@@ -4,6 +4,17 @@ All notable changes to this skill are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and the project aims to follow
 semantic versioning for the rule set.
 
+## [Unreleased]
+
+### Added
+- Microsoft Pragmatic Rust Guidelines (v2026.6) coverage for issue #3: 14
+  new rules (`lint-expect-override`, `api-no-wrapper-params`,
+  `api-inherent-core`, `api-param-order`, `api-impl-io`, `name-no-weasel`,
+  `test-no-tautology`, `async-yield-cpu`, `mem-shrink-to-fit`,
+  `const-named-magic`, `proj-no-glob-reexport`, `macro-no-rewrite-item`,
+  `ffi-logic-in-core`, `ffi-sys-vs-ffi-name`) plus an `ffi-` category.
+  Existing rules were left intact aside from See Also cross-links.
+
 ## [1.5.1]
 
 ### Changed

@@ -76,3 +76,4 @@ name = "my-serde-impl"       # Instead of serde-rs-fork
 - [proj-workspace-deps](./proj-workspace-deps.md) - Cargo configuration
 - [doc-cargo-metadata](./doc-cargo-metadata.md) - Package metadata
 - [name-funcs-snake](./name-funcs-snake.md) - Naming conventions
+- [ffi-sys-vs-ffi-name](./ffi-sys-vs-ffi-name.md) - `*-sys` imports C, `*-ffi` exports C

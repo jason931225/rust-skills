@@ -59,3 +59,4 @@ fn main() {
 - [anti-over-abstraction](anti-over-abstraction.md) - avoid unnecessary abstraction layers
 - [type-generic-bounds](type-generic-bounds.md) - add trait bounds only where needed
 - [macro-rules-hygiene](macro-rules-hygiene.md) - hygiene and `$crate` for declarative macros
+- [macro-no-rewrite-item](macro-no-rewrite-item.md) - do not let a macro lie about the written signature

@@ -141,3 +141,4 @@ for item in items {
 - [async-clone-before-await](async-clone-before-await.md) - Clone Arc before await points
 - [conc-scoped-threads](conc-scoped-threads.md) - Borrow stack data instead of Arc
 - [unsafe-send-sync-manual](unsafe-send-sync-manual.md) - Document manual Send/Sync impls
+- [api-no-wrapper-params](api-no-wrapper-params.md) - keep Arc out of public signatures unless sharing is the API

@@ -141,3 +141,4 @@ impl File {
 - [type-newtype-ids](./type-newtype-ids.md) - Newtype pattern
 - [type-phantom-marker](./type-phantom-marker.md) - PhantomData usage
 - [api-newtype-safety](./api-newtype-safety.md) - Type-safe newtypes
+- [ffi-logic-in-core](./ffi-logic-in-core.md) - keep FFI layouts in the shim crate

@@ -170,3 +170,4 @@ missing_errors_doc = "allow"  # Override pedantic
 - [lint-deny-correctness](./lint-deny-correctness.md) - Critical lints
 - [proj-workspace-deps](./proj-workspace-deps.md) - Workspace configuration
 - [anti-unwrap-abuse](./anti-unwrap-abuse.md) - unwrap lints
+- [lint-expect-override](./lint-expect-override.md) - use `#[expect]` for local overrides

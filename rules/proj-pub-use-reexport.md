@@ -160,3 +160,4 @@ pub use serde::*;  // Usually too broad
 - [proj-prelude-module](./proj-prelude-module.md) - Prelude pattern
 - [proj-pub-crate-internal](./proj-pub-crate-internal.md) - Internal visibility
 - [api-non-exhaustive](./api-non-exhaustive.md) - API stability
+- [proj-no-glob-reexport](./proj-no-glob-reexport.md) - re-export items by name, not with `*`

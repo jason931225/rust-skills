@@ -70,3 +70,4 @@ Run `cargo fix --edition` to apply the mechanical part of this migration automat
 
 - [unsafe-no-mangle-unsafe](unsafe-no-mangle-unsafe.md) - mark `#[no_mangle]` as `#[unsafe(no_mangle)]` in Rust 2024
 - [type-repr-transparent](type-repr-transparent.md) - use `#[repr(transparent)]` for FFI newtypes
+- [ffi-logic-in-core](ffi-logic-in-core.md) - isolate raw extern declarations in the FFI crate

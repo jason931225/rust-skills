@@ -185,3 +185,4 @@ impl MyBuilder {
 - [api-builder-must-use](api-builder-must-use.md) - Add #[must_use] to builders
 - [api-typestate](api-typestate.md) - Compile-time state machines
 - [api-impl-into](api-impl-into.md) - Accept impl Into for flexibility
+- [name-no-weasel](name-no-weasel.md) - call it a Builder, not a Factory

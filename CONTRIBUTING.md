@@ -10,7 +10,7 @@ adding a rule, improving an existing one, or fixing an example.
    an existing category prefix (`own-`, `err-`, `mem-`, `unsafe-`, `api-`,
    `async-`, `conc-`, `opt-`, `num-`, `type-`, `trait-`, `conv-`, `const-`,
    `serde-`, `pat-`, `macro-`, `closure-`, `coll-`, `name-`, `test-`, `doc-`,
-   `obs-`, `perf-`, `proj-`, `lint-`, `anti-`). To propose a brand-new category,
+   `obs-`, `perf-`, `proj-`, `ffi-`, `lint-`, `anti-`). To propose a brand-new category,
    add it to `CATEGORIES` in `checks/gen_index.py`.
 
 2. **Follow the format** of existing rules exactly:

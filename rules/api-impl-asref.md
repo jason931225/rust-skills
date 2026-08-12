@@ -140,3 +140,4 @@ fn process<T: AsRef<U> + ?Sized, U: ?Sized>(value: &T) {
 - [api-impl-into](./api-impl-into.md) - When to use Into instead
 - [own-slice-over-vec](./own-slice-over-vec.md) - Using slices for flexibility
 - [own-borrow-over-clone](./own-borrow-over-clone.md) - Preferring borrows
+- [api-impl-io](./api-impl-io.md) - accept Read/Write the same way you accept AsRef
