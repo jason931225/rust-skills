@@ -187,3 +187,4 @@ async-trait = "0.1"  # For async trait mocking
 - [api-sealed-trait](./api-sealed-trait.md) - Trait design
 - [test-proptest-properties](./test-proptest-properties.md) - Property-based testing
 - [proj-lib-main-split](./proj-lib-main-split.md) - Testable architecture
+- [test-util-feature](./test-util-feature.md) - gate mocks and bypasses behind a test-only feature

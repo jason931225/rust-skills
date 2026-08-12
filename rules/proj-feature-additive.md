@@ -68,3 +68,5 @@ use alloc::vec::Vec;
 - [api-serde-optional](api-serde-optional.md) - gate Serialize/Deserialize behind a feature flag
 - [proj-workspace-deps](proj-workspace-deps.md) - use workspace dependency inheritance
 - [lint-cfg-check](lint-cfg-check.md) - catch feature-gate typos with unexpected_cfgs
+- [proj-works-out-of-box](proj-works-out-of-box.md) - default features must still cargo-build everywhere
+- [test-util-feature](test-util-feature.md) - test-only helpers are an additive feature

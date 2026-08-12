@@ -169,3 +169,4 @@ async fn good(mutex: Arc<Mutex<Data>>) {
 - [async-no-lock-await](./async-no-lock-await.md) - Lock guards across await
 - [own-arc-shared](./own-arc-shared.md) - Arc usage patterns
 - [async-spawn-blocking](./async-spawn-blocking.md) - Blocking in async
+- [async-assert-send](async-assert-send.md) - compile-time Send check on the public future

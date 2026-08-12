@@ -7,13 +7,15 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
-- Microsoft Pragmatic Rust Guidelines (v2026.6) coverage for issue #3: 14
-  new rules (`lint-expect-override`, `api-no-wrapper-params`,
-  `api-inherent-core`, `api-param-order`, `api-impl-io`, `name-no-weasel`,
-  `test-no-tautology`, `async-yield-cpu`, `mem-shrink-to-fit`,
-  `const-named-magic`, `proj-no-glob-reexport`, `macro-no-rewrite-item`,
-  `ffi-logic-in-core`, `ffi-sys-vs-ffi-name`) plus an `ffi-` category.
-  Existing rules were left intact aside from See Also cross-links.
+- Microsoft Pragmatic Rust Guidelines (v2026.6) coverage for issue #3.
+  First commit added 14 rules plus an `ffi-` category. Follow-up adds 16
+  more (`api-impl-rangebounds`, `async-assert-send`, `api-service-clone`,
+  `proj-avoid-statics`, `err-catch-unwind-boundary`, `unsafe-means-ub`,
+  `ffi-native-escape-hatch`, `ffi-sys-crate-builds`, `proj-works-out-of-box`,
+  `test-util-feature`, `doc-first-sentence`, `doc-inline-reexport`,
+  `async-future-size`, `perf-global-allocator`, `api-std-types-boundary`,
+  `obs-named-events`) and revises `proj-prelude-module` /
+  `proj-pub-use-reexport` so they no longer contradict the Microsoft book.
 
 ## [1.5.1]
 

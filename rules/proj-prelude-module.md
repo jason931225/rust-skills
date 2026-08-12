@@ -1,155 +1,81 @@
 # proj-prelude-module
 
-> Create prelude module for common imports
+> Scope a `prelude` to large trait-heavy libraries; typical crates should not define one
 
 ## Why It Matters
 
-A `prelude` module collects the most commonly used types and traits for glob import. Users write `use my_crate::prelude::*` instead of many individual imports. This follows the pattern established by `std::prelude`.
+A `prelude` glob (`use foo::prelude::*`) looks cheap until two crates both export `Client` and the build becomes `error[E0659]: Client is ambiguous`. Today's rust-analyzer already inserts named imports. The Microsoft Pragmatic Rust Guidelines therefore tell ordinary libraries not to ship a prelude: it papers over a muddy root and fights every other glob in the crate. rust-skills previously recommended a prelude for common imports; that disagreed with that guidance. The remaining legitimate case is a *large, trait-heavy* library in the style of `std` or `rayon`, where calling the crate at all means bringing many traits into scope. Applications and typical libraries export named items at the root and stop.
 
 ## Bad
 
 ```rust
-// Users must import everything individually
-use my_crate::Client;
-use my_crate::Config;
-use my_crate::Error;
-use my_crate::Request;
-use my_crate::Response;
-use my_crate::traits::Handler;
-use my_crate::traits::Middleware;
-use my_crate::types::Method;
+// Typical client crate: a prelude whose only job is to hide four root types.
+pub struct Client;
+pub struct Config;
+pub struct Error;
+
+pub mod prelude {
+    pub use crate::{Client, Config, Error};
+}
+
+fn main() {
+    let _ = prelude::Client;
+}
 ```
 
 ## Good
 
 ```rust
-// src/lib.rs
-pub mod prelude {
-    pub use crate::{
-        Client,
-        Config,
-        Error,
-        Request,
-        Response,
-    };
-    pub use crate::traits::{Handler, Middleware};
-    pub use crate::types::Method;
+// Typical crate: named exports, no prelude module.
+pub struct Client;
+pub struct Config;
+pub struct Error;
+
+pub fn connect(_cfg: &Config) -> Result<Client, Error> {
+    Ok(Client)
 }
 
-// Users write:
-use my_crate::prelude::*;
-```
-
-## What to Include
-
-| Include | Don't Include |
-|---------|---------------|
-| Core types users always need | Rarely-used types |
-| Common traits | Implementation details |
-| Error types | Internal helpers |
-| Extension traits | Feature-gated items (usually) |
-| Type aliases | Everything |
-
-## Example: Web Framework Prelude
-
-```rust
-pub mod prelude {
-    // Core request/response
-    pub use crate::{Request, Response, Body};
-    
-    // Error handling
-    pub use crate::Error;
-    
-    // Common traits
-    pub use crate::traits::{FromRequest, IntoResponse};
-    
-    // Routing
-    pub use crate::Router;
-    
-    // HTTP types
-    pub use crate::http::{Method, StatusCode};
+fn main() {
+    let _ = connect(&Config);
 }
 ```
 
-## Example: Database Library Prelude
+## When a Prelude Is Justified
+
+A crate that is *about* a family of traits (parallel iterators, parser combinators, a web extractor stack) may ship one curated prelude. Keep it small, list every item in the module docs, and treat removals as breaking. Do not glob the rest of the crate into it (`proj-no-glob-reexport`).
 
 ```rust
-pub mod prelude {
-    // Connection and pool
-    pub use crate::{Connection, Pool};
-    
-    // Query building
-    pub use crate::query::{Query, Select, Insert, Update, Delete};
-    
-    // Traits for custom types
-    pub use crate::traits::{FromRow, ToSql};
-    
-    // Error type
-    pub use crate::Error;
-}
-```
-
-## Pattern: Tiered Preludes
-
-```rust
-// Minimal prelude
-pub mod prelude {
-    pub use crate::{Client, Config, Error};
+pub trait ParallelIterator {
+    fn for_each<F: Fn(Self::Item)>(self, f: F)
+    where
+        Self: Sized;
+    type Item;
 }
 
-// Full prelude for power users
-pub mod full_prelude {
-    pub use crate::prelude::*;
-    pub use crate::advanced::*;
-    pub use crate::extensions::*;
+impl<T> ParallelIterator for Vec<T> {
+    type Item = T;
+
+    fn for_each<F: Fn(T)>(self, f: F) {
+        for item in self {
+            f(item);
+        }
+    }
 }
-```
 
-## Pattern: Feature-Gated Prelude Items
-
-```rust
+/// Traits that must be in scope to use this crate's iterators.
 pub mod prelude {
-    pub use crate::{Client, Error};
-    
-    #[cfg(feature = "async")]
-    pub use crate::async_client::AsyncClient;
-    
-    #[cfg(feature = "serde")]
-    pub use crate::serde::{Serialize, Deserialize};
+    pub use crate::ParallelIterator;
 }
-```
 
-## Guidelines
-
-1. **Be conservative** - Only include truly common items
-2. **Avoid conflicts** - Don't include names that might clash (e.g., `Error`)
-3. **Document it** - List what's included in module docs
-4. **Stay stable** - Removing items is breaking change
-
-## Documenting the Prelude
-
-```rust
-//! Common imports for convenient glob importing.
-//!
-//! # Usage
-//!
-//! ```
-//! use my_crate::prelude::*;
-//! ```
-//!
-//! # Contents
-//!
-//! This prelude re-exports:
-//! - [`Client`] - The main API client
-//! - [`Config`] - Client configuration
-//! - [`Error`] - Error type
-pub mod prelude {
-    // ...
+fn main() {
+    use prelude::ParallelIterator;
+    vec![1, 2, 3].for_each(|_| {});
 }
 ```
 
 ## See Also
 
-- [proj-pub-use-reexport](./proj-pub-use-reexport.md) - Re-export patterns
-- [api-extension-trait](./api-extension-trait.md) - Extension traits
-- [doc-module-inner](./doc-module-inner.md) - Module documentation
+- [proj-pub-use-reexport](proj-pub-use-reexport.md) - one named public path, not a glob
+- [proj-no-glob-reexport](proj-no-glob-reexport.md) - a prelude is still a list, never `pub use crate::*`
+- [proj-mod-by-feature](proj-mod-by-feature.md) - fix the module layout before inventing a prelude
+- [api-extension-trait](api-extension-trait.md) - extension traits are the usual reason a large crate needs a prelude

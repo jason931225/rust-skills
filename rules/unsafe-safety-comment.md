@@ -70,3 +70,4 @@ fn process(slice: &[u8]) -> Option<u8> {
 - [unsafe-minimize-scope](unsafe-minimize-scope.md) - keep unsafe blocks as small as possible
 - [lint-unsafe-doc](lint-unsafe-doc.md) - enable `clippy::undocumented_unsafe_blocks`
 - [doc-safety-section](doc-safety-section.md) - include `# Safety` sections in public unsafe fns
+- [unsafe-means-ub](unsafe-means-ub.md) - unsafe means UB risk, not "this is dangerous"

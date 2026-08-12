@@ -131,3 +131,4 @@ multiple_unsafe_ops_per_block = "warn"  # One operation per block
 - [doc-safety-section](./doc-safety-section.md) - `# Safety` in docs
 - [lint-deny-correctness](./lint-deny-correctness.md) - Correctness lints
 - [type-repr-transparent](./type-repr-transparent.md) - FFI safety
+- [unsafe-means-ub](./unsafe-means-ub.md) - only UB-risk operations belong in unsafe fns

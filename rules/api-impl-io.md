@@ -43,3 +43,4 @@ fn main() -> std::io::Result<()> {
 - [api-impl-asref](api-impl-asref.md) - the same flexibility for borrowed string, path, and byte inputs
 - [perf-io-buffering](perf-io-buffering.md) - wrap the `Read`/`Write` you accept in a buffer at the call site
 - [test-mock-traits](test-mock-traits.md) - trait inputs are what make I/O-free tests possible
+- [api-impl-rangebounds](api-impl-rangebounds.md) - the same flexibility for range parameters

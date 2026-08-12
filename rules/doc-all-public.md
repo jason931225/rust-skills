@@ -111,3 +111,5 @@ missing_docs = "warn"
 - [doc-module-inner](./doc-module-inner.md) - Module-level documentation
 - [doc-examples-section](./doc-examples-section.md) - Adding examples
 - [lint-missing-docs](./lint-missing-docs.md) - Enforcing documentation
+- [doc-first-sentence](./doc-first-sentence.md) - first rustdoc sentence is one short standalone line
+- [doc-inline-reexport](./doc-inline-reexport.md) - inline first-party pub use in rustdoc

@@ -90,3 +90,5 @@ impl SharedState {
 - [api-sealed-trait](api-sealed-trait.md) - hide implementation choices that callers should not implement
 - [anti-over-abstraction](anti-over-abstraction.md) - extra wrappers add type noise without adding capability
 - [type-deref-coercion](type-deref-coercion.md) - do not paper over a leaked wrapper with `Deref`
+- [api-service-clone](api-service-clone.md) - hide the Arc inside a Clone handle
+- [api-std-types-boundary](api-std-types-boundary.md) - do not leak third-party types either

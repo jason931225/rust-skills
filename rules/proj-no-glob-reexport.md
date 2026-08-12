@@ -61,3 +61,4 @@ fn main() {
 - [proj-pub-use-reexport](proj-pub-use-reexport.md) - named `pub use` is the supported way to flatten a public API
 - [proj-prelude-module](proj-prelude-module.md) - a prelude is still a curated list, not a glob of the crate
 - [doc-all-public](doc-all-public.md) - named re-exports are what rustdoc can document
+- [doc-inline-reexport](doc-inline-reexport.md) - inline the named re-export you kept

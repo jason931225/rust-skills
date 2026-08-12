@@ -77,3 +77,4 @@ fn set_greeting(name: &str) {
 - [name-consts-screaming](name-consts-screaming.md) - naming `SCREAMING_SNAKE_CASE` for `const` and `static`
 - [own-mutex-interior](own-mutex-interior.md) - use `Mutex<T>` for interior mutability in multi-threaded code
 - [const-named-magic](const-named-magic.md) - name production magic numbers and document why
+- [proj-avoid-statics](proj-avoid-statics.md) - no mutable or identity statics; inject the state

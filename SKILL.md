@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 279 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 295 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -22,7 +22,7 @@ metadata:
 
 # Rust Best Practices
 
-Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 279 rules across 27 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.96 (2024 edition).
+Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 295 rules across 27 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.96 (2024 edition).
 
 ## When to Apply
 
@@ -42,11 +42,11 @@ Reference these guidelines when:
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 12 |
-| 2 | Error Handling | CRITICAL | `err-` | 12 |
+| 2 | Error Handling | CRITICAL | `err-` | 13 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
-| 4 | Unsafe Code | CRITICAL | `unsafe-` | 7 |
-| 5 | API Design | HIGH | `api-` | 21 |
-| 6 | Async/Await | HIGH | `async-` | 19 |
+| 4 | Unsafe Code | CRITICAL | `unsafe-` | 8 |
+| 5 | API Design | HIGH | `api-` | 24 |
+| 6 | Async/Await | HIGH | `async-` | 21 |
 | 7 | Concurrency | HIGH | `conc-` | 4 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 5 |
@@ -60,12 +60,12 @@ Reference these guidelines when:
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 17 |
-| 20 | Testing | MEDIUM | `test-` | 16 |
-| 21 | Documentation | MEDIUM | `doc-` | 12 |
-| 22 | Observability | MEDIUM | `obs-` | 7 |
-| 23 | Performance Patterns | MEDIUM | `perf-` | 13 |
-| 24 | Project Structure | LOW | `proj-` | 15 |
-| 25 | FFI & Interop | LOW | `ffi-` | 2 |
+| 20 | Testing | MEDIUM | `test-` | 17 |
+| 21 | Documentation | MEDIUM | `doc-` | 14 |
+| 22 | Observability | MEDIUM | `obs-` | 8 |
+| 23 | Performance Patterns | MEDIUM | `perf-` | 14 |
+| 24 | Project Structure | LOW | `proj-` | 17 |
+| 25 | FFI & Interop | LOW | `ffi-` | 4 |
 | 26 | Clippy & Linting | LOW | `lint-` | 14 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 15 |
 
@@ -102,6 +102,7 @@ Reference these guidelines when:
 - [`err-lowercase-msg`](rules/err-lowercase-msg.md) - Start error messages lowercase, no trailing punctuation
 - [`err-doc-errors`](rules/err-doc-errors.md) - Document error conditions with `# Errors` section in doc comments
 - [`err-custom-type`](rules/err-custom-type.md) - Define custom error types for domain-specific failures
+- [`err-catch-unwind-boundary`](rules/err-catch-unwind-boundary.md) - Use `catch_unwind` only at a task, FFI, or process isolation edge, and pair it with a restart policy
 
 ### 3. Memory Optimization (CRITICAL)
 
@@ -133,6 +134,7 @@ Reference these guidelines when:
 - [`unsafe-extern-block`](rules/unsafe-extern-block.md) - In Rust 2024, wrap `extern` blocks in `unsafe extern { }` and annotate each item as `safe` or `unsafe`.
 - [`unsafe-send-sync-manual`](rules/unsafe-send-sync-manual.md) - Document the invariants when manually implementing `Send` or `Sync`; prefer letting the compiler derive them automatically.
 - [`unsafe-no-mangle-unsafe`](rules/unsafe-no-mangle-unsafe.md) - In Rust 2024, write `#[unsafe(no_mangle)]`, `#[unsafe(export_name = "...")]`, and `#[unsafe(link_section = "...")]` — not the bare attribute forms.
+- [`unsafe-means-ub`](rules/unsafe-means-ub.md) - Mark a function `unsafe` only when misuse can cause undefined behavior, not because the operation is merely dangerous
 
 ### 5. API Design (HIGH)
 
@@ -157,6 +159,9 @@ Reference these guidelines when:
 - [`api-inherent-core`](rules/api-inherent-core.md) - Put a type's essential methods on the type itself; implement traits by forwarding to them
 - [`api-no-wrapper-params`](rules/api-no-wrapper-params.md) - Keep `Rc`, `Arc`, `Box`, and `RefCell` out of public function signatures unless sharing is the API
 - [`api-param-order`](rules/api-param-order.md) - Keep the same conceptual parameters in the same order across related functions
+- [`api-impl-rangebounds`](rules/api-impl-rangebounds.md) - Accept `impl RangeBounds<T>` for range parameters instead of a pair of endpoints or a concrete `Range`
+- [`api-service-clone`](rules/api-service-clone.md) - Expose long-lived services as cheap `Clone` handles around `Arc<Inner>`, not as fat values callers must wrap themselves
+- [`api-std-types-boundary`](rules/api-std-types-boundary.md) - Keep third-party types out of the public surface unless that crate is an intentional part of the contract
 
 ### 6. Async/Await (HIGH)
 
@@ -179,6 +184,8 @@ Reference these guidelines when:
 - [`async-async-fn-bounds`](rules/async-async-fn-bounds.md) - Use `AsyncFn`/`AsyncFnMut`/`AsyncFnOnce` bounds instead of `F: Fn() -> Fut, Fut: Future`
 - [`async-cancel-safety`](rules/async-cancel-safety.md) - Ensure futures used in `tokio::select!` branches are cancellation-safe
 - [`async-yield-cpu`](rules/async-yield-cpu.md) - Yield between chunks of long CPU work so other tasks can run
+- [`async-assert-send`](rules/async-assert-send.md) - Assert that public futures and handles are `Send` so they can move across Tokio workers
+- [`async-future-size`](rules/async-future-size.md) - Keep hot `async fn` state machines small: do not capture large values across `.await`, and box the heavy branch
 
 ### 7. Concurrency (HIGH)
 
@@ -333,6 +340,7 @@ Reference these guidelines when:
 - [`test-loom-concurrency`](rules/test-loom-concurrency.md) - Use `loom` to exhaustively test lock-free and concurrent code
 - [`test-snapshot-testing`](rules/test-snapshot-testing.md) - Use snapshot testing (insta) for complex or serialized output
 - [`test-no-tautology`](rules/test-no-tautology.md) - Assert a property or observable outcome, not a constant restated from the source
+- [`test-util-feature`](rules/test-util-feature.md) - Gate mocks, invariant bypasses, and fake data behind an explicit test-only Cargo feature
 
 ### 21. Documentation (MEDIUM)
 
@@ -348,6 +356,8 @@ Reference these guidelines when:
 - [`doc-link-types`](rules/doc-link-types.md) - Use intra-doc links to connect related types and functions
 - [`doc-cargo-metadata`](rules/doc-cargo-metadata.md) - Fill `Cargo.toml` metadata for published crates
 - [`doc-crate-readme`](rules/doc-crate-readme.md) - Unify the README and crate root docs with `#![doc = include_str!("../README.md")]`
+- [`doc-first-sentence`](rules/doc-first-sentence.md) - Write the first rustdoc sentence as one short standalone line — about fifteen words — that still makes sense in the module index
+- [`doc-inline-reexport`](rules/doc-inline-reexport.md) - Put `#[doc(inline)]` on `pub use` of items you own so rustdoc shows them next to their siblings
 
 ### 22. Observability (MEDIUM)
 
@@ -358,6 +368,7 @@ Reference these guidelines when:
 - [`obs-levels-filter`](rules/obs-levels-filter.md) - Use log levels meaningfully and filter with `EnvFilter` / `RUST_LOG`
 - [`obs-error-chain`](rules/obs-error-chain.md) - Log errors with their full source chain, and log each error exactly once
 - [`obs-no-sensitive-data`](rules/obs-no-sensitive-data.md) - Never log secrets or PII; redact or skip them
+- [`obs-named-events`](rules/obs-named-events.md) - Give telemetry a stable event name (and a message template) so releases stay queryable
 
 ### 23. Performance Patterns (MEDIUM)
 
@@ -374,6 +385,7 @@ Reference these guidelines when:
 - [`perf-profile-first`](rules/perf-profile-first.md) - Profile before optimizing
 - [`perf-ahash`](rules/perf-ahash.md) - Use a faster hasher (`ahash` / `FxHashMap`) when DoS resistance is not needed
 - [`perf-io-buffering`](rules/perf-io-buffering.md) - Wrap `Read`/`Write` in `BufReader`/`BufWriter` for many small operations
+- [`perf-global-allocator`](rules/perf-global-allocator.md) - Pick the process global allocator on purpose in application crates; leave libraries on the system default
 
 ### 24. Project Structure (LOW)
 
@@ -383,8 +395,8 @@ Reference these guidelines when:
 - [`proj-mod-rs-dir`](rules/proj-mod-rs-dir.md) - Use mod.rs for multi-file modules
 - [`proj-pub-crate-internal`](rules/proj-pub-crate-internal.md) - Use pub(crate) for internal APIs
 - [`proj-pub-super-parent`](rules/proj-pub-super-parent.md) - Use pub(super) for parent-only visibility
-- [`proj-pub-use-reexport`](rules/proj-pub-use-reexport.md) - Use pub use for clean public API
-- [`proj-prelude-module`](rules/proj-prelude-module.md) - Create prelude module for common imports
+- [`proj-pub-use-reexport`](rules/proj-pub-use-reexport.md) - Give each owned item one public path; re-export a foreign type only when it is part of your contract
+- [`proj-prelude-module`](rules/proj-prelude-module.md) - Scope a `prelude` to large trait-heavy libraries; typical crates should not define one
 - [`proj-bin-dir`](rules/proj-bin-dir.md) - Put multiple binaries in src/bin/
 - [`proj-workspace-large`](rules/proj-workspace-large.md) - Use workspaces for large projects
 - [`proj-workspace-deps`](rules/proj-workspace-deps.md) - Use workspace dependency inheritance for consistent versions across crates
@@ -392,11 +404,15 @@ Reference these guidelines when:
 - [`proj-msrv-declare`](rules/proj-msrv-declare.md) - Declare `rust-version` (MSRV) in Cargo.toml and test it in CI
 - [`proj-build-rs-minimal`](rules/proj-build-rs-minimal.md) - Keep `build.rs` minimal, deterministic, and idempotent
 - [`proj-no-glob-reexport`](rules/proj-no-glob-reexport.md) - Re-export public items by name; do not `pub use foo::*` across modules or crates
+- [`proj-avoid-statics`](rules/proj-avoid-statics.md) - Do not store mutable or process-identity state in `static`; pass it in. Reserve `static` for immutable tables
+- [`proj-works-out-of-box`](rules/proj-works-out-of-box.md) - Default features must `cargo build` on tier-1 targets with only the Rust toolchain — no extra packages, env vars, or generated-at-install steps
 
 ### 25. FFI & Interop (LOW)
 
 - [`ffi-logic-in-core`](rules/ffi-logic-in-core.md) - Keep business logic in a safe core crate; limit the `*-ffi` crate to translating pointers and status codes
 - [`ffi-sys-vs-ffi-name`](rules/ffi-sys-vs-ffi-name.md) - Name import wrappers `*-sys` and export shims `*-ffi`
+- [`ffi-native-escape-hatch`](rules/ffi-native-escape-hatch.md) - Give native-handle wrappers `from_native` / `into_native` / `as_native` so FFI code can cross the boundary without leaking the raw type everywhere
+- [`ffi-sys-crate-builds`](rules/ffi-sys-crate-builds.md) - Keep `-sys` crates hermetic: vendored C sources or a `pkg-config` probe, no one-off host tools on the default path
 
 ### 26. Clippy & Linting (LOW)
 

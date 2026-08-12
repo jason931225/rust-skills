@@ -45,3 +45,5 @@ fn main() {
 - [ffi-logic-in-core](ffi-logic-in-core.md) - the `*-ffi` crate only translates; logic lives in `foo`
 - [name-crate-no-rs](name-crate-no-rs.md) - `*-sys` / `*-ffi` are role suffixes, not a language tag like `-rs`
 - [proj-lib-main-split](proj-lib-main-split.md) - keep the safe crate a normal `lib.rs`, not an FFI dump
+- [ffi-sys-crate-builds](ffi-sys-crate-builds.md) - hermetic builds for the import crate
+- [ffi-native-escape-hatch](ffi-native-escape-hatch.md) - native handle conversions on the wrapper

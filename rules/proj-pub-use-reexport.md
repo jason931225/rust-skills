@@ -1,163 +1,83 @@
 # proj-pub-use-reexport
 
-> Use pub use for clean public API
+> Give each owned item one public path; re-export a foreign type only when it is part of your contract
 
 ## Why It Matters
 
-`pub use` re-exports items from submodules at the current module level. This creates a flat, ergonomic public API while keeping internal organization flexible. Users import from one place; you can reorganize internals without breaking their code.
+`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) is what the Microsoft Pragmatic Rust Guidelines call a split identity: humans and agents keep both forever. Re-exporting `bytes::Bytes` so callers never depend on `bytes` is the twin foot-gun, unless `Bytes` actually appears in your signatures on purpose. rust-skills previously showed "re-export whatever users might need" and even `pub use foo::*`; those examples contradicted `proj-no-glob-reexport` and the Microsoft book. The rule is now: hide the module, re-export the item once, and leak a third-party type only when it is deliberate API currency.
 
 ## Bad
 
 ```rust
-// lib.rs - Deep module paths exposed
-pub mod error;
-pub mod config;
-pub mod client;
-pub mod types;
+pub mod net {
+    pub struct Client;
+}
 
-// Users must write:
-use my_crate::error::MyError;
-use my_crate::config::Config;
-use my_crate::client::http::HttpClient;
-use my_crate::types::request::Request;
+// Two public paths for one type: `net::Client` and `Client`.
+pub use net::Client;
+
+fn main() {
+    let _ = Client;
+    let _ = net::Client;
+}
 ```
 
 ## Good
 
 ```rust
-// lib.rs - Flat public API
-mod error;
-mod config;
-mod client;
-mod types;
-
-pub use error::MyError;
-pub use config::Config;
-pub use client::http::HttpClient;
-pub use types::request::Request;
-
-// Users write:
-use my_crate::{Config, HttpClient, MyError, Request};
-```
-
-## Pattern: Selective Re-export
-
-```rust
-// src/lib.rs
-mod internal;
-
-// Only re-export what users need
-pub use internal::{
-    PublicStruct,
-    PublicTrait,
-    public_function,
-};
-
-// Keep implementation details hidden
-// internal::helper_function is NOT exported
-```
-
-## Pattern: Rename on Re-export
-
-```rust
-mod v1 {
-    pub struct Client { /* old implementation */ }
+mod net {
+    pub struct Client;
 }
 
-mod v2 {
-    pub struct Client { /* new implementation */ }
+pub use net::Client;
+
+fn main() {
+    let _ = Client;
+}
+```
+
+## Foreign Types
+
+Re-export a type from another crate only when that type is already in your public signatures and you are willing to semver-track that crate. Otherwise callers add the dependency themselves (`api-std-types-boundary`).
+
+```rust
+// This crate's contract *is* a status code. The wrapper is ours; a real
+// `pub use http::StatusCode` follows the same rule when `http` is intentional.
+pub struct StatusCode(pub u16);
+
+pub fn not_found() -> StatusCode {
+    StatusCode(404)
 }
 
-// Re-export with clear names
-pub use v2::Client;
-pub use v1::Client as LegacyClient;
+fn main() {
+    let _ = not_found();
+}
 ```
 
-## Pattern: Prelude Module
+## Feature-Gated Re-exports
+
+Name every item. A feature may add re-exports; it must not glob a module into the root.
 
 ```rust
-// src/lib.rs
-pub mod prelude {
-    pub use crate::{
-        Config,
-        Client,
-        Error,
-        Request,
-        Response,
-    };
+mod blocking {
+    pub struct BlockingClient;
 }
 
-// Users can glob import common items
-use my_crate::prelude::*;
-```
+#[cfg(feature = "blocking")]
+pub use blocking::BlockingClient;
 
-## Pattern: Feature-Gated Re-exports
+pub struct Client;
 
-```rust
-// src/lib.rs
-mod core;
-mod serde_impl;
-mod async_impl;
-
-pub use core::*;
-
-#[cfg(feature = "serde")]
-pub use serde_impl::*;
-
-#[cfg(feature = "async")]
-pub use async_impl::*;
-```
-
-## Comparison: Module Structure vs Public API
-
-```rust
-// Internal structure (complex)
-src/
-├── transport/
-│   ├── http/
-│   │   └── client.rs    // HttpClient
-│   └── grpc/
-│       └── client.rs    // GrpcClient
-├── auth/
-│   └── token.rs         // Token
-└── lib.rs
-
-// Public API (flat)
-pub use transport::http::client::HttpClient;
-pub use transport::grpc::client::GrpcClient;
-pub use auth::token::Token;
-
-// Users see:
-my_crate::HttpClient
-my_crate::GrpcClient
-my_crate::Token
-```
-
-## Re-export External Types
-
-```rust
-// Re-export dependencies users will need
-pub use bytes::Bytes;
-pub use http::{Method, StatusCode};
-
-// Now users don't need to depend on these crates directly
-```
-
-## Glob Re-exports
-
-Use sparingly:
-
-```rust
-// OK for internal modules
-pub use internal::*;
-
-// Careful with external crates - pollutes namespace
-pub use serde::*;  // Usually too broad
+fn main() {
+    let _ = Client;
+}
 ```
 
 ## See Also
 
-- [proj-prelude-module](./proj-prelude-module.md) - Prelude pattern
-- [proj-pub-crate-internal](./proj-pub-crate-internal.md) - Internal visibility
-- [api-non-exhaustive](./api-non-exhaustive.md) - API stability
-- [proj-no-glob-reexport](./proj-no-glob-reexport.md) - re-export items by name, not with `*`
+- [proj-no-glob-reexport](proj-no-glob-reexport.md) - never `pub use foo::*` across modules
+- [proj-prelude-module](proj-prelude-module.md) - a prelude is the exception, not a second public path
+- [doc-inline-reexport](doc-inline-reexport.md) - `#[doc(inline)]` the one path you chose
+- [api-std-types-boundary](api-std-types-boundary.md) - most foreign types should not appear at all
+- [api-non-exhaustive](api-non-exhaustive.md) - the public surface you flattened still needs a stability story
+- [proj-pub-crate-internal](proj-pub-crate-internal.md) - keep the un-exported tree `pub(crate)`

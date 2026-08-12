@@ -81,3 +81,5 @@ fn main() {
 - [type-repr-transparent](type-repr-transparent.md) - wrap a single FFI integer in the shim, not in the domain type
 - [unsafe-minimize-scope](unsafe-minimize-scope.md) - the only `unsafe` should be the pointer copies at the edge
 - [unsafe-safety-comment](unsafe-safety-comment.md) - document the C-side contract next to the shim
+- [ffi-native-escape-hatch](ffi-native-escape-hatch.md) - from_native/into_native stay on the wrapper
+- [ffi-sys-crate-builds](ffi-sys-crate-builds.md) - hermetic -sys builds, no host-tool surprise

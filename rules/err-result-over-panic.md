@@ -128,3 +128,4 @@ fn main() {
 - [err-anyhow-app](./err-anyhow-app.md) - Ergonomic errors for applications
 - [err-no-unwrap-prod](./err-no-unwrap-prod.md) - Avoid unwrap in production code
 - [anti-unwrap-abuse](./anti-unwrap-abuse.md) - When unwrap is acceptable
+- [err-catch-unwind-boundary](./err-catch-unwind-boundary.md) - catch_unwind only at an isolation edge
