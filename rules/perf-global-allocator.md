@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Library crates must not install a `#[global_allocator]`: the application owns the process heap, and two crates fighting over it is a link error. Applications *should* choose. The system allocator is a fine default; replacing it is a measured decision for allocation-heavy servers. The Microsoft Pragmatic Rust Guidelines cite `mimalloc` as a common win on those workloads — that is an example, not a mandate. `jemalloc` / `snmalloc` / the system heap are equally valid once a benchmark says so. Put the `static` in `main.rs`, never in a published `lib.rs`.
+Library crates must not install a `#[global_allocator]`: the application owns the process heap, and two crates fighting over it is a link error. Applications *should* choose. The system allocator is a fine default; replacing it is a measured decision for allocation-heavy servers. In Microsoft Pragmatic Rust Guidelines (M-MIMALLOC-APPS), `mimalloc` is a common win on those workloads — that is an example, not a mandate. `jemalloc` / `snmalloc` / the system heap are equally valid once a benchmark says so. Put the `static` in `main.rs`, never in a published `lib.rs`.
 
 ## Bad
 

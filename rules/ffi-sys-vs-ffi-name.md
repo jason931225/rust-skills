@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-The crate name is the first signal of which side of the ABI you are on. `foo-sys` means "thin bindings *to* an existing C library"; `foo-ffi` means "C functions *from* this Rust library." Mixing them sends reviewers to the wrong `extern` block. The Microsoft Pragmatic Rust Guidelines keep that split so workspace layouts stay predictable next to `foo` (the safe core).
+The crate name is the first signal of which side of the ABI you are on. `foo-sys` means "thin bindings *to* an existing C library"; `foo-ffi` means "C functions *from* this Rust library." Mixing them sends reviewers to the wrong `extern` block. Following Microsoft Pragmatic Rust Guidelines (M-FFI-NAMING), keep that split so workspace layouts stay predictable next to `foo` (the safe core).
 
 ## Bad
 

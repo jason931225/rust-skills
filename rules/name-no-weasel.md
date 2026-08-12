@@ -4,22 +4,24 @@
 
 ## Why It Matters
 
-Every type manages something; putting `Manager` in the name does not tell a reader what the type *does*. The Microsoft Pragmatic Rust Guidelines treat `Service`, `Manager`, and `Factory` as weasel words: replace them with the noun for the work (`Bookings`, `BookingDispatcher`) and use `Builder` when the type exists to construct another value. Shorter, specific names also survive grepping and rustdoc search.
+Every type manages something; putting `Manager` in the name does not tell a reader what the type *does*. Following Microsoft Pragmatic Rust Guidelines (M-WEASEL-WORDS), drop empty role words like `Service`, `Manager`, and `Factory`: replace them with the noun for the work (`Invoices`, `InvoiceDispatcher`) and use `Builder` when the type exists to construct another value. Shorter, specific names also survive grepping and rustdoc search.
 
 ## Bad
 
 ```rust
-pub struct BookingService {
+// Role word says nothing about invoices.
+pub struct InvoiceService {
     pub count: usize,
 }
 
-pub struct SessionManager {
+// Every type "manages" something; the noun is missing.
+pub struct LedgerManager {
     pub live: usize,
 }
 
-pub struct TicketFactory;
+pub struct ReceiptFactory;
 
-impl TicketFactory {
+impl ReceiptFactory {
     pub fn create(&self) -> u64 {
         1
     }
@@ -29,19 +31,19 @@ impl TicketFactory {
 ## Good
 
 ```rust
-pub struct Bookings {
+pub struct Invoices {
     pub count: usize,
 }
 
-pub struct BookingDispatcher {
+pub struct InvoiceDispatcher {
     pub live: usize,
 }
 
-pub struct TicketBuilder {
+pub struct ReceiptBuilder {
     seed: u64,
 }
 
-impl TicketBuilder {
+impl ReceiptBuilder {
     pub fn new() -> Self {
         Self { seed: 1 }
     }
@@ -52,7 +54,7 @@ impl TicketBuilder {
 }
 
 fn main() {
-    let _ = TicketBuilder::new().build();
+    let _ = ReceiptBuilder::new().build();
 }
 ```
 

@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) is what the Microsoft Pragmatic Rust Guidelines call a split identity: humans and agents keep both forever. Re-exporting `bytes::Bytes` so callers never depend on `bytes` is the twin foot-gun, unless `Bytes` actually appears in your signatures on purpose. rust-skills previously showed "re-export whatever users might need" and even `pub use foo::*`; those examples contradicted `proj-no-glob-reexport` and the Microsoft book. The rule is now: hide the module, re-export the item once, and leak a third-party type only when it is deliberate API currency.
+`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) is what Microsoft Pragmatic Rust Guidelines (M-SINGLE-ITEM-PATH) call a split identity: humans and agents keep both forever. Re-exporting `bytes::Bytes` so callers never depend on `bytes` is the twin foot-gun, unless `Bytes` actually appears in your signatures on purpose (M-FOREIGN-REEXPORTS). Hide the module, re-export the item once, and leak a third-party type only when it is deliberate API currency.
 
 ## Bad
 

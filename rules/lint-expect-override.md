@@ -4,27 +4,27 @@
 
 ## Why It Matters
 
-`#[allow]` stays quiet even after the lint no longer fires, so overrides pile up as cargo-cult comments. `#[expect]` fails the build (or warns) once the lint is gone, so the override cannot outlive the code that needed it. The Microsoft Pragmatic Rust Guidelines recommend pairing every override with a `reason` so reviewers can tell whether the exception is still load-bearing.
+`#[allow]` stays quiet even after the lint no longer fires, so overrides pile up as cargo-cult comments. `#[expect]` fails the build (or warns) once the lint is gone, so the override cannot outlive the code that needed it. Per Microsoft Pragmatic Rust Guidelines (M-LINT-OVERRIDE-EXPECT), pair every override with a `reason` so reviewers can tell whether the exception is still load-bearing.
 
 ## Bad
 
 ```rust
 #[allow(clippy::unused_async)]
-pub async fn ping() {
-    // stub: the allow will linger after this function starts doing I/O
+pub async fn flush_metrics() {
+    // The allow will linger after this function starts writing I/O.
 }
 ```
 
 ## Good
 
 ```rust
-#[expect(clippy::unused_async, reason = "signature is fixed; body will perform I/O")]
-pub async fn ping() {
-    // stub for now
+#[expect(clippy::unused_async, reason = "signature is fixed; body will flush to the socket")]
+pub async fn flush_metrics() {
+    // Body still empty; expect fires once the lint stops applying.
 }
 
 fn main() {
-    let _ = ping;
+    let _ = flush_metrics;
 }
 ```
 

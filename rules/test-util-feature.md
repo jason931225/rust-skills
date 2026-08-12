@@ -4,22 +4,22 @@
 
 ## Why It Matters
 
-A `bypass_certificate_checks` method that ships in the default build is a production foot-gun. The Microsoft Pragmatic Rust Guidelines put every testing affordance — mocks, seedable clocks, inspect-secret helpers — behind one clearly named feature (commonly `test-util` or `testing`) that applications enable only in `[dev-dependencies]` / test crates. Combine it with `#[cfg(feature = "...")]` so the symbols do not exist in release rlibs. `clippy::disallowed_methods` can ban the bypass outside that cfg.
+A `skip_hostname_check` method that ships in the default build is a production foot-gun. Under Microsoft Pragmatic Rust Guidelines (M-TEST-UTIL), every testing affordance — mocks, seedable clocks, inspect-secret helpers — belongs behind one clearly named feature (commonly `test-util` or `testing`) that applications enable only in `[dev-dependencies]` / test crates. Combine it with `#[cfg(feature = "...")]` so the symbols do not exist in release rlibs. `clippy::disallowed_methods` can ban the bypass outside that cfg.
 
 ## Bad
 
 ```rust
-pub struct TlsClient {
-    pub skip_verify: bool,
+pub struct SmtpClient {
+    pub skip_host: bool,
 }
 
-impl TlsClient {
+impl SmtpClient {
     pub fn new() -> Self {
-        Self { skip_verify: false }
+        Self { skip_host: false }
     }
 
-    pub fn bypass_certificate_checks(&mut self) {
-        self.skip_verify = true;
+    pub fn skip_hostname_check(&mut self) {
+        self.skip_host = true;
     }
 }
 ```
@@ -27,27 +27,27 @@ impl TlsClient {
 ## Good
 
 ```rust
-pub struct TlsClient {
-    skip_verify: bool,
+pub struct SmtpClient {
+    skip_host: bool,
 }
 
-impl TlsClient {
+impl SmtpClient {
     pub fn new() -> Self {
-        Self { skip_verify: false }
+        Self { skip_host: false }
     }
 
     #[cfg(feature = "test-util")]
-    pub fn bypass_certificate_checks(&mut self) {
-        self.skip_verify = true;
+    pub fn skip_hostname_check(&mut self) {
+        self.skip_host = true;
     }
 
     pub fn verifies_peer(&self) -> bool {
-        !self.skip_verify
+        !self.skip_host
     }
 }
 
 fn main() {
-    let client = TlsClient::new();
+    let client = SmtpClient::new();
     assert!(client.verifies_peer());
 }
 ```

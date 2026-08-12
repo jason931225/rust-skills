@@ -160,4 +160,4 @@ struct X(i32);  // Just use i32
 - [type-newtype-ids](./type-newtype-ids.md) - Newtype pattern for IDs
 - [api-parse-dont-validate](./api-parse-dont-validate.md) - Type-driven validation
 - [own-copy-small](./own-copy-small.md) - Making newtypes Copy
-- [api-param-order](./api-param-order.md) - keep related parameters in one order so newtypes are not the only defense
+- [api-param-order](./api-param-order.md) - Keep related parameters in one order so newtypes are not the only defense

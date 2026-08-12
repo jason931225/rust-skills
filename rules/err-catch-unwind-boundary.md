@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A panic means "this program should stop," not "throw to the caller." Catching it in the middle of a library leaves mutexes poisoned, thread-locals half-updated, and invariants that safe code assumed were impossible. The Microsoft Pragmatic Rust Guidelines allow `catch_unwind` at the rim of a request worker or an FFI callback so *other* work can finish — then the process or task is recycled. `clippy::exit` does not cover this; the review check is: if you catch, you must say what restarts.
+A panic means "this program should stop," not "throw to the caller." Catching it in the middle of a library leaves mutexes poisoned, thread-locals half-updated, and invariants that safe code assumed were impossible. Per Microsoft Pragmatic Rust Guidelines (M-PANIC-CONTINUATION), `catch_unwind` belongs at the rim of a request worker or an FFI callback so *other* work can finish — then the process or task is recycled. `clippy::exit` does not cover this; the review check is: if you catch, you must say what restarts.
 
 ## Bad
 

@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Every consumer of `foo-sys` inherits its build. A `build.rs` that shells out to `nasm`, `perl`, or a downloaded tarball fails on the next machine, in CI, and in any sandbox that has only `cc` and a linker. The Microsoft Pragmatic Rust Guidelines require a `-sys` crate to compile with the Rust toolchain plus `cc`. Vendor the upstream sources (or document a hash-pinned fetch behind a non-default feature), generate bindgen output before publish when you can, and offer static linking. `proj-build-rs-minimal` is the local script hygiene; this rule is the interop contract.
+Every consumer of `foo-sys` inherits its build. A `build.rs` that shells out to `nasm`, `perl`, or a downloaded tarball fails on the next machine, in CI, and in any sandbox that has only `cc` and a linker. Per Microsoft Pragmatic Rust Guidelines (M-SYS-CRATES), a `-sys` crate must compile with the Rust toolchain plus `cc`. Vendor the upstream sources (or document a hash-pinned fetch behind a non-default feature), generate bindgen output before publish when you can, and offer static linking. `proj-build-rs-minimal` is the local script hygiene; this rule is the interop contract.
 
 ## Bad
 
@@ -30,7 +30,7 @@ edition = "2024"
 cc = "1"
 ```
 
-```
+```text
 // foo-sys/build.rs
 // Compile vendored C with the `cc` crate. No perl, nasm, or network fetch
 // on the default path. Sources live in vendor/ next to this script.

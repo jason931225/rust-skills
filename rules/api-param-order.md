@@ -4,22 +4,22 @@
 
 ## Why It Matters
 
-When `user_id` and `tenant_id` swap places between `create` and `delete`, a caller who copies an earlier call site silently transposes arguments of the same type. The Microsoft Pragmatic Rust Guidelines put call-specific values first, shared context (loggers, clocks) last, and a single closure last of all. One order, used everywhere in the crate, is cheaper to review than a comment on each function.
+When `member_id` and `org_id` swap places between `add` and `drop`, a caller who copies an earlier call site silently transposes arguments of the same type. Following Microsoft Pragmatic Rust Guidelines (M-PARAMETER-CONSISTENCY), put call-specific values first, shared context (loggers, clocks) last, and a single closure last of all. One order, used everywhere in the crate, is cheaper to review than a comment on each function.
 
 ## Bad
 
 ```rust
 pub struct Logger;
-pub struct TenantId(pub u64);
-pub struct UserId(pub u64);
+pub struct OrgId(pub u64);
+pub struct MemberId(pub u64);
 
-pub fn create_user(logger: &Logger, user_id: UserId, tenant_id: TenantId) -> bool {
-    let _ = (logger, user_id, tenant_id);
+pub fn add_member(logger: &Logger, member_id: MemberId, org_id: OrgId) -> bool {
+    let _ = (logger, member_id, org_id);
     true
 }
 
-pub fn delete_user(tenant_id: TenantId, user_id: UserId, logger: &Logger) -> bool {
-    let _ = (logger, user_id, tenant_id);
+pub fn drop_member(org_id: OrgId, member_id: MemberId, logger: &Logger) -> bool {
+    let _ = (logger, member_id, org_id);
     true
 }
 ```
@@ -28,34 +28,34 @@ pub fn delete_user(tenant_id: TenantId, user_id: UserId, logger: &Logger) -> boo
 
 ```rust
 pub struct Logger;
-pub struct TenantId(pub u64);
-pub struct UserId(pub u64);
+pub struct OrgId(pub u64);
+pub struct MemberId(pub u64);
 
-pub fn create_user(tenant_id: TenantId, user_id: UserId, logger: &Logger) -> bool {
-    let _ = (logger, user_id, tenant_id);
+pub fn add_member(org_id: OrgId, member_id: MemberId, logger: &Logger) -> bool {
+    let _ = (logger, member_id, org_id);
     true
 }
 
-pub fn delete_user(tenant_id: TenantId, user_id: UserId, logger: &Logger) -> bool {
-    let _ = (logger, user_id, tenant_id);
+pub fn drop_member(org_id: OrgId, member_id: MemberId, logger: &Logger) -> bool {
+    let _ = (logger, member_id, org_id);
     true
 }
 
-pub fn rename_user(
-    tenant_id: TenantId,
-    user_id: UserId,
+pub fn rename_member(
+    org_id: OrgId,
+    member_id: MemberId,
     new_name: &str,
     logger: &Logger,
 ) -> bool {
-    let _ = (logger, user_id, tenant_id, new_name);
+    let _ = (logger, member_id, org_id, new_name);
     true
 }
 
 fn main() {
     let logger = Logger;
-    let _ = create_user(TenantId(1), UserId(2), &logger);
-    let _ = delete_user(TenantId(1), UserId(2), &logger);
-    let _ = rename_user(TenantId(1), UserId(2), "ada", &logger);
+    let _ = add_member(OrgId(1), MemberId(2), &logger);
+    let _ = drop_member(OrgId(1), MemberId(2), &logger);
+    let _ = rename_member(OrgId(1), MemberId(2), "ada", &logger);
 }
 ```
 

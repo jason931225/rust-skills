@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A `static` looks unique. Cargo can link two major versions of the same crate into one binary, and each copy gets its own `static`. Counters, registries, and "the" logger then split silently. Mutable statics also fight tests: every test shares one cell. The Microsoft Pragmatic Rust Guidelines allow a `static` only when a second copy would not change the answer — lookup tables, interned strings, atomics used purely as a fast path. Edition 2024 already rejects `static mut`; `clippy::disallowed_types` / workspace `banned` lists can keep `lazy_static` and ad-hoc globals out of libraries.
+A `static` looks unique. Cargo can link two major versions of the same crate into one binary, and each copy gets its own `static`. Counters, registries, and "the" logger then split silently. Mutable statics also fight tests: every test shares one cell. Per Microsoft Pragmatic Rust Guidelines (M-AVOID-STATICS), a `static` is allowed only when a second copy would not change the answer — lookup tables, interned strings, atomics used purely as a fast path. Edition 2024 already rejects `static mut`; `clippy::disallowed_types` / workspace `banned` lists can keep `lazy_static` and ad-hoc globals out of libraries.
 
 ## Bad
 

@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-An application with two hundred crates will not survive a leaf that needs `protoc`, `openssl-src` plus Perl, or `SOME_SDK_ROOT` on every laptop. The Microsoft Pragmatic Rust Guidelines treat "it compiled on my machine" as a defect: if the crate is not *about* a platform, its default feature set builds on every tier-1 target with `cargo` and `cc`. Generate bindings and data files before you publish; gate optional native extras behind additive features. CI that runs `cargo check --workspace` on linux/mac/windows is the mechanical check.
+An application with two hundred crates will not survive a leaf that needs `protoc`, `openssl-src` plus Perl, or `SOME_SDK_ROOT` on every laptop. Under Microsoft Pragmatic Rust Guidelines (M-OOBE), "it compiled on my machine" is a defect: if the crate is not *about* a platform, its default feature set builds on every tier-1 target with `cargo` and `cc`. Generate bindings and data files before you publish; gate optional native extras behind additive features. CI that runs `cargo check --workspace` on linux/mac/windows is the mechanical check.
 
 ## Bad
 

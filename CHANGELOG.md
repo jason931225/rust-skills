@@ -17,6 +17,8 @@ semantic versioning for the rule set.
   `obs-named-events`) and revises `proj-prelude-module` /
   `proj-pub-use-reexport` so they no longer contradict the Microsoft book.
 
+Now 295 rules across 27 categories.
+
 ## [1.5.1]
 
 ### Changed

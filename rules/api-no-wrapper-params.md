@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Smart pointers in a public signature leak an ownership scheme callers cannot change. Once two crates disagree about `Arc` versus `Rc`, or `Mutex` versus `RwLock`, the types no longer compose and the wrapper infects every downstream field. The Microsoft Pragmatic Rust Guidelines treat those wrappers as implementation details: accept and return `&T`, `&mut T`, or `T`, and hide any internal sharing behind the type.
+Smart pointers in a public signature leak an ownership scheme callers cannot change. Once two crates disagree about `Arc` versus `Rc`, or `Mutex` versus `RwLock`, the types no longer compose and the wrapper infects every downstream field. Per Microsoft Pragmatic Rust Guidelines (M-AVOID-WRAPPERS), treat those wrappers as implementation details: accept and return `&T`, `&mut T`, or `T`, and hide any internal sharing behind the type.
 
 ## Bad
 
@@ -13,23 +13,23 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 
-pub struct Config {
+pub struct Settings {
     pub name: String,
 }
 
-pub struct State {
+pub struct Snapshot {
     pub ready: bool,
 }
 
 // Callers must already live in this exact sharing scheme.
-pub fn process_shared(data: Arc<Mutex<Config>>) -> Box<State> {
+pub fn apply_locked_settings(data: Arc<Mutex<Settings>>) -> Box<Snapshot> {
     let ready = data.lock().unwrap_or_else(|e| e.into_inner()).name.is_empty();
-    Box::new(State { ready })
+    Box::new(Snapshot { ready })
 }
 
-pub fn initialize(config: Rc<RefCell<Config>>) -> Arc<State> {
-    let ready = config.borrow().name.is_empty();
-    Arc::new(State { ready })
+pub fn boot_from_cell(settings: Rc<RefCell<Settings>>) -> Arc<Snapshot> {
+    let ready = settings.borrow().name.is_empty();
+    Arc::new(Snapshot { ready })
 }
 ```
 
@@ -38,41 +38,41 @@ pub fn initialize(config: Rc<RefCell<Config>>) -> Arc<State> {
 ```rust
 use std::sync::Arc;
 
-pub struct Config {
+pub struct Settings {
     pub name: String,
 }
 
-pub struct State {
+pub struct Snapshot {
     ready: bool,
 }
 
-impl State {
+impl Snapshot {
     pub fn is_ready(&self) -> bool {
         self.ready
     }
 }
 
 // Borrow or take ownership; sharing stays inside the type if it is needed.
-pub fn process_data(data: &Config) -> State {
-    State {
+pub fn apply_settings(data: &Settings) -> Snapshot {
+    Snapshot {
         ready: !data.name.is_empty(),
     }
 }
 
-pub fn store_config(config: Config) -> State {
-    State {
-        ready: !config.name.is_empty(),
+pub fn take_settings(settings: Settings) -> Snapshot {
+    Snapshot {
+        ready: !settings.name.is_empty(),
     }
 }
 
 // Sharing *is* the API: a handle type, not a raw Arc in every signature.
 #[derive(Clone)]
-pub struct SharedState {
-    inner: Arc<State>,
+pub struct SharedSnapshot {
+    inner: Arc<Snapshot>,
 }
 
-impl SharedState {
-    pub fn new(state: State) -> Self {
+impl SharedSnapshot {
+    pub fn new(state: Snapshot) -> Self {
         Self {
             inner: Arc::new(state),
         }

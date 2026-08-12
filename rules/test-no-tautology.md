@@ -4,32 +4,32 @@
 
 ## Why It Matters
 
-A test that copies `[0, 90, 180, 270]` into both the production item and the assertion cannot fail unless someone edits only one side. Those tests satisfy a coverage counter and then rot. The Microsoft Pragmatic Rust Guidelines reject tautological tests: check a property the values must keep (spacing, monotonicity, a parse round-trip) or drop the test.
+A test that copies `[1, 2, 4, 8]` into both the production item and the assertion cannot fail unless someone edits only one side. Those tests satisfy a coverage counter and then rot. Per Microsoft Pragmatic Rust Guidelines (M-TAUTOLOGICAL-TESTS), reject tautological tests: check a property the values must keep (spacing, monotonicity, a parse round-trip) or drop the test.
 
 ## Bad
 
 ```rust
-const CHECKPOINTS: [u32; 4] = [0, 90, 180, 270];
+const RETRY_BACKOFF_SECS: [u32; 4] = [1, 2, 4, 8];
 
 #[test]
-fn checkpoints_are_correct() {
-    assert_eq!(CHECKPOINTS, [0, 90, 180, 270]);
+fn backoff_matches_the_literal() {
+    assert_eq!(RETRY_BACKOFF_SECS, [1, 2, 4, 8]);
 }
 ```
 
 ## Good
 
 ```rust
-const CHECKPOINTS: [u32; 4] = [0, 90, 180, 270];
+const RETRY_BACKOFF_SECS: [u32; 4] = [1, 2, 4, 8];
 
-fn checkpoints_are_evenly_spaced(points: &[u32]) -> bool {
-    points.windows(2).all(|pair| pair[1] - pair[0] == 90)
+fn backoff_doubles(points: &[u32]) -> bool {
+    points.windows(2).all(|pair| pair[1] == pair[0] * 2)
 }
 
 fn main() {
-    assert!(checkpoints_are_evenly_spaced(&CHECKPOINTS));
-    assert_eq!(CHECKPOINTS[0], 0);
-    assert_eq!(*CHECKPOINTS.last().unwrap(), 270);
+    assert!(backoff_doubles(&RETRY_BACKOFF_SECS));
+    assert_eq!(RETRY_BACKOFF_SECS[0], 1);
+    assert_eq!(*RETRY_BACKOFF_SECS.last().unwrap(), 8);
 }
 ```
 

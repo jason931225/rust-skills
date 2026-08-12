@@ -4,16 +4,24 @@
 
 ## Why It Matters
 
-A safe `Handle` that hides the OS value is useless the moment a caller already has a `RawFd` from C, or must pass yours into another library. The Microsoft Pragmatic Rust Guidelines ask for a documented, `unsafe` conversion pair: `from_native` states the ownership and validity rules, `into_native` / `as_native` give the integer or pointer back. Keep those methods on the wrapper; do not publish the raw type as the crate's currency (`ffi-logic-in-core`).
+A safe `WindowId` that hides the OS value is useless the moment a caller already has a HWND from C, or must pass yours into another library. Following Microsoft Pragmatic Rust Guidelines (M-ESCAPE-HATCHES), provide a documented, `unsafe` conversion pair: `from_native` states the ownership and validity rules, `into_native` / `as_native` give the integer or pointer back. Keep those methods on the wrapper; do not publish the raw type as the crate's currency (`ffi-logic-in-core`).
 
 ## Bad
 
 ```rust
-pub struct Handle(i32);
+// Public field plus an ad-hoc getter: callers poke the raw HWND and
+// skip any ownership contract.
+pub struct WindowId {
+    pub raw: usize,
+}
 
-impl Handle {
-    pub fn new(fd: i32) -> Self {
-        Self(fd)
+impl WindowId {
+    pub fn new(raw: usize) -> Self {
+        Self { raw }
+    }
+
+    pub fn hwnd(&self) -> usize {
+        self.raw
     }
 }
 ```
@@ -21,35 +29,35 @@ impl Handle {
 ## Good
 
 ```rust
-pub struct Handle(i32);
+pub struct WindowId(usize);
 
-impl Handle {
-    pub fn new(fd: i32) -> Self {
-        Self(fd)
+impl WindowId {
+    pub fn new(raw: usize) -> Self {
+        Self(raw)
     }
 
     /// # Safety
     ///
-    /// `fd` must be an open descriptor this process owns, and no other
-    /// `Handle` may wrap the same number.
-    pub unsafe fn from_native(fd: i32) -> Self {
-        Self(fd)
+    /// `raw` must be a live window handle this process owns, and no
+    /// other `WindowId` may wrap the same value.
+    pub unsafe fn from_native(raw: usize) -> Self {
+        Self(raw)
     }
 
-    pub fn into_native(self) -> i32 {
+    pub fn into_native(self) -> usize {
         self.0
     }
 
-    pub fn as_native(&self) -> i32 {
+    pub fn as_native(&self) -> usize {
         self.0
     }
 }
 
 fn main() {
-    let handle = Handle::new(3);
-    assert_eq!(handle.as_native(), 3);
-    let raw = handle.into_native();
-    let _ = unsafe { Handle::from_native(raw) };
+    let window = WindowId::new(0x100);
+    assert_eq!(window.as_native(), 0x100);
+    let raw = window.into_native();
+    let _ = unsafe { WindowId::from_native(raw) };
 }
 ```
 

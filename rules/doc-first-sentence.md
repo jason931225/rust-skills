@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`cargo doc` lifts the first sentence into the module summary. A clause that only works after the next paragraph, or a line that wraps twice, becomes an unreadable index. The Microsoft Pragmatic Rust Guidelines cap that sentence at roughly fifteen words so the summary stays one line at the default rustdoc width. `clippy::too_long_first_doc_paragraph` flags the wrapping case; this rule is the editorial half: one sentence, one idea, no "this function..." throat-clearing.
+`cargo doc` lifts the first sentence into the module summary. A clause that only works after the next paragraph, or a line that wraps twice, becomes an unreadable index. As Microsoft Pragmatic Rust Guidelines (M-FIRST-DOC-SENTENCE) cap that sentence at roughly fifteen words, the summary stays one line at the default rustdoc width. `clippy::too_long_first_doc_paragraph` flags the wrapping case; this rule is the editorial half: one sentence, one idea, no "this function..." throat-clearing.
 
 ## Bad
 

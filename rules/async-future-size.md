@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Locals that live across `.await`, plus by-value arguments, become fields of the future. A 4 KiB buffer held over one I/O point is copied onto the worker stack and then into the task allocation on every poll setup. The Microsoft Pragmatic Rust Guidelines ask hot entry points to track `size_of_val(&fut)` (or `static_assertions` / a unit test) and to move setup *outside* `async`. `clippy::large_futures` (allowlisted in `clippy::nursery`, enable it for the crate) is the mechanical tripwire; `Box::pin` or `futures::future::Either` keeps the rare large path off the common type.
+Locals that live across `.await`, plus by-value arguments, become fields of the future. A 4 KiB buffer held over one I/O point is copied onto the worker stack and then into the task allocation on every poll setup. Following Microsoft Pragmatic Rust Guidelines (M-ASYNC-STACK-SIZE), hot entry points should track `size_of_val(&fut)` (or `static_assertions` / a unit test) and move setup *outside* `async`. `clippy::large_futures` (allowlisted in `clippy::nursery`, enable it for the crate) is the mechanical tripwire; `Box::pin` or `futures::future::Either` keeps the rare large path off the common type.
 
 ## Bad
 

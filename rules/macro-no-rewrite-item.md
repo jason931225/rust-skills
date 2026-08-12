@@ -4,17 +4,17 @@
 
 ## Why It Matters
 
-Readers and agents trust that `fn foo()` is a synchronous function with that arity. A macro that injects arguments or turns the item `async` makes every call site look wrong until you expand it. The Microsoft Pragmatic Rust Guidelines treat that as lying about the signature: generate repetitive tokens, but leave the written shape of the item intact.
+Readers and agents trust that `fn tally()` is a synchronous function with that arity. A macro that injects arguments or turns the item `async` makes every call site look wrong until you expand it. As Microsoft Pragmatic Rust Guidelines (M-MACROS-DONT-LIE) treat that as lying about the signature, generate repetitive tokens but leave the written shape of the item intact.
 
 ## Bad
 
 ```rust
 // Imagined attribute: adds a `token` argument and makes the function async.
-// Callers then write `foo(token).await` next to a source line that says `fn foo()`.
-fn foo() {}
+// Callers then write `tally(token).await` next to a source line that says `fn tally()`.
+fn tally() {}
 
 fn main() {
-    foo();
+    tally();
 }
 ```
 

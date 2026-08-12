@@ -4,16 +4,16 @@
 
 ## Why It Matters
 
-A function that takes `(low, high)` or only `Range<usize>` cannot express "from here to the end" or "everything" without inventing sentinels. `RangeBounds` is the standard-library trait behind `1..3`, `1..`, `..3`, and `..`. The Microsoft Pragmatic Rust Guidelines treat this the same way as `AsRef` and `Read`: one parameter, every range syntax the caller already knows.
+A function that takes `(low, high)` or only `Range<usize>` cannot express "from here to the end" or "everything" without inventing sentinels. `RangeBounds` is the standard-library trait behind `1..3`, `1..`, `..3`, and `..`. Under Microsoft Pragmatic Rust Guidelines (M-IMPL-RANGEBOUNDS), treat this the same way as `AsRef` and `Read`: one parameter, every range syntax the caller already knows.
 
 ## Bad
 
 ```rust
-pub fn select_range(low: usize, high: usize) -> (usize, usize) {
+pub fn slice_span(low: usize, high: usize) -> (usize, usize) {
     (low, high)
 }
 
-pub fn select_pair(range: (usize, usize)) -> (usize, usize) {
+pub fn slice_pair(range: (usize, usize)) -> (usize, usize) {
     range
 }
 ```
@@ -23,11 +23,11 @@ pub fn select_pair(range: (usize, usize)) -> (usize, usize) {
 ```rust
 use std::ops::{Bound, Range, RangeBounds};
 
-pub fn select_half_open(range: Range<usize>) -> Range<usize> {
+pub fn slice_half_open(range: Range<usize>) -> Range<usize> {
     range
 }
 
-pub fn contains_index(range: impl RangeBounds<usize>, index: usize) -> bool {
+pub fn index_in(range: impl RangeBounds<usize>, index: usize) -> bool {
     range.contains(&index)
 }
 
@@ -46,9 +46,9 @@ fn describe(range: impl RangeBounds<usize>) -> (Bound<usize>, Bound<usize>) {
 }
 
 fn main() {
-    let _ = select_half_open(1..3);
-    assert!(contains_index(1.., 4));
-    assert!(contains_index(.., 0));
+    let _ = slice_half_open(1..3);
+    assert!(index_in(1.., 4));
+    assert!(index_in(.., 0));
     let _ = describe(1..3);
 }
 ```

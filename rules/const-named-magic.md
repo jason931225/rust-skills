@@ -4,19 +4,21 @@
 
 ## Why It Matters
 
-`60 * 60 * 24` is obviously a day; it is not obvious why this call may wait a day, or what breaks if someone shortens it. The Microsoft Pragmatic Rust Guidelines require a named constant plus a note covering the choice, the side effects of changing it, and any external system that shares the value. Inline literals hide that contract from rustdoc and from every other call site.
+Six hours is obviously half a day; it is not obvious why a worker must renew a lease that soon, or what breaks if someone halves it. Under Microsoft Pragmatic Rust Guidelines (M-DOCUMENTED-MAGIC), give the number a named constant plus a note covering the choice, the side effects of changing it, and any external system that shares the value. Inline literals hide that contract from rustdoc and from every other call site.
 
 ## Bad
 
 ```rust
 use std::time::Duration;
 
-fn wait_timeout(limit: Duration) -> Duration {
-    limit
+fn hold_lease(window: Duration) -> Duration {
+    window
 }
 
 fn main() {
-    let _ = wait_timeout(Duration::from_secs(60 * 60 * 24));
+    // Bare product: a reader cannot tell this is a lease, or who else
+    // shares the number.
+    let _ = hold_lease(Duration::from_secs(6 * 60 * 60));
 }
 ```
 
@@ -25,18 +27,19 @@ fn main() {
 ```rust
 use std::time::Duration;
 
-/// Upper bound for a single upstream attempt.
+/// How long a worker may keep a job lease before renewing.
 ///
-/// Sized from `api.example.com` idle timeouts. Values below 30s abort
-/// in-flight work the peer still considers live.
-const UPSTREAM_SERVER_TIMEOUT: Duration = Duration::from_secs(60 * 60 * 24);
+/// Matches the queue broker's `lease-ttl` (six hours). A shorter window
+/// makes healthy workers lose jobs mid-run; a longer one delays failover
+/// after a crash.
+const LEASE_RENEWAL_WINDOW: Duration = Duration::from_secs(6 * 60 * 60);
 
-fn wait_timeout(limit: Duration) -> Duration {
-    limit
+fn hold_lease(window: Duration) -> Duration {
+    window
 }
 
 fn main() {
-    let _ = wait_timeout(UPSTREAM_SERVER_TIMEOUT);
+    let _ = hold_lease(LEASE_RENEWAL_WINDOW);
 }
 ```
 

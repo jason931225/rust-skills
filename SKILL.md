@@ -5,7 +5,8 @@ description: >
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
-  matching, macros, closures, observability, testing, FFI, and common anti-patterns.
+  matching, macros, closures, observability, testing, FFI, and common
+  anti-patterns.
   Invoke with /rust-skills.
 license: MIT
 metadata:
@@ -493,7 +494,7 @@ This skill provides rule identifiers for quick reference. When generating or rev
 | New struct/API | `api-`, `type-`, `conv-`, `doc-` |
 | Async code | `async-`, `own-` |
 | Concurrency / parallelism | `conc-`, `async-`, `own-` |
-|| Unsafe code | `unsafe-`, `type-`, `test-`, `ffi-` |
+| Unsafe code | `unsafe-`, `type-`, `test-`, `ffi-` |
 | Error handling | `err-`, `api-`, `pat-` |
 | Type conversions | `conv-`, `api-` |
 | Serialization (serde) | `serde-`, `type-`, `api-` |
@@ -503,7 +504,7 @@ This skill provides rule identifiers for quick reference. When generating or rev
 | Logging / observability | `obs-`, `err-` |
 | Memory optimization | `mem-`, `own-`, `perf-` |
 | Performance tuning | `opt-`, `mem-`, `perf-` |
-|| FFI / C interop | `ffi-`, `unsafe-`, `type-` |
+| FFI / C interop | `ffi-`, `unsafe-`, `type-` |
 | Code review | `anti-`, `lint-` |
 
 ---

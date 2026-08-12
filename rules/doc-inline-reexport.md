@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A bare `pub use crate::net::Client` renders as a re-export block. Readers hunting for `Client` in the crate root miss it, and the type's docs live two clicks away. The Microsoft Pragmatic Rust Guidelines mark first-party re-exports with `#[doc(inline)]` so the item appears as if it were defined there. Leave third-party types *without* inline so it stays obvious they come from `bytes` or `http`. This pairs with one-canonical-path (`proj-pub-use-reexport`): inline the one public path, do not publish two.
+A bare `pub use crate::net::Client` renders as a re-export block. Readers hunting for `Client` in the crate root miss it, and the type's docs live two clicks away. Following Microsoft Pragmatic Rust Guidelines (M-DOC-INLINE), first-party re-exports get `#[doc(inline)]` so the item appears as if it were defined there. Leave third-party types *without* inline so it stays obvious they come from `bytes` or `http`. This pairs with one-canonical-path (`proj-pub-use-reexport`): inline the one public path, do not publish two.
 
 ## Bad
 

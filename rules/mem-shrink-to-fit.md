@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`Vec` and `String` grow by doubling. A buffer that settled at 1,025 elements can keep a 2,048-element allocation for the rest of the process. The Microsoft Pragmatic Rust Guidelines reserve `shrink_to_fit` for collections that will live a long time after a growth loop, not for short-lived scratch buffers where the extra copy would cost more than the slack.
+`Vec` and `String` grow by doubling. A buffer that settled at 1,025 elements can keep a 2,048-element allocation for the rest of the process. Per Microsoft Pragmatic Rust Guidelines (M-SHRINK-TO-FIT), reserve `shrink_to_fit` for collections that will live a long time after a growth loop, not for short-lived scratch buffers where the extra copy would cost more than the slack.
 
 ## Bad
 
@@ -27,7 +27,7 @@ pub fn collect_labels(items: &[&str]) -> Vec<String> {
     for item in items {
         labels.push((*item).to_string());
     }
-    labels.shrink_to_fit();
+    labels.shrink_to_fit(); // drop spare capacity on a long-lived buffer
     labels
 }
 

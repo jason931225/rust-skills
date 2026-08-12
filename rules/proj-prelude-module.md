@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A `prelude` glob (`use foo::prelude::*`) looks cheap until two crates both export `Client` and the build becomes `error[E0659]: Client is ambiguous`. Today's rust-analyzer already inserts named imports. The Microsoft Pragmatic Rust Guidelines therefore tell ordinary libraries not to ship a prelude: it papers over a muddy root and fights every other glob in the crate. rust-skills previously recommended a prelude for common imports; that disagreed with that guidance. The remaining legitimate case is a *large, trait-heavy* library in the style of `std` or `rayon`, where calling the crate at all means bringing many traits into scope. Applications and typical libraries export named items at the root and stop.
+A `prelude` glob (`use foo::prelude::*`) looks cheap until two crates both export `Client` and the build becomes `error[E0659]: Client is ambiguous`. Today's rust-analyzer already inserts named imports. Following Microsoft Pragmatic Rust Guidelines (M-NO-PRELUDE), ordinary libraries should not ship a prelude: it papers over a muddy root and fights every other glob in the crate. The remaining legitimate case is a *large, trait-heavy* library in the style of `std` or `rayon`, where calling the crate at all means bringing many traits into scope. Applications and typical libraries export named items at the root and stop.
 
 ## Bad
 

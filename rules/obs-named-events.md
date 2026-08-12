@@ -4,13 +4,15 @@
 
 ## Why It Matters
 
-Structured fields (`user.id`, `elapsed_ms`) make one line searchable. They do not group "file opened" across versions if the message string keeps changing or is assembled with `format!`. The Microsoft Pragmatic Rust Guidelines add a second axis: a hierarchical name (`file.open.success`) that dashboards filter on, plus a template that names the fields instead of interpolating them. `obs-structured-fields` is the field vocabulary; this rule is the event identity. `clippy::literal_string_with_formatting_args` is often allowed so templates can keep `{{field}}` braces.
+Structured fields (`user.id`, `elapsed_ms`) make one line searchable. They do not group "cache evicted" across versions if the message string keeps changing or is assembled with `format!`. As Microsoft Pragmatic Rust Guidelines (M-LOG-STRUCTURED) add a second axis, use a hierarchical name (`cache.evict.success`) that dashboards filter on, plus a template that names the fields instead of interpolating them. `obs-structured-fields` is the field vocabulary; this rule is the event identity. `clippy::literal_string_with_formatting_args` is often allowed so templates can keep `{{field}}` braces.
 
 ## Bad
 
 ```rust
-fn on_open(path: &str) {
-    tracing::info!("file opened: {}", path);
+fn on_evict(key: &str) {
+    // Interpolated message: the key is not a field, and the wording
+    // will drift across releases.
+    tracing::info!("evicted cache entry: {}", key);
 }
 ```
 
@@ -19,18 +21,23 @@ fn on_open(path: &str) {
 ```rust
 use tracing::info;
 
-fn on_open(path: &str) {
+fn on_evict(key: &str) {
     info!(
-        event = "file.open.success",
-        file.path = path,
-        "file opened"
+        event = "cache.evict.success",
+        cache.key = key,
+        "cache entry evicted"
     );
 }
 
 fn main() {
-    on_open("notes.txt");
+    on_evict("session:42");
 }
 ```
+
+## Key Points
+
+- Keep the hierarchical event name stable across releases; renaming it breaks dashboards and saved queries.
+- Put values in fields, not in the event name or the message string.
 
 ## See Also
 

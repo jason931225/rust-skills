@@ -4,59 +4,59 @@
 
 ## Why It Matters
 
-If the only way to call `download_file` is through a trait, every caller must discover and import that trait. Inherent methods show up on the type in rustdoc and in completion, so the common path needs no extra `use`. The Microsoft Pragmatic Rust Guidelines keep traits as optional adapters: implement the work once on the type, then forward from the trait so generic code still compiles.
+If the only way to call `extract_entry` is through a trait, every caller must discover and import that trait. Inherent methods show up on the type in rustdoc and in completion, so the common path needs no extra `use`. As Microsoft Pragmatic Rust Guidelines (M-ESSENTIAL-FN-INHERENT) keep traits as optional adapters, implement the work once on the type, then forward from the trait so generic code still compiles.
 
 ## Bad
 
 ```rust
-pub trait Download {
-    fn download_file(&self, url: &str) -> String;
+pub trait Extract {
+    fn extract_entry(&self, name: &str) -> String;
 }
 
-pub struct HttpClient;
+pub struct Archive;
 
-impl Download for HttpClient {
-    fn download_file(&self, url: &str) -> String {
-        format!("fetched {url}")
+impl Extract for Archive {
+    fn extract_entry(&self, name: &str) -> String {
+        format!("entry {name}")
     }
 }
 
 fn main() {
-    let client = HttpClient;
-    // Does not compile until `Download` is in scope.
-    let _ = Download::download_file(&client, "https://example.com");
+    let archive = Archive;
+    // Does not compile until `Extract` is in scope.
+    let _ = Extract::extract_entry(&archive, "readme.txt");
 }
 ```
 
 ## Good
 
 ```rust
-pub trait Download {
-    fn download_file(&self, url: &str) -> String;
+pub trait Extract {
+    fn extract_entry(&self, name: &str) -> String;
 }
 
-pub struct HttpClient;
+pub struct Archive;
 
-impl HttpClient {
-    pub fn download_file(&self, url: &str) -> String {
-        format!("fetched {url}")
+impl Archive {
+    pub fn extract_entry(&self, name: &str) -> String {
+        format!("entry {name}")
     }
 }
 
-impl Download for HttpClient {
-    fn download_file(&self, url: &str) -> String {
-        Self::download_file(self, url)
+impl Extract for Archive {
+    fn extract_entry(&self, name: &str) -> String {
+        Self::extract_entry(self, name)
     }
 }
 
-fn fetch_via_trait(client: &impl Download, url: &str) -> String {
-    client.download_file(url)
+fn fetch_via_trait(archive: &impl Extract, name: &str) -> String {
+    archive.extract_entry(name)
 }
 
 fn main() {
-    let client = HttpClient;
-    let direct = client.download_file("https://example.com");
-    let via_trait = fetch_via_trait(&client, "https://example.com");
+    let archive = Archive;
+    let direct = archive.extract_entry("readme.txt");
+    let via_trait = fetch_via_trait(&archive, "readme.txt");
     assert_eq!(direct, via_trait);
 }
 ```
