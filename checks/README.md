@@ -19,7 +19,7 @@ python3 analyze.py check.json --check-baseline baseline.txt # CI gate: fail on N
 ```
 
 Both run in CI (`.github/workflows/ci.yml`): `validate` (Python only) and
-`examples` (pinned to Rust 1.95.0, the toolchain `baseline.txt` was generated on).
+`examples` (pinned to Rust 1.97.1, the toolchain `baseline.txt` was generated on).
 
 ## Updating the baseline
 
@@ -29,7 +29,7 @@ it. After intentionally adding/changing examples, regenerate it on the pinned
 toolchain and review the diff:
 
 ```bash
-rustup run 1.95.0 cargo check --examples --keep-going --message-format=json > check.json
+rustup run 1.97.1 cargo check --examples --keep-going --message-format=json > check.json
 python3 analyze.py check.json --emit-baseline > baseline.txt
 ```
 
@@ -56,8 +56,8 @@ nightly `#![feature]` gates, procedural-macro code, placeholder crate names
 
 ## Notes
 
-- Run on Rust ≥ 1.95: some examples use APIs stabilized in 1.95 (e.g. the
-  `MaybeUninit` array `From` conversions) and will spuriously fail on older
-  toolchains.
+- Run on Rust ≥ 1.97: the harness is pinned to 1.97.1 and `baseline.txt` is
+  generated there. Older toolchains produce spurious failures (e.g. the
+  `MaybeUninit` array `From` conversions, stable since 1.95).
 - Generated files (`examples/`, `*.json`, `manifest.json`, `target/`) are
   gitignored; only the source (`gen.py`, `analyze.py`, `Cargo.toml`) is tracked.

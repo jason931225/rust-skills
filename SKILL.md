@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 265 rules across 26 categories.
+  Comprehensive Rust coding guidelines with 267 rules across 26 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -21,7 +21,7 @@ metadata:
 
 # Rust Best Practices
 
-Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 265 rules across 26 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.96 (2024 edition).
+Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 267 rules across 26 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.97 (2024 edition).
 
 ## When to Apply
 
@@ -47,7 +47,7 @@ Reference these guidelines when:
 | 6 | Async/Await | HIGH | `async-` | 18 |
 | 7 | Concurrency | HIGH | `conc-` | 4 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
-| 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 5 |
+| 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
 | 10 | Type Safety | MEDIUM | `type-` | 13 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 6 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
@@ -63,7 +63,7 @@ Reference these guidelines when:
 | 22 | Observability | MEDIUM | `obs-` | 7 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 13 |
 | 24 | Project Structure | LOW | `proj-` | 14 |
-| 25 | Clippy & Linting | LOW | `lint-` | 13 |
+| 25 | Clippy & Linting | LOW | `lint-` | 14 |
 | 26 | Anti-patterns | REFERENCE | `anti-` | 15 |
 
 ---
@@ -200,6 +200,7 @@ Reference these guidelines when:
 - [`num-float-compare`](rules/num-float-compare.md) - Don't compare floats with `==`; use a tolerance, and `total_cmp` for ordering
 - [`num-saturating-clamp`](rules/num-saturating-clamp.md) - Bound values with `clamp` and saturating arithmetic
 - [`num-nonzero`](rules/num-nonzero.md) - Use `NonZero*` types to forbid zero and unlock the niche optimization
+- [`num-bit-width`](rules/num-bit-width.md) - Use integer `bit_width` / `highest_one` / `isolate_*_one` instead of hand-rolled bit math
 
 ### 10. Type Safety (MEDIUM)
 
@@ -394,6 +395,7 @@ Reference these guidelines when:
 - [`lint-workspace-lints`](rules/lint-workspace-lints.md) - Configure lints at workspace level for consistent enforcement
 - [`lint-cfg-check`](rules/lint-cfg-check.md) - Enable `unexpected_cfgs` and declare known cfgs to catch feature-gate typos
 - [`lint-clippy-nursery-selected`](rules/lint-clippy-nursery-selected.md) - Enable high-value `clippy::nursery` lints selectively, not the whole group
+- [`lint-warnings-deny-config`](rules/lint-warnings-deny-config.md) - Prefer Cargo `[build] warnings = "deny"` over `RUSTFLAGS=-Dwarnings` for rustc CI
 
 ### 26. Anti-patterns (REFERENCE)
 

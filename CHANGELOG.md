@@ -4,6 +4,23 @@ All notable changes to this skill are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and the project aims to follow
 semantic versioning for the rule set.
 
+## [Unreleased]
+
+### Added
+- `lint-warnings-deny-config`: prefer Cargo `[build] warnings = "deny"` for rustc
+  CI instead of a global `RUSTFLAGS=-Dwarnings`.
+- `num-bit-width`: use the Rust 1.97 integer bit-manipulation APIs
+  (`bit_width`, `highest_one`/`lowest_one`, `isolate_*_one`) instead of
+  hand-rolled shift and mask loops.
+
+### Changed
+- Refreshed for Rust 1.97: pinned the compile-check toolchain and CI to 1.97.1
+  and updated "Current for Rust" claims.
+- Fixed `unsafe-no-mangle-unsafe` for Rust 1.97 `link_section` validation
+  (ELF `.init_array` is now an error on Mach-O).
+
+Now 267 rules across 26 categories.
+
 ## [1.5.1]
 
 ### Changed
@@ -81,6 +98,7 @@ Now 218 rules across 18 categories.
 ### Added
 - Initial release: 179 rules across 14 categories.
 
+[Unreleased]: https://github.com/leonardomso/rust-skills
 [1.5.0]: https://github.com/leonardomso/rust-skills
 [1.4.0]: https://github.com/leonardomso/rust-skills
 [1.3.0]: https://github.com/leonardomso/rust-skills

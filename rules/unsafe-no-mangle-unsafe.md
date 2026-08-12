@@ -38,7 +38,11 @@ pub fn plugin_main() {
     // ...
 }
 
-#[unsafe(link_section = ".init_array")]
+// Section names are platform-specific: ELF takes ".init_array", Mach-O
+// takes a "segment,section" pair. Rust 1.97 rejects an invalid specifier
+// instead of ignoring it.
+#[cfg_attr(target_os = "macos", unsafe(link_section = "__DATA,__mod_init_func"))]
+#[cfg_attr(not(target_os = "macos"), unsafe(link_section = ".init_array"))]
 static INIT: extern "C" fn() = init;
 ```
 
@@ -58,6 +62,7 @@ Run `cargo fix --edition` when migrating to the 2024 edition — it rewrites bar
 - Symbol collisions are especially dangerous in plugin architectures, `cdylib` crates, embedded firmware with custom linker scripts, and any codebase that links multiple Rust crates into a single binary.
 - These attributes interact with `unsafe extern` blocks (see `unsafe-extern-block`): external symbols you import and symbols you export follow the same 2024-edition safety rules.
 - The bare forms (`#[no_mangle]` without `unsafe`) are a hard error in Rust 2024 edition code. They still compile in earlier editions but emit a deprecation warning with `--warn future-incompatible`.
+- `link_section` values are validated in Rust 1.97: a bare ELF name like `.init_array` is an error on Mach-O. Use a `cfg_attr` per target, or a name your linker script actually defines.
 
 ## See Also
 

@@ -92,3 +92,4 @@ mod tests {
 
 - [type-newtype-ids](type-newtype-ids.md) - wrap IDs in newtypes for type-safe distinctions
 - [mem-smaller-integers](mem-smaller-integers.md) - use the smallest integer type that fits
+- [num-bit-width](num-bit-width.md) - use the named bit-width and set-bit methods instead of hand-rolled masks

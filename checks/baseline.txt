@@ -21,7 +21,7 @@ api-impl-into.md :: Implement From, Not Into :: E0119
 api-impl-into.md :: When NOT to Use impl Into :: E0562
 api-must-use.md :: When to Apply :: P:expected one of `->`, `<`,,P:missing parameters for function definition
 api-newtype-safety.md :: Constructor Patterns :: E0204
-api-newtype-safety.md :: Good :: E0063,E0308
+api-newtype-safety.md :: Good :: E0308
 api-newtype-safety.md :: Zero-Cost Abstraction :: E0308
 api-sealed-trait.md :: Full Pattern :: P:missing `fn` or `struct` for,P:non-item in item list
 api-serde-optional.md :: Multiple Optional Dependencies :: P:expected `;`, found `#`,P:expected `;`, found `borsh`,P:expected `;`, found `default`,P:expected `;`, found `rkyv`,P:expected `;`, found `serde`,P:expected one of `.`, `;`,
