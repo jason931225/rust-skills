@@ -113,7 +113,7 @@ Now 218 rules across 18 categories.
 ### Added
 - Initial release: 179 rules across 14 categories.
 
-[Unreleased]: https://github.com/oyatie/rust-skills
+[Unreleased]: https://github.com/jason931225/rust-skills
 [1.5.0]: https://github.com/leonardomso/rust-skills
 [1.4.0]: https://github.com/leonardomso/rust-skills
 [1.3.0]: https://github.com/leonardomso/rust-skills

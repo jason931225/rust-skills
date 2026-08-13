@@ -11,8 +11,8 @@ description: >
 license: MIT
 metadata:
   author: leonardomso
-  maintainer: Oyatie
-  repository: https://github.com/oyatie/rust-skills
+  maintainer: Jason Lee
+  repository: https://github.com/jason931225/rust-skills
   upstream: https://github.com/leonardomso/rust-skills
   version: "1.5.1"
   sources:
