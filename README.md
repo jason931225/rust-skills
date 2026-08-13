@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-314-blue)
+![rules](https://img.shields.io/badge/rules-337-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.96%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-314 Rust rules your AI coding agent can use to write better code. Current for Rust 1.96 (2024 edition).
+337 Rust rules your AI coding agent can use to write better code. Current for Rust 1.96 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,7 +66,7 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-314 rules split into 27 categories:
+337 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
@@ -253,6 +253,7 @@ These rules are an independent synthesis of official Rust guidance, well-known b
 - [Rust Design Patterns](https://rust-unofficial.github.io/patterns/) — rust-unofficial
 - [Rust Atomics and Locks](https://marabos.nl/atomics/) — Mara Bos
 - [Effective Rust](https://effective-rust.com/) — David Drysdale
+- [Zero To Production In Rust](https://www.zero2prod.com/) — Luca Palmieri (audited PDF revision created 2022-03-15)
 - [Microsoft Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guidelines/) v2026.6 — Microsoft ([MIT](https://github.com/microsoft/rust-guidelines/blob/main/LICENSE.md))
 
 **Tooling**
@@ -262,7 +263,7 @@ These rules are an independent synthesis of official Rust guidance, well-known b
 **Real-world codebases studied for idioms**
 - ripgrep, tokio, serde, clap, polars, axum, cargo, hyper, bevy, rayon, and dtolnay's crates (thiserror, anyhow, syn)
 
-This project is MIT-licensed. Referenced upstream materials remain under their own licenses — the official Rust documentation and API Guidelines are dual [MIT](https://github.com/rust-lang/rust/blob/master/LICENSE-MIT) / [Apache-2.0](https://github.com/rust-lang/rust/blob/master/LICENSE-APACHE), and the Microsoft Pragmatic Rust Guidelines are MIT-licensed.
+This project is MIT-licensed. Referenced upstream materials remain under their own licenses and copyrights — the official Rust documentation and API Guidelines are dual [MIT](https://github.com/rust-lang/rust/blob/master/LICENSE-MIT) / [Apache-2.0](https://github.com/rust-lang/rust/blob/master/LICENSE-APACHE), the Microsoft Pragmatic Rust Guidelines are MIT-licensed, and *Zero To Production In Rust* remains copyright Luca Palmieri.
 
 ## Contributing
 

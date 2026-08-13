@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 314 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 337 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -23,7 +23,7 @@ metadata:
 
 # Rust Best Practices
 
-Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 314 rules across 27 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.96 (2024 edition).
+Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 337 rules across 27 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.96 (2024 edition).
 
 ## When to Apply
 
@@ -43,15 +43,15 @@ Reference these guidelines when:
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 12 |
-| 2 | Error Handling | CRITICAL | `err-` | 15 |
+| 2 | Error Handling | CRITICAL | `err-` | 16 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 10 |
-| 5 | API Design | HIGH | `api-` | 26 |
-| 6 | Async/Await | HIGH | `async-` | 22 |
-| 7 | Concurrency | HIGH | `conc-` | 4 |
+| 5 | API Design | HIGH | `api-` | 35 |
+| 6 | Async/Await | HIGH | `async-` | 24 |
+| 7 | Concurrency | HIGH | `conc-` | 5 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 5 |
-| 10 | Type Safety | MEDIUM | `type-` | 13 |
+| 10 | Type Safety | MEDIUM | `type-` | 14 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 6 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -61,11 +61,11 @@ Reference these guidelines when:
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 18 |
-| 20 | Testing | MEDIUM | `test-` | 18 |
+| 20 | Testing | MEDIUM | `test-` | 19 |
 | 21 | Documentation | MEDIUM | `doc-` | 16 |
-| 22 | Observability | MEDIUM | `obs-` | 8 |
+| 22 | Observability | MEDIUM | `obs-` | 9 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
-| 24 | Project Structure | LOW | `proj-` | 19 |
+| 24 | Project Structure | LOW | `proj-` | 26 |
 | 25 | FFI & Interop | LOW | `ffi-` | 5 |
 | 26 | Clippy & Linting | LOW | `lint-` | 15 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -106,6 +106,7 @@ Reference these guidelines when:
 - [`err-catch-unwind-boundary`](rules/err-catch-unwind-boundary.md) - Use `catch_unwind` only at a task, FFI, or process isolation edge, and pair it with a restart policy
 - [`err-canonical-struct`](rules/err-canonical-struct.md) - Expose library errors as situation-specific opaque structs with a private kind, captured backtrace, and `is_*` helpers
 - [`err-panic-message`](rules/err-panic-message.md) - Give every intentional production panic a message that identifies the violated contract and relevant values
+- [`err-edge-mapping`](rules/err-edge-mapping.md) - Keep domain and infrastructure errors protocol-neutral; map them to safe, actionable responses at the entrypoint
 
 ### 3. Memory Optimization (CRITICAL)
 
@@ -169,6 +170,15 @@ Reference these guidelines when:
 - [`api-std-types-boundary`](rules/api-std-types-boundary.md) - Keep third-party types out of the public surface unless that crate is an intentional part of the contract
 - [`api-free-functions`](rules/api-free-functions.md) - Put construction on the type; put computation with no receiver at module scope
 - [`api-init-cascaded`](rules/api-init-cascaded.md) - Group four or more required constructor parameters into semantic helper types
+- [`api-extract-or-reject`](rules/api-extract-or-reject.md) - Parse and validate transport input before handler logic; reject malformed requests without side effects
+- [`api-health-probes`](rules/api-health-probes.md) - Separate liveness from readiness, keep probes cheap, and never perform business side effects
+- [`api-password-auth`](rules/api-password-auth.md) - Hash passwords with a maintained memory-hard scheme and make authentication failures indistinguishable
+- [`api-session-security`](rules/api-session-security.md) - Use opaque server-side sessions, rotate identifiers on privilege change, and enforce secure cookie policy
+- [`api-idempotency-key`](rules/api-idempotency-key.md) - Scope idempotency keys to the caller, serialize concurrent duplicates, and replay the original outcome
+- [`api-authz-fail-closed`](rules/api-authz-fail-closed.md) - Authenticate the principal, authorize the operation, and deny access unless both decisions succeed
+- [`api-browser-security`](rules/api-browser-security.md) - Escape untrusted output, protect state-changing browser requests from CSRF, and authenticate redirect state
+- [`api-password-reset`](rules/api-password-reset.md) - Make password change and recovery single-use, time-bounded, rate-limited security workflows
+- [`api-tls-required`](rules/api-tls-required.md) - Require authenticated TLS for production network hops and never silently downgrade certificate validation
 
 ### 6. Async/Await (HIGH)
 
@@ -194,6 +204,8 @@ Reference these guidelines when:
 - [`async-assert-send`](rules/async-assert-send.md) - Assert that public futures and handles are `Send` so they can move across Tokio workers
 - [`async-future-size`](rules/async-future-size.md) - Keep hot `async fn` state machines small: do not capture large values across `.await`, and box the heavy branch
 - [`async-fn-over-future`](rules/async-fn-over-future.md) - Declare public functions `async fn` instead of returning `impl Future` unless you must control the future
+- [`async-http-client-reuse`](rules/async-http-client-reuse.md) - Reuse one configured HTTP client per service and require deadlines on every outbound call
+- [`async-durable-worker`](rules/async-durable-worker.md) - Claim durable work atomically, bound retries with backoff and jitter, and make worker shutdown explicit
 
 ### 7. Concurrency (HIGH)
 
@@ -201,6 +213,7 @@ Reference these guidelines when:
 - [`conc-scoped-threads`](rules/conc-scoped-threads.md) - Use `std::thread::scope` to borrow stack data across threads
 - [`conc-atomic-ordering`](rules/conc-atomic-ordering.md) - Use the weakest correct memory `Ordering` for every atomic operation
 - [`conc-thread-local`](rules/conc-thread-local.md) - Prefer `thread_local!` with `Cell`/`RefCell` over `static mut`
+- [`conc-db-transaction-boundary`](rules/conc-db-transaction-boundary.md) - Keep one atomic business change inside one short database transaction
 
 ### 8. Compiler Optimization (HIGH)
 
@@ -240,6 +253,7 @@ Reference these guidelines when:
 - [`type-deref-coercion`](rules/type-deref-coercion.md) - Implement `Deref`/`DerefMut` only for smart-pointer and transparent wrapper types
 - [`type-display-vs-debug`](rules/type-display-vs-debug.md) - Use `Display` for user-facing output and `Debug` for diagnostics; never swap them
 - [`type-numeric-fmt`](rules/type-numeric-fmt.md) - Implement `LowerHex`, `UpperHex`, `Octal`, and `Binary` for numeric newtypes
+- [`type-unicode-length`](rules/type-unicode-length.md) - Define whether text limits count bytes, scalar values, or grapheme clusters
 
 ### 11. Trait & Generics Design (MEDIUM)
 
@@ -353,6 +367,7 @@ Reference these guidelines when:
 - [`test-no-tautology`](rules/test-no-tautology.md) - Assert a property or observable outcome, not a constant restated from the source
 - [`test-util-feature`](rules/test-util-feature.md) - Gate mocks, invariant bypasses, and fake data behind an explicit test-only Cargo feature
 - [`test-observable-coverage`](rules/test-observable-coverage.md) - Cover observable behavior and failure modes so refactors can proceed without implementation-shaped tests
+- [`test-http-blackbox`](rules/test-http-blackbox.md) - Test HTTP behavior through the production router and a real ephemeral listener
 
 ### 21. Documentation (MEDIUM)
 
@@ -383,6 +398,7 @@ Reference these guidelines when:
 - [`obs-error-chain`](rules/obs-error-chain.md) - Log errors with their full source chain, and log each error exactly once
 - [`obs-no-sensitive-data`](rules/obs-no-sensitive-data.md) - Never log secrets or PII; redact or skip them
 - [`obs-named-events`](rules/obs-named-events.md) - Give telemetry a stable event name (and a message template) so releases stay queryable
+- [`obs-request-correlation`](rules/obs-request-correlation.md) - Open one request span at the HTTP edge and propagate a non-sensitive correlation ID through all downstream work
 
 ### 23. Performance Patterns (MEDIUM)
 
@@ -423,6 +439,13 @@ Reference these guidelines when:
 - [`proj-works-out-of-box`](rules/proj-works-out-of-box.md) - Default features must `cargo build` on tier-1 targets with only the Rust toolchain — no extra packages, env vars, or generated-at-install steps
 - [`proj-latest-edition`](rules/proj-latest-edition.md) - Create new crates and workspaces on the latest stable edition (2024 today)
 - [`proj-split-crates`](rules/proj-split-crates.md) - Extract independently useful modules into crates; join them again only as a thin umbrella
+- [`proj-schema-migrations`](rules/proj-schema-migrations.md) - Treat database migrations as ordered source artifacts and prove they build the production schema from empty
+- [`proj-typed-config`](rules/proj-typed-config.md) - Deserialize layered configuration into typed values, validate it once at startup, and keep secrets out of source
+- [`proj-thin-vertical-slice`](rules/proj-thin-vertical-slice.md) - Deliver the smallest end-to-end user journey before deepening any one layer
+- [`proj-continuous-delivery`](rules/proj-continuous-delivery.md) - Keep the protected mainline releasable and make deployment consume the exact admitted artifact
+- [`proj-reproducible-runtime`](rules/proj-reproducible-runtime.md) - Build a pinned release artifact in one stage and run it in a minimal, non-secret runtime image
+- [`proj-stable-toolchain`](rules/proj-stable-toolchain.md) - Build and run production applications on a pinned stable toolchain and test upgrades continuously
+- [`proj-stateless-process`](rules/proj-stateless-process.md) - Keep durable application state outside individual service processes
 
 ### 25. FFI & Interop (LOW)
 

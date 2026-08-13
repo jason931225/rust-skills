@@ -24,8 +24,22 @@ semantic versioning for the rule set.
   source-backed validation of every mapped rule and nested reference, focused
   Rust behavior tests where runtime behavior exists, and the existing
   extracted-example compile gate for API-shape guidance.
+- A full section-level audit of *Zero To Production In Rust* adds portable
+  production-service contracts for health probes, extract-before-effects HTTP
+  boundaries, black-box server tests, typed layered configuration, database
+  migrations and transactions, reusable deadline-bound HTTP clients, request
+  correlation, protocol-neutral error mapping, password authentication,
+  server-side session security, reproducible runtime artifacts, continuous
+  delivery, idempotent request replay, durable worker recovery, and thin
+  vertical delivery slices. Unicode input limits now name their counting unit
+  and keep output escaping separate from validation. Browser security,
+  fail-closed authorization, authenticated TLS, and password recovery are
+  expressed as independent defense-in-depth contracts. Production processes
+  pin stable Rust and externalize durable state so replicas remain disposable.
+  Provider- and version-specific tutorial steps are dispositioned instead of
+  imported as timeless Rust guidance.
 
-Now 314 rules across 27 categories.
+Now 337 rules across 27 categories.
 
 ## [1.5.1]
 

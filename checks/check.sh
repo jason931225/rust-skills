@@ -27,9 +27,9 @@ echo "==> structure, links, and index parity"
 python3 "$ROOT/checks/validate.py"
 python3 "$ROOT/checks/gen_index.py" --check
 
-echo "==> Microsoft-guidance behavior checks"
+echo "==> source-guidance behavior checks"
 cd "$ROOT/checks"
-cargo test --test microsoft_guidelines
+cargo test --test source_guidance
 
 echo "==> generating example files from rules"
 python3 gen.py

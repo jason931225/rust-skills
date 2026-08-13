@@ -12,7 +12,7 @@ bash checks/check.sh
 
 # individual focused behavior test
 cd checks
-cargo test --test microsoft_guidelines
+cargo test --test source_guidance
 
 # individual example compile-check
 python3 gen.py                                              # extract blocks -> examples/
@@ -32,9 +32,19 @@ pages, nested-link audit, and known broken references in the pinned upstream
 tree so overlapping guidance is consolidated only after every source item is
 read. The focused Rust test executes representative
 contracts for reusable buffers, `Send` futures, semantic constructor groups,
-and redacted `Debug`. Static API-shape guidance remains enforced through the
+redacted `Debug`, readiness transitions, restartable schema backfills, and
+bounded correlation IDs, idempotency claim semantics, and capped retry
+backoff. A focused socket round-trip prevents the HTTP black-box contract from
+regressing into a bind-only tautology. Static API-shape guidance remains enforced through the
 source-backed mapping plus the extracted-example compile gate rather than
 tautological runtime tests.
+
+The same validator checks `zero2production_coverage.json`: all 431 table-of-
+contents units from the pinned 433-page PDF are independently dispositioned,
+the TOC and final rule mapping digests are fixed, and every final state is
+either covered or explicitly excluded as outdated, project-specific, or
+non-normative. The purchased PDF is not redistributed; its SHA-256 and the 11
+chapter-extraction digests identify the audited revision.
 
 For a standalone structural run, point the validator at an exact checkout:
 

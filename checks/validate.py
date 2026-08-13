@@ -51,6 +51,123 @@ for name in sorted(rule_names):
     if name not in linked:
         err(f"SKILL.md: rule rules/{name} is not listed in the index")
 
+# Source-coverage manifests.
+ZERO2PROD_COVERAGE = HERE / "zero2production_coverage.json"
+EXPECTED_ZERO2PROD_TOC_DIGEST = "bd500a774e3fa5a2d97adb2d6d8c167b201fe76ca33917bda1037e5fd9402d0f"
+EXPECTED_ZERO2PROD_MAPPING_DIGEST = "a640158e851087f388fcc6e3e00c3f333410f0babee30ec7acc4b03ce0c41fc1"
+EXPECTED_ZERO2PROD_EXTRACT_DIGEST = "8a6efbac878df8c1b397e35aeda5d30b44b733c5458f03fc67b3d7ad45b8ef26"
+EXPECTED_ZERO2PROD_LEDGER_DIGEST = "af95e4904ca70593066ed2520b3f2168997771f60ad390879a1c53e202922270"
+EXPECTED_ZERO2PROD_SOURCE_SHA256 = "5de8b3ef43e1175f18579130c9bef9ef492f63c527deb5ac65a9a1bb6320f75e"
+allowed_book_audit_dispositions = {
+    "covered",
+    "partial",
+    "missing",
+    "outdated",
+    "project-specific",
+    "reject",
+}
+allowed_book_final_dispositions = {
+    "covered",
+    "outdated",
+    "project-specific",
+    "reject",
+}
+try:
+    book_coverage = json.loads(ZERO2PROD_COVERAGE.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError) as exc:
+    err(f"{ZERO2PROD_COVERAGE.name}: cannot read coverage manifest: {exc}")
+    book_coverage = None
+
+if book_coverage is not None:
+    units = book_coverage.get("units", [])
+    expected_units = book_coverage.get("source", {}).get("toc_unit_count")
+    source_sha256 = book_coverage.get("source", {}).get("sha256")
+    source_toc_digest = book_coverage.get("source", {}).get("toc_digest")
+    physical_pages = book_coverage.get("source", {}).get("physical_pages")
+    declared_mapping_digest = book_coverage.get("mapping_digest")
+    declared_ledger_digest = book_coverage.get("ledger_digest")
+    declared_summary = book_coverage.get("summary")
+    extract_entries = book_coverage.get("extraction", {}).get("chapter_extracts", [])
+    continuation_pages = book_coverage.get("extraction", {}).get(
+        "unlisted_continuation_pages"
+    )
+    sections = [unit.get("section") for unit in units if isinstance(unit, dict)]
+    toc_lines = [
+        f"{unit.get('section')}:{unit.get('title')}:{unit.get('page')}"
+        for unit in units
+    ]
+    toc_digest = hashlib.sha256("\n".join(toc_lines).encode()).hexdigest()
+    mapping_lines = [
+        f"{unit.get('section')}:{unit.get('disposition')}:{','.join(sorted(unit.get('rule_paths', [])))}"
+        for unit in units
+    ]
+    mapping_digest = hashlib.sha256("\n".join(mapping_lines).encode()).hexdigest()
+    extract_lines = [
+        f"{item.get('name')}:{item.get('sha256')}"
+        for item in extract_entries
+        if isinstance(item, dict)
+    ]
+    extract_digest = hashlib.sha256("\n".join(sorted(extract_lines)).encode()).hexdigest()
+    ledger_lines = [
+        json.dumps(unit, sort_keys=True, separators=(",", ":"))
+        for unit in units
+    ]
+    ledger_digest = hashlib.sha256("\n".join(ledger_lines).encode()).hexdigest()
+    if expected_units != 431 or len(units) != 431:
+        err(f"{ZERO2PROD_COVERAGE.name}: expected exactly 431 TOC units")
+    if source_sha256 != EXPECTED_ZERO2PROD_SOURCE_SHA256:
+        err(f"{ZERO2PROD_COVERAGE.name}: unexpected PDF source digest")
+    if physical_pages != 433:
+        err(f"{ZERO2PROD_COVERAGE.name}: expected the audited 433-page PDF")
+    if len(sections) != len(set(sections)):
+        err(f"{ZERO2PROD_COVERAGE.name}: duplicate section dispositions")
+    if toc_digest != EXPECTED_ZERO2PROD_TOC_DIGEST or source_toc_digest != toc_digest:
+        err(f"{ZERO2PROD_COVERAGE.name}: TOC inventory differs from reviewed source")
+    if (
+        mapping_digest != EXPECTED_ZERO2PROD_MAPPING_DIGEST
+        or declared_mapping_digest != mapping_digest
+    ):
+        err(f"{ZERO2PROD_COVERAGE.name}: rule mappings differ from reviewed source audit")
+    if len(extract_entries) != 11 or extract_digest != EXPECTED_ZERO2PROD_EXTRACT_DIGEST:
+        err(f"{ZERO2PROD_COVERAGE.name}: chapter extraction evidence differs from source audit")
+    if continuation_pages != [272, 390]:
+        err(f"{ZERO2PROD_COVERAGE.name}: unlisted continuation pages are not accounted for")
+    if (
+        ledger_digest != EXPECTED_ZERO2PROD_LEDGER_DIGEST
+        or declared_ledger_digest != ledger_digest
+    ):
+        err(f"{ZERO2PROD_COVERAGE.name}: section ledger differs from reviewed source audit")
+    actual_summary = {
+        disposition: sum(unit.get("disposition") == disposition for unit in units)
+        for disposition in sorted(allowed_book_final_dispositions)
+        if any(unit.get("disposition") == disposition for unit in units)
+    }
+    if declared_summary != actual_summary:
+        err(f"{ZERO2PROD_COVERAGE.name}: disposition summary differs from unit ledger")
+    for unit in units:
+        section = unit.get("section", "<missing>")
+        if unit.get("audit_disposition") not in allowed_book_audit_dispositions:
+            err(f"{ZERO2PROD_COVERAGE.name}: {section} has invalid audit disposition")
+        if unit.get("disposition") not in allowed_book_final_dispositions:
+            err(f"{ZERO2PROD_COVERAGE.name}: {section} has unresolved final disposition")
+        if unit.get("disposition") == "covered" and not unit.get("rule_paths"):
+            err(f"{ZERO2PROD_COVERAGE.name}: {section} is covered without a mapped rule")
+        if not re.fullmatch(r"[0-9a-f]{64}", str(unit.get("page_text_sha256", ""))):
+            err(f"{ZERO2PROD_COVERAGE.name}: {section} has no source-page digest")
+        if not isinstance(unit.get("rationale"), str) or not unit["rationale"].strip():
+            err(f"{ZERO2PROD_COVERAGE.name}: {section} has no rationale")
+        if not isinstance(unit.get("resolution"), str) or not unit["resolution"].strip():
+            err(f"{ZERO2PROD_COVERAGE.name}: {section} has no final resolution")
+        for target in unit.get("rule_paths", []):
+            target_path = pathlib.PurePosixPath(target) if isinstance(target, str) else None
+            if (
+                target_path is None
+                or len(target_path.parts) != 2
+                or target_path.parts[0] != "rules"
+                or target_path.name not in rule_names
+            ):
+                err(f"{ZERO2PROD_COVERAGE.name}: {section} has invalid target {target!r}")
+
 # Microsoft Pragmatic Rust Guidelines v2026.6 coverage parity.
 try:
     coverage = json.loads(MICROSOFT_COVERAGE.read_text(encoding="utf-8"))
