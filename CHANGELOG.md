@@ -12,14 +12,28 @@ semantic versioning for the rule set.
 - `num-bit-width`: use the Rust 1.97 integer bit-manipulation APIs
   (`bit_width`, `highest_one`/`lowest_one`, `isolate_*_one`) instead of
   hand-rolled shift and mask loops.
+- `pat-if-let-guards`: bind fallible match-arm data with Rust 1.95 `if let`
+  guards instead of parsing twice or unwrapping.
+- `conc-atomic-update`: use Rust 1.95 atomic `update` / `try_update` instead of
+  hand-written compare-exchange retry loops.
+- `proj-cfg-select`: make one-of-many conditional compilation explicit with
+  Rust 1.95 `cfg_select!`.
+- `trait-ord-consistent`: keep equality and ordering contracts aligned so
+  ordered collections remain correct.
 
 ### Changed
-- Refreshed for Rust 1.97: pinned the compile-check toolchain and CI to 1.97.1
-  and updated "Current for Rust" claims.
-- Fixed `unsafe-no-mangle-unsafe` for Rust 1.97 `link_section` validation
-  (ELF `.init_array` is now an error on Mach-O).
+- Audited Rust 1.95 through 1.97 release changes, pinned the compile-check
+  toolchain and CI to 1.97.1, and updated "Current for Rust" claims.
+- Updated existing conversion, `NonZero`, workspace dependency, enum layout,
+  collection insertion, visibility linting, read-only lockfile, pattern, cfg,
+  atomic, and unsafe/FFI guidance for useful 1.95–1.97 changes and
+  compatibility notes.
+- Added executable release-behavior checks for the new language/library
+  guidance; generated examples remain compile-checked against the baseline.
+- Fixed `unsafe-no-mangle-unsafe` for Rust 1.97 `link_section` validation (ELF
+  `.init_array` is now an error on Mach-O).
 
-Now 267 rules across 26 categories.
+Now 271 rules across 26 categories.
 
 ## [1.5.1]
 

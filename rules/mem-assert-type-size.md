@@ -154,6 +154,15 @@ struct AppConfig { /* many fields */ }
 // Size doesn't matter, only one instance
 ```
 
+## Do Not Freeze Rust Enum Layout by Accident
+
+Rust may change the layout of an enum that has no representation guarantee; a
+Rust 1.97 compiler change did so for some valid enums. A passing size assertion
+does not make the layout stable. Use `#[repr(C)]` or an explicit integer
+representation only when an FFI or wire contract requires it, assert the
+discriminants and offsets that contract depends on, and serialize logical
+fields rather than raw Rust memory.
+
 ## Cargo.toml
 
 ```toml

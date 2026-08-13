@@ -62,7 +62,9 @@ Run `cargo fix --edition` when migrating to the 2024 edition — it rewrites bar
 - Symbol collisions are especially dangerous in plugin architectures, `cdylib` crates, embedded firmware with custom linker scripts, and any codebase that links multiple Rust crates into a single binary.
 - These attributes interact with `unsafe extern` blocks (see `unsafe-extern-block`): external symbols you import and symbols you export follow the same 2024-edition safety rules.
 - The bare forms (`#[no_mangle]` without `unsafe`) are a hard error in Rust 2024 edition code. They still compile in earlier editions but emit a deprecation warning with `--warn future-incompatible`.
+- Rust 1.96 made the first duplicate `export_name`, `link_name`, or `link_section` attribute take precedence. Never stack duplicate symbol attributes; keep one audited source of truth.
 - `link_section` values are validated in Rust 1.97: a bare ELF name like `.init_array` is an error on Mach-O. Use a `cfg_attr` per target, or a name your linker script actually defines.
+- Rust 1.97 also rejects empty `export_name` values and validates `link_name` / `link` parameters. Treat those diagnostics as contract defects, not warnings to suppress.
 
 ## See Also
 

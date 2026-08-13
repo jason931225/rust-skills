@@ -66,5 +66,6 @@ workspace = true
 
 - [lint-workspace-lints](lint-workspace-lints.md) - configure lints at workspace level
 - [lint-warnings-deny-config](lint-warnings-deny-config.md) - deny rustc warnings in CI via Cargo config
+- [proj-cfg-select](proj-cfg-select.md) - select one conditional item or expression in one place
 - [proj-feature-additive](proj-feature-additive.md) - design features to be strictly additive
 - [lint-warn-suspicious](lint-warn-suspicious.md) - enable suspicious lint group

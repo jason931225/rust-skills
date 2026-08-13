@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 267 rules across 26 categories.
+  Comprehensive Rust coding guidelines with 271 rules across 26 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -21,7 +21,7 @@ metadata:
 
 # Rust Best Practices
 
-Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 267 rules across 26 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.97 (2024 edition).
+Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 271 rules across 26 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.97 (2024 edition).
 
 ## When to Apply
 
@@ -45,15 +45,15 @@ Reference these guidelines when:
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 7 |
 | 5 | API Design | HIGH | `api-` | 17 |
 | 6 | Async/Await | HIGH | `async-` | 18 |
-| 7 | Concurrency | HIGH | `conc-` | 4 |
+| 7 | Concurrency | HIGH | `conc-` | 5 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
 | 10 | Type Safety | MEDIUM | `type-` | 13 |
-| 11 | Trait & Generics Design | MEDIUM | `trait-` | 6 |
+| 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 4 |
 | 14 | Serde | MEDIUM | `serde-` | 8 |
-| 15 | Pattern Matching | MEDIUM | `pat-` | 5 |
+| 15 | Pattern Matching | MEDIUM | `pat-` | 6 |
 | 16 | Macros | MEDIUM | `macro-` | 8 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
@@ -62,7 +62,7 @@ Reference these guidelines when:
 | 21 | Documentation | MEDIUM | `doc-` | 12 |
 | 22 | Observability | MEDIUM | `obs-` | 7 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 13 |
-| 24 | Project Structure | LOW | `proj-` | 14 |
+| 24 | Project Structure | LOW | `proj-` | 15 |
 | 25 | Clippy & Linting | LOW | `lint-` | 14 |
 | 26 | Anti-patterns | REFERENCE | `anti-` | 15 |
 
@@ -177,6 +177,7 @@ Reference these guidelines when:
 - [`conc-scoped-threads`](rules/conc-scoped-threads.md) - Use `std::thread::scope` to borrow stack data across threads
 - [`conc-atomic-ordering`](rules/conc-atomic-ordering.md) - Use the weakest correct memory `Ordering` for every atomic operation
 - [`conc-thread-local`](rules/conc-thread-local.md) - Prefer `thread_local!` with `Cell`/`RefCell` over `static mut`
+- [`conc-atomic-update`](rules/conc-atomic-update.md) - Use atomic `update` / `try_update` instead of hand-written compare-exchange loops
 
 ### 8. Compiler Optimization (HIGH)
 
@@ -226,6 +227,7 @@ Reference these guidelines when:
 - [`trait-default-methods`](rules/trait-default-methods.md) - Define a trait in terms of a few required methods plus defaulted ones built on top of them
 - [`trait-dyn-vs-generic`](rules/trait-dyn-vs-generic.md) - Choose static dispatch (generics / `impl Trait`) vs dynamic dispatch (`dyn Trait`) deliberately
 - [`trait-object-safety`](rules/trait-object-safety.md) - Keep a trait dyn-compatible (object-safe) when you need `dyn Trait`
+- [`trait-ord-consistent`](rules/trait-ord-consistent.md) - Keep `Ord`, `PartialOrd`, `Eq`, and `PartialEq` consistent
 
 ### 12. Conversions (MEDIUM)
 
@@ -258,6 +260,7 @@ Reference these guidelines when:
 - [`pat-if-let-chains`](rules/pat-if-let-chains.md) - Use `if let` chains to combine pattern bindings and conditions
 - [`pat-exhaustive-enum`](rules/pat-exhaustive-enum.md) - Match owned enums exhaustively; avoid catch-all `_` that hides new variants
 - [`pat-at-bindings`](rules/pat-at-bindings.md) - Use `@` bindings to capture a value while matching it against a pattern
+- [`pat-if-let-guards`](rules/pat-if-let-guards.md) - Use `if let` match guards to bind data needed only by one arm
 
 ### 16. Macros (MEDIUM)
 
@@ -379,6 +382,7 @@ Reference these guidelines when:
 - [`proj-feature-additive`](rules/proj-feature-additive.md) - Design Cargo features to be strictly additive
 - [`proj-msrv-declare`](rules/proj-msrv-declare.md) - Declare `rust-version` (MSRV) in Cargo.toml and test it in CI
 - [`proj-build-rs-minimal`](rules/proj-build-rs-minimal.md) - Keep `build.rs` minimal, deterministic, and idempotent
+- [`proj-cfg-select`](rules/proj-cfg-select.md) - Use `cfg_select!` for one-of-many conditional items or expressions
 
 ### 25. Clippy & Linting (LOW)
 

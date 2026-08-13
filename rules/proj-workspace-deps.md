@@ -126,6 +126,26 @@ serde = { workspace = true, optional = true }
 serde = ["dep:serde"]
 ```
 
+## Publishable Git Dependencies
+
+Cargo 1.96 lets a dependency name both a git source for local development and
+an alternate registry source for publication:
+
+```toml
+[dependencies]
+shared-types = { git = "https://github.com/acme/shared-types", rev = "8e4d7ab", version = "2.3", registry = "company" }
+```
+
+Cargo uses the pinned git revision locally and records the registry dependency
+when packaging. Keep `version` compatible with the pinned revision, and run
+`cargo package` plus tests against the packaged artifact in CI; otherwise local
+and published consumers can compile different code under the same dependency
+declaration.
+
+This form is for packages published to the named alternate registry. Crates.io
+does not accept dependencies that resolve from another registry; use a
+crates.io version source there, or do not publish that package to crates.io.
+
 ## Complete Workspace Example
 
 ```toml

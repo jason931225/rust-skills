@@ -119,6 +119,29 @@ match map.entry(key) {
 }
 ```
 
+## Mutate Newly Inserted Sequence Values
+
+Rust 1.95 added mutable-returning insertion methods across sequential
+collections: `Vec::{push_mut, insert_mut}`,
+`VecDeque::{push_back_mut, push_front_mut, insert_mut}`, and
+`LinkedList::{push_back_mut, push_front_mut}`. Use them when insertion is
+immediately followed by mutation; they return the inserted element directly,
+without a second index or end lookup:
+
+```rust
+#[derive(Default)]
+struct Request {
+    headers: Vec<(String, String)>,
+}
+
+let mut queue = Vec::new();
+let request = queue.push_mut(Request::default());
+request.headers.push(("accept".to_owned(), "application/json".to_owned()));
+```
+
+Use ordinary `push` when no mutable reference is needed. The new methods
+clarify the ownership flow; they do not make insertion itself free.
+
 ## Performance
 
 | Pattern | Lookups | Hash Computations |

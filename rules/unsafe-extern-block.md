@@ -64,6 +64,7 @@ Run `cargo fix --edition` to apply the mechanical part of this migration automat
 - The `unsafe` on the block means "I assert these declarations faithfully describe the external ABI". It does not make calls to the items safe by itself.
 - Marking an item `safe` is a promise: if that item is actually unsafe to call, adding `safe` is itself unsound — the compiler will not catch a wrong annotation.
 - `bindgen` (0.70+) and `cbindgen` have been updated to emit `unsafe extern` blocks for Rust 2024 output. Update your code generator if you use one.
+- Use `std::ffi::c_*` types for C ABI declarations instead of assuming a Rust primitive has the same width. Rust 1.96 changed `c_double` to `f32` on AVR to match that platform's C ABI; a hard-coded `f64` declaration is wrong there.
 - The `extern "Rust"` ABI for cross-crate `#[no_mangle]` functions follows the same rules (see `unsafe-no-mangle-unsafe`).
 
 ## See Also

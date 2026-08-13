@@ -89,3 +89,4 @@ mod tests {
 ## See Also
 
 - [num-overflow-explicit](num-overflow-explicit.md) - handle integer overflow explicitly
+- [trait-ord-consistent](trait-ord-consistent.md) - keep ordered collection keys on one total order

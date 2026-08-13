@@ -17,8 +17,11 @@ echo "==> structure, links, and index parity"
 python3 "$ROOT/checks/validate.py"
 python3 "$ROOT/checks/gen_index.py" --check
 
-echo "==> generating example files from rules"
+echo "==> release-guidance behavior checks"
 cd "$ROOT/checks"
+cargo test --test release_195_197
+
+echo "==> generating example files from rules"
 python3 gen.py
 
 echo "==> compile-checking examples (target: $TARGET)"

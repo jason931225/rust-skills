@@ -101,6 +101,7 @@ fn test_handoff() {
 
 ## See Also
 
+- [conc-atomic-update](conc-atomic-update.md) - replace hand-written compare-exchange retry loops
 - [own-mutex-interior](own-mutex-interior.md) - prefer `Mutex<T>` when lock-free isn't required
 - [test-loom-concurrency](test-loom-concurrency.md) - exhaustively test concurrent code with loom
 - [conc-scoped-threads](conc-scoped-threads.md) - safely share stack data across threads
