@@ -1,10 +1,10 @@
 # ffi-sys-crate-builds
 
-> Keep `-sys` crates hermetic: vendored C sources or a `pkg-config` probe, no one-off host tools on the default path
+> Keep `-sys` crates hermetic: build verifiable vendored sources with Rust tooling and offer static or dynamic loading
 
 ## Why It Matters
 
-Every consumer of `foo-sys` inherits its build. A `build.rs` that shells out to `nasm`, `perl`, or a downloaded tarball fails on the next machine, in CI, and in any sandbox that has only `cc` and a linker. Per Microsoft Pragmatic Rust Guidelines (M-SYS-CRATES), a `-sys` crate must compile with the Rust toolchain plus `cc`. Vendor the upstream sources (or document a hash-pinned fetch behind a non-default feature), generate bindgen output before publish when you can, and offer static linking. `proj-build-rs-minimal` is the local script hygiene; this rule is the interop contract.
+Every consumer of `foo-sys` inherits its build. A `build.rs` that shells out to `nasm`, `perl`, `pkg-config`, or a downloaded tarball fails on the next machine, in CI, and in any sandbox that has only `cc` and a linker. Per Microsoft Pragmatic Rust Guidelines (M-SYS-CRATES), a `-sys` crate must compile with the Rust toolchain plus `cc`. Vendor the upstream sources with their repository URL and exact revision, generate bindgen output before publish when you can, and offer static linking plus a `libloading` path when runtime discovery is part of the product.
 
 ## Bad
 
@@ -37,6 +37,10 @@ cc = "1"
 //
 //   println!("cargo::rerun-if-changed=vendor/foo.c");
 //   cc::Build::new().file("vendor/foo.c").include("vendor").compile("foo");
+//
+// vendor/UPSTREAM records:
+//   repository = "https://example.invalid/foo"
+//   revision = "<full source commit>"
 ```
 
 ```rust
@@ -48,6 +52,12 @@ fn main() {
     let _ = linked_native_lib();
 }
 ```
+
+An already-hermetic Rust crate that wraps an upstream native build system may
+be used instead of reproducing every command in `cc`. Likewise, a hermetic
+build service may provide a source root through a documented environment
+variable; validate the path and hash, and never make an ambient workstation
+variable the only build route.
 
 ## See Also
 

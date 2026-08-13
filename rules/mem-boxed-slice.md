@@ -1,10 +1,10 @@
 # mem-boxed-slice
 
-> Use `Box<[T]>` instead of `Vec<T>` for fixed-size heap data
+> Use `Box<[T]>`, `Arc<[T]>`, or `Arc<str>` for internal fixed-size heap data
 
 ## Why It Matters
 
-`Vec<T>` stores three words: pointer, length, and capacity. When you know a collection won't grow, `Box<[T]>` stores only pointer and length (2 words), saving 8 bytes per instance. More importantly, it communicates intent: "this data is fixed-size." For large numbers of fixed collections, this adds up.
+`Vec<T>` stores three words: pointer, length, and capacity. When you know a collection won't grow, `Box<[T]>` stores only pointer and length (2 words), saving 8 bytes per instance. `Arc<[T]>` and `Arc<str>` drop that capacity word the same way when several owners need the bytes. More importantly, it communicates intent: "this data is fixed-size." `into_boxed_slice` / `into_boxed_str` already shed spare capacity, so a `shrink_to_fit()` immediately before the conversion does nothing useful. The pattern pays off for *internal*, immutable sequences created in volume (thousands of instances) that callers never see as `Vec` or `String` — they take `&[T]` or `&str`. Public, growable, or rarely built collections should stay as `Vec`/`String`. Per Microsoft Pragmatic Rust Guidelines (M-BOX-DST).
 
 ## Bad
 
@@ -25,8 +25,14 @@ fn load_document(data: &[u8]) -> Document {
 
 ```rust
 struct Document {
-    // Box<[T]> signals "fixed size" - clear intent
-    paragraphs: Box<[Paragraph]>,  // 16 bytes: ptr + len (as fat pointer)
+    // Private storage signals fixed size; callers receive a slice.
+    paragraphs: Box<[Paragraph]>,
+}
+
+impl Document {
+    pub fn paragraphs(&self) -> &[Paragraph] {
+        &self.paragraphs
+    }
 }
 
 fn load_document(data: &[u8]) -> Document {
@@ -65,11 +71,13 @@ let vec_again: Vec<i32> = boxed.into_vec();
 // From iterator
 let boxed: Box<[i32]> = (0..100).collect::<Vec<_>>().into_boxed_slice();
 
-// Shrink Vec first if it has excess capacity
+// into_boxed_slice already sheds spare capacity — no shrink_to_fit first
 let mut vec = Vec::with_capacity(1000);
 vec.extend(0..10);
-vec.shrink_to_fit();  // Reduce capacity to length
-let boxed = vec.into_boxed_slice();  // Now no wasted allocation
+let boxed = vec.into_boxed_slice();
+// Shared owned bytes: same fat pointer, plus a refcount
+let shared: std::sync::Arc<[i32]> = vec![1, 2, 3].into();
+let _ = shared;
 ```
 
 ## When to Use What
@@ -80,10 +88,13 @@ let boxed = vec.into_boxed_slice();  // Now no wasted allocation
 | `Box<[T]>` | Fixed-size, heap-allocated, many instances |
 | `[T; N]` | Fixed-size, stack-allocated, size known at compile time |
 | `&[T]` | Borrowed view, don't need ownership |
+| `Arc<[T]>` | Fixed-size, shared by several owners, many internal instances |
+| `Arc<str>` | Shared immutable text; callers still see `&str` |
+| `Box<str>` | Owned immutable text, single owner |
 
-## Box<str> for Immutable Strings
+## Box<str> and Arc<str> for Immutable Strings
 
-Same principle applies to strings:
+Same principle applies to strings. Prefer these in private fields; keep the public surface on `&str`.
 
 ```rust
 use std::mem::size_of;
@@ -108,6 +119,19 @@ impl Name {
 // Or from String
 let s = String::from("hello");
 let boxed: Box<str> = s.into_boxed_str();
+// Shared immutable text: still presented to callers as `&str`
+use std::sync::Arc;
+struct SharedName {
+    value: Arc<str>,
+}
+impl SharedName {
+    fn new(s: &str) -> Self {
+        SharedName { value: Arc::from(s) }
+    }
+    fn as_str(&self) -> &str {
+        &self.value
+    }
+}
 ```
 
 ## Real-World Example
@@ -137,3 +161,5 @@ impl Cache {
 - [mem-with-capacity](./mem-with-capacity.md) - Pre-allocating when size is known
 - [own-slice-over-vec](./own-slice-over-vec.md) - Using slices in function parameters
 - [mem-compact-string](./mem-compact-string.md) - Compact string alternatives
+- [mem-shrink-to-fit](./mem-shrink-to-fit.md) - Shrink a long-lived `Vec`; boxed conversion already does this
+- [own-arc-shared](./own-arc-shared.md) - `Arc<[T]>` / `Arc<str>` when several owners share the bytes

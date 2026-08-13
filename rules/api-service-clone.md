@@ -76,6 +76,33 @@ fn main() {
 }
 ```
 
+## Compose Shared Services
+
+Construct dependent services from a shared service bundle by reference and
+clone only the cheap handles they retain:
+
+```rust
+#[derive(Clone)]
+pub struct Services {
+    pub catalog: Catalog,
+}
+
+#[derive(Clone)]
+pub struct Search {
+    catalog: Catalog,
+}
+
+impl Search {
+    pub fn new(services: &Services) -> Self {
+        Self { catalog: services.catalog.clone() }
+    }
+}
+```
+
+If a dependency is used only during `new`, do not retain it. Build one service
+instance per worker or application cell and clone handles into request
+handlers; do not reconstruct deep service graphs per request.
+
 ## See Also
 
 - [own-arc-shared](own-arc-shared.md) - the `Arc` mechanics this handle is built on

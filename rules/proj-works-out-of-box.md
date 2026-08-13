@@ -26,6 +26,12 @@ fn main() {
 }
 ```
 
+If support for a tier-1 target is temporarily incomplete, keep the platform
+edge behind an internal HAL and provide a dummy implementation that compiles
+and returns an explicit unsupported error. That preserves an extension point
+without pretending the hardware works. Use `cfg(target_os = ...)` for genuine
+platform selection and additive opt-in features for optional SDK capability.
+
 ## Good
 
 ```toml

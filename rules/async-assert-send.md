@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A public `async fn` that holds `Rc` or a `!Send` guard across `.await` compiles until a caller writes `tokio::spawn`. The error then appears in *their* crate. Per Microsoft Pragmatic Rust Guidelines (M-TYPES-SEND), public futures — and most public handle types — must stay `Send`. A compile-time `require_send` next to the entry point fails in *your* crate the moment a field or capture regresses. `static_assertions::assert_impl_all!` is the same check for named types.
+A public `async fn` that holds `Rc` or a `!Send` guard across `.await` compiles until a caller writes `tokio::spawn`. The error then appears in *their* crate. Per Microsoft Pragmatic Rust Guidelines (M-TYPES-SEND), public futures — and public handles intended to cross workers — should stay `Send`. A compile-time `require_send` next to each main entry point fails in *your* crate the moment a field or capture regresses. Do not assert every helper mechanically. An instantaneous `!Send` temporary is fine when it is created, used, and dropped before any `.await`.
 
 ## Bad
 
@@ -43,7 +43,12 @@ const fn require_send<T: Send>() {}
 const _: () = require_send::<BlobRead>();
 
 pub async fn fetch_blob(name: Arc<str>) {
-    let _ = name;
+    let length = {
+        let local = std::rc::Rc::new(name.len());
+        *local
+    }; // `!Send` state leaves scope before the await below.
+    std::future::ready(()).await;
+    let _ = (name, length);
 }
 
 fn require_future_send<T: Send>(_: &T) {}

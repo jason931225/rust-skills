@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 295 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 314 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -23,7 +23,7 @@ metadata:
 
 # Rust Best Practices
 
-Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 295 rules across 27 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.96 (2024 edition).
+Comprehensive guide for writing high-quality, idiomatic, and highly optimized Rust code. Contains 314 rules across 27 categories, prioritized by impact to guide LLMs in code generation and refactoring. Current for Rust 1.96 (2024 edition).
 
 ## When to Apply
 
@@ -43,11 +43,11 @@ Reference these guidelines when:
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 12 |
-| 2 | Error Handling | CRITICAL | `err-` | 13 |
+| 2 | Error Handling | CRITICAL | `err-` | 15 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
-| 4 | Unsafe Code | CRITICAL | `unsafe-` | 8 |
-| 5 | API Design | HIGH | `api-` | 24 |
-| 6 | Async/Await | HIGH | `async-` | 21 |
+| 4 | Unsafe Code | CRITICAL | `unsafe-` | 10 |
+| 5 | API Design | HIGH | `api-` | 26 |
+| 6 | Async/Await | HIGH | `async-` | 22 |
 | 7 | Concurrency | HIGH | `conc-` | 4 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 5 |
@@ -57,18 +57,18 @@ Reference these guidelines when:
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
 | 14 | Serde | MEDIUM | `serde-` | 8 |
 | 15 | Pattern Matching | MEDIUM | `pat-` | 5 |
-| 16 | Macros | MEDIUM | `macro-` | 9 |
+| 16 | Macros | MEDIUM | `macro-` | 11 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
-| 19 | Naming Conventions | MEDIUM | `name-` | 17 |
-| 20 | Testing | MEDIUM | `test-` | 17 |
-| 21 | Documentation | MEDIUM | `doc-` | 14 |
+| 19 | Naming Conventions | MEDIUM | `name-` | 18 |
+| 20 | Testing | MEDIUM | `test-` | 18 |
+| 21 | Documentation | MEDIUM | `doc-` | 16 |
 | 22 | Observability | MEDIUM | `obs-` | 8 |
-| 23 | Performance Patterns | MEDIUM | `perf-` | 14 |
-| 24 | Project Structure | LOW | `proj-` | 17 |
-| 25 | FFI & Interop | LOW | `ffi-` | 4 |
-| 26 | Clippy & Linting | LOW | `lint-` | 14 |
-| 27 | Anti-patterns | REFERENCE | `anti-` | 15 |
+| 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
+| 24 | Project Structure | LOW | `proj-` | 19 |
+| 25 | FFI & Interop | LOW | `ffi-` | 5 |
+| 26 | Clippy & Linting | LOW | `lint-` | 15 |
+| 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
 
 ---
 
@@ -104,6 +104,8 @@ Reference these guidelines when:
 - [`err-doc-errors`](rules/err-doc-errors.md) - Document error conditions with `# Errors` section in doc comments
 - [`err-custom-type`](rules/err-custom-type.md) - Define custom error types for domain-specific failures
 - [`err-catch-unwind-boundary`](rules/err-catch-unwind-boundary.md) - Use `catch_unwind` only at a task, FFI, or process isolation edge, and pair it with a restart policy
+- [`err-canonical-struct`](rules/err-canonical-struct.md) - Expose library errors as situation-specific opaque structs with a private kind, captured backtrace, and `is_*` helpers
+- [`err-panic-message`](rules/err-panic-message.md) - Give every intentional production panic a message that identifies the violated contract and relevant values
 
 ### 3. Memory Optimization (CRITICAL)
 
@@ -111,7 +113,7 @@ Reference these guidelines when:
 - [`mem-smallvec`](rules/mem-smallvec.md) - Use `SmallVec` for usually-small collections
 - [`mem-arrayvec`](rules/mem-arrayvec.md) - Use `ArrayVec<T, N>` for fixed-capacity collections that never heap-allocate
 - [`mem-box-large-variant`](rules/mem-box-large-variant.md) - Box large enum variants to reduce overall enum size
-- [`mem-boxed-slice`](rules/mem-boxed-slice.md) - Use `Box<[T]>` instead of `Vec<T>` for fixed-size heap data
+- [`mem-boxed-slice`](rules/mem-boxed-slice.md) - Use `Box<[T]>`, `Arc<[T]>`, or `Arc<str>` for internal fixed-size heap data
 - [`mem-thinvec`](rules/mem-thinvec.md) - Use `ThinVec<T>` for nullable collections with minimal overhead
 - [`mem-clone-from`](rules/mem-clone-from.md) - Use `clone_from()` to reuse allocations when repeatedly cloning
 - [`mem-reuse-collections`](rules/mem-reuse-collections.md) - Clear and reuse collections instead of creating new ones in loops
@@ -135,7 +137,9 @@ Reference these guidelines when:
 - [`unsafe-extern-block`](rules/unsafe-extern-block.md) - In Rust 2024, wrap `extern` blocks in `unsafe extern { }` and annotate each item as `safe` or `unsafe`.
 - [`unsafe-send-sync-manual`](rules/unsafe-send-sync-manual.md) - Document the invariants when manually implementing `Send` or `Sync`; prefer letting the compiler derive them automatically.
 - [`unsafe-no-mangle-unsafe`](rules/unsafe-no-mangle-unsafe.md) - In Rust 2024, write `#[unsafe(no_mangle)]`, `#[unsafe(export_name = "...")]`, and `#[unsafe(link_section = "...")]` — not the bare attribute forms.
-- [`unsafe-means-ub`](rules/unsafe-means-ub.md) - Mark a function `unsafe` only when misuse can cause undefined behavior, not because the operation is merely dangerous
+- [`unsafe-means-ub`](rules/unsafe-means-ub.md) - Mark a function or trait `unsafe` only when misuse can cause undefined behavior, not because it is merely dangerous
+- [`unsafe-justify-use`](rules/unsafe-justify-use.md) - Use `unsafe` only for a novel abstraction, a measured hot path, or FFI / platform code — never as an ad-hoc shortcut
+- [`unsafe-sound-abstractions`](rules/unsafe-sound-abstractions.md) - Never expose a safe API that can hit undefined behavior; if the caller must uphold a UB precondition, the function is `unsafe`
 
 ### 5. API Design (HIGH)
 
@@ -163,6 +167,8 @@ Reference these guidelines when:
 - [`api-impl-rangebounds`](rules/api-impl-rangebounds.md) - Accept `impl RangeBounds<T>` for range parameters instead of a pair of endpoints or a concrete `Range`
 - [`api-service-clone`](rules/api-service-clone.md) - Expose long-lived services as cheap `Clone` handles around `Arc<Inner>`, not as fat values callers must wrap themselves
 - [`api-std-types-boundary`](rules/api-std-types-boundary.md) - Keep third-party types out of the public surface unless that crate is an intentional part of the contract
+- [`api-free-functions`](rules/api-free-functions.md) - Put construction on the type; put computation with no receiver at module scope
+- [`api-init-cascaded`](rules/api-init-cascaded.md) - Group four or more required constructor parameters into semantic helper types
 
 ### 6. Async/Await (HIGH)
 
@@ -187,6 +193,7 @@ Reference these guidelines when:
 - [`async-yield-cpu`](rules/async-yield-cpu.md) - Yield between chunks of long CPU work so other tasks can run
 - [`async-assert-send`](rules/async-assert-send.md) - Assert that public futures and handles are `Send` so they can move across Tokio workers
 - [`async-future-size`](rules/async-future-size.md) - Keep hot `async fn` state machines small: do not capture large values across `.await`, and box the heavy branch
+- [`async-fn-over-future`](rules/async-fn-over-future.md) - Declare public functions `async fn` instead of returning `impl Future` unless you must control the future
 
 ### 7. Concurrency (HIGH)
 
@@ -205,7 +212,7 @@ Reference these guidelines when:
 - [`opt-lto-release`](rules/opt-lto-release.md) - Enable LTO in release builds
 - [`opt-codegen-units`](rules/opt-codegen-units.md) - Set `codegen-units = 1` for maximum optimization in release builds
 - [`opt-pgo-profile`](rules/opt-pgo-profile.md) - Use Profile-Guided Optimization (PGO) for maximum performance
-- [`opt-target-cpu`](rules/opt-target-cpu.md) - Use `target-cpu=native` for maximum performance on known deployment targets
+- [`opt-target-cpu`](rules/opt-target-cpu.md) - Compile server applications for the highest CPU baseline guaranteed across the deployment fleet
 - [`opt-bounds-check`](rules/opt-bounds-check.md) - Use iterators and patterns that eliminate bounds checks in hot paths
 - [`opt-simd-portable`](rules/opt-simd-portable.md) - Use portable SIMD for vectorized operations across architectures
 - [`opt-cache-friendly`](rules/opt-cache-friendly.md) - Organize data for cache-efficient access patterns
@@ -240,7 +247,7 @@ Reference these guidelines when:
 - [`trait-blanket-impl`](rules/trait-blanket-impl.md) - Use a blanket impl `impl<T: Bound> Trait for T` to give behaviour to every type that satisfies a bound
 - [`trait-coherence-newtype`](rules/trait-coherence-newtype.md) - Respect the orphan rule; wrap a foreign type in a newtype to implement a foreign trait on it
 - [`trait-default-methods`](rules/trait-default-methods.md) - Define a trait in terms of a few required methods plus defaulted ones built on top of them
-- [`trait-dyn-vs-generic`](rules/trait-dyn-vs-generic.md) - Choose static dispatch (generics / `impl Trait`) vs dynamic dispatch (`dyn Trait`) deliberately
+- [`trait-dyn-vs-generic`](rules/trait-dyn-vs-generic.md) - Prefer concrete types, then a closed enum, then narrow traits with generic parameters; hide `dyn` behind a crate-owned wrapper
 - [`trait-object-safety`](rules/trait-object-safety.md) - Keep a trait dyn-compatible (object-safe) when you need `dyn Trait`
 
 ### 12. Conversions (MEDIUM)
@@ -287,6 +294,8 @@ Reference these guidelines when:
 - [`macro-proc-syn-quote`](rules/macro-proc-syn-quote.md) - Build procedural macros with `syn`, `quote`, and `proc-macro2`
 - [`macro-proc-error-spans`](rules/macro-proc-error-spans.md) - Report proc-macro errors as spanned compile errors, never by panicking
 - [`macro-no-rewrite-item`](rules/macro-no-rewrite-item.md) - Do not let a macro change an item's kind, signature, or async-ness from what the source shows
+- [`macro-declarative-before-proc`](rules/macro-declarative-before-proc.md) - Prefer `macro_rules!` over a procedural macro whenever the transform can be written by example
+- [`macro-no-implied-items`](rules/macro-no-implied-items.md) - Do not let a macro invent extra items the caller never wrote, especially public types
 
 ### 17. Closures (MEDIUM)
 
@@ -322,6 +331,7 @@ Reference these guidelines when:
 - [`name-acronym-word`](rules/name-acronym-word.md) - Treat acronyms as words in identifiers: `HttpServer`, not `HTTPServer`
 - [`name-crate-no-rs`](rules/name-crate-no-rs.md) - Don't suffix crate names with `-rs` or `-rust`
 - [`name-no-weasel`](rules/name-no-weasel.md) - Drop empty role words like `Service`, `Manager`, and `Factory` from type names
+- [`name-short-items`](rules/name-short-items.md) - Keep item names to about two short words; drop crate prefixes and lean on familiar abbreviations
 
 ### 20. Testing (MEDIUM)
 
@@ -332,16 +342,17 @@ Reference these guidelines when:
 - [`test-arrange-act-assert`](rules/test-arrange-act-assert.md) - Structure tests with clear Arrange, Act, Assert sections
 - [`test-proptest-properties`](rules/test-proptest-properties.md) - Use proptest for property-based testing
 - [`test-mockall-mocking`](rules/test-mockall-mocking.md) - Use mockall for trait mocking
-- [`test-mock-traits`](rules/test-mock-traits.md) - Use traits for dependencies to enable mocking in tests
+- [`test-mock-traits`](rules/test-mock-traits.md) - Put nondeterministic system effects behind a crate-owned native/test backend and return the test controller with the service
 - [`test-fixture-raii`](rules/test-fixture-raii.md) - Use RAII pattern (Drop trait) for automatic test cleanup
 - [`test-tokio-async`](rules/test-tokio-async.md) - Use `#[tokio::test]` for async tests
 - [`test-should-panic`](rules/test-should-panic.md) - Use `#[should_panic]` to test that code panics as expected
-- [`test-criterion-bench`](rules/test-criterion-bench.md) - Use `criterion` for benchmarking
+- [`test-criterion-bench`](rules/test-criterion-bench.md) - Use a statistical harness such as Criterion or Divan for repeatable benchmarks
 - [`test-doctest-examples`](rules/test-doctest-examples.md) - Keep documentation examples as executable doctests
 - [`test-loom-concurrency`](rules/test-loom-concurrency.md) - Use `loom` to exhaustively test lock-free and concurrent code
 - [`test-snapshot-testing`](rules/test-snapshot-testing.md) - Use snapshot testing (insta) for complex or serialized output
 - [`test-no-tautology`](rules/test-no-tautology.md) - Assert a property or observable outcome, not a constant restated from the source
 - [`test-util-feature`](rules/test-util-feature.md) - Gate mocks, invariant bypasses, and fake data behind an explicit test-only Cargo feature
+- [`test-observable-coverage`](rules/test-observable-coverage.md) - Cover observable behavior and failure modes so refactors can proceed without implementation-shaped tests
 
 ### 21. Documentation (MEDIUM)
 
@@ -359,6 +370,8 @@ Reference these guidelines when:
 - [`doc-crate-readme`](rules/doc-crate-readme.md) - Unify the README and crate root docs with `#![doc = include_str!("../README.md")]`
 - [`doc-first-sentence`](rules/doc-first-sentence.md) - Write the first rustdoc sentence as one short standalone line — about fifteen words — that still makes sense in the module index
 - [`doc-inline-reexport`](rules/doc-inline-reexport.md) - Put `#[doc(inline)]` on `pub use` of items you own so rustdoc shows them next to their siblings
+- [`doc-canonical-sections`](rules/doc-canonical-sections.md) - Structure public API docs as summary, details, examples, errors, panics, safety, and abort behavior where each applies
+- [`doc-no-meta-design`](rules/doc-no-meta-design.md) - Document the shipped crate for users; keep design history and process notes out of rustdoc
 
 ### 22. Observability (MEDIUM)
 
@@ -387,6 +400,7 @@ Reference these guidelines when:
 - [`perf-ahash`](rules/perf-ahash.md) - Use a faster hasher (`ahash` / `FxHashMap`) when DoS resistance is not needed
 - [`perf-io-buffering`](rules/perf-io-buffering.md) - Wrap `Read`/`Write` in `BufReader`/`BufWriter` for many small operations
 - [`perf-global-allocator`](rules/perf-global-allocator.md) - Pick the process global allocator on purpose in application crates; leave libraries on the system default
+- [`perf-batch-throughput`](rules/perf-batch-throughput.md) - Optimize for items finished per CPU cycle with batches, independent slices, and no idle spinning
 
 ### 24. Project Structure (LOW)
 
@@ -396,8 +410,8 @@ Reference these guidelines when:
 - [`proj-mod-rs-dir`](rules/proj-mod-rs-dir.md) - Use mod.rs for multi-file modules
 - [`proj-pub-crate-internal`](rules/proj-pub-crate-internal.md) - Use pub(crate) for internal APIs
 - [`proj-pub-super-parent`](rules/proj-pub-super-parent.md) - Use pub(super) for parent-only visibility
-- [`proj-pub-use-reexport`](rules/proj-pub-use-reexport.md) - Give each owned item one public path; re-export a foreign type only when it is part of your contract
-- [`proj-prelude-module`](rules/proj-prelude-module.md) - Scope a `prelude` to large trait-heavy libraries; typical crates should not define one
+- [`proj-pub-use-reexport`](rules/proj-pub-use-reexport.md) - Give each owned item one public path; let callers import foreign types from their defining crate
+- [`proj-prelude-module`](rules/proj-prelude-module.md) - Do not define a crate prelude; export a deliberate root and let callers import traits by name
 - [`proj-bin-dir`](rules/proj-bin-dir.md) - Put multiple binaries in src/bin/
 - [`proj-workspace-large`](rules/proj-workspace-large.md) - Use workspaces for large projects
 - [`proj-workspace-deps`](rules/proj-workspace-deps.md) - Use workspace dependency inheritance for consistent versions across crates
@@ -407,13 +421,16 @@ Reference these guidelines when:
 - [`proj-no-glob-reexport`](rules/proj-no-glob-reexport.md) - Re-export public items by name; do not `pub use foo::*` across modules or crates
 - [`proj-avoid-statics`](rules/proj-avoid-statics.md) - Do not store mutable or process-identity state in `static`; pass it in. Reserve `static` for immutable tables
 - [`proj-works-out-of-box`](rules/proj-works-out-of-box.md) - Default features must `cargo build` on tier-1 targets with only the Rust toolchain — no extra packages, env vars, or generated-at-install steps
+- [`proj-latest-edition`](rules/proj-latest-edition.md) - Create new crates and workspaces on the latest stable edition (2024 today)
+- [`proj-split-crates`](rules/proj-split-crates.md) - Extract independently useful modules into crates; join them again only as a thin umbrella
 
 ### 25. FFI & Interop (LOW)
 
 - [`ffi-logic-in-core`](rules/ffi-logic-in-core.md) - Keep business logic in a safe core crate; limit the `*-ffi` crate to translating pointers and status codes
 - [`ffi-sys-vs-ffi-name`](rules/ffi-sys-vs-ffi-name.md) - Name import wrappers `*-sys` and export shims `*-ffi`
 - [`ffi-native-escape-hatch`](rules/ffi-native-escape-hatch.md) - Give native-handle wrappers `from_native` / `into_native` / `as_native` so FFI code can cross the boundary without leaking the raw type everywhere
-- [`ffi-sys-crate-builds`](rules/ffi-sys-crate-builds.md) - Keep `-sys` crates hermetic: vendored C sources or a `pkg-config` probe, no one-off host tools on the default path
+- [`ffi-sys-crate-builds`](rules/ffi-sys-crate-builds.md) - Keep `-sys` crates hermetic: build verifiable vendored sources with Rust tooling and offer static or dynamic loading
+- [`ffi-dll-portable-state`](rules/ffi-dll-portable-state.md) - Share only portable, repr-stable values across Rust dynamic libraries; keep allocations, statics, TLS, and TypeId local to the DLL that created them
 
 ### 26. Clippy & Linting (LOW)
 
@@ -431,6 +448,7 @@ Reference these guidelines when:
 - [`lint-cfg-check`](rules/lint-cfg-check.md) - Enable `unexpected_cfgs` and declare known cfgs to catch feature-gate typos
 - [`lint-clippy-nursery-selected`](rules/lint-clippy-nursery-selected.md) - Enable high-value `clippy::nursery` lints selectively, not the whole group
 - [`lint-expect-override`](rules/lint-expect-override.md) - Prefer `#[expect(...)]` over `#[allow(...)]` when silencing a lint at an item
+- [`lint-static-verification`](rules/lint-static-verification.md) - Gate compiler and Clippy lints, formatting, dependency audits, feature combinations, unused dependencies, and unsafe-code checks in CI
 
 ### 27. Anti-patterns (REFERENCE)
 
@@ -449,6 +467,7 @@ Reference these guidelines when:
 - [`anti-format-hot-path`](rules/anti-format-hot-path.md) - Don't use format! in hot paths
 - [`anti-collect-intermediate`](rules/anti-collect-intermediate.md) - Don't collect intermediate iterators
 - [`anti-stringly-typed`](rules/anti-stringly-typed.md) - Don't use strings where enums or newtypes would provide type safety
+- [`anti-transliterated-port`](rules/anti-transliterated-port.md) - Port domain behavior into Rust; do not copy the source language's types, errors, or runtime architecture
 
 ---
 

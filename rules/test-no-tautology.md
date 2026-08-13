@@ -33,6 +33,14 @@ fn main() {
 }
 ```
 
+## Mutation Testing
+
+A mutation tool may generate a mutant for a constant or definition whose
+literal value has no independent behavioral oracle. Do not add a
+copy-the-literal assertion merely to kill that mutant. Mark the mutant as
+inapplicable in the mutation tool and keep a property test only when the
+property matters to users.
+
 ## See Also
 
 - [test-descriptive-names](test-descriptive-names.md) - a name that states the property makes a tautology obvious

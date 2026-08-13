@@ -19,12 +19,14 @@ fn on_evict(key: &str) {
 ## Good
 
 ```rust
-use tracing::info;
+use tracing::{event, Level};
 
 fn on_evict(key: &str) {
-    info!(
-        event = "cache.evict.success",
+    event!(
+        name: "cache.evict.success",
+        Level::INFO,
         cache.key = key,
+        message.template = "cache entry {cache.key} evicted",
         "cache entry evicted"
     );
 }
@@ -37,10 +39,14 @@ fn main() {
 ## Key Points
 
 - Keep the hierarchical event name stable across releases; renaming it breaks dashboards and saved queries.
-- Put values in fields, not in the event name or the message string.
+- Use `<component>.<operation>.<state>` names when that vocabulary fits (`cache.evict.success`, `db.query.failure`).
+- Put values in fields, not in the event name or a preformatted message.
+- A backend-facing message template may reference field names for human rendering; record the values only once as fields.
+- Third-party libraries must assume events can remain enabled under load. Keep hot inner loops free of telemetry when possible; otherwise emit one lightweight event per batch or state transition so operators can reconstruct the detail offline.
 
 ## See Also
 
 - [obs-structured-fields](obs-structured-fields.md) - named fields on the event; this rule names the event itself
+- [obs-levels-filter](obs-levels-filter.md) - filtering controls volume but does not make expensive event construction free
 - [obs-tracing-over-log](obs-tracing-over-log.md) - emit through `tracing`, not `println!`
 - [obs-no-sensitive-data](obs-no-sensitive-data.md) - a stable name does not excuse logging secrets

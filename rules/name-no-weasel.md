@@ -58,6 +58,26 @@ fn main() {
 }
 ```
 
+## Factories and Lifecycle
+
+Do not pass a `FooFactory` merely to create values later. Accept the capability
+you need:
+
+```rust
+fn populate(make_receipt: impl Fn() -> u64) -> Vec<u64> {
+    (0..3).map(|_| make_receipt()).collect()
+}
+
+fn main() {
+    assert_eq!(populate(|| 7), vec![7, 7, 7]);
+}
+```
+
+Likewise, do not invent a `ResourceManager` whose job is disposal. Put cleanup
+in the resource's `Drop` implementation so every ownership path follows the
+same lifecycle. Keep `Builder` only for a genuine staged constructor with
+optional or permutation-heavy configuration.
+
 ## See Also
 
 - [name-types-camel](name-types-camel.md) - casing still follows UpperCamelCase after the extra words come out

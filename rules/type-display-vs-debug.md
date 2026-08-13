@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`Debug` (`{:?}`) is for developers: logs, panic messages, test assertions, and `dbg!()`. It should always be derived and reflects internal structure. `Display` (`{}`) is for end users: CLI output, error messages surfaced to humans, and log fields meant to be read in production. `std::error::Error` requires `Display` so that error chains read naturally. Routing `Debug` output to users leaks implementation details; routing `Display` output to log frameworks loses structural information.
+`Debug` (`{:?}`) is for developers: logs, panic messages, test assertions, and `dbg!()`. Derive it for ordinary public types; write a redacting implementation for sensitive ones. `Display` (`{}`) is for end users: CLI output, error messages surfaced to humans, string-like wrappers, and log fields meant to be read in production. `std::error::Error` requires `Display` so that error chains read naturally. Routing `Debug` output to users leaks implementation details; routing `Display` output to log frameworks loses structural information.
 
 ## Bad
 
@@ -49,6 +49,16 @@ impl fmt::Display for ParseError {
 
 impl std::error::Error for ParseError {}
 
+#[derive(Debug)]
+struct Label(String);
+
+impl fmt::Display for Label {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Preserve the wrapped string's newlines and escape sequences.
+        f.write_str(&self.0)
+    }
+}
+
 fn main() {
     let e = ParseError { input: "foo bar".into(), line: 42 };
 
@@ -69,6 +79,8 @@ fn main() {
 
 - Never derive `Display` — it must be intentionally written.
 - `#[derive(Debug)]` on every public type (API Guidelines C-DEBUG).
+- Implement `Display` for public string-like wrappers rather than forcing callers to reach into the wrapper or use `Debug`.
+- Follow the wrapped value's rendering conventions, including newlines and escape sequences; do not route `Display` through `{:?}`.
 - If your error type implements `std::error::Error`, its `Display` output becomes the human-readable error message that propagates through `anyhow::Context` and similar.
 - The `{:#?}` pretty-print form is still `Debug`; use it in tests for readable assertion output, not in user-facing code.
 

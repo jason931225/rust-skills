@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   checks:
-    name: Validate & compile-check
+    name: Validate, test & compile-check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -40,6 +40,11 @@ fn main() {
 }
 ```
 
+The ecosystem has established spelling variants. An underscore may replace a
+hyphen in identifiers, and an abandoned binding crate may force a successor
+name such as `foo-sys2`. Preserve the import/export meaning even when registry
+history prevents the ideal spelling.
+
 ## See Also
 
 - [ffi-logic-in-core](ffi-logic-in-core.md) - the `*-ffi` crate only translates; logic lives in `foo`

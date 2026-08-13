@@ -7,19 +7,41 @@ published skill.
 ## Run
 
 ```bash
-# structural / link / index checks (no toolchain needed)
-python3 checks/validate.py
+# full local/CI gate (retrieves and verifies the pinned Microsoft source)
+bash checks/check.sh
 
-# compile-check the examples
+# individual focused behavior test
 cd checks
+cargo test --test microsoft_guidelines
+
+# individual example compile-check
 python3 gen.py                                              # extract blocks -> examples/
 cargo check --examples --keep-going --message-format=json > check.json
 python3 analyze.py check.json                               # classify results
 python3 analyze.py check.json --check-baseline baseline.txt # CI gate: fail on NEW suspects
 ```
 
-Both run in CI (`.github/workflows/ci.yml`): `validate` (Python only) and
-`examples` (pinned to Rust 1.95.0, the toolchain `baseline.txt` was generated on).
+The full gate runs in CI (`.github/workflows/ci.yml`): validation plus focused tests and
+examples pinned to Rust 1.95.0 (the toolchain `baseline.txt` was generated on).
+
+`validate.py` also checks the 89-item Microsoft Pragmatic Rust Guidelines
+v2026.6 coverage manifest at `microsoft_guidelines_coverage.json`: the pinned
+source revision and ID set cannot drift, every item has a disposition, and
+every mapped rule exists. It also records the non-rule navigation/context
+pages, nested-link audit, and known broken references in the pinned upstream
+tree so overlapping guidance is consolidated only after every source item is
+read. The focused Rust test executes representative
+contracts for reusable buffers, `Send` futures, semantic constructor groups,
+and redacted `Debug`. Static API-shape guidance remains enforced through the
+source-backed mapping plus the extracted-example compile gate rather than
+tautological runtime tests.
+
+For a standalone structural run, point the validator at an exact checkout:
+
+```bash
+MICROSOFT_RUST_GUIDELINES_ROOT=/path/to/microsoft-rust-guidelines \
+  python3 checks/validate.py
+```
 
 ## Updating the baseline
 

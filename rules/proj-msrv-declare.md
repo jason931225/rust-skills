@@ -45,9 +45,11 @@ CI job pinning the MSRV toolchain (GitHub Actions example):
 
 ## Choosing and Maintaining MSRV
 
-- Pick the oldest stable toolchain your users are realistically running (check distro packages, embedded targets, corporate freeze windows).
-- Do not go lower than needed — a lower MSRV widens the set of eligible dependency versions and can force you onto older, buggier releases.
+- Declare the MSRV when a library is created; retrofitting the promise after users depend on the crate is harder.
+- Keep it a few stable releases behind current Rust by default. Choose a wider lag only for measured user constraints such as embedded targets or a documented corporate freeze.
+- Do not chase the oldest toolchain that can compile by accident—a very low floor widens eligible dependency versions and can force users onto older, buggier releases.
 - When you bump MSRV, treat it as a semver-minor change (for libraries) and document it in your changelog.
+- A major version does not improve MSRV compatibility: downstream projects already resolve every dependency's toolchain floor, and an unnecessary major can split the graph into two versions.
 - Run `cargo msrv` (the `cargo-msrv` tool) to find the actual floor automatically.
 
 ## See Also

@@ -36,6 +36,12 @@ fn main() {
 }
 ```
 
+Umbrella crates may expose types from their own constituent crates because the
+facade is the product boundary. Likewise, a domain-specific ecosystem type may
+be intentional API currency. Keep embedded, `no_std`, and allocation-sensitive
+cores stricter: use core/alloc or owned domain types so a convenience
+dependency does not become a platform requirement.
+
 ## See Also
 
 - [api-serde-optional](api-serde-optional.md) - when a third-party type *is* the contract, put it behind a feature

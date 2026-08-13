@@ -16,8 +16,16 @@ semantic versioning for the rule set.
   `async-future-size`, `perf-global-allocator`, `api-std-types-boundary`,
   `obs-named-events`) and revises `proj-prelude-module` /
   `proj-pub-use-reexport` so they no longer contradict the Microsoft book.
+- Independent clause-level audit of all 89 nested guideline pages adds 19
+  consolidated rules for missing performance, AI, macro, FFI, unsafe, project,
+  API, error, testing, lint, and documentation contracts. Existing rules were
+  revised where topic-level mappings had omitted caveats or taught the inverse.
+- Executable coverage includes a pinned 89-item source/disposition manifest,
+  source-backed validation of every mapped rule and nested reference, focused
+  Rust behavior tests where runtime behavior exists, and the existing
+  extracted-example compile gate for API-shape guidance.
 
-Now 295 rules across 27 categories.
+Now 314 rules across 27 categories.
 
 ## [1.5.1]
 

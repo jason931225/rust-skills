@@ -1,10 +1,10 @@
 # proj-prelude-module
 
-> Scope a `prelude` to large trait-heavy libraries; typical crates should not define one
+> Do not define a crate prelude; export a deliberate root and let callers import traits by name
 
 ## Why It Matters
 
-A `prelude` glob (`use foo::prelude::*`) looks cheap until two crates both export `Client` and the build becomes `error[E0659]: Client is ambiguous`. Today's rust-analyzer already inserts named imports. Following Microsoft Pragmatic Rust Guidelines (M-NO-PRELUDE), ordinary libraries should not ship a prelude: it papers over a muddy root and fights every other glob in the crate. The remaining legitimate case is a *large, trait-heavy* library in the style of `std` or `rayon`, where calling the crate at all means bringing many traits into scope. Applications and typical libraries export named items at the root and stop.
+A `prelude` glob (`use foo::prelude::*`) looks cheap until two crates export the same name and the build becomes `error[E0659]: Client is ambiguous`. It also hides which trait enabled a method and lets a dependency add names to downstream scopes in a minor release. Rust-analyzer already inserts named imports. Following Microsoft Pragmatic Rust Guidelines (M-NO-PRELUDE), libraries should not ship a prelude or any other namespace intended for wildcard import. Export a deliberate root and let callers name the traits they use.
 
 ## Bad
 
@@ -40,9 +40,10 @@ fn main() {
 }
 ```
 
-## When a Prelude Is Justified
+## Import Extension Traits Explicitly
 
-A crate that is *about* a family of traits (parallel iterators, parser combinators, a web extractor stack) may ship one curated prelude. Keep it small, list every item in the module docs, and treat removals as breaking. Do not glob the rest of the crate into it (`proj-no-glob-reexport`).
+Trait-heavy APIs still do not require a prelude. Put the essential trait at a
+stable named path and show that import in every example:
 
 ```rust
 pub trait ParallelIterator {
@@ -62,13 +63,8 @@ impl<T> ParallelIterator for Vec<T> {
     }
 }
 
-/// Traits that must be in scope to use this crate's iterators.
-pub mod prelude {
-    pub use crate::ParallelIterator;
-}
-
 fn main() {
-    use prelude::ParallelIterator;
+    use crate::ParallelIterator;
     vec![1, 2, 3].for_each(|_| {});
 }
 ```
@@ -76,6 +72,6 @@ fn main() {
 ## See Also
 
 - [proj-pub-use-reexport](proj-pub-use-reexport.md) - one named public path, not a glob
-- [proj-no-glob-reexport](proj-no-glob-reexport.md) - a prelude is still a list, never `pub use crate::*`
+- [proj-no-glob-reexport](proj-no-glob-reexport.md) - wildcard public imports expand silently
 - [proj-mod-by-feature](proj-mod-by-feature.md) - fix the module layout before inventing a prelude
 - [api-extension-trait](api-extension-trait.md) - extension traits are the usual reason a large crate needs a prelude

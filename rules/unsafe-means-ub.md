@@ -1,33 +1,33 @@
 # unsafe-means-ub
 
-> Mark a function `unsafe` only when misuse can cause undefined behavior, not because the operation is merely dangerous
+> Mark a function or trait `unsafe` only when misuse can cause undefined behavior, not because it is merely dangerous
 
 ## Why It Matters
 
-`unsafe` is a contract about the abstract machine: call this wrong and you may get a data race, a wild pointer, or a broken validity invariant. Using it as a "this is scary" sticker trains callers to sprinkle `unsafe {}` around `rm -rf`. Under Microsoft Pragmatic Rust Guidelines (M-UNSAFE-IMPLIES-UB), `unsafe` is for UB risk only. A function that wipes a ledger, spends money, or pages on-call stays safe, gets a loud name, and documents the blast radius. `clippy::undocumented_unsafe_blocks` and `unsafe_op_in_unsafe_fn` only help if `unsafe` still means UB.
+`unsafe` is a contract about the abstract machine: use this wrong and you may get a data race, a wild pointer, or a broken validity invariant. Using it as a "this is scary" sticker trains callers to sprinkle `unsafe {}` around destructive operations. Under Microsoft Pragmatic Rust Guidelines (M-UNSAFE-IMPLIES-UB), `unsafe` is for UB risk only. A function that reboots a host, spends money, or pages on-call stays safe, gets a loud name, and documents the blast radius. The same test applies to traits: an `unsafe trait` means an incorrect implementation can let safe code cause UB.
 
 ## Bad
 
 ```rust
-pub unsafe fn wipe_ledger(name: &str) {
-    let _ = name;
+pub unsafe fn reboot_host(host: &str) {
+    let _ = host;
 }
 
-pub fn reset(name: &str) {
+pub fn restart(host: &str) {
     // Callers now need an unsafe block for a defined, if catastrophic, action.
-    unsafe { wipe_ledger(name) }
+    unsafe { reboot_host(host) }
 }
 ```
 
 ## Good
 
 ```rust
-/// Permanently drops every row in `name`.
+/// Immediately restarts `host`.
 ///
 /// This cannot cause undefined behavior. It *can* destroy production data.
-/// Callers must pass a name they have already authorized to erase.
-pub fn wipe_ledger(name: &str) {
-    let _ = name;
+/// Callers must pass a host they have already authorized to restart.
+pub fn reboot_host(host: &str) {
+    let _ = host;
 }
 
 /// # Safety
@@ -39,7 +39,7 @@ pub unsafe fn read_u32(ptr: *const u32) -> u32 {
 }
 
 fn main() {
-    wipe_ledger("scratch");
+    reboot_host("worker-7");
     let value = 7u32;
     let n = unsafe { read_u32(&value) };
     assert_eq!(n, 7);
@@ -50,6 +50,7 @@ fn main() {
 
 - The test is undefined behavior, not consequences: data races, invalid derefs, and aliasing violations are `unsafe`; deleting data or spending money is not.
 - Dangerous-but-defined operations stay safe, use a loud name, and document the blast radius.
+- Mark a trait `unsafe` only when safe code relies on every implementation upholding invariants that prevent UB; document those implementation obligations.
 
 ## See Also
 

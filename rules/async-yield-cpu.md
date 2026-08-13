@@ -24,6 +24,18 @@ async fn inflate_batch(items: &[&[u8]]) -> Vec<Vec<u8>> {
 }
 ```
 
+## Unpredictable Work
+
+A fixed item count is only a proxy for time. When item cost or batch length
+varies widely, use the cooperative-budget signal exposed by the hosting
+runtime and yield when its budget is exhausted. Tokio, for example, exposes
+`tokio::task::coop::has_budget_remaining()`. That API is Tokio-specific; a
+runtime-neutral library should put the policy behind its runtime adapter
+instead of leaking Tokio into its public API.
+
+For multi-millisecond CPU work, budget checks are not enough—move the work to
+`spawn_blocking` or a dedicated compute pool.
+
 ## Good
 
 ```rust

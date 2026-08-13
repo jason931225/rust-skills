@@ -141,16 +141,23 @@ let email: Email = serde_json::from_str(r#""user@example.com""#)?;
 ## Compile-Time Validation
 
 ```rust
-// For values known at compile time
-macro_rules! email {
-    ($s:literal) => {{
-        const _: () = assert!(is_valid_email_const($s));
-        Email::new_unchecked($s)
-    }};
+pub struct Month(u8);
+
+impl Month {
+    pub const fn new(value: u8) -> Self {
+        assert!(value >= 1 && value <= 12, "month must be in 1..=12");
+        Self(value)
+    }
 }
 
-let admin = email!("admin@example.com");  // Validated at compile time
+const JANUARY: Month = Month::new(1);
 ```
+
+Every conversion from a weaker representation is fallible. Do not implement
+`From<String>` or `From<u8>` when some inputs violate the invariant; use
+`TryFrom`, `FromStr`, or a constructor returning a proper error. An additional
+panicking `const fn` is appropriate for literals because an invalid constant
+fails at compile time.
 
 ## See Also
 

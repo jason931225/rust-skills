@@ -6,6 +6,11 @@
 
 Examples are the most valuable part of documentation. They show users exactly how to use your API. Rust's doc tests ensure examples stay correct as code evolves.
 
+Keep short, copyable calls in rustdoc. Put complete workflows that need setup,
+multiple modules, or external services under the repository's `examples/`
+directory and compile them in CI. Users and coding agents need both: a local
+answer beside the item and an end-to-end program they can run.
+
 ## Bad
 
 ```rust

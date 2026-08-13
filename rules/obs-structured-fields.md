@@ -59,10 +59,10 @@ fn handle_request(req: &Request, status: u16) {
 
 ## Key Points
 
-- Keep the message string short, stable, and human-readable. It should make sense *without* the fields.
+- Keep the message string short and stable. If the telemetry backend supports message templates, reference the structured field names rather than formatting their values eagerly.
 - Prefer `%` over `?` for values that have a clean `Display` (e.g., `%id`, `%path`) — JSON backends quote Debug output inconsistently.
 - Use namespaced field names like `user.id`, `http.status`, `db.query` when aligning to OpenTelemetry semantic conventions.
-- Avoid placing the same data in both the message and a field (redundant and noisy).
+- Record each value once as a field. A template placeholder that names that field is metadata, not a second serialized copy.
 
 ## See Also
 

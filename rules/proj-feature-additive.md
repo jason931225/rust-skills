@@ -58,10 +58,13 @@ use alloc::vec::Vec;
 
 ## Rules for Additive Features
 
-- A feature may add new items, trait impls, or dependencies — never gate-away existing ones.
+- A feature may add new items, trait impls, dependencies, or variants to an already `#[non_exhaustive]` enum—never gate away existing behavior.
 - If you ship a `no_std` crate, make `std` a feature in `default`, not the other way around.
-- Mutually exclusive features (e.g. `backend-a` vs `backend-b`) cannot be enforced by Cargo; emit a compile-time error via `compile_error!` if both are set, and document the limitation clearly.
+- Every feature must work in every unified combination. Do not publish mutually exclusive features, and do not use `compile_error!` as the normal backend-selection mechanism.
+- A feature enables every feature it requires; callers must not need to discover and add a second feature manually.
+- Do not rely on a parent crate suppressing a child dependency feature. Another graph path may enable it, and Cargo will unify it globally.
 - Use `dep:` syntax (`dep:serde`) to keep optional dependency names out of the feature namespace.
+- Name the capability (`serde`, `tls`, `metrics`), not a placeholder such as `extras`, `misc`, `full2`, or `unstable-stuff`.
 
 ## See Also
 

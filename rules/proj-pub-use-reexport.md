@@ -1,10 +1,10 @@
 # proj-pub-use-reexport
 
-> Give each owned item one public path; re-export a foreign type only when it is part of your contract
+> Give each owned item one public path; let callers import foreign types from their defining crate
 
 ## Why It Matters
 
-`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) is what Microsoft Pragmatic Rust Guidelines (M-SINGLE-ITEM-PATH) call a split identity: humans and agents keep both forever. Re-exporting `bytes::Bytes` so callers never depend on `bytes` is the twin foot-gun, unless `Bytes` actually appears in your signatures on purpose (M-FOREIGN-REEXPORTS). Hide the module, re-export the item once, and leak a third-party type only when it is deliberate API currency.
+`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) is what Microsoft Pragmatic Rust Guidelines (M-SINGLE-ITEM-PATH) call a split identity: humans and agents keep both forever. Re-exporting `bytes::Bytes` creates a second apparent owner for a foreign type. Even when that type appears in your signatures, callers should normally import it from `bytes` and declare the dependency themselves (M-FOREIGN-REEXPORTS). Hide your module, re-export your item once, and leave foreign identity with its defining crate.
 
 ## Bad
 
@@ -38,21 +38,18 @@ fn main() {
 
 ## Foreign Types
 
-Re-export a type from another crate only when that type is already in your public signatures and you are willing to semver-track that crate. Otherwise callers add the dependency themselves (`api-std-types-boundary`).
+Do not re-export a dependency merely because its type appears in your public
+signature. Callers need that dependency to name the type coherently, and its
+original path makes documentation and version diagnostics unambiguous.
 
-```rust
-// This crate's contract *is* a status code. The wrapper is ours; a real
-// `pub use http::StatusCode` follows the same rule when `http` is intentional.
-pub struct StatusCode(pub u16);
+Two narrow exceptions preserve one product boundary:
 
-pub fn not_found() -> StatusCode {
-    StatusCode(404)
-}
+- an umbrella crate may re-export items from its own constituent crates;
+- a facade may re-export an item from a technical split such as `foo_core`.
 
-fn main() {
-    let _ = not_found();
-}
-```
+Generated macros may also require a stable hidden path such as
+`foo::__private::DependencyType`. That path is an implementation channel, not
+a second user-facing import.
 
 ## Feature-Gated Re-exports
 
@@ -79,5 +76,6 @@ fn main() {
 - [proj-prelude-module](proj-prelude-module.md) - a prelude is the exception, not a second public path
 - [doc-inline-reexport](doc-inline-reexport.md) - `#[doc(inline)]` the one path you chose
 - [api-std-types-boundary](api-std-types-boundary.md) - most foreign types should not appear at all
+- [macro-private-helpers](macro-private-helpers.md) - the hidden stable-path exception for generated code
 - [api-non-exhaustive](api-non-exhaustive.md) - the public surface you flattened still needs a stability story
 - [proj-pub-crate-internal](proj-pub-crate-internal.md) - keep the un-exported tree `pub(crate)`

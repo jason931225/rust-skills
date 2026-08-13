@@ -118,7 +118,19 @@ impl Debug for Password {
         write!(f, "Password([REDACTED])")
     }
 }
+
+#[test]
+fn password_debug_never_exposes_the_secret() {
+    let rendered = format!("{:?}", Password("correct horse".to_owned()));
+    assert_eq!(rendered, "Password([REDACTED])");
+    assert!(!rendered.contains("correct horse"));
+}
 ```
+
+Any public type that can hold credentials, tokens, keys, or personal data needs
+a regression test beside its custom `Debug`. Review alone proves today's
+implementation; the test prevents a future derive or field addition from
+silently exposing the value.
 
 ## Serde Traits
 

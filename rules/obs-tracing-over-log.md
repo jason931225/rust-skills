@@ -47,6 +47,8 @@ fn main() {
 - Add to `Cargo.toml`: `tracing = "0.1"` for all crates; `tracing-subscriber = { version = "0.3", features = ["env-filter"] }` for binaries only.
 - The `%expr` sigil uses `Display`; `?expr` uses `Debug`; bare `field = value` records typed primitives.
 - `tracing` ships a `log` compatibility bridge: set `tracing-subscriber`'s `log` feature or call `tracing_log::LogTracer::init()` to capture existing `log`-emitting dependencies.
+- `println!` is valid for a CLI's intentional user interface on stdout. Diagnostics, progress internals, and library output still go through telemetry (or an explicit CLI renderer).
+- Remove `dbg!` from production paths; it writes unstructured file/line diagnostics to stderr.
 
 ## See Also
 

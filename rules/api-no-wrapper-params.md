@@ -84,6 +84,13 @@ impl SharedSnapshot {
 }
 ```
 
+## Measured Exception
+
+A measured hot-path win can justify exposing a wrapper when callers need the
+same representation and the alternative copies substantial data. Require a
+benchmark and document the ownership consequence; "it might be faster" is not
+an exception.
+
 ## See Also
 
 - [own-arc-shared](own-arc-shared.md) - share with `Arc` behind a type, not in every parameter
