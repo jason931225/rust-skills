@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A library that looks snappy on one record can still be expensive at fleet scale: each item pays a lock, a task hop, or a cache miss, and most of those cycles produce nothing. Microsoft Pragmatic Rust Guidelines (M-THROUGHPUT) treat *items per CPU cycle* as the headline metric. Latency still matters — extra machines raise volume, they do not shrink one request's wait — but do not buy that wait-time with idle cores, one-record APIs, or contended shared state. Batching is a tool, not a law: a single interactive request with a latency SLO should not sit in a queue just to look batched.
+A library that looks snappy on one record can still be expensive at fleet scale: each item pays a lock, a task hop, or a cache miss, and most of those cycles produce nothing. Treat *items per CPU cycle* as a primary throughput metric. Latency still matters — extra machines raise volume, they do not shrink one request's wait — but do not buy that wait-time with idle cores, one-record APIs, or contended shared state. Batching is a tool, not a law: a single interactive request with a latency SLO should not sit in a queue just to look batched.
 
 ## Bad
 

@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A safe `WindowId` that hides the OS value is useless the moment a caller already has a HWND from C, or must pass yours into another library. Following Microsoft Pragmatic Rust Guidelines (M-ESCAPE-HATCHES), provide a documented, `unsafe` conversion pair: `from_native` states the ownership and validity rules, `into_native` / `as_native` give the integer or pointer back. Keep those methods on the wrapper; do not publish the raw type as the crate's currency (`ffi-logic-in-core`).
+A safe `WindowId` that hides the OS value is useless the moment a caller already has a HWND from C, or must pass yours into another library. Provide a documented conversion pair: `from_native` states the ownership and validity rules, while `into_native` or `as_native` gives the integer or pointer back. Keep those methods on the wrapper; do not publish the raw type as the crate's currency (`ffi-logic-in-core`).
 
 ## Bad
 
@@ -57,6 +57,7 @@ fn main() {
     let window = WindowId::new(0x100);
     assert_eq!(window.as_native(), 0x100);
     let raw = window.into_native();
+    // SAFETY: `raw` came from the sole owning wrapper and has not been reused.
     let _ = unsafe { WindowId::from_native(raw) };
 }
 ```

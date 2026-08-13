@@ -1,234 +1,131 @@
 # err-canonical-struct
 
-> Expose library errors as situation-specific opaque structs with a private kind, captured backtrace, and `is_*` helpers
+> Keep extensible library errors opaque, preserve `source()`, and expose only stable recovery queries
 
 ## Why It Matters
 
-A public error enum freezes every failure mode as part of the crate's API. Adding an internal case, wrapping a new upstream crate, or hiding an unhandleable fault becomes a breaking change, and callers start matching on details they cannot recover from. Microsoft Pragmatic Rust Guidelines (M-ERRORS-CANONICAL-STRUCTS) keep each error a situation-specific struct that owns a `Backtrace`, an optional cause, and the accessors callers actually need. Simple crates export one `Error`; larger crates split by domain (`AccessError`, `ConfigurationError`) instead of one global enum. Callers classify with `is_*` helpers and context getters, not by matching public variants.
+A public enum makes every variant part of the compatibility contract. That is
+appropriate when callers must exhaustively handle a closed domain, but it is a
+poor fit for an evolving library boundary with internal and upstream failure
+modes. An opaque, situation-specific struct can add internal causes without a
+breaking change while still participating in Rust's standard error chain.
+
+Opacity must not discard interoperability. `Display` provides concise context;
+`Error::source()` exposes the underlying cause to reporters and downcasting;
+`Debug` or the application reporter decides whether to include the complete
+chain and backtrace.
 
 ## Bad
 
 ```rust
-// One crate-wide enum so every function can "just" return it.
-// Callers match on variants you consider internal, and you cannot
-// add a failure mode without a breaking change.
-pub enum GlobalEverythingErrorEnum {
-    DownloadFailed,
-    VmBootFailed,
-    JsonBroken,
-    TomlBroken,
+#[derive(Debug)]
+pub enum GlobalError {
     Io(std::io::Error),
+    Protocol,
+    Configuration,
 }
 
-fn download_iso() -> Result<(), GlobalEverythingErrorEnum> {
-    Err(GlobalEverythingErrorEnum::DownloadFailed)
+impl std::fmt::Display for GlobalError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Embedding every cause and backtrace here makes normal messages noisy
+        // and duplicates output from reporters that walk source().
+        write!(f, "{self:?}")
+    }
 }
 
-fn start_vm() -> Result<(), GlobalEverythingErrorEnum> {
-    Err(GlobalEverythingErrorEnum::VmBootFailed)
-}
-
-// Distinct parse situations get distinct variants instead of one reusable type.
-fn parse_json() -> Result<(), GlobalEverythingErrorEnum> {
-    Err(GlobalEverythingErrorEnum::JsonBroken)
-}
-
-fn parse_toml() -> Result<(), GlobalEverythingErrorEnum> {
-    Err(GlobalEverythingErrorEnum::TomlBroken)
-}
-
-fn is_io(err: &GlobalEverythingErrorEnum) -> bool {
-    matches!(err, GlobalEverythingErrorEnum::Io(_))
-}
+impl std::error::Error for GlobalError {}
 ```
 
 ## Good
 
 ```rust
-use std::backtrace::Backtrace;
+use std::error::Error as StdError;
 use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
+enum ConfigurationErrorKind {
+    Io(std::io::Error),
+    InvalidSyntax,
+}
+
+#[derive(Debug)]
 pub struct ConfigurationError {
-    backtrace: Backtrace,
-    config_file: PathBuf,
+    file: PathBuf,
+    kind: ConfigurationErrorKind,
 }
 
 impl ConfigurationError {
-    pub(crate) fn new(config_file: PathBuf) -> Self {
+    pub(crate) fn io(file: PathBuf, error: std::io::Error) -> Self {
         Self {
-            backtrace: Backtrace::capture(),
-            config_file,
+            file,
+            kind: ConfigurationErrorKind::Io(error),
         }
     }
 
-    pub fn config_file(&self) -> &Path {
-        &self.config_file
+    pub fn file(&self) -> &Path {
+        &self.file
+    }
+
+    pub fn is_invalid_syntax(&self) -> bool {
+        matches!(self.kind, ConfigurationErrorKind::InvalidSyntax)
     }
 }
 
 impl Display for ConfigurationError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        // Summary sentence of what happened.
-        writeln!(
-            f,
-            "failed to load configuration from {}",
-            self.config_file.display()
-        )?;
-        // Captured backtrace (empty unless the process asked for one).
-        write!(f, "{}", self.backtrace)
+        write!(f, "failed to load configuration from {}", self.file.display())
     }
 }
 
-impl std::error::Error for ConfigurationError {}
-```
-
-## Domain Grouping
-
-Split public error types when the situations do not overlap. Reuse a type when they do. Do not invent a new type per function, and do not collapse unrelated domains into one enum just to avoid extra structs.
-
-```rust
-// Prefer this
-fn download_iso() -> Result<(), DownloadError> {
-    Err(DownloadError)
-}
-fn start_vm() -> Result<(), VmError> {
-    Err(VmError)
-}
-
-// Over that
-fn download_iso_bad() -> Result<(), GlobalEverythingErrorEnum> {
-    Err(GlobalEverythingErrorEnum)
-}
-fn start_vm_bad() -> Result<(), GlobalEverythingErrorEnum> {
-    Err(GlobalEverythingErrorEnum)
-}
-
-// However, not every function warrants a new error type. Errors
-// should be general enough to be reused.
-fn parse_json() -> Result<(), ParseError> {
-    Err(ParseError)
-}
-fn parse_toml() -> Result<(), ParseError> {
-    Err(ParseError)
-}
-
-pub struct DownloadError;
-pub struct VmError;
-pub struct ParseError;
-pub struct GlobalEverythingErrorEnum;
-```
-
-## Private Kind and `is_*` Helpers
-
-If the API mixes operations or wraps several upstream libraries, store an inner `ErrorKind`. Keep that enum crate-private so you do not publish every failure mode — including internal, unhandleable ones. Expose `is_*` helpers instead of letting callers match public variants.
-
-```rust
-use std::backtrace::Backtrace;
-
-#[derive(Debug)]
-pub(crate) enum ErrorKind {
-    Io(std::io::Error),
-    Protocol,
-}
-
-#[derive(Debug)]
-pub struct HttpError {
-    kind: ErrorKind,
-    backtrace: Backtrace,
-}
-
-impl HttpError {
-    pub fn is_io(&self) -> bool {
-        matches!(&self.kind, ErrorKind::Io(_))
-    }
-
-    pub fn is_protocol(&self) -> bool {
-        matches!(&self.kind, ErrorKind::Protocol)
-    }
-}
-```
-
-`err-custom-type` still applies to closed application domains where matching on variants is the product. A library surface that must evolve uses this opaque struct: `thiserror` may generate `Display` / `Error` boilerplate, but the public type is not a matchable enum of every internal cause.
-
-## Construction and Conversion
-
-Most upstream errors do not provide a backtrace. Capture one when you construct the error — either in an `Error::new()` flavor or in `From<UpstreamError>`.
-
-```rust
-use std::backtrace::Backtrace;
-
-impl HttpError {
-    pub(crate) fn new(kind: ErrorKind) -> Self {
-        Self {
-            kind,
-            backtrace: Backtrace::capture(),
-        }
-    }
-}
-
-impl From<std::io::Error> for HttpError {
-    fn from(err: std::io::Error) -> Self {
-        Self::new(ErrorKind::Io(err))
-    }
-}
-
-impl HttpError {
-    pub fn io_source(&self) -> Option<&std::io::Error> {
+impl StdError for ConfigurationError {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match &self.kind {
-            ErrorKind::Io(err) => Some(err),
-            ErrorKind::Protocol => None,
+            ConfigurationErrorKind::Io(error) => Some(error),
+            ConfigurationErrorKind::InvalidSyntax => None,
         }
     }
 }
-```
 
-Use `From` for owned conversions so `?` works (`err-from-impl`). Reach for `map_err` only when the type is foreign or you must attach extra context (`err-context-chain`).
-
-## Display and `Error`
-
-`Display` renders a summary sentence, the captured backtrace, and any upstream
-cause. Because that rendering already includes the cause, use an empty
-`std::error::Error` implementation for this convention; do not also return the
-same cause from `source()` and make reporters print it twice.
-
-```rust
-use std::fmt::{Display, Formatter};
-
-impl Display for HttpError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        // Print a summary sentence what happened.
-        writeln!(f, "http request failed")?;
-        // Print `self.backtrace`.
-        writeln!(f, "{}", self.backtrace)?;
-        // Print any additional upstream 'cause' information you might have.
-        if let ErrorKind::Io(err) = &self.kind {
-            write!(f, "{err}")?;
-        }
-        Ok(())
-    }
+fn main() {
+    let error = ConfigurationError::io(
+        PathBuf::from("settings.toml"),
+        std::io::Error::other("unavailable"),
+    );
+    assert_eq!(error.to_string(), "failed to load configuration from settings.toml");
+    assert!(error.source().is_some());
 }
-
-impl std::error::Error for HttpError {}
 ```
 
-If the crate emits many errors, add a private `bail!()` helper that constructs the struct and returns `Err`. Do not publish that macro.
+## Choosing the Public Shape
 
-## Backtrace Cost
+- Use a public enum for a deliberately closed domain whose variants are the
+  recovery protocol.
+- Use an opaque struct when internal causes may evolve independently of caller
+  recovery behavior.
+- Split unrelated situations into separate error types; do not create one
+  crate-wide catch-all merely to standardize a name.
+- Expose stable queries such as `is_not_found()` or typed context accessors.
+  Do not mirror every private kind with a public boolean.
 
-A trace connects an error reported much later to the call site that created it,
-which is especially useful after asynchronous handoffs. `Backtrace::capture()`
-consults the standard backtrace environment policy and avoids walking frames
-when capture is disabled. Keep capture in the constructor and let operators
-enable it for diagnosis; benchmark an error-heavy hot path before designing a
-custom suppression mechanism.
+## Error and Backtrace Contract
+
+- Keep `Display` concise and single-line unless the surrounding API explicitly
+  defines another format.
+- Return the immediate underlying error from `source()`. Generic reporters own
+  traversal and presentation of the chain.
+- Capture a backtrace only when the application error strategy does not already
+  provide one and operational evidence justifies the per-error cost. Keep its
+  rendering out of `Display`.
+- Use `From` when conversion preserves enough context; use `map_err` or a
+  constructor when the operation, resource, or identifier must be attached.
+- Redact credentials, tokens, and sensitive user data from every representation.
 
 ## See Also
 
-- [err-custom-type](err-custom-type.md) - closed application domains may still use matchable enums; library surfaces that must evolve stay opaque
-- [err-from-impl](err-from-impl.md) - capture the backtrace inside `From`, then let `?` convert
-- [err-source-chain](err-source-chain.md) - alternative convention: omit the cause from `Display` and expose it through `source()`
-- [err-context-chain](err-context-chain.md) - attach situation text without making the kind public
-- [err-thiserror-lib](err-thiserror-lib.md) - generate `Display` / `Error` boilerplate; do not publish every derived variant
-- [api-non-exhaustive](api-non-exhaustive.md) - if a kind must be public, it is still not a substitute for `is_*` helpers
+- [err-custom-type](err-custom-type.md) - public enums for closed recovery protocols
+- [err-source-chain](err-source-chain.md) - preserve standard cause traversal
+- [err-context-chain](err-context-chain.md) - attach operation context at boundaries
+- [err-from-impl](err-from-impl.md) - owned conversions for `?`
+- [err-thiserror-lib](err-thiserror-lib.md) - derive boilerplate without exposing internals
+- [obs-no-sensitive-data](obs-no-sensitive-data.md) - redact diagnostics

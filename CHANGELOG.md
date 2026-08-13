@@ -8,38 +8,26 @@ semantic versioning for the rule set.
 
 ### Added
 - Microsoft Pragmatic Rust Guidelines (v2026.6) coverage for issue #3.
-  First commit added 14 rules plus an `ffi-` category. Follow-up adds 16
-  more (`api-impl-rangebounds`, `async-assert-send`, `api-service-clone`,
-  `proj-avoid-statics`, `err-catch-unwind-boundary`, `unsafe-means-ub`,
-  `ffi-native-escape-hatch`, `ffi-sys-crate-builds`, `proj-works-out-of-box`,
-  `test-util-feature`, `doc-first-sentence`, `doc-inline-reexport`,
-  `async-future-size`, `perf-global-allocator`, `api-std-types-boundary`,
-  `obs-named-events`) and revises `proj-prelude-module` /
-  `proj-pub-use-reexport` so they no longer contradict the Microsoft book.
-- Independent clause-level audit of all 89 nested guideline pages adds 19
-  consolidated rules for missing performance, AI, macro, FFI, unsafe, project,
-  API, error, testing, lint, and documentation contracts. Existing rules were
-  revised where topic-level mappings had omitted caveats or taught the inverse.
-- Executable coverage includes a pinned 89-item source/disposition manifest,
-  source-backed validation of every mapped rule and nested reference, focused
-  Rust behavior tests where runtime behavior exists, and the existing
-  extracted-example compile gate for API-shape guidance.
-- A full section-level audit of *Zero To Production In Rust* adds portable
-  production-service contracts for health probes, extract-before-effects HTTP
-  boundaries, black-box server tests, typed layered configuration, database
-  migrations and transactions, reusable deadline-bound HTTP clients, request
-  correlation, protocol-neutral error mapping, password authentication,
-  server-side session security, reproducible runtime artifacts, continuous
-  delivery, idempotent request replay, durable worker recovery, and thin
-  vertical delivery slices. Unicode input limits now name their counting unit
-  and keep output escaping separate from validation. Browser security,
-  fail-closed authorization, authenticated TLS, and password recovery are
-  expressed as independent defense-in-depth contracts. Production processes
-  pin stable Rust and externalize durable state so replicas remain disposable.
-  Provider- and version-specific tutorial steps are dispositioned instead of
-  imported as timeless Rust guidance.
+  The source audit adds original rules and revises existing guidance where
+  topic-level mappings omitted caveats or taught the inverse.
+- Executable source coverage includes a pinned 89-item Microsoft manifest,
+  source-backed inventory and nested-reference checks, focused behavioral
+  examples where runtime behavior exists, and extracted-example compilation.
+- A 431-unit audit of *Zero To Production In Rust* adds durable production
+  contracts while explicitly dispositioning obsolete and product-specific
+  tutorial recipes.
+- Rust 1.95 through 1.97 guidance for atomic update helpers, conditional
+  selection, `if let` guards, integer bit APIs, warning policy, and consistent
+  ordering implementations.
 
-Now 337 rules across 27 categories.
+### Changed
+- Pinned the compile-check toolchain and CI to Rust 1.97.1 and updated existing
+  conversion, `NonZero`, workspace, collection, cfg, lint, and unsafe/FFI
+  guidance for the 1.95–1.97 releases.
+- Added focused release-behavior checks; generated examples remain checked
+  against the reviewed baseline.
+
+Now 343 rules across 27 categories.
 
 ## [1.5.1]
 
@@ -118,6 +106,7 @@ Now 218 rules across 18 categories.
 ### Added
 - Initial release: 179 rules across 14 categories.
 
+[Unreleased]: https://github.com/leonardomso/rust-skills
 [1.5.0]: https://github.com/leonardomso/rust-skills
 [1.4.0]: https://github.com/leonardomso/rust-skills
 [1.3.0]: https://github.com/leonardomso/rust-skills

@@ -1,69 +1,81 @@
 # async-yield-cpu
 
-> Yield between chunks of long CPU work so other tasks can run
+> Bound CPU work on executor threads; consume cooperative budget or move sustained work to a compute pool
 
 ## Why It Matters
 
-An `async fn` that inflates a whole archive without awaiting never gives the runtime a chance to poll anything else on that worker. I/O-bound loops already yield at each `.await`; CPU-bound loops do not. Following Microsoft Pragmatic Rust Guidelines (M-YIELD-POINTS), insert an explicit `yield_now().await` every few tens of microseconds of compute so one request cannot starve the rest of the process.
+A future that performs a long computation without reaching a suspension point
+can monopolize an executor worker. Unconditional yielding after every tiny item
+solves starvation by replacing it with scheduler overhead. Define a bounded
+chunk or time budget, yield through the runtime's cooperative mechanism, and
+move sustained or parallel CPU work off the async executor.
 
 ## Bad
 
 ```rust
-fn inflate_chunk(item: &[u8]) -> Vec<u8> {
-    item.to_vec()
+async fn transform(items: &[Vec<u8>]) -> Vec<Vec<u8>> {
+    let mut output = Vec::new();
+    for item in items {
+        output.push(expensive_transform(item));
+    }
+    output
 }
 
-async fn inflate_batch(items: &[&[u8]]) -> Vec<Vec<u8>> {
-    let mut out = Vec::new();
-    for item in items {
-        // No await in the loop: this future occupies the worker until every
-        // item is done.
-        out.push(inflate_chunk(item));
-    }
-    out
+fn expensive_transform(item: &[u8]) -> Vec<u8> {
+    item.to_vec()
 }
 ```
 
-## Unpredictable Work
-
-A fixed item count is only a proxy for time. When item cost or batch length
-varies widely, use the cooperative-budget signal exposed by the hosting
-runtime and yield when its budget is exhausted. Tokio, for example, exposes
-`tokio::task::coop::has_budget_remaining()`. That API is Tokio-specific; a
-runtime-neutral library should put the policy behind its runtime adapter
-instead of leaking Tokio into its public API.
-
-For multi-millisecond CPU work, budget checks are not enough—move the work to
-`spawn_blocking` or a dedicated compute pool.
+A sufficiently large or expensive batch prevents unrelated tasks on that
+worker from being polled.
 
 ## Good
 
 ```rust
-fn inflate_chunk(item: &[u8]) -> Vec<u8> {
-    item.to_vec()
-}
+async fn transform(items: &[Vec<u8>]) -> Vec<Vec<u8>> {
+    let mut output = Vec::with_capacity(items.len());
+    for chunk in items.chunks(64) {
+        output.extend(chunk.iter().map(|item| expensive_transform(item)));
 
-async fn inflate_batch(items: &[&[u8]]) -> Vec<Vec<u8>> {
-    let mut out = Vec::new();
-    for item in items {
-        out.push(inflate_chunk(item));
-        // Yield so other tasks on this worker can run between chunks.
-        tokio::task::yield_now().await;
+        // Tokio consumes cooperative budget and yields only when exhausted.
+        tokio::task::consume_budget().await;
     }
-    out
+    output
 }
 
-#[tokio::main(flavor = "current_thread")]
-async fn main() {
-    let blob: &[u8] = b"payload";
-    let items = [blob, blob];
-    let out = inflate_batch(&items).await;
-    assert_eq!(out.len(), 2);
+fn expensive_transform(item: &[u8]) -> Vec<u8> {
+    item.to_vec()
 }
 ```
 
+The chunk size is a measured latency/throughput policy, not a universal
+constant. A runtime-neutral library should put the cooperative operation
+behind its runtime adapter instead of exposing Tokio in its public API.
+
+## Sustained Work
+
+Use `spawn_blocking` with explicit admission bounds for unavoidable
+synchronous calls. Use a fixed compute pool for sustained or parallel CPU
+work. Cooperative yielding keeps a short mixed workload responsive; it does
+not add capacity or make unbounded CPU work safe.
+
+## Key Points
+
+- Measure worst-case uninterrupted execution, not only item count.
+- Yield at a bounded chunk or runtime budget boundary, never after every cheap
+  operation by default.
+- Tokio's `has_budget_remaining()` only observes budget. Use
+  `consume_budget().await` when a pure computation must participate in its
+  cooperative scheduler.
+- Bound admission to compute pools so overload becomes backpressure instead of
+  an unbounded task or thread queue.
+- Do not hold locks or transactions across a cooperative yield.
+- Test tail latency and throughput under concurrent load before fixing a chunk
+  size in policy.
+
 ## See Also
 
-- [async-spawn-blocking](async-spawn-blocking.md) - move multi-millisecond CPU work off the runtime entirely
-- [async-join-parallel](async-join-parallel.md) - split independent chunks into concurrent tasks after you can yield
-- [async-no-lock-await](async-no-lock-await.md) - do not hold a lock across the yield point you just added
+- [async-spawn-blocking](async-spawn-blocking.md) - isolate sustained CPU or blocking work
+- [async-bounded-channel](async-bounded-channel.md) - apply admission backpressure
+- [async-no-lock-await](async-no-lock-await.md) - release guards before yielding
+- [perf-profile-first](perf-profile-first.md) - measure the scheduling trade-off

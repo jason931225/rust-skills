@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A server constructs one client, one clock, one telemetry sink, and then needs that same instance in a dozen handlers. If `Clone` deep-copies the service, callers invent their own `Arc` and your type leaks into every signature. Under Microsoft Pragmatic Rust Guidelines (M-SERVICES-CLONE), a service is a handle: `Clone` bumps a refcount, methods forward to `Inner`. That is an API convention, not the same claim as "use `Arc` when you share" (`own-arc-shared`).
+A server constructs one client, one clock, one telemetry sink, and then needs that same instance in a dozen handlers. If `Clone` deep-copies the service, callers invent their own `Arc` and your type leaks into every signature. Model a service as a handle: `Clone` bumps a refcount and methods forward to `Inner`. That is an API convention, not the same claim as "use `Arc` when you share" (`own-arc-shared`).
 
 ## Bad
 

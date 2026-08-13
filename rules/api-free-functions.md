@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Rust functions do not need a type to live on. `Decoder::validate_shape(rows, cols)` forces every caller to name a type that is not an argument and is not returned. Per Microsoft Pragmatic Rust Guidelines (M-REGULAR-FN), inherent associated functions are for creating a value (`new`, `with_capacity`, `from_parts`). Work that has no `self` and does not produce `Self` belongs next to the type as a module-level function. Methods with a receiver stay on the type.
+Rust functions do not need a type to live on. `Decoder::validate_shape(rows, cols)` forces every caller to name a type that is not an argument and is not returned. Inherent associated functions are for creating a value (`new`, `with_capacity`, `from_parts`). Work that has no `self` and does not produce `Self` belongs next to the type as a module-level function. Methods with a receiver stay on the type.
 
 This is the opposite pressure from `api-inherent-core`: essential *instance* behavior remains inherent so rustdoc and completion show it. Do not "clean up" `decode(&self)` into a free function.
 

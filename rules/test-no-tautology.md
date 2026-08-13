@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A test that copies `[1, 2, 4, 8]` into both the production item and the assertion cannot fail unless someone edits only one side. Those tests satisfy a coverage counter and then rot. Per Microsoft Pragmatic Rust Guidelines (M-TAUTOLOGICAL-TESTS), reject tautological tests: check a property the values must keep (spacing, monotonicity, a parse round-trip) or drop the test.
+A test that copies `[1, 2, 4, 8]` into both the production item and the assertion cannot fail unless someone edits only one side. Those tests satisfy a coverage counter and then rot. Reject tautological tests: check a property the values must keep (spacing, monotonicity, a parse round-trip) or drop the test.
 
 ## Bad
 

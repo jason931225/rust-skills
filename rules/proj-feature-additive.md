@@ -4,7 +4,11 @@
 
 ## Why It Matters
 
-Cargo unifies features across the dependency graph: if any crate in the build enables a feature, every consumer of that crate gets it. A feature that removes or changes existing behavior will break crates that depend on the baseline behavior the moment a third dependency enables it. Features must only add capability — new trait impls, additional dependencies, optional integrations — never subtract. Mutually exclusive features are an anti-pattern in the Cargo model.
+Features should add capability or dependency support without removing the
+baseline contract. Even an added trait implementation can create coherence or
+method-resolution conflicts, so it needs ordinary API compatibility review.
+Mutually exclusive backend features do not compose under unification; model
+runtime/provider choice as data or separate facade crates instead.
 
 ## Bad
 
@@ -38,29 +42,35 @@ std = []
 
 # Optional integrations — purely additive
 serde = ["dep:serde"]
-tokio = ["dep:tokio"]
+tokio = ["std", "dep:tokio"]
 
 [dependencies]
-serde = { version = "1", optional = true }
-tokio = { version = "1", optional = true }
+serde = { version = "1", optional = true, default-features = false, features = ["alloc", "derive"] }
+tokio = { version = "1", optional = true, default-features = false, features = ["rt"] }
 ```
 
 ```rust
 // lib.rs — std is opt-in, no_std is the default baseline
-#![cfg_attr(not(feature = "std"), no_std)]
+// Crate-root attribute:
+// #![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(feature = "std")]
-use std::vec::Vec;
+#[cfg(not(feature = "std"))]
+extern crate alloc;
 
 #[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
+#[cfg(feature = "std")]
+use std::vec::Vec;
 ```
 
 ## Rules for Additive Features
 
-- A feature may add new items, trait impls, dependencies, or variants to an already `#[non_exhaustive]` enum—never gate away existing behavior.
+- A feature may add items, dependencies, or integrations, but every added
+  public impl or variant still needs coherence and semver review.
 - If you ship a `no_std` crate, make `std` a feature in `default`, not the other way around.
 - Every feature must work in every unified combination. Do not publish mutually exclusive features, and do not use `compile_error!` as the normal backend-selection mechanism.
+- Test `--no-default-features`, each feature individually, `--all-features`,
+  and supported pairwise/high-risk combinations on every applicable target.
 - A feature enables every feature it requires; callers must not need to discover and add a second feature manually.
 - Do not rely on a parent crate suppressing a child dependency feature. Another graph path may enable it, and Cargo will unify it globally.
 - Use `dep:` syntax (`dep:serde`) to keep optional dependency names out of the feature namespace.

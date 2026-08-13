@@ -64,8 +64,8 @@ adding a rule, improving an existing one, or fixing an example.
 Run the same checks CI runs:
 
 ```bash
-# Pins and validates the Microsoft source, checks structure/index parity,
-# runs focused behavior tests, and compile-checks extracted examples.
+# Pins and validates source evidence, checks structure/index parity, runs both
+# focused behavior suites, and compile-checks extracted examples on Rust 1.97.1.
 bash checks/check.sh
 ```
 

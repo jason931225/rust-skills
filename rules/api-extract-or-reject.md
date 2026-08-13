@@ -64,7 +64,7 @@ fn main() {
     let email = SubscriberEmail::try_from(RawSubscribe {
         email: "user@example.com".to_owned(),
     })
-    .unwrap();
+    .expect("literal contains a non-empty local and domain");
     let _ = SubscribeRequest { email };
 }
 ```

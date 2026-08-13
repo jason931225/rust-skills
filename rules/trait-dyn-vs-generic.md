@@ -1,176 +1,144 @@
 # trait-dyn-vs-generic
 
-> Prefer concrete types, then a closed enum, then narrow traits with generic parameters; hide `dyn` behind a crate-owned wrapper
+> Choose concrete types, enums, generics, or `dyn Trait` from the substitution and ownership contract
 
 ## Why It Matters
 
-It is easy to port an `IDatabase` interface into a Rust trait and then ask every caller for `Rc<dyn Database>` or `Box<dyn Database>`. That locks the crate out of constructs that are not object-safe, fights async (`async-fn-in-trait`), and leaks wrappers (`api-no-wrapper-params`). Microsoft Pragmatic Rust Guidelines (M-DI-HIERARCHY) escalate only as far as substitution actually requires: inherent methods on a concrete type first; a private enum for a small closed or test-only alternate set; narrow traits composed by subtraits when callers must supply implementations; generic parameters while they do not nest into `Foo<Bar<Baz>>`; `dyn Trait` last, and only behind a crate-owned wrapper — never a raw `Box` / `Arc` / `Rc` in the public API. Generics monomorphize and can inline; `dyn` is one vtable call and one code path. That cost model informs the last rung. It does not justify starting there.
+Dispatch is an API decision, not a universal performance ladder. Concrete types
+are simplest when behavior is fixed. Enums model a closed set. Generics keep
+open implementations statically dispatched but can spread type parameters
+through public state. Trait objects provide runtime heterogeneity, smaller code,
+and a stable erased boundary at the cost of object-safety constraints and
+indirect calls.
+
+Do not translate every interface from another language into `Arc<dyn Trait>`.
+Do not hide a genuine ownership-and-erasure contract merely to ban `dyn` from a
+public signature.
 
 ## Bad
 
 ```rust
-use std::path::PathBuf;
-use std::rc::Rc;
+use std::sync::Arc;
 
-struct Id;
-struct Object;
-struct MyDatabase;
-
-// Naive C# `IDatabase` translation: one wide trait, used as a trait object.
-trait Database {
-    async fn update_config(&self, file: PathBuf);
-    async fn store_object(&self, id: Id, obj: Object);
-    async fn load_object(&self, id: Id) -> Object;
+pub trait Store {
+    fn load(&self, key: &str) -> Option<Vec<u8>>;
 }
 
-impl Database for MyDatabase {
-    async fn update_config(&self, _file: PathBuf) {}
-    async fn store_object(&self, _id: Id, _obj: Object) {}
-    async fn load_object(&self, _id: Id) -> Object {
-        Object
-    }
+// There is one implementation, but every caller inherits sharing and dispatch.
+pub struct Service {
+    store: Arc<dyn Store + Send + Sync>,
 }
-
-// Intended to be used like this:
-async fn start_service(_b: Rc<dyn Database>) {}
 ```
-
-A public `Vec<Box<dyn Shape>>` or `Box<dyn Database>` parameter has the same shape: the wrapper and the trait object are the API. Heterogeneous storage may need `dyn` *inside* the crate; it is not a reason to publish the fat pointer.
 
 ## Good
 
-Follow this ladder. Stop at the first rung that covers the substitutions you actually have.
+Use the least complex form that expresses the supported substitutions.
 
-### 1. Concrete type, inherent methods
-
-If there is one implementation, there is no trait. Put the work on the type (`api-inherent-core`). Callers name `MyDatabase`, not `impl Database`.
-
-### 2. Enum for a small closed or test-only set
-
-If the other implementation exists only to provide a sans-I/O or test double, keep a private enum and dispatch there (`test-mock-traits`). Do not open a trait so a test can inject a mock.
+### Concrete Type
 
 ```rust
-enum DataAccess {
-    MyDatabase(MyDatabase),
-    Mock(mock::MockCtrl),
-}
+pub struct Store;
 
-struct MyDatabase;
-mod mock {
-    pub struct MockCtrl;
-}
-
-async fn read_database(_x: &DataAccess) {}
-```
-
-### 3. Narrow traits, composed by subtraits
-
-When users are expected to provide implementations, add one or more *narrow* traits on top of the inherent methods. `StoreObject` and `LoadObject` beat a single `Database` kitchen sink. If a combined bound is eventually needed, make it a subtrait.
-
-```rust
-trait StoreObject {
-    async fn store_object(&self, id: Id, obj: Object);
-}
-
-trait LoadObject {
-    async fn load_object(&self, id: Id) -> Object;
-}
-
-trait DataAccess: StoreObject + LoadObject {}
-
-struct Id;
-struct Object;
-```
-
-### 4. Generic parameters for open substitution
-
-Code that works with those traits should take generic type parameters (or `impl Trait`) while the type remains local and readable. Use the most specific trait, not the umbrella, at each call site.
-
-```rust
-// Good, generic does not have infectious impact, uses only most specific trait
-async fn read_database(x: impl LoadObject) {
-    let _ = x;
-}
-
-// Acceptable, unless further nesting makes this excessive.
-struct MyService<T: DataAccess> {
-    db: T,
-}
-
-trait LoadObject {}
-trait StoreObject {}
-trait DataAccess: StoreObject + LoadObject {}
-```
-
-A service type that would have to be named as `Service<Backend<Store>>` has gone too far (`anti-over-abstraction`). That is the point to stop adding type parameters, not the point to start sprinkling `dyn` into every signature.
-
-### 5. `dyn` behind a crate-owned wrapper
-
-When generic layers start leaking through several public types, runtime dispatch becomes a reasonable trade. Even then, do not publish `Box<dyn Trait>` or `Arc<dyn Trait>`. Hide the fat pointer in a type you own so you can change the storage, implement the trait for the wrapper, and keep using ordinary generic functions.
-
-```rust
-use std::sync::Arc;
-
-trait DataAccess {
-    fn foo(&self);
-}
-
-// This allows you to expand or change `DynamicDataAccess` later. You can also
-// implement `DataAccess` for `DynamicDataAccess` if needed, and use it with
-// regular generic functions.
-struct DynamicDataAccess(Arc<dyn DataAccess>);
-
-impl DynamicDataAccess {
-    fn new<T: DataAccess + 'static>(db: T) -> Self {
-        Self(Arc::new(db))
+impl Store {
+    pub fn load(&self, _key: &str) -> Option<Vec<u8>> {
+        None
     }
 }
 
-struct MyService {
-    db: DynamicDataAccess,
+pub struct Service {
+    store: Store,
 }
 ```
 
-The wrapper combines with the enum rung when a crate needs a native impl, a test double, *and* an escape hatch for unknown runtime types:
+Choose this when the implementation is fixed and callers do not supply one.
+
+### Closed Enum
 
 ```rust
-enum DataAccess {
-    MyDatabase(MyDatabase),
-    Mock(mock::MockCtrl),
-    Dynamic(DynamicDataAccess),
+pub enum Backend {
+    Memory(MemoryStore),
+    File(FileStore),
 }
 
-async fn read_database(_x: &DataAccess) {}
+pub struct MemoryStore;
+pub struct FileStore;
+```
 
-struct MyDatabase;
-struct DynamicDataAccess;
-mod mock {
-    pub struct MockCtrl;
+Choose this when the supported set is intentionally closed and exhaustive
+matching is useful.
+
+### Generic Parameter
+
+```rust
+pub trait Store {
+    fn load(&self, key: &str) -> Option<Vec<u8>>;
+}
+
+pub struct Service<S> {
+    store: S,
+}
+
+impl<S: Store> Service<S> {
+    pub fn load(&self, key: &str) -> Option<Vec<u8>> {
+        self.store.load(key)
+    }
 }
 ```
 
-The trait still has to be dyn-compatible if this rung is in play (`trait-object-safety`). Native `async fn` in the trait is not; name the future or keep this rung off the async surface (`async-fn-in-trait`).
+Choose this when callers provide implementations and the parameter remains
+local instead of infecting many public types.
 
-## Escalation Ladder
+### Trait Object
 
-| Situation | Choose |
+```rust
+pub trait Store: Send + Sync {
+    fn load(&self, key: &str) -> Option<Vec<u8>>;
+}
+
+pub struct Service {
+    store: Box<dyn Store>,
+}
+
+impl Service {
+    pub fn new(store: Box<dyn Store>) -> Self {
+        Self { store }
+    }
+}
+```
+
+A public `Box<dyn Store>` is appropriate when the caller transfers unique
+ownership of an erased implementation. `Arc<dyn Store>` is appropriate when
+shared ownership itself is the contract. A crate-owned handle can hide those
+wrappers when storage and sharing are implementation details that may change.
+
+## Decision Guide
+
+| Requirement | Default |
 |---|---|
-| One implementation | Concrete type, inherent methods |
-| Small closed set, or a test-only / sans-I/O alternate | Private enum |
-| Callers must supply behavior | Narrow traits on top of inherent methods; compose with subtraits |
-| Open substitution, no nesting problem | Generic parameter / `impl Trait` |
-| Generics nest or the set is heterogeneous at runtime | `dyn Trait` inside a crate-owned wrapper |
-| Public `Box<dyn …>`, `Arc<dyn …>`, `Rc<dyn …>` | Never — that wrapper *is* the leak |
+| One implementation | Concrete type |
+| Small, closed implementation set | Enum |
+| Caller implementations; type remains local | Generic / `impl Trait` |
+| Runtime heterogeneous collection | `dyn Trait` |
+| Stable plugin or ABI-adjacent erasure boundary | `dyn Trait` behind an owned boundary |
+| Sharing is internal | Crate-owned cloneable handle |
+| Caller transfers or shares erased ownership | Public `Box` / `Arc<dyn Trait>` may be the honest API |
 
-`anti-type-erasure` still prefers `impl Trait` over `Box<dyn Trait>` when a single concrete type would do. This rule adds the public-API constraint: when `dyn` is genuinely required, the crate owns the handle. Hot-path inlining is a reason to stay generic on rung 4, not a reason to skip rungs 1–3.
+## Key Points
+
+- Keep traits narrow and based on behavior callers actually substitute.
+- Require `Send` and `Sync` only when the execution contract needs them.
+- Confirm object safety before committing to `dyn Trait`.
+- Benchmark dispatch only on measured hot paths; monomorphization also has code
+  size and compile-time costs.
+- Avoid nested generic architecture that exposes implementation topology.
+- State ownership directly. Hiding every smart pointer can make lifetime and
+  sharing costs less clear rather than more stable.
 
 ## See Also
 
-- [api-inherent-core](api-inherent-core.md) - the first rung: essential methods live on the type
-- [test-mock-traits](test-mock-traits.md) - the enum rung for clocks, I/O, and other syscalls
-- [api-no-wrapper-params](api-no-wrapper-params.md) - do not publish `Box` / `Arc` / `Rc` as the API
-- [anti-type-erasure](anti-type-erasure.md) - do not erase a type you already know
-- [anti-over-abstraction](anti-over-abstraction.md) - nesting generics is the signal to wrap, not to add another parameter
-- [type-generic-bounds](type-generic-bounds.md) - keep bounds on the functions that need them
-- [trait-object-safety](trait-object-safety.md) - a trait used on the `dyn` rung must stay dyn-compatible
-- [async-fn-in-trait](async-fn-in-trait.md) - native async traits are not dyn-compatible
+- [api-no-wrapper-params](api-no-wrapper-params.md) - keep incidental wrappers out of signatures
+- [api-service-clone](api-service-clone.md) - hide internal shared ownership in a handle
+- [anti-type-erasure](anti-type-erasure.md) - retain known concrete types
+- [anti-over-abstraction](anti-over-abstraction.md) - do not add substitution without a consumer
+- [trait-object-safety](trait-object-safety.md) - requirements for `dyn Trait`
+- [type-generic-bounds](type-generic-bounds.md) - keep bounds near their use

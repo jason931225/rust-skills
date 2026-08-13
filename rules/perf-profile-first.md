@@ -112,7 +112,8 @@ cargo run --release
 ### criterion (Micro-benchmarks)
 
 ```rust
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
+use std::hint::black_box;
 
 fn bench_my_function(c: &mut Criterion) {
     c.bench_function("my_function", |b| {

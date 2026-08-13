@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A function that takes `(low, high)` or only `Range<usize>` cannot express "from here to the end" or "everything" without inventing sentinels. `RangeBounds` is the standard-library trait behind `1..3`, `1..`, `..3`, and `..`. Under Microsoft Pragmatic Rust Guidelines (M-IMPL-RANGEBOUNDS), treat this the same way as `AsRef` and `Read`: one parameter, every range syntax the caller already knows.
+A function that takes `(low, high)` or only `Range<usize>` cannot express "from here to the end" or "everything" without inventing sentinels. `RangeBounds` is the standard-library trait behind `1..3`, `1..`, `..3`, and `..`. Treat it like `AsRef` and `Read`: one parameter accepts every range syntax the caller already knows.
 
 ## Bad
 

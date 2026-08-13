@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-The compiler treats each Rust dylib as its own program. That copy has its own `static`s and thread-locals, its own `TypeId` table, and its own allocator. `#[repr(Rust)]` layout is allowed to differ between those compilations. Handing a `String`, a Tokio handle, or a default-repr struct to another DLL is not "the same type": Drop may free the wrong heap, a method body may run against the wrong statics, and a `TypeId` comparison is meaningless. Microsoft Pragmatic Rust Guidelines (M-ISOLATE-DLL-STATE) allow only portable state across that edge, both when you load plugins and when you publish one.
+The compiler treats each Rust dylib as its own program. That copy has its own `static`s and thread-locals, its own `TypeId` table, and its own allocator. `#[repr(Rust)]` layout is allowed to differ between those compilations. Handing a `String`, a Tokio handle, or a default-repr struct to another DLL is not "the same type": Drop may free the wrong heap, a method body may run against the wrong statics, and a `TypeId` comparison is meaningless. Allow only portable state across that edge, both when you load plugins and when you publish one.
 
 FFI safety alone is insufficient for cross-image ownership. A portable value
 also has a defined layout (`#[repr(C)]` or equivalent) and satisfies every
@@ -97,6 +97,7 @@ fn main() {
         ptr: owned.as_ptr(),
         len: owned.len(),
     };
+    // SAFETY: `view` points to `owned`, which remains live for this call.
     let sum = unsafe { checksum(view) };
     assert_eq!(sum, u32::from(b'o') + u32::from(b'k'));
 
@@ -105,6 +106,7 @@ fn main() {
         millis: 9,
         value: 4,
     };
+    // SAFETY: `sample` is live and uniquely borrowed for this call.
     let rc = unsafe { fill(&mut sample) };
     assert_eq!(rc, 0);
     assert_eq!(sample.millis, 0);

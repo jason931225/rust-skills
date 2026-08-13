@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Readers and agents trust that `fn tally()` is a synchronous function with that arity. A macro that injects arguments or turns the item `async` makes every call site look wrong until you expand it. As Microsoft Pragmatic Rust Guidelines (M-MACROS-DONT-LIE) treat that as lying about the signature, generate repetitive tokens but leave the written shape of the item intact.
+Readers and agents trust that `fn tally()` is a synchronous function with that arity. A macro that injects arguments or turns the item `async` makes every call site look wrong until you expand it. Treat that as lying about the signature: generate repetitive tokens, but leave the written shape of the item intact.
 
 ## Bad
 

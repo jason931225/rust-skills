@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-If the only way to call `extract_entry` is through a trait, every caller must discover and import that trait. Inherent methods show up on the type in rustdoc and in completion, so the common path needs no extra `use`. As Microsoft Pragmatic Rust Guidelines (M-ESSENTIAL-FN-INHERENT) keep traits as optional adapters, implement the work once on the type, then forward from the trait so generic code still compiles.
+If the only way to call `extract_entry` is through a trait, every caller must discover and import that trait. Inherent methods show up on the type in rustdoc and in completion, so the common path needs no extra `use`. Keep traits as optional adapters: implement the work once on the type, then forward from the trait so generic code still compiles.
 
 ## Bad
 

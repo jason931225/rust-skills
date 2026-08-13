@@ -72,6 +72,9 @@ fn process_fast(data: &[u8]) -> u64 {
 
 #[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
+/// # Safety
+///
+/// The caller must prove that the current CPU supports AVX2 before entry.
 unsafe fn process_avx2(data: &[u8]) -> u64 {
     // an AVX2-optimized path would go here; delegate to the scalar version
     process_generic(data)
@@ -90,11 +93,12 @@ RUSTFLAGS="-C target-cpu=x86-64" cargo build --release
 mv target/release/app target/release/app-generic
 
 RUSTFLAGS="-C target-cpu=x86-64-v3" cargo build --release
-mv target/release/app target/release/app-avx2
+mv target/release/app target/release/app-x86-64-v3
 
-# Select at runtime
-if supports_avx2; then
-    ./app-avx2
+# Select only after checking the complete x86-64-v3 feature baseline, not AVX2
+# alone. Prefer platform scheduling or in-process feature dispatch.
+if supports_x86_64_v3; then
+    ./app-x86-64-v3
 else
     ./app-generic
 fi

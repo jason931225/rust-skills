@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Six hours is obviously half a day; it is not obvious why a worker must renew a lease that soon, or what breaks if someone halves it. Under Microsoft Pragmatic Rust Guidelines (M-DOCUMENTED-MAGIC), give the number a named constant plus a note covering the choice, the side effects of changing it, and any external system that shares the value. Inline literals hide that contract from rustdoc and from every other call site.
+Six hours is obviously half a day; it is not obvious why a worker must renew a lease that soon, or what breaks if someone halves it. Give the number a named constant plus a note covering the choice, the side effects of changing it, and any external system that shares the value. Inline literals hide that contract from rustdoc and from every other call site.
 
 ## Bad
 

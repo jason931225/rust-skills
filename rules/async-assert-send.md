@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A public `async fn` that holds `Rc` or a `!Send` guard across `.await` compiles until a caller writes `tokio::spawn`. The error then appears in *their* crate. Per Microsoft Pragmatic Rust Guidelines (M-TYPES-SEND), public futures — and public handles intended to cross workers — should stay `Send`. A compile-time `require_send` next to each main entry point fails in *your* crate the moment a field or capture regresses. Do not assert every helper mechanically. An instantaneous `!Send` temporary is fine when it is created, used, and dropped before any `.await`.
+A public `async fn` that holds `Rc` or a `!Send` guard across `.await` compiles until a caller writes `tokio::spawn`. The error then appears in *their* crate. Public futures and handles intended to cross workers should stay `Send`. A compile-time `require_send` next to each main entry point fails in *your* crate the moment a field or capture regresses. Do not assert every helper mechanically. An instantaneous `!Send` temporary is fine when it is created, used, and dropped before any `.await`.
 
 ## Bad
 
@@ -62,5 +62,5 @@ fn main() {
 ## See Also
 
 - [async-clone-before-await](async-clone-before-await.md) - drop `!Send` borrows before the future is spawned
-- [own-arc-shared](own-arc-shared.md) - `Arc` is the `Send` sharing primitive
+- [own-arc-shared](own-arc-shared.md) - `Arc<T>` can cross threads only when `T` permits it
 - [unsafe-send-sync-manual](unsafe-send-sync-manual.md) - do not paper over a `!Send` field with an unsafe impl

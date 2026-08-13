@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Every type in a public signature is a semver promise. If `load(path: camino::Utf8PathBuf)` leaks `camino`, your users inherit that crate's major bumps. `std` (`Path`, `Vec`, `Duration`, `io::Error`) does not move out from under them. In Microsoft Pragmatic Rust Guidelines (M-DONT-LEAK-TYPES), a leak is allowed when the dependency *is* the product (`http::Uri` in an HTTP client, `serde_json::Value` behind a `json` feature). Feature-gate the rest the way `api-serde-optional` already does for serde. This is the type-identity twin of `api-no-wrapper-params`.
+Every type in a public signature is a semver promise. If `load(path: camino::Utf8PathBuf)` leaks `camino`, your users inherit that crate's major bumps. `std` (`Path`, `Vec`, `Duration`, `io::Error`) does not move out from under them. A third-party type is appropriate when that dependency *is* the product (`http::Uri` in an HTTP client, `serde_json::Value` behind a `json` feature). Feature-gate the rest the way `api-serde-optional` already does for serde. This is the type-identity twin of `api-no-wrapper-params`.
 
 ## Bad
 

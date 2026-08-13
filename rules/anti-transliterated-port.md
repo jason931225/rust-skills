@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A mechanical C#, Java, C++, or Python translation keeps the business rules and also keeps the other language's answers to *its* problems. Microsoft Pragmatic Rust Guidelines (M-RUST-SHAPED) split those layers: an invoice total or a customer lookup can follow the same steps, but errors, ownership, threads, traits, lifetimes, process-wide cells, and "inspect the type at runtime" dispatch are Rust problems. Constructs that have no Rust counterpart (managed reflection) and constructs that only *look* familiar (process statics) both fail — the second often months later. Matching method names and inputs for the domain is fine. Matching the foreign architecture is a warning sign.
+A mechanical C#, Java, C++, or Python translation keeps the business rules and also keeps the other language's answers to *its* problems. Split those layers: an invoice total or a customer lookup can follow the same steps, but errors, ownership, threads, traits, lifetimes, process-wide cells, and "inspect the type at runtime" dispatch are Rust problems. Constructs that have no Rust counterpart (managed reflection) and constructs that only *look* familiar (process statics) both fail — the second often months later. Matching method names and inputs for the domain is fine. Matching the foreign architecture is a warning sign.
 
 ## Bad
 

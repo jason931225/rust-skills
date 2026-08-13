@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-When `member_id` and `org_id` swap places between `add` and `drop`, a caller who copies an earlier call site silently transposes arguments of the same type. Following Microsoft Pragmatic Rust Guidelines (M-PARAMETER-CONSISTENCY), put call-specific values first, shared context (loggers, clocks) last, and a single closure last of all. One order, used everywhere in the crate, is cheaper to review than a comment on each function.
+When `member_id` and `org_id` swap places between `add` and `drop`, a caller who copies an earlier call site silently transposes arguments of the same type. put call-specific values first, shared context (loggers, clocks) last, and a single closure last of all. One order, used everywhere in the crate, is cheaper to review than a comment on each function.
 
 ## Bad
 

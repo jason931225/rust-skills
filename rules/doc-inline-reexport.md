@@ -1,38 +1,67 @@
 # doc-inline-reexport
 
-> Put `#[doc(inline)]` on `pub use` of items you own so rustdoc shows them next to their siblings
+> Inline an owned re-export when rustdoc would otherwise show only a forwarding link
 
 ## Why It Matters
 
-A bare `pub use crate::net::Client` renders as a re-export block. Readers hunting for `Client` in the crate root miss it, and the type's docs live two clicks away. Following Microsoft Pragmatic Rust Guidelines (M-DOC-INLINE), first-party re-exports get `#[doc(inline)]` so the item appears as if it were defined there. Leave third-party types *without* inline so it stays obvious they come from `bytes` or `http`. This pairs with one-canonical-path (`proj-pub-use-reexport`): inline the one public path, do not publish two.
+Rustdoc automatically inlines an item re-exported from a private module. Adding
+`#[doc(inline)]` there is redundant. The attribute is useful when a public
+facade deliberately re-exports an owned item from another public module or a
+constituent crate and wants the facade page to contain the full documentation.
+Use it only on the canonical public path; forced inlining must not disguise two
+competing user-facing paths.
 
 ## Bad
 
 ```rust
-mod net {
+mod detail {
     pub struct Client;
 }
 
-pub use net::Client;
+// Already inlined because `detail` is private.
+#[doc(inline)]
+pub use detail::Client;
 ```
+
+The attribute adds no behavior and suggests the default is not understood.
 
 ## Good
 
 ```rust
-mod net {
+#[doc(hidden)]
+pub mod core {
+    /// Sends requests through the configured transport.
     pub struct Client;
 }
 
+// The facade intentionally owns the documented path.
 #[doc(inline)]
-pub use net::Client;
+pub use core::Client;
 
 fn main() {
     let _ = Client;
 }
 ```
 
+In a real multi-crate facade, apply the same policy to an owned constituent
+crate. Do not inline arbitrary third-party types merely because they appear in
+your signatures.
+
+## Key Points
+
+- Private-module re-exports are inlined automatically.
+- Use `#[doc(inline)]` when rustdoc would otherwise retain a forwarding entry
+  and the facade is the intended documentation home.
+- Use `#[doc(no_inline)]` when preserving the defining path is clearer.
+- Keep one supported public path for an owned item.
+- Leave foreign types attributed to their defining crates unless an explicit
+  facade contract says otherwise.
+- Inspect generated rustdoc; this is a presentation rule, not a type-system
+  invariant.
+
 ## See Also
 
-- [proj-pub-use-reexport](proj-pub-use-reexport.md) - one public path; inline that path
-- [proj-no-glob-reexport](proj-no-glob-reexport.md) - `#[doc(inline)]` does not make a glob safe
-- [doc-all-public](doc-all-public.md) - inlined items still need their own rustdoc
+- [proj-pub-use-reexport](proj-pub-use-reexport.md) - choose one canonical public path
+- [proj-no-glob-reexport](proj-no-glob-reexport.md) - name every public re-export
+- [api-std-types-boundary](api-std-types-boundary.md) - avoid accidental foreign API commitments
+- [doc-all-public](doc-all-public.md) - document the item at its canonical path

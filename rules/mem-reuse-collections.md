@@ -87,7 +87,7 @@ values that outlive the request must not borrow its storage.
 ```rust
 fn process_batches(batches: &[Batch]) -> Vec<Result> {
     let mut results = Vec::with_capacity(batches.len());
-    let mut temp = Vec::new();  // Allocate once outside loop
+    let mut temp = Vec::new();  // Reuse any capacity grown by prior batches.
     
     for batch in batches {
         temp.clear();  // Reuse allocation, just reset length
@@ -111,7 +111,8 @@ fn format_lines(items: &[Item]) -> String {
     
     for item in items {
         line.clear();
-        write!(&mut line, "{}: {}", item.name, item.value).unwrap();
+        write!(&mut line, "{}: {}", item.name, item.value)
+            .expect("Display implementations must not invent formatting errors");
         output.push_str(&line);
         output.push('\n');
     }

@@ -1,10 +1,14 @@
 # proj-prelude-module
 
-> Do not define a crate prelude; export a deliberate root and let callers import traits by name
+> Prefer named imports; provide a curated prelude only when a cohesive trait-heavy API needs one
 
 ## Why It Matters
 
-A `prelude` glob (`use foo::prelude::*`) looks cheap until two crates export the same name and the build becomes `error[E0659]: Client is ambiguous`. It also hides which trait enabled a method and lets a dependency add names to downstream scopes in a minor release. Rust-analyzer already inserts named imports. Following Microsoft Pragmatic Rust Guidelines (M-NO-PRELUDE), libraries should not ship a prelude or any other namespace intended for wildcard import. Export a deliberate root and let callers name the traits they use.
+A `prelude` glob (`use foo::prelude::*`) can collide with another crate, hide
+which trait enabled a method, and add names to downstream scopes in a minor
+release. Most libraries should export a deliberate root and let callers name
+the traits they use. A prelude is justified only when importing a small,
+cohesive set of extension traits is the established way to use the API.
 
 ## Bad
 
@@ -68,6 +72,14 @@ fn main() {
     vec![1, 2, 3].for_each(|_| {});
 }
 ```
+
+## Curated Exception
+
+A DSL or ecosystem facade may expose `crate::prelude::*` when all exported
+items are routinely needed together. Keep the list explicit, small, and
+semver-reviewed; do not re-export dependencies or general-purpose names.
+Documentation must also show the equivalent named imports so diagnostics and
+minimal consumers have a clear path.
 
 ## See Also
 

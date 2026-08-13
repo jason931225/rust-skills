@@ -5,9 +5,8 @@
 ## Why It Matters
 
 A constructor with four or more required inputs is hard to scan and easy to
-call incorrectly; repeated primitive types make the risk worse. Microsoft
-Pragmatic Rust Guidelines (M-INIT-CASCADED) cascade that initialization through
-helper types: group required parameters by meaning, then construct the outer
+call incorrectly; repeated primitive types make the risk worse. Cascade that
+initialization through helper types: group required parameters by meaning, then construct the outer
 type from those groups. Check the Rust API Guidelines newtype pattern
 (`C-NEWTYPE`) at the same time so `Origin` and `Destination` cannot be
 transposed. This is not a builder. Builders exist for optional,

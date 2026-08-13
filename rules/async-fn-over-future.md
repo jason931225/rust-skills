@@ -1,10 +1,10 @@
 # async-fn-over-future
 
-> Declare public functions `async fn` instead of returning `impl Future` unless you must control the future
+> Prefer `async fn` for readability; return `impl Future` when bounds or capture are the contract
 
 ## Why It Matters
 
-`async fn foo()` and `fn foo() -> impl Future` can describe the same work. The `async fn` form is the idiomatic public signature: readers do not have to decode a return-position future, and the body does not need an extra `async` block. Microsoft Pragmatic Rust Guidelines (M-ASYNC-FN) keep that as the default whenever both are viable. Write an explicit `Future`-returning signature only when the `async fn` desugaring cannot express the bound or the capture you need.
+`async fn foo()` and `fn foo() -> impl Future` can describe the same work. The `async fn` form is the idiomatic public signature: readers do not have to decode a return-position future, and the body does not need an extra `async` block. Keep that as the default whenever both are viable. Write an explicit `Future`-returning signature only when the `async fn` desugaring cannot express the bound or capture you need.
 
 ## Bad
 
@@ -42,7 +42,11 @@ pub struct FooError;
 
 Use an explicit future type only for these cases:
 
-**Trait `Send` (or other) bounds.** A native `async fn` in a trait does not let you write `+ Send` on the generated future. When callers must `tokio::spawn` the result, name the future and add the bound (`async-fn-in-trait`, `async-assert-send`).
+**`Send` (or other) bounds.** A native `async fn` signature does not spell out
+an auto-trait promise on its generated future. When callers must be able to
+`tokio::spawn` the result across future implementation changes, return
+`impl Future + Send` and test that contract. This applies to traits and to
+public free/inherent functions (`async-fn-in-trait`, `async-assert-send`).
 
 ```rust
 use std::future::Future;
@@ -54,17 +58,17 @@ pub trait Repo {
 pub struct RepoError;
 ```
 
-**Intentionally controlling future size, capture, or type.** Hot, frequently instantiated async work should not drag large arguments or setup locals into the state machine. Returning `impl Future` lets you run that setup *outside* `async {}`, pick `Either` for early-error branches, and keep `size_of_val(&fut)` small (`async-future-size`, Microsoft M-ASYNC-STACK-SIZE).
+**Intentionally controlling future size, capture, or type.** Hot, frequently instantiated async work should not drag large arguments or setup locals into the state machine. Returning `impl Future` lets you run that setup *outside* `async {}`, pick `Either` for early-error branches, and keep `size_of_val(&fut)` small (`async-future-size`).
 
 ```rust
 use std::future::Future;
 
-pub struct Huge([u8; 32]);
+pub struct SetupData(Box<[u8; 32 * 1024]>);
 
-pub fn send(payload: Huge) -> impl Future<Output = usize> {
+pub fn send(payload: SetupData) -> impl Future<Output = usize> + Send {
     let first = payload.0[0];
     async move {
-        async { 1 }.await;
+        std::future::ready(()).await;
         first as usize
     }
 }

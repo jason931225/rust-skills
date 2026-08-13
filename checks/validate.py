@@ -54,9 +54,9 @@ for name in sorted(rule_names):
 # Source-coverage manifests.
 ZERO2PROD_COVERAGE = HERE / "zero2production_coverage.json"
 EXPECTED_ZERO2PROD_TOC_DIGEST = "bd500a774e3fa5a2d97adb2d6d8c167b201fe76ca33917bda1037e5fd9402d0f"
-EXPECTED_ZERO2PROD_MAPPING_DIGEST = "a640158e851087f388fcc6e3e00c3f333410f0babee30ec7acc4b03ce0c41fc1"
+EXPECTED_ZERO2PROD_MAPPING_DIGEST = "2bfed4501931b106c37cf9958a0b3c69dce33087a2197ad310f1b0370de87faf"
 EXPECTED_ZERO2PROD_EXTRACT_DIGEST = "8a6efbac878df8c1b397e35aeda5d30b44b733c5458f03fc67b3d7ad45b8ef26"
-EXPECTED_ZERO2PROD_LEDGER_DIGEST = "af95e4904ca70593066ed2520b3f2168997771f60ad390879a1c53e202922270"
+EXPECTED_ZERO2PROD_LEDGER_DIGEST = "df174b813c5074a5b22177d4fda61f66d6781793cfff01d91e7118aef7c5d19e"
 EXPECTED_ZERO2PROD_SOURCE_SHA256 = "5de8b3ef43e1175f18579130c9bef9ef492f63c527deb5ac65a9a1bb6320f75e"
 allowed_book_audit_dispositions = {
     "covered",
@@ -180,7 +180,7 @@ else:
     expected_commit = "bbf7b03f3a51548f187888fb8c516e8118ebb1c2"
     expected_id_digest = "c370753a70145bc180f03e63d0e47af4ad3c78482c43516e574c03a1074d141d"
     expected_source_digest = "ffa6c25aa19f756d4f9785711c2da4d92424c14dacea9bd29de88533e361508e"
-    expected_mapping_digest = "cf440e7818f27e00051fa4e078cceee6b1ced6821cca7a062215fd6d068d6201"
+    expected_mapping_digest = "26a9d2e2f9ea1bcbdfdc2fbfbb1653fc3701da96b1b15b7d9d009a207833af94"
     expected_context_digest = "24ed39c87495d4087c4fc89e94b237704bd47dbb6611d6d4613779b6c968a409"
     actual_id_digest = hashlib.sha256(
         "\n".join(sorted(str(item) for item in ids)).encode()

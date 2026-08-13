@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`unsafe` is a contract about the abstract machine: use this wrong and you may get a data race, a wild pointer, or a broken validity invariant. Using it as a "this is scary" sticker trains callers to sprinkle `unsafe {}` around destructive operations. Under Microsoft Pragmatic Rust Guidelines (M-UNSAFE-IMPLIES-UB), `unsafe` is for UB risk only. A function that reboots a host, spends money, or pages on-call stays safe, gets a loud name, and documents the blast radius. The same test applies to traits: an `unsafe trait` means an incorrect implementation can let safe code cause UB.
+`unsafe` is a contract about the abstract machine: use this wrong and you may get a data race, a wild pointer, or a broken validity invariant. Using it as a "this is scary" sticker trains callers to sprinkle `unsafe {}` around destructive operations. `unsafe` is for UB risk only. A function that reboots a host, spends money, or pages on-call stays safe, gets a loud name, and documents the blast radius. The same test applies to traits: an `unsafe trait` means an incorrect implementation can let safe code cause UB.
 
 ## Bad
 
@@ -41,6 +41,7 @@ pub unsafe fn read_u32(ptr: *const u32) -> u32 {
 fn main() {
     reboot_host("worker-7");
     let value = 7u32;
+    // SAFETY: `value` is a live, aligned `u32` for this call.
     let n = unsafe { read_u32(&value) };
     assert_eq!(n, 7);
 }

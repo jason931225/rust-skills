@@ -102,26 +102,30 @@ impl Email {
 let email = Email::new("user@example.com")?;  // Must go through validation
 ```
 
-## Zero-Cost Abstraction
+## Layout Only When It Is a Contract
 
 ```rust
 use std::mem::size_of;
 
 #[derive(Clone, Copy)]
+#[repr(transparent)]
 struct Miles(f64);
 
 #[derive(Clone, Copy)]
+#[repr(transparent)]
 struct Kilometers(f64);
 
-// Same size as raw f64
+// repr(transparent) makes same layout/ABI an explicit promise.
 assert_eq!(size_of::<Miles>(), size_of::<f64>());
 assert_eq!(size_of::<Kilometers>(), size_of::<f64>());
 
-// But can't accidentally mix them
-fn drive(distance: Miles) { ... }
+// The function accepts exactly one unit.
+fn drive(distance: Miles) {
+    println!("driving {} miles", distance.0);
+}
 
 let km = Kilometers(100.0);
-drive(km);  // Error: expected Miles, found Kilometers
+// drive(km); // rejected: expected Miles, found Kilometers
 
 // Explicit conversion
 impl From<Kilometers> for Miles {
@@ -130,8 +134,13 @@ impl From<Kilometers> for Miles {
     }
 }
 
-drive(km.into());  // Explicit, visible conversion
+drive(km.into());  // Explicit, visible conversion.
 ```
+
+A logical newtype usually needs no representation attribute; let the compiler
+choose its layout. Add `repr(transparent)` only when same layout/ABI is itself
+part of a reviewed FFI or storage contract. It does not make a conversion or
+pointer cast semantically safe.
 
 ## When Newtypes Help Most
 

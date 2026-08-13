@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A glob re-export makes every new `pub` item in the source module part of your crate's API without a reviewable line in the diff. Downstream code then depends on names you never meant to promise. In Microsoft Pragmatic Rust Guidelines (M-NO-GLOB-REEXPORTS), a glob is allowed only when a `cfg`-split HAL forwards an entire platform module, where the wildcard is the point.
+A glob re-export makes every new `pub` item in the source module part of your crate's API without a reviewable line in the diff. Downstream code then depends on names you never meant to promise. A narrow exception is a `cfg`-split HAL that deliberately forwards an entire platform module.
 
 ## Bad
 

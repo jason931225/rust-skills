@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-*Safe* and `unsafe` are technical terms. A function is safe when its signature is not marked `unsafe`. That function can still be disastrous (`trigger_cluster_failover`) and an `unsafe` one can be routine (`slice.get_unchecked`) when the caller keeps the contract. A function is *unsound* when it looks safe — it is not marked `unsafe` — but *any* way of calling it from safe code, including a remote, theoretical path that needs unusual inputs, can produce undefined behavior. Microsoft Pragmatic Rust Guidelines (M-UNSOUND) give that test no slack: unsound abstractions are never allowed.
+*Safe* and `unsafe` are technical terms. A function is safe when its signature is not marked `unsafe`. That function can still be disastrous (`trigger_cluster_failover`) and an `unsafe` one can be routine (`slice.get_unchecked`) when the caller keeps the contract. A function is *unsound* when it looks safe — it is not marked `unsafe` — but *any* way of calling it from safe code, including a remote, theoretical path that needs unusual inputs, can produce undefined behavior. Give that test no slack: unsound abstractions are never allowed.
 
 If the invariant cannot be established inside your API, do not hide it. Mark the entry `unsafe`, write the `# Safety` contract, and let the caller take the obligation.
 
@@ -46,16 +46,14 @@ mod words {
         }
 
         pub fn get(&self) -> u32 {
-            // SAFETY: `self.0` is always four initialized bytes. Other
-            // functions in this module never overwrite that field with
-            // a shorter view, so `read_unaligned` cannot see uninit.
-            unsafe { self.0.as_ptr().cast::<u32>().read_unaligned() }
+            u32::from_le_bytes(self.0)
         }
     }
 }
 
 fn main() {
     let stored = 7u32;
+    // SAFETY: `stored` is a live, aligned `u32` for this call.
     let n = unsafe { load_word(&stored) };
     assert_eq!(n, 7);
     assert_eq!(words::Word::from_le_bytes(7u32.to_le_bytes()).get(), 7);

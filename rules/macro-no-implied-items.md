@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-An expansion that quietly defines `SensorMeta` next to the user's `Temp` collides with a type already in that module, with the next invocation of the same macro, and with the crate's naming habits. The extra item is invisible in the source, so it is easy to forget when re-exporting a public API. Months later a refactor in an unrelated file fails with a duplicate-definition error that names a type nobody typed. Microsoft Pragmatic Rust Guidelines (M-PROC-IMPLIED-ITEMS) treat those generated ghosts as a hygiene and visibility defect.
+An expansion that quietly defines `SensorMeta` next to the user's `Temp` collides with a type already in that module, with the next invocation of the same macro, and with the crate's naming habits. The extra item is invisible in the source, so it is easy to forget when re-exporting a public API. Months later a refactor in an unrelated file fails with a duplicate-definition error that names a type nobody typed. Treat those generated ghosts as a hygiene and visibility defect.
 
 ## Bad
 

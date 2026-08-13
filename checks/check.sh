@@ -4,7 +4,7 @@
 #     bash checks/check.sh
 #
 # It runs the exact same gates CI runs, pinned to the same toolchain
-# (checks/rust-toolchain.toml -> Rust 1.95.0) and the same compile target
+# (checks/rust-toolchain.toml -> Rust 1.97.1) and the same compile target
 # (x86_64-unknown-linux-gnu), so a green run here means a green run on CI.
 # On non-x86 hosts (e.g. Apple Silicon) the examples are cross-checked for that
 # target — `cargo check` type-checks without linking, so no cross-linker needed.
@@ -30,6 +30,9 @@ python3 "$ROOT/checks/gen_index.py" --check
 echo "==> source-guidance behavior checks"
 cd "$ROOT/checks"
 cargo test --test source_guidance
+
+echo "==> Rust 1.95-1.97 behavior checks"
+cargo test --test release_195_197
 
 echo "==> generating example files from rules"
 python3 gen.py

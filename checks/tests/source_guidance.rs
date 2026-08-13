@@ -1,6 +1,9 @@
+use std::error::Error as StdError;
 use std::fmt;
 use std::io::{Read, Write};
 use std::net::{Shutdown, TcpListener, TcpStream};
+use std::path::{Path, PathBuf};
+use std::time::Duration;
 
 #[derive(Default)]
 struct Frame {
@@ -63,7 +66,7 @@ impl Route {
 }
 
 #[test]
-fn cascaded_initialization_preserves_semantic_roles() {
+fn semantic_constructor_types_prevent_role_ambiguity() {
     let route = Route::new(Origin("oslo"), Destination("helsinki"));
     assert_eq!(route.origin.0, "oslo");
     assert_eq!(route.destination.0, "helsinki");
@@ -80,7 +83,7 @@ impl fmt::Debug for Secret {
 }
 
 #[test]
-fn sensitive_debug_output_is_regression_checked() {
+fn sensitive_debug_output_is_redacted() {
     let rendered = format!(
         "{:?}",
         Secret {
@@ -200,30 +203,108 @@ fn retry_backoff_grows_caps_and_adds_jitter() {
     assert_eq!(retry_delay(100, 20, 7), 6_553_607);
 }
 
-#[test]
-fn black_box_http_contract_crosses_a_real_socket() {
-    let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
-    let address = listener.local_addr().unwrap();
-    let server = std::thread::spawn(move || {
-        let (mut connection, _) = listener.accept().unwrap();
-        let mut request = [0_u8; 256];
-        let bytes = connection.read(&mut request).unwrap();
-        let request = std::str::from_utf8(&request[..bytes]).unwrap();
-        assert!(request.starts_with("GET /health/live HTTP/1.1\r\n"));
-        connection
-            .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok")
-            .unwrap();
-    });
+#[derive(Debug)]
+struct ConfigurationError {
+    path: PathBuf,
+    source: std::io::Error,
+}
 
-    let mut client = TcpStream::connect(address).unwrap();
+impl fmt::Display for ConfigurationError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            formatter,
+            "failed to load configuration from {}",
+            self.path.display()
+        )
+    }
+}
+
+impl StdError for ConfigurationError {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+        Some(&self.source)
+    }
+}
+
+#[test]
+fn opaque_error_keeps_standard_source_chain() {
+    let error = ConfigurationError {
+        path: Path::new("settings.toml").to_owned(),
+        source: std::io::Error::other("unavailable"),
+    };
+
+    assert_eq!(
+        error.to_string(),
+        "failed to load configuration from settings.toml"
+    );
+    assert_eq!(
+        error.source().map(ToString::to_string).as_deref(),
+        Some("unavailable")
+    );
+}
+
+fn serve_health(listener: TcpListener) -> std::io::Result<()> {
+    let (mut connection, _) = listener.accept()?;
+    connection.set_read_timeout(Some(Duration::from_secs(2)))?;
+    connection.set_write_timeout(Some(Duration::from_secs(2)))?;
+
+    let mut request = Vec::new();
+    let mut chunk = [0_u8; 128];
+    while !request.windows(4).any(|window| window == b"\r\n\r\n") {
+        let read = connection.read(&mut chunk)?;
+        if read == 0 {
+            break;
+        }
+        request.extend_from_slice(&chunk[..read]);
+        if request.len() > 4096 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "request headers exceed test limit",
+            ));
+        }
+    }
+
+    let request = std::str::from_utf8(&request)
+        .map_err(|error| std::io::Error::new(std::io::ErrorKind::InvalidData, error))?;
+    if !request.starts_with("GET /health/live HTTP/1.1\r\n") {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "unexpected request target",
+        ));
+    }
+
+    connection.write_all(
+        b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok",
+    )?;
+    Ok(())
+}
+
+#[test]
+fn socket_smoke_test_exchanges_a_complete_http_message() {
+    let listener = TcpListener::bind(("127.0.0.1", 0)).expect("bind loopback listener");
+    let address = listener.local_addr().expect("read listener address");
+    let server = std::thread::spawn(move || serve_health(listener));
+
+    let mut client = TcpStream::connect_timeout(&address, Duration::from_secs(2))
+        .expect("connect to loopback listener");
     client
-        .write_all(b"GET /health/live HTTP/1.1\r\nHost: localhost\r\n\r\n")
-        .unwrap();
-    client.shutdown(Shutdown::Write).unwrap();
+        .set_read_timeout(Some(Duration::from_secs(2)))
+        .expect("set client read timeout");
+    client
+        .set_write_timeout(Some(Duration::from_secs(2)))
+        .expect("set client write timeout");
+    client
+        .write_all(b"GET /health/live HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
+        .expect("write request");
+    client.shutdown(Shutdown::Write).expect("finish request");
+
     let mut response = String::new();
-    client.read_to_string(&mut response).unwrap();
-    server.join().unwrap();
+    client.read_to_string(&mut response).expect("read response");
+    server
+        .join()
+        .expect("server thread panicked")
+        .expect("server failed");
 
     assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    assert!(response.contains("Content-Type: text/plain\r\n"));
     assert!(response.ends_with("\r\n\r\nok"));
 }

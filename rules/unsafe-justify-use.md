@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`unsafe` moves checks from the compiler to whoever writes and reviews the block. That review misses things, and a miss is how you ship a memory-safety hole. Microsoft Pragmatic Rust Guidelines (M-UNSAFE) therefore require a listed reason before the keyword appears, and they forbid sprinkling it through otherwise safe code to "just" transmute an enum, mint `Send`, or erase a lifetime. Those shortcuts are not promoted into acceptable designs merely by moving them behind a helper; the valid categories below still need a sound invariant that cannot be expressed safely.
+`unsafe` moves checks from the compiler to whoever writes and reviews the block. That review misses things, and a miss is how you ship a memory-safety hole. Require a listed reason before the keyword appears, and forbid sprinkling it through otherwise safe code to "just" transmute an enum, mint `Send`, or erase a lifetime. Those shortcuts are not promoted into acceptable designs merely by moving them behind a helper; the valid categories below still need a sound invariant that cannot be expressed safely.
 
 ## Bad
 
@@ -64,6 +64,7 @@ fn main() {
     assert_eq!(kind_tag(Kind::High), 2);
     let buf = b"ab";
     assert_eq!(byte_at(buf, 1), Some(b'b'));
+    // SAFETY: index 1 is within the two-byte `buf`.
     let b = unsafe { byte_unchecked(buf, 1) };
     assert_eq!(b, b'b');
 }

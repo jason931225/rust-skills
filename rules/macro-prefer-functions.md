@@ -4,7 +4,11 @@
 
 ## Why It Matters
 
-Macros operate on token streams before type checking, so they bypass type inference, resist IDE navigation, and produce opaque error messages. They also slow incremental compilation, cannot be passed as values, and can break when an edition changes the syntax they consume or emit. A generic function is almost always clearer, better-optimized by the compiler, and easier for contributors to reason about.
+Macros expand before type checking; the expanded Rust is still inferred and
+type checked. The indirection can make navigation, diagnostics, compile time,
+and edition-sensitive syntax harder to reason about, and a macro cannot be
+passed around as a function value. A function or trait usually gives callers a
+smaller, typed contract without promising any universal optimization benefit.
 
 Reach for a macro only when you genuinely need one of: variadic argument counts, a DSL with non-Rust syntax, blanket trait impls across an open-ended set of types, compile-time format/string checks, or eliminating mechanically repetitive boilerplate that a function truly cannot handle. Expansion complexity is a warning sign: users should be able to predict the generated shape from the invocation. If they cannot, use an explicit API or code generation at build time.
 
@@ -31,9 +35,9 @@ fn main() {
 #[inline]
 fn double<T>(x: T) -> T
 where
-    T: std::ops::Mul<Output = T> + Copy,
+    T: std::ops::Add<Output = T> + Copy,
 {
-    x * x  // or x + x for integer-like types
+    x + x
 }
 
 fn main() {

@@ -56,6 +56,8 @@ pub unsafe fn copy_frame(src: *const u8, dst: *mut u8, len: usize) {
 /// With `panic = "abort"`, a violated assertion in the surrounding FFI shim
 /// terminates the process instead of unwinding to the host.
 pub unsafe fn copy_frame(src: *const u8, dst: *mut u8, len: usize) {
+    // SAFETY: the function's caller contract requires valid, aligned,
+    // non-overlapping regions for len bytes.
     unsafe { std::ptr::copy_nonoverlapping(src, dst, len) }
 }
 ```

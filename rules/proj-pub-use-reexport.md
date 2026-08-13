@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) is what Microsoft Pragmatic Rust Guidelines (M-SINGLE-ITEM-PATH) call a split identity: humans and agents keep both forever. Re-exporting `bytes::Bytes` creates a second apparent owner for a foreign type. Even when that type appears in your signatures, callers should normally import it from `bytes` and declare the dependency themselves (M-FOREIGN-REEXPORTS). Hide your module, re-export your item once, and leave foreign identity with its defining crate.
+`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) creates a split identity that humans and agents preserve forever. Re-exporting `bytes::Bytes` creates a second apparent owner for a foreign type. Even when that type appears in your signatures, callers should normally import it from `bytes` and declare the dependency themselves. Hide your module, re-export your item once, and leave foreign identity with its defining crate.
 
 ## Bad
 
@@ -73,7 +73,7 @@ fn main() {
 ## See Also
 
 - [proj-no-glob-reexport](proj-no-glob-reexport.md) - never `pub use foo::*` across modules
-- [proj-prelude-module](proj-prelude-module.md) - a prelude is the exception, not a second public path
+- [proj-prelude-module](proj-prelude-module.md) - a curated prelude is a deliberate opt-in import surface
 - [doc-inline-reexport](doc-inline-reexport.md) - `#[doc(inline)]` the one path you chose
 - [api-std-types-boundary](api-std-types-boundary.md) - most foreign types should not appear at all
 - [macro-private-helpers](macro-private-helpers.md) - the hidden stable-path exception for generated code

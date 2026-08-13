@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Smart pointers in a public signature leak an ownership scheme callers cannot change. Once two crates disagree about `Arc` versus `Rc`, or `Mutex` versus `RwLock`, the types no longer compose and the wrapper infects every downstream field. Per Microsoft Pragmatic Rust Guidelines (M-AVOID-WRAPPERS), treat those wrappers as implementation details: accept and return `&T`, `&mut T`, or `T`, and hide any internal sharing behind the type.
+Smart pointers in a public signature leak an ownership scheme callers cannot change. Once two crates disagree about `Arc` versus `Rc`, or `Mutex` versus `RwLock`, the types no longer compose and the wrapper infects every downstream field. Treat incidental wrappers as implementation details: accept and return `&T`, `&mut T`, or `T`, and hide internal sharing behind the type.
 
 ## Bad
 

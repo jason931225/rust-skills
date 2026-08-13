@@ -24,7 +24,7 @@ edition = "2021"
 name = "my-crate"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.80"  # oldest toolchain you commit to supporting
+rust-version = "1.85"  # edition 2024 floor; raise when the code requires it
 
 [workspace]
 resolver = "3"  # default for edition 2024; enables MSRV-aware dep resolution
@@ -37,7 +37,7 @@ CI job pinning the MSRV toolchain (GitHub Actions example):
 - name: Install MSRV toolchain
   uses: dtolnay/rust-toolchain@master
   with:
-    toolchain: "1.80"
+    toolchain: "1.85"
 
 - name: Check MSRV
   run: cargo check --all-features
@@ -46,6 +46,8 @@ CI job pinning the MSRV toolchain (GitHub Actions example):
 ## Choosing and Maintaining MSRV
 
 - Declare the MSRV when a library is created; retrofitting the promise after users depend on the crate is harder.
+- Keep `rust-version` at or above the selected edition's minimum compiler
+  release (Rust 1.85 for edition 2024).
 - Keep it a few stable releases behind current Rust by default. Choose a wider lag only for measured user constraints such as embedded targets or a documented corporate freeze.
 - Do not chase the oldest toolchain that can compile by accident—a very low floor widens eligible dependency versions and can force users onto older, buggier releases.
 - When you bump MSRV, treat it as a semver-minor change (for libraries) and document it in your changelog.

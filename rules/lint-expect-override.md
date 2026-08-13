@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`#[allow]` stays quiet even after the lint no longer fires, so overrides pile up as cargo-cult comments. `#[expect]` fails the build (or warns) once the lint is gone, so the override cannot outlive the code that needed it. Per Microsoft Pragmatic Rust Guidelines (M-LINT-OVERRIDE-EXPECT), pair every override with a `reason` so reviewers can tell whether the exception is still load-bearing.
+`#[allow]` stays quiet even after the lint no longer fires, so overrides pile up as cargo-cult comments. `#[expect]` warns once the lint is gone, so the override cannot outlive the code that needed it unnoticed. Pair every override with a `reason` so reviewers can tell whether the exception is still load-bearing.
 
 ## Bad
 

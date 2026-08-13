@@ -128,7 +128,12 @@ fn main() {
 - Return `(service, controller)` from the test constructor. Accepting a borrowed controller allows several services to share ambiguous mutable test state.
 - Keep the controller cheap to clone around shared internal state, matching other service handles.
 - If the library already selects Tokio, smol, or another runtime with a private enum, add the test backend to that enum instead of creating a parallel abstraction.
-- Put the test backend and controller behind `test-util`; they must not appear in the default production artifact.
+- Put a safe test backend and controller behind `test-util` when downstream
+  integration tests need them. Assume feature unification can still place
+  those symbols in a release artifact, so they must not weaken authentication,
+  validation, or other production invariants.
+- Keep security bypasses and destructive fault injectors in a separate test
+  harness or test-only crate outside the production dependency graph.
 - Do not offer `Default` when construction silently chooses unreplaceable ambient effects. Make the native policy visible through `new`.
 
 ## Traits vs a Closed Backend

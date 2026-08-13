@@ -4,14 +4,21 @@
 
 ## Why It Matters
 
-`Vec<T>` stores three words: pointer, length, and capacity. When you know a collection won't grow, `Box<[T]>` stores only pointer and length (2 words), saving 8 bytes per instance. `Arc<[T]>` and `Arc<str>` drop that capacity word the same way when several owners need the bytes. More importantly, it communicates intent: "this data is fixed-size." `into_boxed_slice` / `into_boxed_str` already shed spare capacity, so a `shrink_to_fit()` immediately before the conversion does nothing useful. The pattern pays off for *internal*, immutable sequences created in volume (thousands of instances) that callers never see as `Vec` or `String` — they take `&[T]` or `&str`. Public, growable, or rarely built collections should stay as `Vec`/`String`. Per Microsoft Pragmatic Rust Guidelines (M-BOX-DST).
+`Vec<T>` tracks pointer, length, and capacity. A boxed slice has no growth
+capacity and is represented as an owned slice pointer. On common 64-bit targets
+that often makes the handle one machine word smaller, but Rust does not promise
+those exact sizes as a stable ABI. More importantly, the type communicates
+"fixed after construction." `into_boxed_slice` and `into_boxed_str` already
+discard spare capacity, so a preceding `shrink_to_fit()` is redundant. Use the
+pattern for measured, high-cardinality internal storage; keep public, growable,
+or rarely created collections as `Vec` or `String`.
 
 ## Bad
 
 ```rust
 struct Document {
     // Vec signals "might grow" but we never push after creation
-    paragraphs: Vec<Paragraph>,  // 24 bytes: ptr + len + capacity
+    paragraphs: Vec<Paragraph>,  // carries growth capacity
 }
 
 fn load_document(data: &[u8]) -> Document {
@@ -48,14 +55,9 @@ fn load_document(data: &[u8]) -> Document {
 ```rust
 use std::mem::size_of;
 
-// Vec: 24 bytes on 64-bit
-assert_eq!(size_of::<Vec<u8>>(), 24);  // ptr(8) + len(8) + cap(8)
-
-// Box<[T]>: 16 bytes (fat pointer)
-assert_eq!(size_of::<Box<[u8]>>(), 16);  // ptr(8) + len(8)
-
-// Savings per instance: 8 bytes
-// For 1 million instances: 8 MB saved
+// Measure the deployment target; do not make these sizes a wire or ABI contract.
+#[cfg(target_pointer_width = "64")]
+assert!(size_of::<Box<[u8]>>() < size_of::<Vec<u8>>());
 ```
 
 ## Conversion Patterns
@@ -99,15 +101,12 @@ Same principle applies to strings. Prefer these in private fields; keep the publ
 ```rust
 use std::mem::size_of;
 
-// String: 24 bytes (like Vec<u8>)
-assert_eq!(size_of::<String>(), 24);
-
-// Box<str>: 16 bytes
-assert_eq!(size_of::<Box<str>>(), 16);
+#[cfg(target_pointer_width = "64")]
+assert!(size_of::<Box<str>>() < size_of::<String>());
 
 // For immutable strings
 struct Name {
-    value: Box<str>,  // Saves 8 bytes vs String
+    value: Box<str>,  // Carries no spare-capacity field
 }
 
 impl Name {
@@ -139,7 +138,7 @@ impl SharedName {
 ```rust
 // Cache with millions of entries
 struct Cache {
-    // 8 bytes saved per entry adds up
+    // A measured handle-size reduction can add up at high cardinality
     entries: HashMap<Key, Box<[u8]>>,
 }
 

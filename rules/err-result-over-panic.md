@@ -113,9 +113,9 @@ fn main() {
 | Index out of bounds (from user data) | `Result` |
 | Index out of bounds (internal bug) | Panic |
 | Violated internal invariant | Panic |
-| Violated documented API precondition | Panic |
-| Unimplemented code path | Panic (`unimplemented!()`) |
-| Impossible state reached | Panic (`unreachable!()`) |
+| Violated safe API precondition | Prefer a type/`Result`; panic only when the API deliberately specifies it |
+| Unimplemented production path | Do not ship it |
+| State proved unreachable by a maintained invariant | Panic with the invariant; never use unchecked UB as an assertion |
 
 You do not need to add an expensive check merely to detect every possible
 contract violation. Omitting a check may produce an unspecified but defined
@@ -129,22 +129,27 @@ must not observe memory unsafety or broken validity invariants. Const evaluation
 may use assertions or unwrap-like operations to reject an invalid constant at
 compile time.
 
-## Library vs Application
+## Library Versus Application Boundary
 
 ```rust
-// Library: NEVER panic on user input
+// Library: return a typed rejection for input-controlled failure.
 pub fn parse(input: &str) -> Result<Ast, ParseError> {
-    // Always return Result
+    // ...
 }
 
-// Application: Can panic at top level for critical failures
-fn main() {
+// Application: map startup failure to diagnostics and controlled termination.
+fn main() -> std::process::ExitCode {
     if let Err(e) = run() {
-        eprintln!("Fatal error: {}", e);
-        std::process::exit(1);
+        eprintln!("startup failed: {e:#}");
+        return std::process::ExitCode::FAILURE;
     }
+    std::process::ExitCode::SUCCESS
 }
 ```
+
+Returning a failure exit status is not a panic. Keep sensitive configuration
+and credentials out of the rendered chain, and flush telemetry only within a
+bounded shutdown budget.
 
 ## See Also
 

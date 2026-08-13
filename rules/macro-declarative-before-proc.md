@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A `macro_rules!` expansion is still tokens you can `cargo expand`, jump to, and review. A procedural macro is a compiler plugin: rust-analyzer often cannot show what it emitted, and every dependent crate pays to compile that plugin plus its `syn` graph. As Microsoft Pragmatic Rust Guidelines (M-EXAMPLE-OVER-PROC) treat inspectability and compile time as the default, start with a macro-by-example and introduce a proc-macro crate only when the job genuinely needs the AST.
+A `macro_rules!` expansion is still tokens you can `cargo expand`, jump to, and review. A procedural macro is a compiler plugin: rust-analyzer often cannot show what it emitted, and every dependent crate pays to compile that plugin plus its `syn` graph. Prefer inspectability and low compile cost: start with a macro-by-example and introduce a proc-macro crate only when the job genuinely needs the AST.
 
 ## Bad
 

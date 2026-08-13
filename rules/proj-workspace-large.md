@@ -170,6 +170,22 @@ another crate's directory or `src/`; keep members as siblings. A flat
 group sibling crates in domain folders, while preserving independent package
 roots. Dummy crates used only as UI-test fixtures are the narrow exception.
 
+## Read-Only Source Trees
+
+Cargo 1.97 added `resolver.lockfile-path` for environments where the source
+checkout is read-only but dependency resolution may update the lockfile:
+
+```toml
+# supplied as CI-local Cargo configuration, not committed as a developer path
+[resolver]
+lockfile-path = "/workspace-state/Cargo.lock"
+```
+
+Keep the ordinary workspace `Cargo.lock` checked in for reproducible
+application builds. Override its location only for a deliberate sandbox,
+packaging, or read-only-source workflow, and preserve the resulting lockfile as
+an input or artifact rather than resolving from scratch on every run.
+
 ## See Also
 
 - [proj-workspace-deps](./proj-workspace-deps.md) - Workspace dependencies

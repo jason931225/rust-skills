@@ -34,33 +34,43 @@ impl fmt::Display for ParseError {
 ```rust
 use std::fmt;
 
-#[derive(Debug)] // derive Debug for free diagnostic output
+#[derive(Debug)]
 struct ParseError {
-    input: String,
+    input_len: usize,
     line: u32,
 }
 
 // Hand-write Display for a clean, human-readable message
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "parse error on line {}: {:?}", self.line, self.input)
+        write!(
+            f,
+            "parse error on line {} ({} input bytes)",
+            self.line,
+            self.input_len,
+        )
     }
 }
 
 impl std::error::Error for ParseError {}
 
-#[derive(Debug)]
 struct Label(String);
+
+impl fmt::Debug for Label {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("Label").field(&"[redacted]").finish()
+    }
+}
 
 impl fmt::Display for Label {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Preserve the wrapped string's newlines and escape sequences.
+        // This domain has reviewed Label as intentionally user-visible.
         f.write_str(&self.0)
     }
 }
 
 fn main() {
-    let e = ParseError { input: "foo bar".into(), line: 42 };
+    let e = ParseError { input_len: 7, line: 42 };
 
     // User-facing: clean sentence
     eprintln!("error: {e}");
@@ -74,12 +84,14 @@ fn main() {
 
 | Trait | Format | Audience | How to implement |
 |-------|--------|----------|-----------------|
-| `Debug` | `{:?}` / `{:#?}` | Developers, logs | `#[derive(Debug)]` (almost always) |
+| `Debug` | `{:?}` / `{:#?}` | Developers, diagnostics | Derive only when every field is safe; otherwise redact |
 | `Display` | `{}` | End users, error messages | Hand-write to describe the condition clearly |
 
 - Never derive `Display` — it must be intentionally written.
-- `#[derive(Debug)]` on every public type (API Guidelines C-DEBUG).
-- Implement `Display` for public string-like wrappers rather than forcing callers to reach into the wrapper or use `Debug`.
+- Provide useful `Debug` for ordinary public types, but never derive it across
+  secrets, credentials, tokens, unrestricted PII, or payloads.
+- Implement `Display` for a string-like wrapper only when its contents are
+  intentionally user-visible; do not create a convenient secret-leak path.
 - Follow the wrapped value's rendering conventions, including newlines and escape sequences; do not route `Display` through `{:?}`.
 - If your error type implements `std::error::Error`, its `Display` output becomes the human-readable error message that propagates through `anyhow::Context` and similar.
 - The `{:#?}` pretty-print form is still `Debug`; use it in tests for readable assertion output, not in user-facing code.

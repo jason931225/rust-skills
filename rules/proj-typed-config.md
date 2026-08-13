@@ -53,7 +53,9 @@ pub fn validate(settings: &Settings) -> Result<(), &'static str> {
 
 fn main() {
     let settings = Settings {
-        listen: "127.0.0.1:8080".parse().unwrap(),
+        listen: "127.0.0.1:8080"
+            .parse()
+            .expect("default listen address is a valid socket address"),
         request_timeout: Duration::from_secs(10),
         database_url: SecretString("postgres://example".to_owned()),
     };

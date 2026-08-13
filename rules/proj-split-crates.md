@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Rust compiles crate-by-crate. A client-only change that still type-checks a server module pays for that module every time, and two modules that import each other cannot become crates later without a rewrite. Per Microsoft Pragmatic Rust Guidelines (M-SMALLER-CRATES), move a submodule that outsiders could depend on by itself into its own package. Bias toward more crates when the split is real; do not invent a package for a helper that has no independent user.
+Rust compiles crate-by-crate. A client-only change that still type-checks a server module pays for that module every time, and two modules that import each other cannot become crates later without a rewrite. Move a submodule that outsiders could depend on by itself into its own package. Bias toward more crates when the split is real; do not invent a package for a helper that has no independent user.
 
 ## Bad
 
@@ -65,7 +65,11 @@ A split hides former `pub(crate)` fields and methods. Treat that as a design sig
 
 Proc-macro crates and runtime stacks sometimes need a single name on crates.io. Re-join the pieces as a facade that `pub use`s what users should type.
 
-- A technical split such as `foo_proc` (`proc-macro = true`) **must** be re-exported from `foo`. Users depend on `foo` only; they never name `foo_proc`.
+- A technical proc-macro split may be re-exported from `foo` when one facade is
+  the intended product API. A separately versioned macro crate is also valid
+  when users need independent dependency/features or the macro is useful
+  without the runtime crate. Pick one public path and document the versioning
+  relationship; do not expose accidental duplicate paths.
 - Re-export other members sparingly. An umbrella is a convenience crate, not a second public path for every item (`proj-pub-use-reexport`).
 
 ```text

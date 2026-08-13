@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Structured fields (`user.id`, `elapsed_ms`) make one line searchable. They do not group "cache evicted" across versions if the message string keeps changing or is assembled with `format!`. As Microsoft Pragmatic Rust Guidelines (M-LOG-STRUCTURED) add a second axis, use a hierarchical name (`cache.evict.success`) that dashboards filter on, plus a template that names the fields instead of interpolating them. `obs-structured-fields` is the field vocabulary; this rule is the event identity. `clippy::literal_string_with_formatting_args` is often allowed so templates can keep `{{field}}` braces.
+Structured fields (`user.id`, `elapsed_ms`) make one line searchable. They do not group "cache evicted" across versions if the message string keeps changing or is assembled with `format!`. add a second axis, use a hierarchical name (`cache.evict.success`) that dashboards filter on, plus a template that names the fields instead of interpolating them. `obs-structured-fields` is the field vocabulary; this rule is the event identity. `clippy::literal_string_with_formatting_args` is often allowed so templates can keep `{{field}}` braces.
 
 ## Bad
 

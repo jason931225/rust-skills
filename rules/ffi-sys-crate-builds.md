@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Every consumer of `foo-sys` inherits its build. A `build.rs` that shells out to `nasm`, `perl`, `pkg-config`, or a downloaded tarball fails on the next machine, in CI, and in any sandbox that has only `cc` and a linker. Per Microsoft Pragmatic Rust Guidelines (M-SYS-CRATES), a `-sys` crate must compile with the Rust toolchain plus `cc`. Vendor the upstream sources with their repository URL and exact revision, generate bindgen output before publish when you can, and offer static linking plus a `libloading` path when runtime discovery is part of the product.
+Every consumer of `foo-sys` inherits its build. A `build.rs` that shells out to `nasm`, `perl`, `pkg-config`, or a downloaded tarball fails on the next machine, in CI, and in any sandbox that has only `cc` and a linker. Keep a `-sys` crate hermetic: vendor upstream sources with their repository URL and exact revision, generate bindgen output before publish when possible, and offer static linking plus a `libloading` path when runtime discovery is part of the product.
 
 ## Bad
 

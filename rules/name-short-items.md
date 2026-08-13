@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Rust APIs are used with the module path in scope. `billing::DistributedInvoiceIdentifier` repeats what the path already said and hides the noun. Following Microsoft Pragmatic Rust Guidelines (M-SHORT-NAMES), prefer `RuntimeConfig`, `billing::Id`, and `HookFn`. Callers who hold two `Id` types qualify them at the use site instead of baking the module into every identifier.
+Rust APIs are used with the module path in scope. `billing::DistributedInvoiceIdentifier` repeats what the path already said and hides the noun. Prefer `RuntimeConfig`, `billing::Id`, and `HookFn`. Callers who hold two `Id` types qualify them at the use site instead of baking the module into every identifier.
 
 ## Bad
 

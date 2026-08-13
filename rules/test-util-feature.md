@@ -1,25 +1,29 @@
 # test-util-feature
 
-> Gate mocks, invariant bypasses, and fake data behind an explicit test-only Cargo feature
+> Put safe testing utilities behind an additive feature; never use a feature to weaken a production invariant
 
 ## Why It Matters
 
-A `skip_hostname_check` method that ships in the default build is a production foot-gun. Under Microsoft Pragmatic Rust Guidelines (M-TEST-UTIL), every testing affordance — mocks, seedable clocks, inspect-secret helpers — belongs behind one clearly named feature (commonly `test-util` or `testing`) that applications enable only in `[dev-dependencies]` / test crates. Combine it with `#[cfg(feature = "...")]` so the symbols do not exist in release rlibs. `clippy::disallowed_methods` can ban the bypass outside that cfg.
+Cargo features are capabilities, not build profiles. Dependency feature
+unification means a `test-util` feature enabled anywhere in a resolved graph may
+also be present in a release build. It is useful for deterministic clocks,
+scripted transports, and observable test controllers only when those APIs
+remain safe if accidentally enabled. Certificate bypasses, authorization
+shortcuts, secret extractors, and other invariant-breaking controls do not
+become safe merely because their symbols are feature-gated.
 
 ## Bad
 
 ```rust
-pub struct SmtpClient {
-    pub skip_host: bool,
+pub struct TlsClient {
+    verify_peer: bool,
 }
 
-impl SmtpClient {
-    pub fn new() -> Self {
-        Self { skip_host: false }
-    }
-
+impl TlsClient {
+    #[cfg(feature = "test-util")]
     pub fn skip_hostname_check(&mut self) {
-        self.skip_host = true;
+        // A downstream release can enable this feature through unification.
+        self.verify_peer = false;
     }
 }
 ```
@@ -27,33 +31,64 @@ impl SmtpClient {
 ## Good
 
 ```rust
-pub struct SmtpClient {
-    skip_host: bool,
+pub trait Clock {
+    fn now_millis(&self) -> u64;
 }
 
-impl SmtpClient {
-    pub fn new() -> Self {
-        Self { skip_host: false }
-    }
+pub struct SystemClock;
 
-    #[cfg(feature = "test-util")]
-    pub fn skip_hostname_check(&mut self) {
-        self.skip_host = true;
+impl Clock for SystemClock {
+    fn now_millis(&self) -> u64 {
+        0 // Call the platform clock in the real adapter.
     }
+}
 
-    pub fn verifies_peer(&self) -> bool {
-        !self.skip_host
+#[cfg(feature = "test-util")]
+#[derive(Clone)]
+pub struct ManualClock {
+    now_millis: u64,
+}
+
+#[cfg(feature = "test-util")]
+impl ManualClock {
+    pub fn new(now_millis: u64) -> Self {
+        Self { now_millis }
+    }
+}
+
+#[cfg(feature = "test-util")]
+impl Clock for ManualClock {
+    fn now_millis(&self) -> u64 {
+        self.now_millis
     }
 }
 
 fn main() {
-    let client = SmtpClient::new();
-    assert!(client.verifies_peer());
+    let _ = SystemClock;
 }
 ```
 
+Enabling `ManualClock` in a release artifact adds a deterministic adapter but
+does not disable authentication, validation, or transport security.
+
+## Key Points
+
+- Assume every published feature can be enabled in production.
+- Keep features additive: they may add safe fakes or controllers, but must not
+  remove checks or change secure defaults.
+- Keep crate-internal helpers under `#[cfg(test)]` when integration consumers do
+  not need them.
+- Put destructive fault injectors and invariant bypasses in a separate test
+  harness or test-only crate that is absent from the production dependency
+  graph.
+- Test default and all-feature builds. Inspect resolved features when a release
+  unexpectedly contains test support.
+- Name the feature consistently (`test-util` is conventional) and declare it to
+  `check-cfg` so misspellings fail loudly.
+
 ## See Also
 
-- [test-mock-traits](test-mock-traits.md) - inject fakes through traits; gate the fake constructors
-- [proj-feature-additive](proj-feature-additive.md) - a test feature may add items, never remove production checks by default
-- [lint-cfg-check](lint-cfg-check.md) - declare the feature so a typo does not silently drop the gate
+- [test-mock-traits](test-mock-traits.md) - inject deterministic effects without weakening invariants
+- [proj-feature-additive](proj-feature-additive.md) - dependency features unify and must compose safely
+- [lint-cfg-check](lint-cfg-check.md) - validate feature names
+- [api-tls-required](api-tls-required.md) - certificate validation has no feature-gated bypass

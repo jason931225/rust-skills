@@ -1,49 +1,78 @@
 # async-future-size
 
-> Keep hot `async fn` state machines small: do not capture large values across `.await`, and box the heavy branch
+> Keep frequently created futures small by dropping large setup state before the first suspension point
 
 ## Why It Matters
 
-Locals that live across `.await`, plus by-value arguments, become fields of the future. A 4 KiB buffer held over one I/O point is copied onto the worker stack and then into the task allocation on every poll setup. Following Microsoft Pragmatic Rust Guidelines (M-ASYNC-STACK-SIZE), hot entry points should track `size_of_val(&fut)` (or `static_assertions` / a unit test) and move setup *outside* `async`. `clippy::large_futures` (allowlisted in `clippy::nursery`, enable it for the crate) is the mechanical tripwire; `Box::pin` or `futures::future::Either` keeps the rare large path off the common type.
+Arguments and locals that remain live across `.await` are candidates for
+storage in the generated state machine, subject to compiler layout
+optimization. Tokio commonly stores a spawned future in one task allocation
+and polls it in place; that is a runtime implementation strategy, not a Rust
+language guarantee. Large future values can increase task storage, cache
+pressure, and movement before pinning. Measure hot entry points and keep large,
+rare state out of the common future type.
 
 ## Bad
 
 ```rust
-pub struct Huge([u8; 4096]);
+pub struct Payload([u8; 4096]);
 
-pub async fn send(payload: Huge) -> usize {
-    let scratch = [0u8; 4096];
-    async { 1 }.await;
-    payload.0[0] as usize + scratch[0] as usize
+pub async fn first_byte(payload: Payload) -> u8 {
+    std::future::ready(()).await;
+    payload.0[0]
 }
 ```
+
+The entire payload remains part of the future because it is read after the
+suspension point.
 
 ## Good
 
 ```rust
-pub struct Huge([u8; 32]);
+use std::future::Future;
 
-pub fn send(payload: Huge) -> impl Future<Output = usize> {
+pub struct Payload([u8; 4096]);
+
+pub fn first_byte(payload: Payload) -> impl Future<Output = u8> {
     let first = payload.0[0];
+    // `payload` is dropped before the returned future is created.
     async move {
-        async { 1 }.await;
-        first as usize
+        std::future::ready(()).await;
+        first
     }
 }
 
 #[test]
-fn send_future_stays_small() {
-    let fut = send(Huge([0; 32]));
-    assert!(std::mem::size_of_val(&fut) < 256);
+fn hot_future_size_is_bounded() {
+    let future = first_byte(Payload([7; 4096]));
+    assert!(std::mem::size_of_val(&future) <= 16);
 }
 
 fn main() {
-    let _ = send(Huge([7; 32]));
+    let _ = first_byte(Payload([7; 4096]));
 }
 ```
 
+A size assertion is useful only for a measured hot path. Treat the threshold as
+an architecture-specific regression budget, not a universal ABI guarantee.
+
+## Key Points
+
+- Inspect values that remain live across each `.await`; source order alone does
+  not determine liveness.
+- Extract small required data before constructing the async block when setup is
+  synchronous.
+- Box a genuinely rare large branch when reducing the common future outweighs
+  one allocation on that branch.
+- Use `clippy::large_futures` as a tripwire, then profile before reshaping code.
+- Move sustained CPU work to a bounded compute pool; shrinking a future does
+  not make CPU work cooperative.
+- Recheck thresholds after compiler or target changes because state-machine
+  layout is not a stable interface.
+
 ## See Also
 
-- [mem-box-large-variant](mem-box-large-variant.md) - box the large enum arm the same way you box a large future branch
-- [mem-assert-type-size](mem-assert-type-size.md) - the same size tripwire for ordinary structs
-- [async-spawn-blocking](async-spawn-blocking.md) - multi-kilobyte CPU work does not belong in the future at all
+- [mem-assert-type-size](mem-assert-type-size.md) - measured size regression budgets
+- [async-fn-over-future](async-fn-over-future.md) - return `impl Future` only when setup or bounds require it
+- [async-spawn-blocking](async-spawn-blocking.md) - isolate sustained CPU work
+- [perf-profile-first](perf-profile-first.md) - optimize measured hot paths

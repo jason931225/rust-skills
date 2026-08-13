@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Every type manages something; putting `Manager` in the name does not tell a reader what the type *does*. Following Microsoft Pragmatic Rust Guidelines (M-WEASEL-WORDS), drop empty role words like `Service`, `Manager`, and `Factory`: replace them with the noun for the work (`Invoices`, `InvoiceDispatcher`) and use `Builder` when the type exists to construct another value. Shorter, specific names also survive grepping and rustdoc search.
+Every type manages something; putting `Manager` in the name does not tell a reader what the type *does*. Drop empty role words like `Service`, `Manager`, and `Factory`: replace them with the noun for the work (`Invoices`, `InvoiceDispatcher`) and use `Builder` when the type exists to construct another value. Shorter, specific names also survive grepping and rustdoc search.
 
 ## Bad
 

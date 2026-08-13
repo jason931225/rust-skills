@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-C ABI types (`*mut u8`, lengths, integer status codes) do not compose with idiomatic Rust ownership. Once `Receipt` itself stores a raw pointer, every Rust caller inherits FFI unsafety. As Microsoft Pragmatic Rust Guidelines (M-FFI-TRANSLATES) split the work, a safe crate owns the data model and the fallible operations; the FFI crate copies bytes across the boundary and returns a `u8`. The extra types are cheaper than infecting the core crate with `#[repr(C)]` layouts.
+C ABI types (`*mut u8`, lengths, integer status codes) do not compose with idiomatic Rust ownership. Once `Receipt` itself stores a raw pointer, every Rust caller inherits FFI unsafety. Split the work: a safe crate owns the data model and fallible operations; the FFI crate copies bytes across the boundary and returns a status code. The extra types are cheaper than infecting the core crate with `#[repr(C)]` layouts.
 
 ## Bad
 
@@ -50,6 +50,11 @@ impl Receipt {
 }
 
 /// FFI shim: copy the C buffers, then call the safe API.
+///
+/// # Safety
+///
+/// `merchant` must point to a live identifier. `body` must be null when
+/// `body_len` is zero or valid for `body_len` readable bytes.
 pub unsafe fn post_receipt(
     merchant: *const [u8; 8],
     body: *const u8,
@@ -58,8 +63,9 @@ pub unsafe fn post_receipt(
     if merchant.is_null() || (body.is_null() && body_len != 0) {
         return 1;
     }
-    // SAFETY: caller promised `merchant` is valid and `body` is valid for `body_len`.
+    // SAFETY: caller promised `merchant` points to a live identifier.
     let dest = unsafe { *merchant };
+    // SAFETY: caller promised `body` is valid for `body_len` bytes.
     let bytes = unsafe { std::slice::from_raw_parts(body, body_len) }.to_vec();
     match Receipt::new(dest, bytes).post() {
         Ok(()) => 0,
@@ -70,6 +76,7 @@ pub unsafe fn post_receipt(
 fn main() {
     let dest = [0u8; 8];
     let payload = b"ok";
+    // SAFETY: both pointers refer to live local values for the duration of the call.
     let rc = unsafe { post_receipt(&dest, payload.as_ptr(), payload.len()) };
     assert_eq!(rc, 0);
 }

@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-A function that takes `std::fs::File` cannot parse bytes that arrived over the network, from stdin, or from a test cursor without first writing them to disk. Sans-I/O APIs take the standard I/O traits and let the caller supply the source. As Microsoft Pragmatic Rust Guidelines (M-IMPL-IO) note, that is the cheap way to get N×M composability: one parser, many transports. Use this for one-shot reads or writes, especially during initialization. For asynchronous libraries that target multiple runtimes, accept `futures::io::AsyncRead` / `AsyncWrite` or a crate-owned port instead of a Tokio-specific type. A long-lived runtime-aware service needs an explicit runtime adapter, not a borrowed stream parameter threaded through every method.
+A function that takes `std::fs::File` cannot parse bytes that arrived over the network, from stdin, or from a test cursor without first writing them to disk. Sans-I/O APIs take the standard I/O traits and let the caller supply the source. That yields N×M composability: one parser, many transports. Use this for one-shot reads or writes, especially during initialization. For asynchronous libraries that target multiple runtimes, accept `futures::io::AsyncRead` / `AsyncWrite` or a crate-owned port instead of a Tokio-specific type. A long-lived runtime-aware service needs an explicit runtime adapter, not a borrowed stream parameter threaded through every method.
 
 ## Bad
 

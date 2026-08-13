@@ -15,7 +15,9 @@
       "source_sha256": "27fdd619878b614651e3968d8719b0e445f902693301920fbad5f4b90a51d13d",
       "disposition": "covered",
       "rules": [
+        "rules/doc-all-public.md",
         "rules/doc-examples-section.md",
+        "rules/doc-module-inner.md",
         "rules/test-observable-coverage.md",
         "rules/test-mock-traits.md",
         "rules/type-newtype-validated.md"
