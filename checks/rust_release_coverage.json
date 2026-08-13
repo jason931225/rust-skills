@@ -1,0 +1,3876 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "Rust Release Notes",
+    "document_url": "https://doc.rust-lang.org/stable/releases.html",
+    "rustc_version": "1.97.1",
+    "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+    "document_sha256": "fe0b97da4fb0ac6f4ec52fd9312afaf95229a76040f26ec3737185c733d9f07d",
+    "versions": [
+      "1.95.0",
+      "1.96.0",
+      "1.96.1",
+      "1.97.0",
+      "1.97.1"
+    ],
+    "entry_count": 162
+  },
+  "summary": {
+    "covered": 50,
+    "documented-deviation": 1,
+    "provider-specific": 8,
+    "reference-only": 98,
+    "superseded": 5
+  },
+  "entries": [
+    {
+      "id": "rust-1.97.1-patch-01",
+      "source_identity": {
+        "version": "1.97.1",
+        "section": "Patch",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/issues/159035"
+        ]
+      },
+      "claim": "rustc: Fix miscompilation in LLVM optimization This backports an LLVM submodule bump to include the LLVM-side fix and a revert of the rustc change that is one known trigger for the bug. The rustc side revert should not be strictly necessary but is done out of abundance of caution.",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/proj-stable-toolchain.md"
+      ],
+      "exact_difference": "The maintained clone pins Rust 1.97.1 rather than 1.97.0 so the audited toolchain includes the upstream LLVM miscompilation fix.",
+      "rationale_class": "security",
+      "executable_check": "checks/rust-toolchain.toml",
+      "remaining_uncertainty": "The repository verifies compiler identity and behavior but does not reproduce the upstream miscompilation trigger.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/issues/159035",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-language-01",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Language",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/148214"
+        ]
+      },
+      "claim": "Consider Result<T, Uninhabited> and ControlFlow<Uninhabited, T> to be equivalent to T for must use lint",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/148214",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-language-02",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Language",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149509"
+        ]
+      },
+      "claim": "Add allow-by-default dead_code_pub_in_binary lint for unused pub items in binary crates",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/proj-pub-crate-internal.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149509",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-language-03",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Language",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154510"
+        ]
+      },
+      "claim": "Stabilize the div32, lam-bh, lamcas, ld-seq-sa and scq target features",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154510",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-language-04",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Language",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155006"
+        ]
+      },
+      "claim": "Stabilize cfg(target_has_atomic_primitive_alignment)",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155006",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-language-05",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Language",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155137"
+        ]
+      },
+      "claim": "Allow trailing self in imports in more cases",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155137",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-platform-support-01",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Platform Support",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152443"
+        ]
+      },
+      "claim": "nvptx64-nvidia-cuda: drop support for old architectures and old ISAs",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152443",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-01",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/iter/struct.RepeatN.html#impl-Default-for-RepeatN%3CA%3E"
+        ]
+      },
+      "claim": "Default for RepeatN",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/iter/struct.RepeatN.html#impl-Default-for-RepeatN%3CA%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-02",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/ffi/struct.FromBytesUntilNulError.html#impl-Copy-for-FromBytesUntilNulError"
+        ]
+      },
+      "claim": "Copy for ffi::FromBytesUntilNulError",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/ffi/struct.FromBytesUntilNulError.html#impl-Copy-for-FromBytesUntilNulError",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-03",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154003"
+        ]
+      },
+      "claim": "Send for std::fs::File on UEFI",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154003",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-04",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.isolate_highest_one"
+        ]
+      },
+      "claim": "<{integer}>::isolate_highest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.isolate_highest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-05",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.isolate_lowest_one"
+        ]
+      },
+      "claim": "<{integer}>::isolate_lowest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.isolate_lowest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-06",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.highest_one"
+        ]
+      },
+      "claim": "<{integer}>::highest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.highest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-07",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.lowest_one"
+        ]
+      },
+      "claim": "<{integer}>::lowest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.lowest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-08",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 8,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.bit_width"
+        ]
+      },
+      "claim": "<{integer}>::bit_width",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.u32.html#method.bit_width",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-09",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 9,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.isolate_highest_one"
+        ]
+      },
+      "claim": "NonZero<{integer}>::isolate_highest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.isolate_highest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-10",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 10,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.isolate_lowest_one"
+        ]
+      },
+      "claim": "NonZero<{integer}>::isolate_lowest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.isolate_lowest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-11",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 11,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.highest_one"
+        ]
+      },
+      "claim": "NonZero<{integer}>::highest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.highest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-12",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 12,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.lowest_one"
+        ]
+      },
+      "claim": "NonZero<{integer}>::lowest_one",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.lowest_one",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-13",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 13,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.bit_width"
+        ]
+      },
+      "claim": "NonZero<{integer}>::bit_width",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-bit-width.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::integer_bit_helpers_define_zero_and_set_bit_behavior",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/num/struct.NonZero.html#method.bit_width",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-stabilized-apis-14",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Stabilized APIs",
+        "ordinal": 14,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.char.html#method.is_control"
+        ]
+      },
+      "claim": "char::is_control",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.char.html#method.is_control",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-cargo-01",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Cargo",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/16796",
+          "https://doc.rust-lang.org/nightly/cargo/reference/config.html#buildwarnings"
+        ]
+      },
+      "claim": "Stabilize build.warnings config. This controls how lint warnings from local packages are treated. Useful for enforcing a warning-free build in CI, replacing -Dwarnings. docs",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/lint-warnings-deny-config.md",
+        "rules/lint-deny-correctness.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/16796",
+        "https://doc.rust-lang.org/nightly/cargo/reference/config.html#buildwarnings",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-cargo-02",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Cargo",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/16694",
+          "https://doc.rust-lang.org/nightly/cargo/reference/config.html#resolverlockfile-path"
+        ]
+      },
+      "claim": "Stabilize resolver.lockfile-path config. This allows specifying the path to the lockfile to use when resolving dependencies. Useful when working with read-only source directories. docs",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/proj-workspace-large.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/16694",
+        "https://doc.rust-lang.org/nightly/cargo/reference/config.html#resolverlockfile-path",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-cargo-03",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Cargo",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/16712"
+        ]
+      },
+      "claim": "cargo-clean: Error when --target-dir doesn’t look like a Cargo target directory. This prevents accidental deletion of non-target directories.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This Cargo behavior is an optional build-policy input. It becomes skill guidance only where the repository has a portable, enforceable contract beyond the release-note feature itself.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/16712",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-cargo-04",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Cargo",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/16858"
+        ]
+      },
+      "claim": "Add -m shorthand for --manifest-path",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This Cargo behavior is an optional build-policy input. It becomes skill guidance only where the repository has a portable, enforceable contract beyond the release-note feature itself.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/16858",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-cargo-05",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Cargo",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/16936"
+        ]
+      },
+      "claim": "Remove curl dependency from crates-io crate",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This Cargo behavior is an optional build-policy input. It becomes skill guidance only where the repository has a portable, enforceable contract beyond the release-note feature itself.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/16936",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-rustdoc-01",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Rustdoc",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/146220"
+        ]
+      },
+      "claim": "Stabilize --emit flag",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This rustdoc behavior affects documentation tooling but does not change the durable source-level guidance in the rule corpus.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/146220",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-rustdoc-02",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Rustdoc",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155307"
+        ]
+      },
+      "claim": "Stabilize --remap-path-prefix",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This rustdoc behavior affects documentation tooling but does not change the durable source-level guidance in the rule corpus.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155307",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-01",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/139087"
+        ]
+      },
+      "claim": "Emit a future-compatibility warning when relying on f32: From<{float}> to constrain {float}",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/139087",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-02",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/151994"
+        ]
+      },
+      "claim": "Rust will use the v0 symbol mangling scheme by default. This may cause some tools (such as debuggers or profilers, especially with old versions) to fail to demangle symbols emitted by Rust. It may also cause the formatting of text in backtraces to change.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/151994",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-03",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153457"
+        ]
+      },
+      "claim": "Prevent deref coercions in pin!, in order to prevent unsoundness. The most likely case where this might impact users is: writing pin!(x) where x has type &mut T will now always correctly produce a value of type Pin<&mut &mut T>, instead of sometimes allowing a coercion that produces a value of type Pin<&mut T>. This coercion was previously incorrectly allowed since Rust 1.88.0.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153457",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-04",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153873"
+        ]
+      },
+      "claim": "Deprecate std::char constants and functions",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153873",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-05",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153968"
+        ]
+      },
+      "claim": "Warn on linker output by default",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153968",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-06",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153975"
+        ]
+      },
+      "claim": "Remove hidden f64 methods which have been deprecated since 1.0",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153975",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-07",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154599"
+        ]
+      },
+      "claim": "report the varargs_without_pattern lint in deps",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154599",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-08",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 8,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154971"
+        ]
+      },
+      "claim": "Forbid passing generic arguments to module path segments even if the module reexports a generic enum variant",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154971",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-09",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 9,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155065"
+        ]
+      },
+      "claim": "Error on invalid macho link_section specifier",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-no-mangle-unsafe.md"
+      ],
+      "exact_difference": "The FFI/export rule adopts target-correct link-section names, non-empty export names, and validated link parameters; the Linux compile lane cannot execute Mach-O diagnostics.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Mach-O-specific rejection requires a macOS-target compile fixture beyond the default Linux cross-check.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155065",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-10",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 10,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155473"
+        ]
+      },
+      "claim": "The encoding of certain enums have changed. This is not a breaking change, as it only applies to enums without layout guarantees, but is noted here as we’ve seen people impacted from having made assumptions about the layout algorithm.",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/ffi-dll-portable-state.md",
+        "rules/type-repr-transparent.md"
+      ],
+      "exact_difference": "The mapped rules already forbid relying on Rust's unspecified enum layout across ABI or independently built boundaries and require an explicit stable representation where layout is contractual.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155473",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-11",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 11,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155515"
+        ]
+      },
+      "claim": "Error on #[export_name = \"...\"] where the name is empty",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-no-mangle-unsafe.md"
+      ],
+      "exact_difference": "The export rule requires non-empty audited symbol names and treats the Rust 1.97 diagnostic as a contract defect rather than suppressing it.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "The compile harness checks the general attribute contract; each foreign linker and target still needs its own ABI fixture.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155515",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-12",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 12,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155698"
+        ]
+      },
+      "claim": "Syntactically reject tuple index shorthands in struct patterns",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155698",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-13",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 13,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155817"
+        ]
+      },
+      "claim": "validate #[link_name = \"...\"] & #[link(name = \"...\")] parameters",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-no-mangle-unsafe.md"
+      ],
+      "exact_difference": "The FFI/export rule adopts target-correct link-section names, non-empty export names, and validated link parameters; the Linux compile lane cannot execute Mach-O diagnostics.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Mach-O-specific rejection requires a macOS-target compile fixture beyond the default Linux cross-check.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155817",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.97.0-compatibility-notes-14",
+      "source_identity": {
+        "version": "1.97.0",
+        "section": "Compatibility Notes",
+        "ordinal": 14,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/156063"
+        ]
+      },
+      "claim": "On Windows, after calling shutdown on a socket to shut down the write side, attempting to write to the socket will now produce a BrokenPipe error rather than Other. Map WSAESHUTDOWN to io::ErrorKind::BrokenPipe",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/156063",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.1-patch-01",
+      "source_identity": {
+        "version": "1.96.1",
+        "section": "Patch",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/17131"
+        ]
+      },
+      "claim": "Cargo: fix timeout/retry behavior",
+      "disposition": "superseded",
+      "target_rules": [
+        "rules/proj-stable-toolchain.md"
+      ],
+      "exact_difference": "The current 1.97.1 pin includes this 1.96.1 patch fix; the durable rule is to upgrade the pinned stable toolchain deliberately rather than encode the incident as source advice.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/rust-toolchain.toml",
+      "remaining_uncertainty": "The upstream regression or vulnerability reproducer is not duplicated in this guideline repository.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/17131",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.1-patch-02",
+      "source_identity": {
+        "version": "1.96.1",
+        "section": "Patch",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/17140"
+        ]
+      },
+      "claim": "Cargo: apply patches for CVE-2025-15661, CVE-2026-55199, and CVE-2026-55200 to libssh2",
+      "disposition": "superseded",
+      "target_rules": [
+        "rules/proj-stable-toolchain.md"
+      ],
+      "exact_difference": "The current 1.97.1 pin includes this 1.96.1 patch fix; the durable rule is to upgrade the pinned stable toolchain deliberately rather than encode the incident as source advice.",
+      "rationale_class": "security",
+      "executable_check": "checks/rust-toolchain.toml",
+      "remaining_uncertainty": "The upstream regression or vulnerability reproducer is not duplicated in this guideline repository.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/17140",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.1-patch-03",
+      "source_identity": {
+        "version": "1.96.1",
+        "section": "Patch",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/158214"
+        ]
+      },
+      "claim": "rustc: fix miscompilation in MIR optimization",
+      "disposition": "superseded",
+      "target_rules": [
+        "rules/proj-stable-toolchain.md"
+      ],
+      "exact_difference": "The current 1.97.1 pin includes this 1.96.1 patch fix; the durable rule is to upgrade the pinned stable toolchain deliberately rather than encode the incident as source advice.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/rust-toolchain.toml",
+      "remaining_uncertainty": "The upstream regression or vulnerability reproducer is not duplicated in this guideline repository.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/158214",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-language-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Language",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/146961"
+        ]
+      },
+      "claim": "Allow passing expr metavariable to cfg",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/146961",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-language-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Language",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/147834"
+        ]
+      },
+      "claim": "Always coerce never types in tuple expressions",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/147834",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-language-03",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Language",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/150316"
+        ]
+      },
+      "claim": "Avoid incorrect inference guidance of function arguments in rare cases",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/150316",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-language-04",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Language",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154184"
+        ]
+      },
+      "claim": "Support s390x vector registers in inline assembly",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154184",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-language-05",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Language",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154891"
+        ]
+      },
+      "claim": "Allow using constants of type ManuallyDrop as patterns (fixing a regression introduced in 1.94.0)",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154891",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compiler-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compiler",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153427"
+        ]
+      },
+      "claim": "Enable link relaxation feature for LoongArch Linux targets",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153427",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compiler-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compiler",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155072"
+        ]
+      },
+      "claim": "Update riscv64gc-unknown-fuchsia baseline to RVA22 + vector",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155072",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-libraries-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Libraries",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/127534"
+        ]
+      },
+      "claim": "Support iterating over ranges of NonZero integers",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/num-nonzero.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::fallible_bool_and_nonzero_ranges_reject_invalid_states",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/127534",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-libraries-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Libraries",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152615"
+        ]
+      },
+      "claim": "refactor ‘valid for read/write’ definition: exclude null; add that as an exception on individual methods instead",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152615",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-libraries-03",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Libraries",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152851"
+        ]
+      },
+      "claim": "Fix SGX delayed host lookup via ToSocketAddr",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152851",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/macro.assert_matches.html"
+        ]
+      },
+      "claim": "assert_matches!",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/pat-matches-macro.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/macro.assert_matches.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/macro.debug_assert_matches.html"
+        ]
+      },
+      "claim": "debug_assert_matches!",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/pat-matches-macro.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/macro.debug_assert_matches.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-03",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/panic/struct.AssertUnwindSafe.html#impl-From%3CT%3E-for-AssertUnwindSafe%3CT%3E"
+        ]
+      },
+      "claim": "From<T> for AssertUnwindSafe<T>",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/panic/struct.AssertUnwindSafe.html#impl-From%3CT%3E-for-AssertUnwindSafe%3CT%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-04",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/cell/struct.LazyCell.html#impl-From%3CT%3E-for-LazyCell%3CT,+F%3E"
+        ]
+      },
+      "claim": "From<T> for LazyCell<T, F>",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/cell/struct.LazyCell.html#impl-From%3CT%3E-for-LazyCell%3CT,+F%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-05",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/struct.LazyLock.html#impl-From%3CT%3E-for-LazyLock%3CT,+F%3E"
+        ]
+      },
+      "claim": "From<T> for LazyLock<T, F>",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/struct.LazyLock.html#impl-From%3CT%3E-for-LazyLock%3CT,+F%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-06",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/range/struct.RangeToInclusive.html"
+        ]
+      },
+      "claim": "core::range::RangeToInclusive",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/range/struct.RangeToInclusive.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-07",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/range/struct.RangeToInclusiveIter.html"
+        ]
+      },
+      "claim": "core::range::RangeToInclusiveIter",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/range/struct.RangeToInclusiveIter.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-08",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 8,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/ops/struct.RangeFrom.html"
+        ]
+      },
+      "claim": "core::range::RangeFrom",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/ops/struct.RangeFrom.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-09",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 9,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/ops/struct.RangeFromIter.html"
+        ]
+      },
+      "claim": "core::range::RangeFromIter",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/ops/struct.RangeFromIter.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-10",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 10,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/range/struct.Range.html"
+        ]
+      },
+      "claim": "core::range::Range",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/range/struct.Range.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-stabilized-apis-11",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Stabilized APIs",
+        "ordinal": 11,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/range/struct.RangeIter.html"
+        ]
+      },
+      "claim": "core::range::RangeIter",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/range/struct.RangeIter.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-cargo-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Cargo",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/16810/"
+        ]
+      },
+      "claim": "Allow a dependency to specify both a git repository and an alternate registry. Just like with crates.io, the git repository will be used locally, but the registry version will be used when published.",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/proj-workspace-deps.md"
+      ],
+      "exact_difference": "The workspace-dependency rule adopts the dual-source declaration only for alternate-registry publication and requires compatible versions plus packaged-artifact tests.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/16810/",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-cargo-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Cargo",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/cargo/pull/16846"
+        ]
+      },
+      "claim": "Added target.'cfg(..)'.rustdocflags support in configuration.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This Cargo behavior is an optional build-policy input. It becomes skill guidance only where the repository has a portable, enforceable contract beyond the release-note feature itself.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/cargo/pull/16846",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-cargo-03",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Cargo",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://blog.rust-lang.org/2026/05/25/cve-2026-5222/",
+          "https://blog.rust-lang.org/2026/05/25/cve-2026-5223/"
+        ]
+      },
+      "claim": "Fixed CVE-2026-5222 and CVE-2026-5223.",
+      "disposition": "superseded",
+      "target_rules": [
+        "rules/proj-stable-toolchain.md"
+      ],
+      "exact_difference": "The pinned Rust 1.97.1 toolchain includes this security fix; the durable guidance is deliberate stable-toolchain upgrade rather than duplicating a vendored-toolchain vulnerability rule.",
+      "rationale_class": "security",
+      "executable_check": "checks/rust-toolchain.toml",
+      "remaining_uncertainty": "The upstream vulnerability reproducer and affected vendored component are not duplicated in this guideline repository.",
+      "supporting_evidence": [
+        "https://blog.rust-lang.org/2026/05/25/cve-2026-5222/",
+        "https://blog.rust-lang.org/2026/05/25/cve-2026-5223/",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-rustdoc-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Rustdoc",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149931"
+        ]
+      },
+      "claim": "Deprecation notes are now rendered like any other documentation. Previously they used the css white-space: pre-wrap; property and stripped any <p> elements from the rendered html, however this caused issues and unintuitive behavior. The new behavior should be more predictable, however some multi-line deprecation notes will now be rendered as as single lines. If this is undesirable, you can use the standard markdown method of forcing a linebreak, which is two spaces followed by a newline (\"\\n\").",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This rustdoc behavior affects documentation tooling but does not change the durable source-level guidance in the rule corpus.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149931",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-rustdoc-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Rustdoc",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154048"
+        ]
+      },
+      "claim": "Don’t emit rustdoc missing_doc_code_examples lint on impl items",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This rustdoc behavior affects documentation tooling but does not change the durable source-level guidance in the rule corpus.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154048",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-rustdoc-03",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Rustdoc",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154644"
+        ]
+      },
+      "claim": "Separate methods and associated functions in sidebar",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This rustdoc behavior affects documentation tooling but does not change the durable source-level guidance in the rule corpus.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154644",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/146989"
+        ]
+      },
+      "claim": "Fix layout of #[repr(Int)] enums in some edge cases involving fields of uninhabited zero-sized types",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/146989",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149218"
+        ]
+      },
+      "claim": "Prevent unsize-coercing into Pin<Foo> where Foo doesn’t implement Deref. Some such coercions were previously allowed, but produce a type with no useful public API.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149218",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-03",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149868"
+        ]
+      },
+      "claim": "rustc: Stop passing --allow-undefined on wasm targets",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149868",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-04",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152210"
+        ]
+      },
+      "claim": "Gate the accidentally stabilized #![reexport_test_harness_main] attribute",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152210",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-05",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152543"
+        ]
+      },
+      "claim": "Error on return-position-impl-trait-in-traits whose types are too private",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152543",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-06",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152853"
+        ]
+      },
+      "claim": "Report the uninhabited_static lint in dependencies and make it deny-by-default",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152853",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-07",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152870"
+        ]
+      },
+      "claim": "Distributed builds now contain non-split debuginfo for windows-gnu This appears to improve the quality of backtraces. This change has no effect on the defaults for the output of rustc/cargo on these targets.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152870",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-08",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 8,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152931"
+        ]
+      },
+      "claim": "Check const generic arguments are correctly typed in more positions",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152931",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-09",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 9,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152973"
+        ]
+      },
+      "claim": "Remove -Csoft-float",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152973",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-10",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 10,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152996"
+        ]
+      },
+      "claim": "Importing structs with ::{self [as name]}, e.g., struct S {}; use S::{self as Other};, is now no longer permitted because {self} imports require a module parent.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152996",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-11",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 11,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153041"
+        ]
+      },
+      "claim": "For export_name, link_name, and link_section attributes, if multiple of the same attribute is present, the first one now takes precedence.",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-no-mangle-unsafe.md"
+      ],
+      "exact_difference": "The export rule forbids stacking duplicate symbol attributes and keeps one audited source of truth rather than depending on precedence.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153041",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-12",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 12,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153684"
+        ]
+      },
+      "claim": "Update the minimum external LLVM to 21",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153684",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-13",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 13,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/154647"
+        ]
+      },
+      "claim": "On avr targets, C’s double type is 32-bit by default, so change c_double to f32 on avr targets to match. This is a breaking change, but necessary to make c_double match C’s double.",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-extern-block.md"
+      ],
+      "exact_difference": "The FFI rule uses `std::ffi::c_*` types instead of hard-coding Rust primitive widths; AVR remains a target-specific ABI fixture.",
+      "rationale_class": "provider-specific",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "The default harness does not compile an AVR C ABI example.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/154647",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-compatibility-notes-14",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Compatibility Notes",
+        "ordinal": 14,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153107"
+        ]
+      },
+      "claim": "BTreeMap::append() was optimized, which may now cause panics for types with incorrect Ord impls",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/trait-ord-consistent.md"
+      ],
+      "exact_difference": "The mapped rule treats the newly exposed panic as evidence of an already-invalid `Ord`/`Eq` contract and derives the comparison traits together.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::derived_order_is_total_and_keeps_distinct_keys",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153107",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-internal-changes-01",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Internal Changes",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152941"
+        ]
+      },
+      "claim": "JSON targets: aarch64 softfloat targets now have to have rustc_abi set to \"softfloat\"",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "The release notes explicitly classify this as an internal implementation change with no public Rust interface contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152941",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.96.0-internal-changes-02",
+      "source_identity": {
+        "version": "1.96.0",
+        "section": "Internal Changes",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/153769"
+        ]
+      },
+      "claim": "target specs: stricter checks for LLVM ABI values, and correlate that with cfg(target_abi)",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "The release notes explicitly classify this as an internal implementation change with no public Rust interface contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/153769",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-language-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Language",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/141295"
+        ]
+      },
+      "claim": "Stabilize if let guards on match arms",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/pat-if-let-guards.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::if_let_guard_binds_only_valid_port",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/141295",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-language-02",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Language",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/146832"
+        ]
+      },
+      "claim": "irrefutable_let_patterns lint no longer lints on let chains",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/146832",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-language-03",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Language",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/146972"
+        ]
+      },
+      "claim": "Support importing path-segment keywords with renaming",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/146972",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-language-04",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Language",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/147996"
+        ]
+      },
+      "claim": "Stabilize inline assembly for PowerPC and PowerPC64",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/147996",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-language-05",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Language",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/148967"
+        ]
+      },
+      "claim": "const-eval: be more consistent in the behavior of padding during typed copies",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/148967",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-language-06",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Language",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/150557"
+        ]
+      },
+      "claim": "Const blocks are no longer evaluated to determine if expressions involving fallible operations can implicitly be constant-promoted.. Expressions whose ability to implicitly be promoted would depend on the result of a const block are no longer implicitly promoted.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/150557",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-language-07",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Language",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/150681"
+        ]
+      },
+      "claim": "Make operational semantics of pattern matching independent of crate and module",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/150681",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compiler-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compiler",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/147611"
+        ]
+      },
+      "claim": "Stabilize --remap-path-scope for controlling the scoping of how paths get remapped in the resulting binary",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/147611",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compiler-02",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compiler",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/155171"
+        ]
+      },
+      "claim": "Apply patches for CVE-2026-6042 and CVE-2026-40200 to vendored musl",
+      "disposition": "superseded",
+      "target_rules": [
+        "rules/proj-stable-toolchain.md"
+      ],
+      "exact_difference": "The pinned Rust 1.97.1 toolchain includes this security fix; the durable guidance is deliberate stable-toolchain upgrade rather than duplicating a vendored-toolchain vulnerability rule.",
+      "rationale_class": "security",
+      "executable_check": "checks/rust-toolchain.toml",
+      "remaining_uncertainty": "The upstream vulnerability reproducer and affected vendored component are not duplicated in this guideline repository.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/155171",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-platform-support-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Platform Support",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149962"
+        ]
+      },
+      "claim": "Promote powerpc64-unknown-linux-musl to Tier 2 with host tools",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149962",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-platform-support-02",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Platform Support",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152021"
+        ]
+      },
+      "claim": "Promote aarch64-apple-tvos to Tier 2",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152021",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-platform-support-03",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Platform Support",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152021"
+        ]
+      },
+      "claim": "Promote aarch64-apple-tvos-sim to Tier 2",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152021",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-platform-support-04",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Platform Support",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152021"
+        ]
+      },
+      "claim": "Promote aarch64-apple-watchos to Tier 2",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152021",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-platform-support-05",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Platform Support",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152021"
+        ]
+      },
+      "claim": "Promote aarch64-apple-watchos-sim to Tier 2",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152021",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-platform-support-06",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Platform Support",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152021"
+        ]
+      },
+      "claim": "Promote aarch64-apple-visionos to Tier 2",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152021",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-platform-support-07",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Platform Support",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152021"
+        ]
+      },
+      "claim": "Promote aarch64-apple-visionos-sim to Tier 2",
+      "disposition": "provider-specific",
+      "target_rules": [],
+      "exact_difference": "Target support is owned by Rust's live platform registry and by each project's supported-target contract; the skill does not duplicate a dated target matrix.",
+      "rationale_class": "provider-specific",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152021",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-libraries-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Libraries",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149482"
+        ]
+      },
+      "claim": "thread::scope: document how join interacts with TLS destructors",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149482",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-libraries-02",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Libraries",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/152176"
+        ]
+      },
+      "claim": "Speed up str::contains on aarch64 targets with neon target feature enabled by default",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compiler, library, Cargo, rustdoc, or platform change is recorded for upgrade review but does not by itself create a durable general Rust coding rule.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/152176",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-From%3CMaybeUninit%3C%5BT;+N%5D%3E%3E-for-%5BMaybeUninit%3CT%3E;+N%5D"
+        ]
+      },
+      "claim": "MaybeUninit<[T; N]>: From<[MaybeUninit<T>; N]>",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-maybeuninit.md"
+      ],
+      "exact_difference": "The unsafe-initialization rule adopts the stable array conversions only after every element is initialized and keeps `assume_init` behind an explicit safety proof.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-From%3CMaybeUninit%3C%5BT;+N%5D%3E%3E-for-%5BMaybeUninit%3CT%3E;+N%5D",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-02",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-AsRef%3C%5BMaybeUninit%3CT%3E;+N%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E"
+        ]
+      },
+      "claim": "MaybeUninit<[T; N]>: AsRef<[MaybeUninit<T>; N]>",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-maybeuninit.md"
+      ],
+      "exact_difference": "The unsafe-initialization rule adopts the stable array conversions only after every element is initialized and keeps `assume_init` behind an explicit safety proof.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-AsRef%3C%5BMaybeUninit%3CT%3E;+N%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-03",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-AsRef%3C%5BMaybeUninit%3CT%3E%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E"
+        ]
+      },
+      "claim": "MaybeUninit<[T; N]>: AsRef<[MaybeUninit<T>]>",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-maybeuninit.md"
+      ],
+      "exact_difference": "The unsafe-initialization rule adopts the stable array conversions only after every element is initialized and keeps `assume_init` behind an explicit safety proof.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-AsRef%3C%5BMaybeUninit%3CT%3E%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-04",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/beta/std/mem/union.MaybeUninit.html#impl-AsMut%3C%5BMaybeUninit%3CT%3E;+N%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E"
+        ]
+      },
+      "claim": "MaybeUninit<[T; N]>: AsMut<[MaybeUninit<T>; N]>",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-maybeuninit.md"
+      ],
+      "exact_difference": "The unsafe-initialization rule adopts the stable array conversions only after every element is initialized and keeps `assume_init` behind an explicit safety proof.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/beta/std/mem/union.MaybeUninit.html#impl-AsMut%3C%5BMaybeUninit%3CT%3E;+N%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-05",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-AsMut%3C%5BMaybeUninit%3CT%3E%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E"
+        ]
+      },
+      "claim": "MaybeUninit<[T; N]>: AsMut<[MaybeUninit<T>]>",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-maybeuninit.md"
+      ],
+      "exact_difference": "The unsafe-initialization rule adopts the stable array conversions only after every element is initialized and keeps `assume_init` behind an explicit safety proof.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-AsMut%3C%5BMaybeUninit%3CT%3E%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-06",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-From%3C%5BMaybeUninit%3CT%3E;+N%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E"
+        ]
+      },
+      "claim": "[MaybeUninit<T>; N]: From<MaybeUninit<[T; N]>>",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/unsafe-maybeuninit.md"
+      ],
+      "exact_difference": "The unsafe-initialization rule adopts the stable array conversions only after every element is initialized and keeps `assume_init` behind an explicit safety proof.",
+      "rationale_class": "security",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/mem/union.MaybeUninit.html#impl-From%3C%5BMaybeUninit%3CT%3E;+N%5D%3E-for-MaybeUninit%3C%5BT;+N%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-07",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/cell/struct.Cell.html#impl-AsRef%3C%5BCell%3CT%3E;+N%5D%3E-for-Cell%3C%5BT;+N%5D%3E"
+        ]
+      },
+      "claim": "Cell<[T; N]>: AsRef<[Cell<T>; N]>",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/cell/struct.Cell.html#impl-AsRef%3C%5BCell%3CT%3E;+N%5D%3E-for-Cell%3C%5BT;+N%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-08",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 8,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/cell/struct.Cell.html#impl-AsRef%3C%5BCell%3CT%3E%5D%3E-for-Cell%3C%5BT;+N%5D%3E"
+        ]
+      },
+      "claim": "Cell<[T; N]>: AsRef<[Cell<T>]>",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/cell/struct.Cell.html#impl-AsRef%3C%5BCell%3CT%3E%5D%3E-for-Cell%3C%5BT;+N%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-09",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 9,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/cell/struct.Cell.html#impl-AsRef%3C%5BCell%3CT%3E%5D%3E-for-Cell%3C%5BT%5D%3E"
+        ]
+      },
+      "claim": "Cell<[T]>: AsRef<[Cell<T>]>",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/cell/struct.Cell.html#impl-AsRef%3C%5BCell%3CT%3E%5D%3E-for-Cell%3C%5BT%5D%3E",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-10",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 10,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.bool.html#impl-TryFrom%3Cu128%3E-for-bool"
+        ]
+      },
+      "claim": "bool: TryFrom<{integer}>",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conv-tryfrom-fallible.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::fallible_bool_and_nonzero_ranges_reject_invalid_states",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.bool.html#impl-TryFrom%3Cu128%3E-for-bool",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-11",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 11,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicPtr.html#method.update"
+        ]
+      },
+      "claim": "AtomicPtr::update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicPtr.html#method.update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-12",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 12,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicPtr.html#method.try_update"
+        ]
+      },
+      "claim": "AtomicPtr::try_update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicPtr.html#method.try_update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-13",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 13,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicBool.html#method.update"
+        ]
+      },
+      "claim": "AtomicBool::update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicBool.html#method.update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-14",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 14,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicBool.html#method.try_update"
+        ]
+      },
+      "claim": "AtomicBool::try_update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicBool.html#method.try_update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-15",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 15,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicIsize.html#method.update"
+        ]
+      },
+      "claim": "AtomicIn::update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicIsize.html#method.update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-16",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 16,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicIsize.html#method.try_update"
+        ]
+      },
+      "claim": "AtomicIn::try_update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicIsize.html#method.try_update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-17",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 17,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicUsize.html#method.update"
+        ]
+      },
+      "claim": "AtomicUn::update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicUsize.html#method.update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-18",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 18,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicUsize.html#method.try_update"
+        ]
+      },
+      "claim": "AtomicUn::try_update",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/conc-atomic-update.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::atomic_update_and_try_update_preserve_contracts",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/sync/atomic/struct.AtomicUsize.html#method.try_update",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-19",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 19,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/macro.cfg_select.html"
+        ]
+      },
+      "claim": "cfg_select!",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/proj-cfg-select.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::cfg_select_chooses_exactly_one_branch",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/macro.cfg_select.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-20",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 20,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/range/index.html"
+        ]
+      },
+      "claim": "mod core::range",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/range/index.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-21",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 21,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/range/struct.RangeInclusive.html"
+        ]
+      },
+      "claim": "core::range::RangeInclusive",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/range/struct.RangeInclusive.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-22",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 22,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/range/struct.RangeInclusiveIter.html"
+        ]
+      },
+      "claim": "core::range::RangeInclusiveIter",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/range/struct.RangeInclusiveIter.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-23",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 23,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/hint/fn.cold_path.html"
+        ]
+      },
+      "claim": "core::hint::cold_path",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/opt-likely-hint.md"
+      ],
+      "exact_difference": "The optimization rule adopts stable `cold_path` only for profiled rare branches and explicitly rejects unstable likely/unlikely hints on the pinned toolchain.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/hint/fn.cold_path.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-24",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 24,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.pointer.html#method.as_ref_unchecked"
+        ]
+      },
+      "claim": "<*const T>::as_ref_unchecked",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.pointer.html#method.as_ref_unchecked",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-25",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 25,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.pointer.html#method.as_ref_unchecked-1"
+        ]
+      },
+      "claim": "<*mut T>::as_ref_unchecked",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.pointer.html#method.as_ref_unchecked-1",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-26",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 26,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/primitive.pointer.html#method.as_mut_unchecked"
+        ]
+      },
+      "claim": "<*mut T>::as_mut_unchecked",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/primitive.pointer.html#method.as_mut_unchecked",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-27",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 27,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/vec/struct.Vec.html#method.push_mut"
+        ]
+      },
+      "claim": "Vec::push_mut",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/perf-entry-api.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::mutable_insert_returns_the_inserted_value",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/vec/struct.Vec.html#method.push_mut",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-28",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 28,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/vec/struct.Vec.html#method.insert_mut"
+        ]
+      },
+      "claim": "Vec::insert_mut",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/perf-entry-api.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::mutable_insert_returns_the_inserted_value",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/vec/struct.Vec.html#method.insert_mut",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-29",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 29,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html#method.push_front_mut"
+        ]
+      },
+      "claim": "VecDeque::push_front_mut",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/perf-entry-api.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::mutable_insert_returns_the_inserted_value",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html#method.push_front_mut",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-30",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 30,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html#method.push_back_mut"
+        ]
+      },
+      "claim": "VecDeque::push_back_mut",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/perf-entry-api.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::mutable_insert_returns_the_inserted_value",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html#method.push_back_mut",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-31",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 31,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html#method.insert_mut"
+        ]
+      },
+      "claim": "VecDeque::insert_mut",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/perf-entry-api.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::mutable_insert_returns_the_inserted_value",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html#method.insert_mut",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-32",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 32,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/collections/struct.LinkedList.html#method.push_front_mut"
+        ]
+      },
+      "claim": "LinkedList::push_front_mut",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/perf-entry-api.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::mutable_insert_returns_the_inserted_value",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/collections/struct.LinkedList.html#method.push_front_mut",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-33",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 33,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/collections/struct.LinkedList.html#method.push_back_mut"
+        ]
+      },
+      "claim": "LinkedList::push_back_mut",
+      "disposition": "covered",
+      "target_rules": [
+        "rules/perf-entry-api.md"
+      ],
+      "exact_difference": "The mapped rule adopts the durable behavior while avoiding release-note-specific or provider-specific implementation detail.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/tests/language_guidance.rs::mutable_insert_returns_the_inserted_value",
+      "remaining_uncertainty": "Eligible Rust examples are compiled on the pinned stable toolchain; platform-specific branches remain limited to their target contract.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/collections/struct.LinkedList.html#method.push_back_mut",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-34",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 34,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.dangling_ptr"
+        ]
+      },
+      "claim": "Layout::dangling_ptr",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.dangling_ptr",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-35",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 35,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.repeat"
+        ]
+      },
+      "claim": "Layout::repeat",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.repeat",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-36",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 36,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.repeat_packed"
+        ]
+      },
+      "claim": "Layout::repeat_packed",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.repeat_packed",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-37",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 37,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.extend_packed"
+        ]
+      },
+      "claim": "Layout::extend_packed",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/alloc/struct.Layout.html#method.extend_packed",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-38",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 38,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/std/fmt/fn.from_fn.html"
+        ]
+      },
+      "claim": "fmt::from_fn",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/std/fmt/fn.from_fn.html",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-39",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 39,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/ops/enum.ControlFlow.html#method.is_break"
+        ]
+      },
+      "claim": "ControlFlow::is_break",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/ops/enum.ControlFlow.html#method.is_break",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-stabilized-apis-40",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Stabilized APIs",
+        "ordinal": 40,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/stable/core/ops/enum.ControlFlow.html#method.is_continue"
+        ]
+      },
+      "claim": "ControlFlow::is_continue",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "API availability is recorded, but stabilization alone is not a recommendation to use the API; the skill adopts it only where it replaces an error-prone pattern or clarifies a durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/core/ops/enum.ControlFlow.html#method.is_continue",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-rustdoc-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Rustdoc",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149460"
+        ]
+      },
+      "claim": "In search results, rank unstable items lower",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This rustdoc behavior affects documentation tooling but does not change the durable source-level guidance in the rule corpus.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149460",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-rustdoc-02",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Rustdoc",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/151091"
+        ]
+      },
+      "claim": "Add new “hide deprecated items” setting in rustdoc",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This rustdoc behavior affects documentation tooling but does not change the durable source-level guidance in the rule corpus.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/151091",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/140283"
+        ]
+      },
+      "claim": "Array coercions may now result in less inference constraints than before",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/140283",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-02",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 2,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": []
+      },
+      "claim": "Importing $crate without renaming, i.e. use $crate::{self};, is now no longer permitted due to stricter error checking for self imports.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-03",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 3,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/148967"
+        ]
+      },
+      "claim": "const-eval: be more consistent in the behavior of padding during typed copies. In very rare cases, this may cause compilation errors due to bytes from parts of a pointer ending up in the padding bytes of a const or static.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/148967",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-04",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 4,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149058"
+        ]
+      },
+      "claim": "A future-incompatibility warning lint ambiguous_glob_imported_traits is now reported when using an ambiguously glob imported trait",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149058",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-05",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 5,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149389"
+        ]
+      },
+      "claim": "Check lifetime bounds of types mentioning only type parameters",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149389",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-06",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 6,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149596"
+        ]
+      },
+      "claim": "Report more visibility-related ambiguous import errors",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149596",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-07",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 7,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/149978"
+        ]
+      },
+      "claim": "Deprecate Eq::assert_receiver_is_total_eq and emit future compatibility warnings on manual impls",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/149978",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-08",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 8,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/150468"
+        ]
+      },
+      "claim": "powerpc64: Use the ELF ABI version set in target spec instead of guessing (fixes the ELF ABI used by the OpenBSD target)",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/150468",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-09",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 9,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/150681"
+        ]
+      },
+      "claim": "Matching on a #[non_exhaustive] enum now reads the discriminant, even if the enum has only one variant. This can cause closures to capture values that they previously wouldn’t.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/150681",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-10",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 10,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/issues/123076"
+        ]
+      },
+      "claim": "mut ref and mut ref mut patterns, part of the unstable Match Ergonomics 2024 RFC, were accidentally allowed on stable within struct pattern field shorthand. These patterns are now correctly feature-gated as unstable in this position.",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/issues/123076",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-11",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 11,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/151152"
+        ]
+      },
+      "claim": "Add future-compatibility warning for derive helper attributes which conflict with built-in attributes",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/151152",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-12",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 12,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://doc.rust-lang.org/rustc/targets/custom.html",
+          "https://github.com/rust-lang/rust/pull/150151",
+          "https://github.com/rust-lang/rust/pull/150151",
+          "https://github.com/rust-lang/cargo/pull/16557"
+        ]
+      },
+      "claim": "JSON target specs have been destabilized and now require -Z unstable-options to use. Previously, they could not be used without the standard library, which has no stable build mechanism. In preparation for the build-std project adding that support, JSON target specs are being proactively gated to ensure they remain unstable even if build-std is stabilized. Cargo now includes the -Z json-target-spec CLI flag to automatically pass -Z unstable-options to the compiler when needed. See #150151, #151534, and rust-lang/cargo#16557.",
+      "disposition": "documented-deviation",
+      "target_rules": [
+        "rules/proj-stable-toolchain.md"
+      ],
+      "exact_difference": "The skill keeps production guidance on pinned stable target triples and does not recommend unstable JSON target specifications or `-Z` flags.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Projects that own a custom target require their own nightly/toolchain and target-spec evidence.",
+      "supporting_evidence": [
+        "https://doc.rust-lang.org/rustc/targets/custom.html",
+        "https://github.com/rust-lang/rust/pull/150151",
+        "https://github.com/rust-lang/rust/pull/150151",
+        "https://github.com/rust-lang/cargo/pull/16557",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-compatibility-notes-13",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Compatibility Notes",
+        "ordinal": 13,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/issues/153764"
+        ]
+      },
+      "claim": "The arguments of #[feature] attributes on invalid targets are now checked",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "This compatibility item is upgrade-review evidence for affected code. No universal source rewrite is prescribed unless a mapped rule below captures the durable contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/issues/153764",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    },
+    {
+      "id": "rust-1.95.0-internal-changes-01",
+      "source_identity": {
+        "version": "1.95.0",
+        "section": "Internal Changes",
+        "ordinal": 1,
+        "rustc_commit": "8bab26f4f68e0e26f0bb7960be334d5b520ea452",
+        "links": [
+          "https://github.com/rust-lang/rust/pull/150722"
+        ]
+      },
+      "claim": "Update to LLVM 22",
+      "disposition": "reference-only",
+      "target_rules": [],
+      "exact_difference": "The release notes explicitly classify this as an internal implementation change with no public Rust interface contract.",
+      "rationale_class": "newer-rust-behavior",
+      "executable_check": null,
+      "remaining_uncertainty": "Applicability depends on the consuming code, target, and toolchain integration; no rule-level behavior fixture is warranted without that context.",
+      "supporting_evidence": [
+        "https://github.com/rust-lang/rust/pull/150722",
+        "https://doc.rust-lang.org/stable/releases.html"
+      ]
+    }
+  ]
+}

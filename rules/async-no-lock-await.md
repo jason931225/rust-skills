@@ -12,7 +12,7 @@ serializes every waiter for the whole suspended operation.
 Default to extracting owned data, releasing the guard, and awaiting afterward.
 Keep an async guard across `.await` only when exclusive ownership of the
 resource is the actual protocol—for example, one framed connection whose
-request and response must not interleave. Bound that operation with a deadline,
+request and response must not interleave; bound that operation with a deadline,
 keep unrelated state outside the guard, and prefer a dedicated owner task when
 the protocol grows.
 

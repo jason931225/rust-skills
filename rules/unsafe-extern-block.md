@@ -4,9 +4,12 @@
 
 ## Why It Matters
 
-Before Rust 2024, every function declared inside an `extern "C" { }` block was implicitly unsafe to call — but the block itself carried no `unsafe` keyword. This made it easy to forget that the FFI contract (correct types, valid pointers, no aliasing violations) was entirely the programmer's responsibility. Rust 2024 makes this explicit: the block must be `unsafe extern`, which signals that the *programmer* is asserting the declarations are accurate. Individual items can then be marked `safe` (callable without an `unsafe` block by the caller) or `unsafe` (the default — caller must use `unsafe {}`).
-
-This change makes FFI boundaries auditable at a glance and lets wrappers expose a safe API while keeping raw declarations accurate.
+Before Rust 2024, functions inside an `extern "C" { }` block were implicitly
+unsafe to call even though the block carried no `unsafe` keyword. Rust 2024
+requires `unsafe extern`, making the programmer's responsibility for accurate
+types, pointers, and aliasing explicit. Individual items can then be marked
+`safe` for callers or remain `unsafe` by default. This makes FFI boundaries
+auditable while allowing reviewed wrappers to expose safe calls.
 
 ## Bad
 

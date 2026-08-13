@@ -4,7 +4,12 @@
 
 ## Why It Matters
 
-`Debug` (`{:?}`) is for developers: logs, panic messages, test assertions, and `dbg!()`. Derive it for ordinary public types; write a redacting implementation for sensitive ones. `Display` (`{}`) is for end users: CLI output, error messages surfaced to humans, string-like wrappers, and log fields meant to be read in production. `std::error::Error` requires `Display` so that error chains read naturally. Routing `Debug` output to users leaks implementation details; routing `Display` output to log frameworks loses structural information.
+`Debug` (`{:?}`) is for developers, so derive it for ordinary public types and
+write a redacting implementation for sensitive ones. `Display` (`{}`) is for
+end users, including CLI output, human-facing errors, and string-like wrappers.
+`std::error::Error` requires `Display` so error chains read naturally. Routing
+`Debug` to users can leak implementation details, while routing only `Display`
+to telemetry loses structural information.
 
 ## Bad
 

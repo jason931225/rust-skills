@@ -11,10 +11,26 @@ Property-based testing generates random inputs to verify that properties hold ac
 ```toml
 # Cargo.toml
 [dev-dependencies]
-proptest = "1.0"
+proptest = "1"
 ```
 
-## Basic Usage
+## Bad
+
+```rust
+#[test]
+fn reversing_one_example_twice_returns_input() {
+    let input = vec![1, 2, 3];
+    assert_eq!(
+        input.iter().copied().rev().rev().collect::<Vec<_>>(),
+        input
+    );
+}
+```
+
+One hand-picked value does not exercise empty, repeated, minimum, or maximum
+elements.
+
+## Good
 
 ```rust
 use proptest::prelude::*;

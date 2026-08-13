@@ -4,7 +4,13 @@
 
 ## Why It Matters
 
-Cache misses are expensive—a L3 cache miss costs ~100+ cycles vs ~4 cycles for L1 hit. Data layout and access patterns determine cache efficiency. Arrays of structs (AoS) vs structs of arrays (SoA), memory locality, and access patterns can make order-of-magnitude performance differences. Nested `Arc` / `Box` chains levy the same tax: each extra pointer is another miss before the hot field is in hand. Copy that field next to the loop unless a measurement says the hop is cheaper, or the value is large and several owners truly share it.
+Cache misses can dominate a hot loop, but their cost varies by CPU and
+workload. Data layout, locality, and access patterns such as arrays of structs
+versus structs of arrays should be chosen from representative profiles and
+benchmarks. Nested `Arc` or `Box` chains may add pointer-chasing misses before
+the hot field is available. Co-locate measured hot fields when that improves
+the benchmark, while preserving sharing when semantics or measurements justify
+it.
 
 ## Bad
 
@@ -117,14 +123,19 @@ fn process_sequentially(data: &mut [u8]) {
 ## Avoid Pointer Chasing
 
 ```rust
-// Bad: linked list - random memory access
+// Bad for a measured traversal hot path: non-contiguous allocation
 struct Node {
     value: i32,
     next: Option<Box<Node>>,
 }
 
-fn sum_linked(head: &Node) -> i32 {
-    // Each node is a cache miss
+fn sum_linked(mut node: Option<&Node>) -> i32 {
+    let mut total = 0;
+    while let Some(current) = node {
+        total += current.value;
+        node = current.next.as_deref();
+    }
+    total
 }
 
 // Good: contiguous vector

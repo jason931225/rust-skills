@@ -4,7 +4,13 @@
 
 ## Why It Matters
 
-`pub use` lets you keep a deep internal tree and still offer `the_crate::Client`. Publishing the *same* item at two public paths (`the_crate::Client` *and* `the_crate::net::Client`) creates a split identity that humans and agents preserve forever. Re-exporting `bytes::Bytes` creates a second apparent owner for a foreign type. Even when that type appears in your signatures, callers should normally import it from `bytes` and declare the dependency themselves. Hide your module, re-export your item once, and leave foreign identity with its defining crate.
+`pub use` can keep a deep internal tree while offering `the_crate::Client`, but
+publishing the same item at both `the_crate::Client` and
+`the_crate::net::Client` creates a split identity callers preserve. Re-exporting
+`bytes::Bytes` similarly creates a second apparent owner for a foreign type.
+Even when that type appears in your signatures, callers should normally import
+it from `bytes` and declare the dependency themselves. Hide your module,
+re-export your item once, and leave foreign identity with its defining crate.
 
 ## Bad
 

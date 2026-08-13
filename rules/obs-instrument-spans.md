@@ -32,7 +32,11 @@ async fn some_async_db_call(_id: u64) -> Result<String, String> {
 use tracing::{info, instrument, Instrument, info_span};
 
 // GOOD: #[instrument] handles async correctly; skip large/sensitive args
-#[instrument(skip(db), fields(user.id = user_id))]
+#[instrument(
+    skip(db),
+    fields(dependency = "database", operation = "user.load", user.id = user_id),
+    err(Debug)
+)]
 async fn fetch_user(user_id: u64, db: &DbPool) -> Result<String, DbError> {
     info!("fetching user from database");
     let user = db.query_user(user_id).await?;
@@ -73,6 +77,9 @@ impl DbPool {
 - Use `fields(key = value)` inside `#[instrument]` to add or rename fields beyond the auto-captured args.
 - For manual spans, always attach with `.instrument(span).await`, never hold a guard across `.await`.
 - Spans nest automatically: entering a child span inside a parent records the parent's context in traces, enabling waterfall views in tools like Jaeger or Tempo.
+- Wrap outbound dependency calls in child spans with stable dependency and
+  operation fields. Record the outcome or error once; span lifetime supplies
+  duration without separate start/success log pairs.
 
 ## See Also
 

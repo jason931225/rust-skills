@@ -90,6 +90,20 @@ impl MyCollection<T> {
 }
 ```
 
+## Good
+
+```rust
+impl<T> MyCollection<T> {
+    fn iter(&self) -> std::slice::Iter<'_, T> {
+        self.items.iter()
+    }
+
+    fn iter_mut(&mut self) -> std::slice::IterMut<'_, T> {
+        self.items.iter_mut()
+    }
+}
+```
+
 ## Additional Iterator Methods
 
 ```rust

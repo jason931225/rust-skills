@@ -6,7 +6,12 @@
 
 Clippy's `perf` group detects source patterns that are often unnecessarily expensive while preserving behavior. A lint name is not benchmark evidence: allocator behavior, optimizer output, key sizes, surrounding I/O, readability, and API contracts determine product impact. Keep the group enabled, fix clear cases, and use narrow reasoned expectations when the suggested rewrite is wrong for the measured workload.
 
-## Configuration
+## Bad
+
+Disable the whole group because one suggestion does not fit the measured
+workload, or treat every warning as proof of a production regression.
+
+## Good
 
 ```toml
 [workspace.lints.clippy]

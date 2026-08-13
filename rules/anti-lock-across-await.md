@@ -5,10 +5,9 @@
 ## Why It Matters
 
 Holding a `Mutex` or `RwLock` guard across an `.await` keeps the protected
-resource unavailable while the task is suspended. A synchronous guard can
-block an executor thread and deadlock the runtime. An async guard yields the
-thread, but all tasks needing that resource still wait until the operation
-finishes.
+resource unavailable while the task is suspended; a synchronous guard can
+block an executor thread and deadlock the runtime, while an async guard still
+serializes every task needing that resource.
 
 An async mutex may deliberately span `.await` when the protected value is an
 I/O resource whose protocol requires one exclusive request at a time. That is

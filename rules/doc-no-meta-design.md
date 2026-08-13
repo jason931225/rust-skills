@@ -4,7 +4,11 @@
 
 ## Why It Matters
 
-Callers open crate and module docs to learn what the type does *now* — arguments, failure modes, invariants. Keep that surface free of the story of how the crate was built. Agents in particular paste design journals, "we chose X after trying Y" essays, and self-scorecards of which rules they followed. Those notes help the author during the change and then rot. They do not explain behavior. Put the working record in a PR, an ADR, or an internal log; put the finished contract in rustdoc.
+Callers open crate and module docs to learn what the type does now: arguments,
+failure modes, and invariants, not the story of how the crate was built. Design
+journals, rejected alternatives, and rule-compliance scorecards may help during
+a change but then rot without explaining current behavior. Put the working
+record in a PR, ADR, or internal log. Put the finished contract in rustdoc.
 
 ## Bad
 

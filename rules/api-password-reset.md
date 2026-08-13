@@ -8,7 +8,15 @@ A password reset bypasses the existing password by design. Long-lived,
 reusable, guessable, or logged reset tokens become alternate credentials.
 Changing a password without revoking sessions leaves stolen sessions active.
 
-## Contract
+## Bad
+
+- Store reset tokens in plaintext or allow the same token to be redeemed more
+  than once.
+- Reveal whether an account exists through status, body, or timing differences.
+- Change the credential without atomically consuming the token and revoking
+  sessions.
+
+## Good
 
 - Authenticated password change verifies the current credential and applies
   the same password policy as enrollment.

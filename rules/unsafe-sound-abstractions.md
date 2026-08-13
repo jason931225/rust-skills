@@ -4,9 +4,13 @@
 
 ## Why It Matters
 
-*Safe* and `unsafe` are technical terms. A function is safe when its signature is not marked `unsafe`. That function can still be disastrous (`trigger_cluster_failover`) and an `unsafe` one can be routine (`slice.get_unchecked`) when the caller keeps the contract. A function is *unsound* when it looks safe — it is not marked `unsafe` — but *any* way of calling it from safe code, including a remote, theoretical path that needs unusual inputs, can produce undefined behavior. Give that test no slack: unsound abstractions are never allowed.
-
-If the invariant cannot be established inside your API, do not hide it. Mark the entry `unsafe`, write the `# Safety` contract, and let the caller take the obligation.
+*Safe* and `unsafe` are technical terms, not severity labels: a safe function
+can be operationally disastrous, while an `unsafe` one can be routine when the
+caller upholds its contract. An abstraction is unsound when any call available
+to safe code, including an unusual or theoretical path, can produce undefined
+behavior. Unsound abstractions are never allowed. If the invariant cannot be
+established inside the API, mark the entry `unsafe`, write its `# Safety`
+contract, and give the obligation to the caller.
 
 ## Bad
 

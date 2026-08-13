@@ -4,7 +4,13 @@
 
 ## Why It Matters
 
-An `.await` does not require every borrowed value to become owned. A reference may live across suspension when its lifetime is valid, and the resulting future can still be `Send` when every captured value satisfies the required bounds. The ownership problem appears when work must outlive the current borrow—for example, a `tokio::spawn` future normally needs `'static`. Clone an `Arc` handle before moving it into that task. Do not deep-clone state just to silence a borrow error, and do not claim that cloning `Rc` makes a future `Send`.
+An `.await` does not require every borrowed value to become owned; a reference
+may live across suspension when its lifetime is valid and the future can still
+be `Send` when every capture satisfies the required bounds. The ownership
+problem appears when work must outlive the current borrow, such as a
+`tokio::spawn` future that normally needs `'static`. Clone an `Arc` handle
+before moving it into that task. Do not deep-clone state merely to silence a
+borrow error or claim that cloning `Rc` makes a future `Send`.
 
 ## Bad
 

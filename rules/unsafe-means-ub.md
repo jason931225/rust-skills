@@ -4,7 +4,13 @@
 
 ## Why It Matters
 
-`unsafe` is a contract about the abstract machine: use this wrong and you may get a data race, a wild pointer, or a broken validity invariant. Using it as a "this is scary" sticker trains callers to sprinkle `unsafe {}` around destructive operations. `unsafe` is for UB risk only. A function that reboots a host, spends money, or pages on-call stays safe, gets a loud name, and documents the blast radius. The same test applies to traits: an `unsafe trait` means an incorrect implementation can let safe code cause UB.
+`unsafe` is a contract about the abstract machine: misuse may cause a data
+race, wild pointer, or broken validity invariant. Using it as a "this is scary"
+sticker trains callers to wrap destructive operations in `unsafe {}` without
+proving memory safety. A function that reboots a host, spends money, or pages
+on-call stays safe, gets a loud name, and documents the blast radius. The same
+test applies to traits: an `unsafe trait` means an incorrect implementation can
+let safe code cause undefined behavior.
 
 ## Bad
 

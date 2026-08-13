@@ -11,10 +11,21 @@ Unit tests should isolate the code under test from external dependencies (databa
 ```toml
 # Cargo.toml
 [dev-dependencies]
-mockall = "0.12"
+mockall = "0.13"
 ```
 
-## Basic Usage
+## Bad
+
+```rust
+struct Service {
+    database: PostgresDatabase,
+}
+```
+
+The concrete dependency forces a unit test to provision the real database or
+to reach into private implementation details.
+
+## Good
 
 ```rust
 use mockall::automock;

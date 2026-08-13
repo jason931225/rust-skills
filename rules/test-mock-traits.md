@@ -4,9 +4,16 @@
 
 ## Why It Matters
 
-A database trait alone does not make a library deterministic. Time, random bytes, files, sockets, process variables, and hardware calls can all prevent a test from reaching timeouts, short reads, clock rollback, exhausted entropy, or platform failures. A public service must give consumers a supported way to drive those outcomes.
+A database trait alone does not make a library deterministic because time,
+random bytes, files, sockets, process variables, and hardware calls can still
+hide timeouts, short reads, clock rollback, exhausted entropy, or platform
+failures. A public service must give consumers a supported way to drive those
+outcomes.
 
-Use a trait when downstream crates are expected to provide new implementations. For a closed native-versus-test choice owned by your crate, keep a private enum behind the service. That avoids exporting `Box<dyn ...>` and makes the test backend an intentional feature rather than a second architecture.
+Use a trait when downstream crates are expected to provide new implementations.
+For a closed native-versus-test choice owned by your crate, keep a private enum
+behind the service to avoid exporting `Box<dyn ...>` and make the test backend
+an intentional feature rather than a second architecture.
 
 ## Bad
 

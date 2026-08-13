@@ -4,11 +4,16 @@
 
 ## Why It Matters
 
-Log levels exist to communicate urgency and to let operators tune verbosity without recompiling. Misusing them — emitting everything at `info!`, or leaving `debug!` output in hot paths in production — overwhelms aggregators and hides real signals. `tracing_subscriber::EnvFilter` reads the `RUST_LOG` environment variable and supports per-crate, per-target, and per-span directives, giving operators fine-grained control at runtime. For release builds, tracing's `max_level_*` Cargo features can compile out verbose levels entirely, eliminating even the call-site overhead.
+Log levels communicate urgency and let operators tune verbosity without
+recompiling; emitting everything at `info!` or leaving noisy `debug!` events in
+hot paths can overwhelm aggregators and hide real signals.
+`tracing_subscriber::EnvFilter` supports runtime per-crate, per-target, and
+per-span directives, while tracing's `max_level_*` Cargo features can compile
+out verbose levels in release builds.
 
 Filtering is not a license to build expensive events. Published libraries must
-assume telemetry may stay enabled under production load. Avoid events inside
-hot per-item loops; emit a stable batch or state-transition event instead.
+assume telemetry may stay enabled under production load, avoiding events inside
+hot per-item loops in favor of stable batch or state-transition events.
 
 ## Bad
 

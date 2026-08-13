@@ -5,13 +5,13 @@
 ## Why It Matters
 
 `Vec<T>` tracks pointer, length, and capacity. A boxed slice has no growth
-capacity and is represented as an owned slice pointer. On common 64-bit targets
-that often makes the handle one machine word smaller, but Rust does not promise
-those exact sizes as a stable ABI. More importantly, the type communicates
-"fixed after construction." `into_boxed_slice` and `into_boxed_str` already
-discard spare capacity, so a preceding `shrink_to_fit()` is redundant. Use the
-pattern for measured, high-cardinality internal storage; keep public, growable,
-or rarely created collections as `Vec` or `String`.
+capacity and is represented as an owned slice pointer, which often makes the
+handle smaller on common 64-bit targets without creating a stable ABI promise.
+More importantly, the type communicates "fixed after construction," and
+`into_boxed_slice` or `into_boxed_str` already discards spare capacity without
+a preceding `shrink_to_fit()`. Use the pattern for measured, high-cardinality
+internal storage; keep public, growable, or rarely created collections as
+`Vec` or `String`.
 
 ## Bad
 

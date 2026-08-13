@@ -20,7 +20,7 @@ Or in `Cargo.toml`:
 style = "warn"
 ```
 
-## What It Catches
+## Bad
 
 ### Redundant Code
 
@@ -91,22 +91,9 @@ impl Foo {
 | `needless_return` | Remove explicit `return` at end |
 | `question_mark` | Use `?` instead of `match` |
 
-## Examples
+## Good
 
 ```rust
-// Before (style warnings)
-fn process(data: Vec<i32>) -> Option<i32> {
-    if data.len() == 0 {
-        return None;
-    }
-    let first = match data.first() {
-        Some(x) => x,
-        None => return None,
-    };
-    return Some(*first);
-}
-
-// After (idiomatic)
 fn process(data: Vec<i32>) -> Option<i32> {
     if data.is_empty() {
         return None;

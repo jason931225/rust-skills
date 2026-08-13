@@ -6,7 +6,18 @@
 
 Criterion provides statistically rigorous benchmarking with warmup, multiple iterations, outlier detection, and comparison between runs. Divan offers a smaller alternative with similar goals. Either is more reliable than a one-off `Instant::now()` measurement.
 
-## Setup
+## Bad
+
+```rust
+let start = std::time::Instant::now();
+run_once();
+println!("{:?}", start.elapsed());
+```
+
+A single debug-build timing cannot characterize warmup, variance, or
+regressions.
+
+## Good
 
 ```toml
 # Cargo.toml

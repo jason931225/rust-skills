@@ -4,9 +4,15 @@
 
 ## Why It Matters
 
-A coverage percentage says which lines ran, not whether the contract was checked. Refactoring stays safe when tests exercise outputs, state transitions, errors, and externally visible side effects through supported APIs. That evidence also lets coding agents change internals without inventing assumptions about private branches.
+A coverage percentage says which lines ran, not whether the contract was
+checked; refactoring stays safe when tests exercise outputs, state transitions,
+errors, and externally visible side effects through supported APIs. That
+evidence also lets coding agents change internals without inventing assumptions
+about private branches.
 
-Treat uncovered observable behavior as a product gap. Do not inflate the number by calling getters, mirroring match arms, or asserting private representation details.
+Treat uncovered observable behavior as a product gap. Do not inflate the number
+by calling getters, mirroring match arms, or asserting private representation
+details.
 
 ## Bad
 

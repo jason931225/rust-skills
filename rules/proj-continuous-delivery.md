@@ -10,7 +10,14 @@ previous binary, the team accumulates an untested release branch. Continuous
 delivery treats every admitted commit as a complete candidate and promotes the
 same immutable artifact through environments.
 
-## Contract
+## Bad
+
+- Rebuild from source separately in each environment.
+- Admit schema or configuration changes that cannot coexist with the previous
+  binary.
+- Continue a rollout after health or service-level signals regress.
+
+## Good
 
 - Protected-main admission runs build, lint, tests, dependency/security policy,
   schema compatibility, and artifact construction.

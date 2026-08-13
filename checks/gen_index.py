@@ -74,12 +74,13 @@ def build():
         if m.group(1) not in seen:
             seen.add(m.group(1)); existing.append(m.group(1))
 
-    table_rows, qr_sections = [], []
+    table_rows, qr_sections, category_counts = [], [], []
     total = 0
     for i, (prefix, title, impact) in enumerate(CATEGORIES, 1):
         rules = by_prefix.get(prefix, [])
         ordered = [r for r in existing if r in rules] + sorted(r for r in rules if r not in existing)
         total += len(ordered)
+        category_counts.append(len(ordered))
         table_rows.append(f"| {i} | {title} | {impact} | `{prefix}` | {len(ordered)} |")
         lines = [f"### {i}. {title} ({impact})", ""]
         for rid in ordered:
@@ -90,7 +91,7 @@ def build():
              "|----------|----------|--------|--------|-------|\n"
              + "\n".join(table_rows))
     quickref = "\n\n".join(qr_sections)
-    return table, quickref, total, len(CATEGORIES)
+    return table, quickref, category_counts, total, len(CATEGORIES)
 
 def render_skill(text, table, quickref, total, ncat):
     text = re.sub(r"(## Rule Categories by Priority\n\n).*?(\n\n---\n\n## Quick Reference)",
@@ -100,17 +101,40 @@ def render_skill(text, table, quickref, total, ncat):
     text = re.sub(r"\d+ rules across \d+ categories", f"{total} rules across {ncat} categories", text)
     return text
 
-def render_readme(text, total, ncat):
+def render_readme(text, category_counts, total, ncat):
     text = re.sub(r"rules-\d+", f"rules-{total}", text)
     text = re.sub(r"categories-\d+", f"categories-{ncat}", text)
     text = re.sub(r"\d+ Rust rules", f"{total} Rust rules", text)
     text = re.sub(r"\d+ rules split into \d+ categories", f"{total} rules split into {ncat} categories", text)
+    match = re.search(
+        r"(\| Category \| Rules \| What it covers \|\n"
+        r"\|[-|]+\|\n)(.*?)(\n\nEach rule has:)",
+        text,
+        flags=re.S,
+    )
+    if match is None:
+        raise SystemExit("README.md: category table not found")
+    rows = match.group(2).splitlines()
+    if len(rows) != ncat:
+        raise SystemExit(
+            f"README.md: category table has {len(rows)} rows, expected {ncat}"
+        )
+    updated_rows = []
+    for row, count in zip(rows, category_counts):
+        columns = row.split("|")
+        if len(columns) != 5:
+            raise SystemExit(f"README.md: malformed category row: {row}")
+        columns[2] = f" {count} "
+        updated_rows.append("|".join(columns))
+    text = text[:match.start(2)] + "\n".join(updated_rows) + text[match.end(2):]
     return text
 
 def main():
-    table, quickref, total, ncat = build()
+    table, quickref, category_counts, total, ncat = build()
     skill_new = render_skill(SKILL.read_text(encoding="utf-8"), table, quickref, total, ncat)
-    readme_new = render_readme(README.read_text(encoding="utf-8"), total, ncat)
+    readme_new = render_readme(
+        README.read_text(encoding="utf-8"), category_counts, total, ncat
+    )
 
     if "--check" in sys.argv:
         stale = []

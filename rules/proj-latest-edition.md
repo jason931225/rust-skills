@@ -5,13 +5,13 @@
 ## Why It Matters
 
 An edition selects edition-gated syntax and name-resolution behavior, not a
-compatibility firewall or a Rust release. A package on 2018 still talks to 2024
-dependencies and can use release-stabilized features such as `let ... else`
-when its `rust-version` is new enough; it does not receive 2024-specific
-changes such as the revised prelude and unsafe-attribute rules. Set `edition`
-to the newest stable when creating a crate. Staying on 2015 or 2018 does not widen the
-crate graph. It can permit an older compiler floor because every edition has a
-minimum Rust release; Rust 2024 requires Rust 1.85 or newer.
+compatibility firewall or Rust release. A package on edition 2018 can use 2024
+dependencies and release-stabilized features when its `rust-version` is new
+enough, but it does not receive edition-specific changes such as the revised
+prelude and unsafe-attribute rules. Set `edition` to the newest stable when
+creating a crate. Staying on 2015 or 2018 does not widen the crate graph, though
+it can permit an older compiler floor because each edition has a minimum Rust
+release and Rust 2024 requires Rust 1.85 or newer.
 
 ## Bad
 

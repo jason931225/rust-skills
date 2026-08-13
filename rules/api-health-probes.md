@@ -7,8 +7,8 @@
 An orchestrator uses probes to decide whether to restart a process or route
 traffic to it. A probe that sends email, mutates the database, or waits on
 every dependency can amplify an outage. Liveness answers whether the process
-event loop is functioning. Readiness answers whether this instance should
-receive new traffic. They are different failure policies.
+event loop is functioning, while readiness answers whether this instance
+should receive new traffic; they are different failure policies.
 
 ## Bad
 

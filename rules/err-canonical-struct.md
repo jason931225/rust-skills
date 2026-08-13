@@ -5,15 +5,14 @@
 ## Why It Matters
 
 A public enum makes every variant part of the compatibility contract. That is
-appropriate when callers must exhaustively handle a closed domain, but it is a
+appropriate for a closed domain callers must handle exhaustively, but it is a
 poor fit for an evolving library boundary with internal and upstream failure
 modes. An opaque, situation-specific struct can add internal causes without a
 breaking change while still participating in Rust's standard error chain.
 
-Opacity must not discard interoperability. `Display` provides concise context;
-`Error::source()` exposes the underlying cause to reporters and downcasting;
-`Debug` or the application reporter decides whether to include the complete
-chain and backtrace.
+Opacity must not discard interoperability: `Display` provides concise context,
+`Error::source()` exposes the underlying cause, and `Debug` or the application
+reporter decides whether to include the complete chain and backtrace.
 
 ## Bad
 

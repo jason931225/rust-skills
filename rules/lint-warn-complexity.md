@@ -20,7 +20,7 @@ Or in `Cargo.toml`:
 complexity = "warn"
 ```
 
-## What It Catches
+## Bad
 
 ### Unnecessary Complexity
 
@@ -88,23 +88,9 @@ if condition {
 | `unnecessary_cast` | Remove redundant casts |
 | `useless_conversion` | Remove `.into()` when types match |
 
-## Examples
+## Good
 
 ```rust
-// Before (complexity warnings)
-fn find_positive(nums: &[i32]) -> Option<i32> {
-    let filtered: Vec<_> = nums.iter()
-        .cloned()
-        .filter(|x| *x > 0)
-        .collect();
-    if filtered.len() == 0 {
-        None
-    } else {
-        Some(filtered[0])
-    }
-}
-
-// After (simplified)
 fn find_positive(nums: &[i32]) -> Option<i32> {
     nums.iter()
         .copied()

@@ -5,13 +5,12 @@
 ## Why It Matters
 
 A `const` names a value and has no unique identity: each use behaves as if the
-value appeared there. The compiler may still materialize storage when a value
-is borrowed, so "inline" is not a size guarantee. A `static` names one
-program-lifetime location and can provide a stable address. Use the semantic
-difference first, then inspect binary layout for large tables. Avoid
-`static mut`; shared or mutable references to it are denied in edition 2024,
-and unsynchronized access can be undefined behavior. Prefer injected state,
-atomics, `OnceLock`, or `LazyLock` according to the ownership contract.
+value appeared there, although the compiler may materialize storage when it is
+borrowed. A `static` names one program-lifetime location and can provide a
+stable address. Choose from that semantic difference first, then inspect binary
+layout for large tables. Avoid `static mut`; edition 2024 denies references to
+it and unsynchronized access can be undefined behavior, so prefer injected
+state, atomics, `OnceLock`, or `LazyLock` according to the ownership contract.
 
 ## Bad
 

@@ -4,9 +4,14 @@
 
 ## Why It Matters
 
-Exported macros often need to call helper functions, use types, or invoke traits at the call site. Placing those helpers directly in the crate's public API pollutes the surface with implementation details and freezes them under semver — any rename or removal becomes a breaking change. Requiring the caller to depend directly on a third-party helper is worse: the dependency may be absent or at an incompatible version. Routing first- and third-party references through a `#[doc(hidden)] pub mod __private` keeps generated paths stable without making those items part of the user-facing API.
-
-This is the pattern used by `serde`, `thiserror`, and many derive crates.
+Exported macros often need to call helper functions, use types, or invoke
+traits at the call site. Putting those helpers directly in the public API
+exposes implementation details and freezes them under semver, while requiring
+the caller to provide third-party helpers risks missing or incompatible
+versions. Route first- and third-party references through a
+`#[doc(hidden)] pub mod __private` so generated paths stay stable without
+becoming user-facing API. This is the pattern used by `serde`, `thiserror`, and
+many derive crates.
 
 ## Bad
 

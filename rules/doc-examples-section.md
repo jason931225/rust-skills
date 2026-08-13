@@ -4,15 +4,15 @@
 
 ## Why It Matters
 
-Examples show users how the API fits together. Runnable doctests compile and,
-unless marked `no_run`, execute with the crate's test suite. `ignore`,
+Examples show users how the API fits together, and runnable doctests compile
+and, unless marked `no_run`, execute with the crate's test suite. `ignore`,
 `compile_fail`, target cfgs, and external-service setup have different
 contracts; do not claim an example is continuously verified when CI skips it.
 
-Keep short, copyable calls in rustdoc. Put complete workflows that need setup,
-multiple modules, or external services under the repository's `examples/`
-directory and compile them in CI. Users and coding agents need both: a local
-answer beside the item and an end-to-end program they can run.
+Keep short, copyable calls in rustdoc, and put complete workflows that need
+setup, multiple modules, or external services under the repository's
+`examples/` directory and compile them in CI. Users and coding agents need
+both: a local answer beside the item and an end-to-end program they can run.
 
 ## Bad
 

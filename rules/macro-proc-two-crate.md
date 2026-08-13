@@ -4,11 +4,17 @@
 
 ## Why It Matters
 
-A crate marked `proc-macro = true` in `Cargo.toml` compiles for the host (the build machine) and can **only** export procedural macros — no regular types, traits, or functions. If your library needs both a derive/attribute macro and ordinary APIs, you must split into two crates: a `mycrate-derive` (or `mycrate-macros`) proc-macro crate and a `mycrate` facade crate that re-exports everything.
+A crate marked `proc-macro = true` compiles for the host and can export only
+procedural macros, not regular types, traits, or functions. A library that
+needs both macros and ordinary APIs must split into a proc-macro crate and a
+facade crate that re-exports them.
 
-The two-crate split is the minimum. When parsing and token transformation are
-more than a thin derive, add a third regular library crate for that logic and
-its tests; keep the `proc-macro` crate as a shim.
+The two-crate split is the minimum; when parsing and token transformation
+exceed a thin derive, add a regular library crate for that logic and keep the
+`proc-macro` crate as a shim. This keeps the user-facing dependency stable while
+making transformation logic testable without invoking the compiler.
+
+## Contract
 
 The facade approach ensures:
 - Users add only `mycrate` as a dependency.

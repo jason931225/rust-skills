@@ -4,7 +4,12 @@
 
 ## Why It Matters
 
-A public `async fn` that holds `Rc` or a `!Send` guard across `.await` compiles until a caller writes `tokio::spawn`. The error then appears in *their* crate. Public futures and handles intended to cross workers should stay `Send`. A compile-time `require_send` next to each main entry point fails in *your* crate the moment a field or capture regresses. Do not assert every helper mechanically. An instantaneous `!Send` temporary is fine when it is created, used, and dropped before any `.await`.
+A public `async fn` that holds `Rc` or a `!Send` guard across `.await` may
+compile until a caller uses `tokio::spawn`, moving the error into their crate.
+Public futures and handles intended to cross workers should stay `Send`, with a
+compile-time `require_send` beside each main entry point. Do not assert every
+helper mechanically. A `!Send` temporary is fine when it is created, used, and
+dropped before any `.await`.
 
 ## Bad
 

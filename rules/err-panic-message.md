@@ -4,9 +4,16 @@
 
 ## Why It Matters
 
-A bare `assert!`, `panic!`, `unreachable!`, or `todo!` terminates work without telling an operator what invariant failed. Intentional panics represent bugs or contract violations; their messages are often the only evidence available before a process restarts. State the expected condition and include safe values that make the defect reproducible.
+A bare `assert!`, `panic!`, `unreachable!`, or `todo!` terminates work without
+telling an operator what invariant failed. Intentional panics represent bugs
+or contract violations, and their messages may be the only evidence available
+before a process restarts, so state the expected condition and safe values that
+make the defect reproducible.
 
-Messages for caller misuse should explain how to correct the call. Messages for internal bugs should help the maintainer locate the broken invariant. Tests may omit a custom message when the assertion expression and test name already provide the required context.
+Messages for caller misuse should explain how to correct the call, while
+messages for internal bugs should locate the broken invariant. Tests may omit
+a custom message when the assertion expression and test name already provide
+the required context.
 
 ## Bad
 

@@ -101,6 +101,36 @@ pub use error::DatabaseError;
 pub use queries::{UserQueries, OrderQueries};
 ```
 
+## Bad
+
+```text
+src/
+├── account.rs
+├── account/
+│   └── token.rs
+├── billing/
+│   ├── mod.rs
+│   └── invoice.rs
+```
+
+Mixing conventions without a boundary makes file discovery depend on which
+module a maintainer happens to open.
+
+## Good
+
+```text
+src/
+├── account.rs
+├── account/
+│   └── token.rs
+├── billing.rs
+└── billing/
+    └── invoice.rs
+```
+
+Either supported module layout is valid. Use one convention within a
+component, and let a deliberate migration change the whole affected subtree.
+
 ## Consistency Rule
 
 Pick one style for your project and stick with it:

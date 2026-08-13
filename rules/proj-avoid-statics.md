@@ -4,13 +4,17 @@
 
 ## Why It Matters
 
-A `static` looks unique. Cargo can link two major versions of the same crate into one binary, and each copy gets its own `static`. Counters, registries, and "the" logger then split silently. Mutable statics also fight tests: every test shares one cell. a `static` is allowed only when a second copy would not change the answer — lookup tables, interned strings, atomics used purely as a fast path. Edition 2024 already rejects `static mut`; `clippy::disallowed_types` / workspace `banned` lists can keep `lazy_static` and ad-hoc globals out of libraries.
+A `static` looks unique, but Cargo can link multiple versions of one crate and
+give each copy its own counters, registries, or logger. Mutable statics also
+couple tests and can create lock or cache-line contention, so pass cell-local
+state through a service handle. Use a `static` only when a second copy cannot
+change the answer, such as a lookup table, interned string, or atomic fast
+path.
 
 The same identity warning applies to thread-local state: every linked crate
-version and every thread gets another copy. A `0.x` crate makes this especially
-easy because each minor line is a distinct compatibility version. Shared
-mutable statics also become cache-line and lock contention points in
-thread-per-core designs; pass cell-local state through a service handle.
+version and thread gets another copy, especially across incompatible `0.x`
+minor lines; Edition 2024 rejects `static mut`, and workspace lint policy can
+keep ad-hoc globals out of libraries.
 
 ## Bad
 

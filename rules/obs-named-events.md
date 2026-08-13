@@ -4,7 +4,14 @@
 
 ## Why It Matters
 
-Structured fields (`user.id`, `elapsed_ms`) make one line searchable. They do not group "cache evicted" across versions if the message string keeps changing or is assembled with `format!`. add a second axis, use a hierarchical name (`cache.evict.success`) that dashboards filter on, plus a template that names the fields instead of interpolating them. `obs-structured-fields` is the field vocabulary; this rule is the event identity. `clippy::literal_string_with_formatting_args` is often allowed so templates can keep `{{field}}` braces.
+Structured fields such as `user.id` and `elapsed_ms` make one line searchable,
+but they do not group the same event across versions when its message keeps
+changing. Give each event a stable hierarchical name such as
+`cache.evict.success` and a literal template that names fields instead of
+interpolating them. `obs-structured-fields` defines the field vocabulary; this
+rule defines event identity. Allow
+`clippy::literal_string_with_formatting_args` where templates need
+`{{field}}` braces.
 
 ## Bad
 

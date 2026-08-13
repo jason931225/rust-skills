@@ -4,7 +4,12 @@
 
 ## Why It Matters
 
-`Send` and `Sync` are unsafe auto traits used by other unsafe code. `Send` means ownership of a value may move to another thread. `Sync` means shared references `&T` may be used from multiple threads (`T: Sync` implies `&T: Send`). A wrong implementation lets entirely safe callers create data races or violate foreign thread-affinity rules. Field changes can invalidate the proof without touching the impl, so manual implementations are a load-bearing review boundary.
+`Send` and `Sync` are unsafe auto traits used by other unsafe code: `Send`
+allows ownership to move to another thread, while `Sync` allows shared
+references to be used from multiple threads (`T: Sync` implies `&T: Send`). A
+wrong implementation lets safe callers create data races or violate foreign
+thread-affinity rules. Field changes can invalidate the proof without touching
+the impl. Manual implementations are therefore a load-bearing review boundary.
 
 ## Bad
 
@@ -31,7 +36,7 @@ unsafe impl Send for BorrowedHandle {}
 unsafe impl Sync for BorrowedHandle {}
 ```
 
-## Prefer Auto Traits
+## Good
 
 ```rust
 use std::sync::{Arc, Mutex};

@@ -20,7 +20,7 @@ Or in code:
 #![warn(clippy::cargo)]
 ```
 
-## What It Catches
+## Bad
 
 ### Missing Metadata
 
@@ -66,7 +66,9 @@ feature-a = []  # Feature name matches crate name
 | `redundant_feature_names` | Feature same as crate name |
 | `wildcard_dependencies` | Using `*` for version |
 
-## Complete Cargo.toml
+## Good
+
+### Complete Cargo.toml
 
 ```toml
 [package]

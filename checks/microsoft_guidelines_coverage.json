@@ -83,7 +83,15 @@
       "disposition": "documented-deviation",
       "rules": [
         "rules/perf-global-allocator.md"
-      ]
+      ],
+      "exact_difference": "The source recommends mimalloc as an application default. The mapped rule keeps the system allocator until representative allocation profiles and end-to-end benchmarks prove a production benefit, then requires rollback and platform evidence.",
+      "rationale_class": "production-scalability",
+      "supporting_evidence": [
+        "src/guidelines/apps/M-MIMALLOC-APPS.md",
+        "rules/perf-global-allocator.md"
+      ],
+      "executable_check": "checks/check.sh",
+      "remaining_uncertainty": "Allocator results remain workload-, target-, libc-, and deployment-specific; the guideline repository cannot establish a universal winner."
     },
     {
       "id": "M-TARGET-CPU",

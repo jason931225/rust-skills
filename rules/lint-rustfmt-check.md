@@ -6,7 +6,18 @@
 
 Consistent formatting eliminates style debates and makes diffs cleaner. Running `cargo fmt --check` in CI ensures all code follows the same format. This catches formatting issues before merge, not after.
 
-## CI Configuration
+## Bad
+
+```bash
+# Local formatting alone is not an admission gate.
+cargo fmt
+git push
+```
+
+This mutates one checkout but does not prove that the committed tree is
+formatted in a clean environment.
+
+## Good
 
 ### GitHub Actions
 

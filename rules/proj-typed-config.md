@@ -80,6 +80,9 @@ concatenating fragments throughout the application.
 ## Key Points
 
 - Load and validate once before spawning workers.
+- Treat the listen address as security policy. Default developer settings to
+  loopback and require deployment configuration to widen the interface; never
+  silently replace a parse failure with `0.0.0.0`.
 - Return configuration errors with the key and expected shape, never the
   secret value.
 - Do not commit production credentials or bake them into images.

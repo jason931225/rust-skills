@@ -4,17 +4,32 @@
 
 ## Why It Matters
 
-The compiler treats each Rust dylib as its own program. That copy has its own `static`s and thread-locals, its own `TypeId` table, and its own allocator. `#[repr(Rust)]` layout is allowed to differ between those compilations. Handing a `String`, a Tokio handle, or a default-repr struct to another DLL is not "the same type": Drop may free the wrong heap, a method body may run against the wrong statics, and a `TypeId` comparison is meaningless. Allow only portable state across that edge, both when you load plugins and when you publish one.
+The compiler treats each Rust dylib as its own program, with its own `static`s,
+thread-locals, `TypeId` table, and allocator. `#[repr(Rust)]` layout may differ
+between compilations, so handing a `String`, Tokio handle, or default-repr
+struct to another DLL can free the wrong heap, use the wrong statics, or make a
+meaningless `TypeId` comparison. FFI safety alone is insufficient for
+cross-image ownership: portable values also need a defined layout and no
+dependency on image-local state. Allow only portable state across that edge,
+both when loading and publishing plugins.
 
-FFI safety alone is insufficient for cross-image ownership. A portable value
-also has a defined layout (`#[repr(C)]` or equivalent) and satisfies every
-constraint below:
+## Contract
+
+A portable value has a defined layout (`#[repr(C)]` or equivalent) and
+satisfies every constraint below:
 
 - It has no interaction with any `static` or thread-local.
 - It has no interaction with any `TypeId`.
 - It contains no value, pointer, or reference to non-portable data.
+- Both images agree on the value definition and ABI version. Export a
+  versioned entry point or `#[repr(C)]` API table and reject a mismatch before
+  passing values.
 
-A pointer *into* portable bytes that still live in a non-portable owner is allowed: a `*const u8` / length pair into a `Vec<u8>` that the allocating DLL keeps is portable; the `Vec` itself is not. *Interaction* is any computational relationship, including how the bits are interpreted. Passing a `u128` is fine; transmuting a `TypeId` into that `u128` is not.
+A pointer *into* portable bytes that still live in a non-portable owner is
+allowed: a `*const u8` / length pair into a `Vec<u8>` that the allocating DLL
+keeps is portable; the `Vec` itself is not. *Interaction* is any computational
+relationship, including how the bits are interpreted. Passing a `u128` is fine;
+transmuting a `TypeId` into that `u128` is not.
 
 ## Bad
 
@@ -32,6 +47,10 @@ impl Meter {
     }
 }
 
+/// # Safety
+///
+/// Demonstration only: `meter` must point to a live `Meter`, but the type is
+/// still not portable across an independently compiled library boundary.
 pub unsafe fn drive(meter: *const Meter) -> u64 {
     // SAFETY: demonstration only — the type is not portable.
     unsafe { (*meter).reading() }
@@ -61,12 +80,20 @@ pub struct ByteView {
     pub len: usize,
 }
 
+pub const PLUGIN_ABI_VERSION: u32 = 1;
+
+#[repr(C)]
+pub struct PluginApi {
+    pub abi_version: u32,
+    pub fill_sample: FillSample,
+}
+
 /// # Safety
 ///
 /// `view.ptr` must be valid for `view.len` bytes until this function
 /// returns. The caller keeps the allocation and the matching allocator;
 /// this side must copy if it needs the bytes later.
-pub unsafe fn checksum(view: ByteView) -> u32 {
+pub unsafe extern "C" fn checksum(view: ByteView) -> u32 {
     if view.ptr.is_null() {
         return 0;
     }
@@ -91,6 +118,13 @@ unsafe extern "C" fn fill_zero(out: *mut Sample) -> i32 {
     0
 }
 
+fn validate_plugin(api: &PluginApi) -> Result<(), &'static str> {
+    if api.abi_version != PLUGIN_ABI_VERSION {
+        return Err("plugin abi version mismatch");
+    }
+    Ok(())
+}
+
 fn main() {
     let owned = b"ok";
     let view = ByteView {
@@ -101,13 +135,18 @@ fn main() {
     let sum = unsafe { checksum(view) };
     assert_eq!(sum, u32::from(b'o') + u32::from(b'k'));
 
-    let fill: FillSample = fill_zero;
+    let api = PluginApi {
+        abi_version: PLUGIN_ABI_VERSION,
+        fill_sample: fill_zero,
+    };
+    assert!(validate_plugin(&api).is_ok());
+
     let mut sample = Sample {
         millis: 9,
         value: 4,
     };
     // SAFETY: `sample` is live and uniquely borrowed for this call.
-    let rc = unsafe { fill(&mut sample) };
+    let rc = unsafe { (api.fill_sample)(&mut sample) };
     assert_eq!(rc, 0);
     assert_eq!(sample.millis, 0);
 }
@@ -118,10 +157,15 @@ fn main() {
 - **Allocator ownership.** `String`, `Vec<T>`, `Box<T>`, and anything else that frees on drop must be dropped by the DLL that allocated them. Crossing the boundary is a cross-heap free.
 - **Transitive portability.** Every nested field must be portable. Wrapping a `String` in `#[repr(C)]` does not make the heap value portable.
 - **Nested pointers.** A pointer or reference is portable only when it addresses portable data. Pointing at a Rust-layout node inside a C envelope is still UB.
-- **Byte views need a protocol.** A slice or `ptr`+`len` view is portable for primitive bytes; document who allocated, who copies, who frees, and that the owner outlives the call.
+- **Byte views need a protocol.** A slice or `ptr`+`len` view is portable for primitive bytes; document who allocated, who copies, who frees, and that both the owner and the loaded image remain live while any data or function pointer is in use.
 - **Hidden method hazard.** A method call on a foreign object is compiled in *your* image. The code that runs is yours; the bytes are theirs. Prefer an `extern "C"` function pointer the originating DLL provides.
 - **Libraries with process state.** Runtimes and loggers that keep static registries (`tokio`, `log`, similar) are not portable handles. Give each DLL its own instance, or talk through a C ABI you control.
-- Passing any of the above across libraries is how you get silent data loss, corrupted state, and usually undefined behavior.
+- **No unwinding.** Foreign boundary functions return status codes. Catch a
+  panic at the boundary only when the process uses unwind semantics, convert
+  it to an error, and keep process isolation for `panic = "abort"`.
+- **Failures compound.** Passing owning, default-layout, or image-state-bound
+  values across libraries can cause silent data loss, corrupted state, and
+  undefined behavior.
 
 ## See Also
 
@@ -130,4 +174,5 @@ fn main() {
 - [type-repr-transparent](type-repr-transparent.md) - a one-field ABI wrapper is layout-stable; a Rust struct is not
 - [proj-avoid-statics](proj-avoid-statics.md) - process-identity state is already unsound inside one binary
 - [conc-thread-local](conc-thread-local.md) - TLS is per image, not per process
+- [err-catch-unwind-boundary](err-catch-unwind-boundary.md) - convert unwind failures only at an isolation edge
 - [unsafe-minimize-scope](unsafe-minimize-scope.md) - the only `unsafe` at the edge should be the pointer copies

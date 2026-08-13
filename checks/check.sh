@@ -31,8 +31,8 @@ echo "==> source-guidance behavior checks"
 cd "$ROOT/checks"
 cargo test --test source_guidance
 
-echo "==> Rust 1.95-1.97 behavior checks"
-cargo test --test release_195_197
+echo "==> language-guidance behavior checks"
+cargo test --test language_guidance
 
 echo "==> generating example files from rules"
 python3 gen.py

@@ -4,7 +4,12 @@
 
 ## Why It Matters
 
-Rust allows operator overloading through traits in `std::ops` (`Add`, `Sub`, `Mul`, `Index`, `Neg`, etc.). The Rust API Guidelines (C-OVERLOAD) permit this — but only when the operator meaning is immediately obvious to any reader. Natural fits: arithmetic on numeric newtypes, vector/matrix math, set union/intersection with `+`/`|`, duration arithmetic. Surprising overloads — `+` that mutates state, `*` that performs a network call, `Index` that panics unconditionally — mislead readers and violate the principle of least surprise. When in doubt, name a method instead. Also implement the operator for references to avoid forcing callers to clone.
+Rust allows operator overloading through `std::ops` traits, but the Rust API
+Guidelines permit it only when the meaning is immediately obvious. Natural
+fits include numeric newtypes, vector or matrix math, set operations, and
+duration arithmetic. Overloads that mutate state, perform I/O, or panic
+unconditionally mislead readers. When in doubt, name a method instead, and
+implement natural operators for references to avoid forcing callers to clone.
 
 ## Bad
 

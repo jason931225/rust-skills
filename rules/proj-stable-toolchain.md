@@ -26,11 +26,21 @@ deliberately.
 - Upgrade regularly with the dependency graph and review compiler/lint changes
   rather than postponing them indefinitely.
 
+## Bad
+
+```toml
+[toolchain]
+channel = "stable"
+```
+
+A floating channel can select different compilers across developer machines,
+CI, and later rebuilds.
+
 ## Good
 
 ```toml
 [toolchain]
-channel = "1.97.0"
+channel = "1.97.1"
 profile = "minimal"
 components = ["clippy", "rustfmt"]
 targets = ["x86_64-unknown-linux-gnu"]

@@ -6,7 +6,13 @@
 
 Profile-guided optimization feeds observed branch and call frequencies into later compilation. It can improve an application whose production workload is stable and well represented, but stale or biased profiles can regress another tenant, request shape, architecture, or failure path. PGO also adds a training build, workload execution, profile merge, optimized rebuild, and new provenance inputs. Treat it as an artifact pipeline, not a universal performance switch.
 
-## Process
+## Bad
+
+Train on an undocumented sample, reuse profiles across source or compiler
+changes, or promote a rebuilt artifact without comparing it to the non-PGO
+candidate.
+
+## Good
 
 1. **Instrument** the exact source, lockfile, compiler, target, profile, and features intended for the candidate.
 2. **Exercise** a versioned, privacy-safe workload representing normal, peak, and important failure paths.

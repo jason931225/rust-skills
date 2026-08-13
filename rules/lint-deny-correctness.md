@@ -1,18 +1,31 @@
 # lint-deny-correctness
 
-> `#![deny(clippy::correctness)]`
+> Deny `clippy::correctness` and fix every finding
 
 ## Why It Matters
 
-Clippy's correctness lints catch code that is outright wrong - logic errors, undefined behavior, or code that doesn't do what you think. These should always be errors, not warnings.
+Clippy's correctness lints catch code that is outright wrong, including logic
+errors, undefined behavior, and expressions that do not behave as intended.
+Treat these findings as errors, not warnings.
 
-## Setup
+## Bad
+
+```rust
+#![allow(clippy::correctness)]
+```
+
+Allowing the group lets known correctness defects enter the crate.
+
+## Good
 
 ```rust
 // At the top of lib.rs or main.rs
 #![deny(clippy::correctness)]
+```
 
-// Or in Cargo.toml for workspace-wide
+Or configure the policy workspace-wide:
+
+```toml
 [lints.clippy]
 correctness = "deny"
 ```

@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-343-blue)
+![rules](https://img.shields.io/badge/rules-345-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+345 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -16,7 +16,7 @@ Out of the box, coding agents write *average* Rust — they clone to dodge the b
 ## Install
 
 ```bash
-npx add-skill leonardomso/rust-skills
+npx add-skill oyatie/rust-skills
 ```
 
 That's it. The CLI figures out which agents you have and installs the skill to the right place.
@@ -66,36 +66,37 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-343 rules split into 27 categories:
+345 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
 | **Ownership & Borrowing** | 12 | When to borrow vs clone, Arc/Rc, lifetimes |
-| **Error Handling** | 12 | thiserror for libs, anyhow for apps, the `?` operator |
-| **Memory** | 17 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
-| **Unsafe Code** | 7 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
-| **API Design** | 17 | Builder pattern, newtypes, sealed traits, `FromIterator` |
-| **Async** | 18 | Tokio patterns, channels, async fn in traits, cancel safety |
-| **Concurrency** | 4 | rayon, scoped threads, atomic ordering, thread-locals |
+| **Error Handling** | 16 | thiserror for libs, anyhow for apps, the `?` operator |
+| **Memory** | 18 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
+| **Unsafe Code** | 10 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
+| **API Design** | 35 | Builder pattern, newtypes, sealed traits, `FromIterator` |
+| **Async** | 25 | Tokio patterns, channels, async fn in traits, cancel safety |
+| **Concurrency** | 6 | rayon, scoped threads, atomic ordering, thread-locals |
 | **Optimization** | 12 | LTO, inlining, PGO, SIMD |
-| **Numeric & Arithmetic** | 5 | Overflow handling, `as` vs `TryFrom`, float compare, `NonZero` |
-| **Type Safety** | 13 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
-| **Trait & Generics Design** | 6 | dyn vs generic, associated types, blanket impls, object safety, orphan rule |
+| **Numeric & Arithmetic** | 6 | Overflow handling, `as` vs `TryFrom`, float compare, `NonZero` |
+| **Type Safety** | 14 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
+| **Trait & Generics Design** | 7 | dyn vs generic, associated types, blanket impls, object safety, orphan rule |
 | **Conversions** | 3 | `TryFrom`, `FromStr`, `AsMut` |
-| **Const & Compile-Time** | 4 | `const fn`, const vs static, const generics, `const {}` blocks |
+| **Const & Compile-Time** | 5 | `const fn`, const vs static, const generics, `const {}` blocks |
 | **Serde** | 8 | rename_all, default, flatten, enum tagging, validate-on-deserialize |
-| **Pattern Matching** | 5 | `let-else`, `matches!`, if-let chains, exhaustive matches |
-| **Macros** | 8 | `macro_rules!` hygiene, fragment specifiers, proc-macros with syn/quote |
+| **Pattern Matching** | 6 | `let-else`, `matches!`, if-let chains, exhaustive matches |
+| **Macros** | 11 | `macro_rules!` hygiene, fragment specifiers, proc-macros with syn/quote |
 | **Closures** | 5 | Fn/FnMut/FnOnce bounds, returning `impl Fn`, move & disjoint capture |
 | **Collections** | 4 | HashMap/BTreeMap/IndexMap, Vec/VecDeque, sets, `BinaryHeap` |
-| **Naming** | 16 | Following Rust API Guidelines |
-| **Testing** | 15 | Proptest, mockall, criterion, loom, snapshot tests |
-| **Docs** | 12 | Doc examples, intra-doc links, README/crate-doc unification |
-| **Observability** | 7 | tracing over log, spans, structured fields, redacting secrets |
-| **Performance** | 13 | Iterators, entry API, faster hashers, I/O buffering |
-| **Project Structure** | 14 | Workspaces, module layout, features, MSRV |
-| **Linting** | 13 | Clippy config, CI setup, `unexpected_cfgs` |
-| **Anti-patterns** | 15 | Common mistakes and how to fix them |
+| **Naming** | 18 | Following Rust API Guidelines |
+| **Testing** | 19 | Proptest, mockall, criterion, loom, snapshot tests |
+| **Docs** | 16 | Doc examples, intra-doc links, README/crate-doc unification |
+| **Observability** | 10 | tracing over log, spans, structured fields, redacting secrets |
+| **Performance** | 15 | Iterators, entry API, faster hashers, I/O buffering |
+| **Project Structure** | 27 | Workspaces, module layout, features, MSRV |
+| **FFI & Interop** | 5 | ABI boundaries, native handles, `-sys` crates, dynamic libraries |
+| **Linting** | 16 | Clippy config, CI setup, `unexpected_cfgs` |
+| **Anti-patterns** | 16 | Common mistakes and how to fix them |
 
 Each rule has:
 - Why it matters
@@ -122,12 +123,12 @@ If `add-skill` doesn't work for your setup, here's how to install manually:
 
 Global (applies to all projects):
 ```bash
-git clone https://github.com/leonardomso/rust-skills.git ~/.claude/skills/rust-skills
+git clone https://github.com/oyatie/rust-skills.git ~/.claude/skills/rust-skills
 ```
 
 Or just for one project:
 ```bash
-git clone https://github.com/leonardomso/rust-skills.git .claude/skills/rust-skills
+git clone https://github.com/oyatie/rust-skills.git .claude/skills/rust-skills
 ```
 </details>
 
@@ -135,7 +136,7 @@ git clone https://github.com/leonardomso/rust-skills.git .claude/skills/rust-ski
 <summary><b>OpenCode</b></summary>
 
 ```bash
-git clone https://github.com/leonardomso/rust-skills.git .opencode/skills/rust-skills
+git clone https://github.com/oyatie/rust-skills.git .opencode/skills/rust-skills
 ```
 </details>
 
@@ -143,12 +144,12 @@ git clone https://github.com/leonardomso/rust-skills.git .opencode/skills/rust-s
 <summary><b>Cursor</b></summary>
 
 ```bash
-git clone https://github.com/leonardomso/rust-skills.git .cursor/skills/rust-skills
+git clone https://github.com/oyatie/rust-skills.git .cursor/skills/rust-skills
 ```
 
 Or just grab the skill file:
 ```bash
-curl -o .cursorrules https://raw.githubusercontent.com/leonardomso/rust-skills/master/SKILL.md
+curl -o .cursorrules https://raw.githubusercontent.com/oyatie/rust-skills/HEAD/SKILL.md
 ```
 </details>
 
@@ -157,7 +158,7 @@ curl -o .cursorrules https://raw.githubusercontent.com/leonardomso/rust-skills/m
 
 ```bash
 mkdir -p .windsurf/rules
-curl -o .windsurf/rules/rust-skills.md https://raw.githubusercontent.com/leonardomso/rust-skills/master/SKILL.md
+curl -o .windsurf/rules/rust-skills.md https://raw.githubusercontent.com/oyatie/rust-skills/HEAD/SKILL.md
 ```
 </details>
 
@@ -165,12 +166,12 @@ curl -o .windsurf/rules/rust-skills.md https://raw.githubusercontent.com/leonard
 <summary><b>OpenAI Codex</b></summary>
 
 ```bash
-git clone https://github.com/leonardomso/rust-skills.git .codex/skills/rust-skills
+git clone https://github.com/oyatie/rust-skills.git .codex/skills/rust-skills
 ```
 
 Or use the AGENTS.md standard:
 ```bash
-curl -o AGENTS.md https://raw.githubusercontent.com/leonardomso/rust-skills/master/SKILL.md
+curl -o AGENTS.md https://raw.githubusercontent.com/oyatie/rust-skills/HEAD/SKILL.md
 ```
 </details>
 
@@ -179,7 +180,7 @@ curl -o AGENTS.md https://raw.githubusercontent.com/leonardomso/rust-skills/mast
 
 ```bash
 mkdir -p .github
-curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/leonardomso/rust-skills/master/SKILL.md
+curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/oyatie/rust-skills/HEAD/SKILL.md
 ```
 </details>
 
@@ -201,7 +202,7 @@ aider --read path/to/rust-skills/SKILL.md
 <summary><b>Zed</b></summary>
 
 ```bash
-curl -o AGENTS.md https://raw.githubusercontent.com/leonardomso/rust-skills/master/SKILL.md
+curl -o AGENTS.md https://raw.githubusercontent.com/oyatie/rust-skills/HEAD/SKILL.md
 ```
 </details>
 
@@ -209,7 +210,7 @@ curl -o AGENTS.md https://raw.githubusercontent.com/leonardomso/rust-skills/mast
 <summary><b>Amp</b></summary>
 
 ```bash
-git clone https://github.com/leonardomso/rust-skills.git .agents/skills/rust-skills
+git clone https://github.com/oyatie/rust-skills.git .agents/skills/rust-skills
 ```
 </details>
 
@@ -218,7 +219,7 @@ git clone https://github.com/leonardomso/rust-skills.git .agents/skills/rust-ski
 
 ```bash
 mkdir -p .clinerules
-curl -o .clinerules/rust-skills.md https://raw.githubusercontent.com/leonardomso/rust-skills/master/SKILL.md
+curl -o .clinerules/rust-skills.md https://raw.githubusercontent.com/oyatie/rust-skills/HEAD/SKILL.md
 ```
 </details>
 
@@ -227,7 +228,7 @@ curl -o .clinerules/rust-skills.md https://raw.githubusercontent.com/leonardomso
 
 If your agent supports the [AGENTS.md](https://agents.md) standard:
 ```bash
-curl -o AGENTS.md https://raw.githubusercontent.com/leonardomso/rust-skills/master/SKILL.md
+curl -o AGENTS.md https://raw.githubusercontent.com/oyatie/rust-skills/HEAD/SKILL.md
 ```
 </details>
 
@@ -236,6 +237,11 @@ curl -o AGENTS.md https://raw.githubusercontent.com/leonardomso/rust-skills/mast
 See [SKILL.md](./SKILL.md) for the full list with links to each rule file.
 
 ## Sources & attribution
+
+Leonardo Maldonado ([`leonardomso`](https://github.com/leonardomso)) created
+rust-skills and remains credited as its original author. Oyatie maintains this
+standalone clone; the original repository and its history remain available at
+[`leonardomso/rust-skills`](https://github.com/leonardomso/rust-skills).
 
 These rules are an independent synthesis of official Rust guidance, well-known books, and patterns drawn from widely-used open-source crates. They are not affiliated with or endorsed by the Rust project or any crate author. The text and code examples are original summaries — no substantial content is copied from the sources below.
 

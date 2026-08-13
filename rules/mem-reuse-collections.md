@@ -4,12 +4,14 @@
 
 ## Why It Matters
 
-Creating new `Vec`, `String`, or `HashMap` instances in hot loops generates significant allocator pressure. Clearing a collection and reusing it keeps the existing capacity, avoiding repeated allocation/deallocation cycles. This is especially impactful for frequently-executed code paths.
+Creating new `Vec`, `String`, or `HashMap` instances in hot loops can add
+allocator pressure, while clearing and reusing a collection keeps its existing
+capacity. Measure the effect on frequently executed paths.
 
 Library APIs decide whether callers can reuse storage at all. Make the
 caller-owned-output form the core operation; an allocating convenience method
-can delegate to it. This keeps allocation policy with the caller instead of
-hiding one allocation per item behind an innocent-looking getter.
+can delegate to it, keeping allocation policy with the caller instead of hiding
+one allocation per item behind an innocent-looking getter.
 
 ## Bad
 

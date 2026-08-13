@@ -4,14 +4,18 @@
 
 ## Why It Matters
 
-Unsafe blocks are unauditable without justification. A reviewer cannot verify invariants they cannot read. The `clippy::undocumented_unsafe_blocks` lint enforces this mechanically. The standard library, tokio, and bevy all require both forms before merging unsafe code.
+Unsafe code is unauditable when its obligations and local proof are implicit.
+The `clippy::undocumented_unsafe_blocks` lint can require a comment for each
+block, while public unsafe functions also need a caller-facing contract. These
+two forms answer different questions and neither replaces the other. Omitting
+either prevents a reviewer from verifying soundness.
 
-There are two distinct levels of documentation:
+## Contract
+
+Use two distinct levels of documentation:
 
 1. **`# Safety` in a doc comment on an `unsafe fn`** — describes the *caller's* obligations (preconditions that must hold for the call to be sound).
 2. **`// SAFETY:` inline comment above each `unsafe {}` block** — explains why *this specific operation* upholds the required invariants at the call site.
-
-Both are required. Omitting either leaves an auditor unable to verify soundness.
 
 ## Bad
 

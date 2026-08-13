@@ -4,14 +4,14 @@
 
 ## Why It Matters
 
-Tokio uses a small set of worker threads to poll many futures. A blocking call
-or long computation on one worker delays unrelated tasks. `spawn_blocking`
+Tokio uses a small set of worker threads to poll many futures, so a blocking
+call or long computation on one worker delays unrelated tasks. `spawn_blocking`
 moves synchronous work to Tokio's blocking pool, but that pool has a high
 default thread limit because it also serves blocking I/O. It is not automatic
-CPU backpressure: many CPU jobs must acquire a semaphore or enter a separately
-bounded compute pool. Once a blocking task starts, aborting its `JoinHandle`
-does not stop it, and runtime shutdown waits for it unless the caller imposes a
-shutdown timeout.
+CPU backpressure, so many CPU jobs must acquire a semaphore or enter a
+separately bounded compute pool. Once a blocking task starts, aborting its
+`JoinHandle` does not stop it, and runtime shutdown waits for it unless the
+caller imposes a shutdown timeout.
 
 ## Bad
 

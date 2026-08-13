@@ -5,12 +5,12 @@
 ## Why It Matters
 
 `println!` and `eprintln!` have no log level, target, or structured fields. The
-`log` facade adds levels and targets but not spans. `tracing` records events
-and contextual spans with structured fields. Context does not automatically
-jump into every spawned task or thread: instrument the future/task explicitly
-and propagate trace context across process boundaries. A library that emits no
-diagnostics does not need a tracing dependency; libraries that do emit should
-depend on the facade and leave subscriber/exporter ownership to the binary.
+`log` facade adds levels and targets but not spans, while `tracing` records
+structured events and contextual spans. Context does not automatically enter
+every spawned task or thread, so instrument the future or task and propagate
+trace context across process boundaries. A library that emits no diagnostics
+needs no tracing dependency; one that does should depend on the facade and
+leave subscriber or exporter ownership to the binary.
 
 ## Bad
 

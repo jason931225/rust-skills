@@ -5,12 +5,16 @@
 ## Why It Matters
 
 Macros expand before type checking; the expanded Rust is still inferred and
-type checked. The indirection can make navigation, diagnostics, compile time,
-and edition-sensitive syntax harder to reason about, and a macro cannot be
-passed around as a function value. A function or trait usually gives callers a
-smaller, typed contract without promising any universal optimization benefit.
+type checked, but the indirection can complicate navigation, diagnostics,
+compile time, and edition-sensitive syntax, and a macro cannot be passed as a
+function value. A function or trait usually gives callers a smaller, typed
+contract without promising any universal optimization benefit.
 
-Reach for a macro only when you genuinely need one of: variadic argument counts, a DSL with non-Rust syntax, blanket trait impls across an open-ended set of types, compile-time format/string checks, or eliminating mechanically repetitive boilerplate that a function truly cannot handle. Expansion complexity is a warning sign: users should be able to predict the generated shape from the invocation. If they cannot, use an explicit API or code generation at build time.
+Reach for a macro only for variadic argument counts, a DSL with non-Rust
+syntax, open-ended blanket impls, compile-time string checks, or mechanical
+boilerplate a function cannot express. Expansion complexity is a warning sign:
+users should predict the generated shape from the invocation, or the crate
+should use an explicit API or build-time code generation.
 
 ## Bad
 

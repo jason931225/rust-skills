@@ -4,17 +4,15 @@
 
 ## Why It Matters
 
-`Vec::contains` is O(n) per call. Checking m values against n entries is
-O(n × m), which becomes quadratic when both grow together. A `HashSet` offers
-expected O(1) membership after an O(n) build; collisions and hashing cost still
-matter. Use `BTreeSet` for sorted iteration or ranges. A small `Vec` may win
-when order, compact storage, or tiny cardinality matters—measure rather than
-freezing an eight-element threshold.
+`Vec::contains` is O(n) per call, so checking m values against n entries is
+O(n × m). A `HashSet` offers expected O(1) membership after an O(n) build,
+while `BTreeSet` supports sorted iteration and ranges. A small `Vec` may still
+win when order, compact storage, or tiny cardinality matters, so measure rather
+than freezing a threshold.
 
-Deduplication depends on the required output order and existing state. A
-`HashSet` is expected O(n) for unsorted input. Sorting then `dedup` is
-O(n log n), while `Vec::dedup` itself is O(n) when equal elements are already
-adjacent and avoids a second hash table.
+Deduplication also depends on output order and existing state: a `HashSet` is
+expected O(n), sorting then `dedup` is O(n log n), and `Vec::dedup` is O(n)
+when equal elements are already adjacent.
 
 ## Bad
 

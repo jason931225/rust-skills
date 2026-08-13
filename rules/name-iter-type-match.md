@@ -135,6 +135,18 @@ pub struct Iterator<T>;  // Conflicts with std::iter::Iterator
 pub struct I<T>;         // Too cryptic
 ```
 
+## Good
+
+```rust
+impl<T> MyCollection<T> {
+    fn iter(&self) -> Iter<'_, T> {
+        Iter(self.items.iter())
+    }
+}
+
+pub struct Iter<'a, T>(std::slice::Iter<'a, T>);
+```
+
 ## See Also
 
 - [name-iter-convention](./name-iter-convention.md) - iter/iter_mut/into_iter

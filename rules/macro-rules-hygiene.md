@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-`macro_rules!` is hygienic for local bindings: identifiers introduced inside the macro (with `let`, loop labels, etc.) live in their own namespace and cannot shadow or clash with the caller's identifiers. This protects callers from surprising capture bugs.
+`macro_rules!` is hygienic for local bindings: identifiers introduced inside the macro (with `let`, loop labels, etc.) live in their own namespace and cannot shadow or clash with the caller's identifiers, which protects callers from surprising capture bugs.
 
 Item paths, however, are not automatically resolved. If your macro calls `crate::helper()`, it silently breaks when the macro is used from a different crate. Use `$crate::helper()` instead — `$crate` expands to the defining crate regardless of call site, so the macro works correctly even when re-exported.
 

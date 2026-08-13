@@ -26,7 +26,7 @@ Or in `clippy.toml`:
 warn = ["clippy::suspicious"]
 ```
 
-## What It Catches
+## Bad
 
 ### Suspicious Arithmetic
 
@@ -99,6 +99,27 @@ if condition {
 else {  // Weird formatting, might be a mistake
     do_other();
 }
+```
+
+## Good
+
+```rust
+#![warn(clippy::suspicious)]
+
+fn parity(value: i32) -> i32 {
+    value % 2
+}
+
+fn choose(condition: bool) {
+    if condition {
+        do_something();
+    } else {
+        do_other();
+    }
+}
+
+fn do_something() {}
+fn do_other() {}
 ```
 
 ## When to Allow

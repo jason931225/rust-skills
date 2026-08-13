@@ -5,15 +5,14 @@
 ## Why It Matters
 
 Dispatch is an API decision, not a universal performance ladder. Concrete types
-are simplest when behavior is fixed. Enums model a closed set. Generics keep
-open implementations statically dispatched but can spread type parameters
-through public state. Trait objects provide runtime heterogeneity, smaller code,
-and a stable erased boundary at the cost of object-safety constraints and
-indirect calls.
+fit fixed behavior, while enums model a closed set. Generics keep open
+implementations statically dispatched but can spread type parameters through
+public state; trait objects provide runtime heterogeneity and a stable erased
+boundary at the cost of object-safety constraints and indirect calls.
 
-Do not translate every interface from another language into `Arc<dyn Trait>`.
-Do not hide a genuine ownership-and-erasure contract merely to ban `dyn` from a
-public signature.
+Do not translate every interface from another language into `Arc<dyn Trait>`,
+but do not hide a genuine ownership-and-erasure contract merely to ban `dyn`
+from a public signature.
 
 ## Bad
 

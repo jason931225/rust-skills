@@ -5,13 +5,13 @@
 ## Why It Matters
 
 A constructor with four or more required inputs is hard to scan and easy to
-call incorrectly; repeated primitive types make the risk worse. Cascade that
-initialization through helper types: group required parameters by meaning, then construct the outer
-type from those groups. Check the Rust API Guidelines newtype pattern
-(`C-NEWTYPE`) at the same time so `Origin` and `Destination` cannot be
-transposed. This is not a builder. Builders exist for optional,
-permutation-heavy configuration; cascading structures a long required
-argument list.
+call incorrectly, especially when primitive types repeat. Cascade
+initialization through helper types by grouping required parameters by meaning
+and constructing the outer type from those groups. Apply the Rust API
+Guidelines newtype pattern (`C-NEWTYPE`) so values such as `Origin` and
+`Destination` cannot be transposed. This is not a builder: builders handle
+optional, permutation-heavy configuration, while cascading structures a long
+required argument list.
 
 ## Bad
 

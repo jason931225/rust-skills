@@ -7,7 +7,7 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
-- Microsoft Pragmatic Rust Guidelines (v2026.6) coverage for issue #3.
+- Microsoft Pragmatic Rust Guidelines (v2026.6) coverage.
   The source audit adds original rules and revises existing guidance where
   topic-level mappings omitted caveats or taught the inverse.
 - Executable source coverage includes a pinned 89-item Microsoft manifest,
@@ -19,15 +19,22 @@ semantic versioning for the rule set.
 - Rust 1.95 through 1.97 guidance for atomic update helpers, conditional
   selection, `if let` guards, integer bit APIs, warning policy, and consistent
   ordering implementations.
+- A 162-entry Rust 1.95.0–1.97.1 release-note ledger records every language,
+  library, Cargo, rustdoc, platform, compatibility, internal, and patch item
+  with its disposition, evidence, executable check, and uncertainty.
 
 ### Changed
 - Pinned the compile-check toolchain and CI to Rust 1.97.1 and updated existing
   conversion, `NonZero`, workspace, collection, cfg, lint, and unsafe/FFI
   guidance for the 1.95–1.97 releases.
-- Added focused release-behavior checks; generated examples remain checked
-  against the reviewed baseline.
+- Added focused language-guidance behavior checks; generated examples remain
+  checked against the reviewed baseline.
+- Corrected forty self-contradictory book dispositions, removed redundant
+  mutable-ledger checksums, and recorded the semantic audit as blocked until
+  the pinned purchased PDF can be independently reread.
+- Added bounded dependency admission and SLO-driven operational signal rules.
 
-Now 343 rules across 27 categories.
+Now 345 rules across 27 categories.
 
 ## [1.5.1]
 
@@ -106,7 +113,7 @@ Now 218 rules across 18 categories.
 ### Added
 - Initial release: 179 rules across 14 categories.
 
-[Unreleased]: https://github.com/leonardomso/rust-skills
+[Unreleased]: https://github.com/oyatie/rust-skills
 [1.5.0]: https://github.com/leonardomso/rust-skills
 [1.4.0]: https://github.com/leonardomso/rust-skills
 [1.3.0]: https://github.com/leonardomso/rust-skills

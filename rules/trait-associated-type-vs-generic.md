@@ -5,15 +5,15 @@
 ## Why It Matters
 
 The choice between `type Output;` and `<Rhs>` has two concrete consequences.
-An associated type has one binding per trait implementation and callers project
-it as `<T as Trait>::Output` or `T::Output` when unambiguous. A generic
+An associated type has one binding per trait implementation, while a generic
 parameter permits multiple implementations for different arguments:
 `impl Add<f64> for Vec2` and `impl Add<Vec2> for Vec2` can coexist, while one
 `impl Iterator for T` defines one `Item`. Generic arguments are often inferred;
 explicit type annotations are needed only when context cannot select an
 implementation.
 
-The Rust API Guidelines (rust-lang.github.io/api-guidelines/future-proofing.html) capture the rule: prefer associated types when there is a single natural output per implementor.
+The Rust API Guidelines capture the rule: prefer associated types when there is
+a single natural output per implementor.
 
 ## Bad
 

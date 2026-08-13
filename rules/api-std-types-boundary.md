@@ -4,7 +4,13 @@
 
 ## Why It Matters
 
-Every type in a public signature is a semver promise. If `load(path: camino::Utf8PathBuf)` leaks `camino`, your users inherit that crate's major bumps. `std` (`Path`, `Vec`, `Duration`, `io::Error`) does not move out from under them. A third-party type is appropriate when that dependency *is* the product (`http::Uri` in an HTTP client, `serde_json::Value` behind a `json` feature). Feature-gate the rest the way `api-serde-optional` already does for serde. This is the type-identity twin of `api-no-wrapper-params`.
+Every type in a public signature is a semver promise, so exposing
+`camino::Utf8PathBuf` makes users inherit that crate's major changes.
+Standard-library types such as `Path`, `Vec`, `Duration`, and `io::Error` do not
+move out from under them. A third-party type is appropriate when that
+dependency is the product, such as `http::Uri` in an HTTP client; feature-gate
+other integrations as `api-serde-optional` does for serde. This is the
+type-identity counterpart of `api-no-wrapper-params`.
 
 ## Bad
 

@@ -44,11 +44,8 @@ err-lowercase-msg.md :: When to Use Capitals :: P:expected statement after outer
 err-question-mark.md :: In main() :: E0428
 err-result-over-panic.md :: When Panic IS Appropriate :: E0428
 lint-deny-correctness.md :: Important Correctness Lints :: P:this file contains an unclosed
-lint-deny-correctness.md :: Setup :: P:expected item, found `[`
-lint-warn-complexity.md :: Examples :: E0428
 lint-warn-complexity.md :: Overly Verbose Code :: P:expected `;`, found keyword `let`
 lint-warn-complexity.md :: Unnecessary Complexity :: E0308
-lint-warn-style.md :: Examples :: E0428
 lint-warn-style.md :: Redundant Code :: P:expected `;`, found keyword `match`
 mem-arrayvec.md :: When NOT to Use ArrayVec :: P:expected identifier, found `>`
 mem-avoid-format.md :: Pre-allocate for Multiple Appends :: E0428
@@ -68,7 +65,6 @@ name-no-get-prefix.md :: Standard Library Examples :: P:expected `;`, found `btr
 name-no-get-prefix.md :: When get_ IS Appropriate :: E0116
 name-type-param-single.md :: Trait Bounds :: E0404,E0428,P:free function without a body
 name-types-camel.md :: Good :: P:non-item in item list
-opt-cache-friendly.md :: Avoid Pointer Chasing :: E0308
 opt-inline-never-cold.md :: Pattern: Extract Cold Code :: E0428
 own-clone-explicit.md :: When to Avoid Clone :: E0428
 own-lifetime-elision.md :: Common Patterns :: P:expected one of `!`, `(`,

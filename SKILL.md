@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 343 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 345 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -11,6 +11,9 @@ description: >
 license: MIT
 metadata:
   author: leonardomso
+  maintainer: Oyatie
+  repository: https://github.com/oyatie/rust-skills
+  upstream: https://github.com/leonardomso/rust-skills
   version: "1.5.1"
   sources:
     - Rust API Guidelines
@@ -25,7 +28,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 343 rules across 27 categories, prioritized by impact for use by
+Contains 345 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -51,7 +54,7 @@ Reference these guidelines when:
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 10 |
 | 5 | API Design | HIGH | `api-` | 35 |
-| 6 | Async/Await | HIGH | `async-` | 24 |
+| 6 | Async/Await | HIGH | `async-` | 25 |
 | 7 | Concurrency | HIGH | `conc-` | 6 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
@@ -67,7 +70,7 @@ Reference these guidelines when:
 | 19 | Naming Conventions | MEDIUM | `name-` | 18 |
 | 20 | Testing | MEDIUM | `test-` | 19 |
 | 21 | Documentation | MEDIUM | `doc-` | 16 |
-| 22 | Observability | MEDIUM | `obs-` | 9 |
+| 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
 | 24 | Project Structure | LOW | `proj-` | 27 |
 | 25 | FFI & Interop | LOW | `ffi-` | 5 |
@@ -210,6 +213,7 @@ Reference these guidelines when:
 - [`async-fn-over-future`](rules/async-fn-over-future.md) - Prefer `async fn` for readability; return `impl Future` when bounds or capture are the contract
 - [`async-http-client-reuse`](rules/async-http-client-reuse.md) - Reuse one configured HTTP client per service and require deadlines on every outbound call
 - [`async-durable-worker`](rules/async-durable-worker.md) - Claim durable work atomically, bound retries with backoff and jitter, and make worker shutdown explicit
+- [`async-bounded-dependency`](rules/async-bounded-dependency.md) - Bound dependency admission and calls with explicit deadlines and observable failures
 
 ### 7. Concurrency (HIGH)
 
@@ -232,7 +236,7 @@ Reference these guidelines when:
 - [`opt-pgo-profile`](rules/opt-pgo-profile.md) - Adopt PGO only with representative profiles, pinned tools, and measured wins
 - [`opt-target-cpu`](rules/opt-target-cpu.md) - Compile server applications for the highest CPU baseline guaranteed across the deployment fleet
 - [`opt-bounds-check`](rules/opt-bounds-check.md) - Prefer safe traversal that exposes bounds; verify optimized hot loops before considering unchecked access
-- [`opt-simd-portable`](rules/opt-simd-portable.md) - Use portable SIMD for vectorized operations across architectures
+- [`opt-simd-portable`](rules/opt-simd-portable.md) - Add explicit SIMD only after representative benchmarks beat optimized scalar code
 - [`opt-cache-friendly`](rules/opt-cache-friendly.md) - Organize data for cache-efficient access patterns
 
 ### 9. Numeric & Arithmetic Safety (HIGH)
@@ -407,6 +411,7 @@ Reference these guidelines when:
 - [`obs-no-sensitive-data`](rules/obs-no-sensitive-data.md) - Never log secrets or PII; redact or skip them
 - [`obs-named-events`](rules/obs-named-events.md) - Give telemetry a stable event name (and a message template) so releases stay queryable
 - [`obs-request-correlation`](rules/obs-request-correlation.md) - Open one request span at the HTTP edge and propagate a non-sensitive correlation ID through all downstream work
+- [`obs-operational-signals`](rules/obs-operational-signals.md) - Define service-level signals and failure telemetry before production traffic
 
 ### 23. Performance Patterns (MEDIUM)
 
@@ -466,7 +471,7 @@ Reference these guidelines when:
 
 ### 26. Clippy & Linting (LOW)
 
-- [`lint-deny-correctness`](rules/lint-deny-correctness.md) - `#![deny(clippy::correctness)]`
+- [`lint-deny-correctness`](rules/lint-deny-correctness.md) - Deny `clippy::correctness` and fix every finding
 - [`lint-warn-suspicious`](rules/lint-warn-suspicious.md) - Enable clippy::suspicious for likely bugs
 - [`lint-warn-style`](rules/lint-warn-style.md) - Enable clippy::style for idiomatic code
 - [`lint-warn-complexity`](rules/lint-warn-complexity.md) - Enable clippy::complexity for simpler code

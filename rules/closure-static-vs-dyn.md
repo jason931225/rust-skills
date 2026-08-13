@@ -5,12 +5,12 @@
 ## Why It Matters
 
 A generic parameter `F: Fn(…) -> …` (or `impl Fn`) monomorphizes for each
-concrete closure type, enabling static dispatch and possible inlining. That can
-increase code size. `&dyn Fn` or `Box<dyn Fn>` erases closure types behind a
-vtable and may reduce duplicated code. Dynamic dispatch is one way to store an
-open heterogeneous set; a closed enum or one homogeneous generic field is
-another. Choose from substitution, ownership, lifetime, code-size, and measured
-hot-path requirements.
+concrete closure type, enabling static dispatch and possible inlining while
+potentially increasing code size. `&dyn Fn` or `Box<dyn Fn>` erases closure
+types behind a vtable and may reduce duplicated code. Dynamic dispatch can
+store an open heterogeneous set, while a closed enum or homogeneous generic
+field fits other substitution contracts. Choose from substitution, ownership,
+lifetime, code-size, and measured hot-path requirements.
 
 ## Bad
 

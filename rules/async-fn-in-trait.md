@@ -5,8 +5,8 @@
 ## Why It Matters
 
 Since Rust 1.75, a trait can declare `async fn` directly. Static dispatch then
-uses an opaque concrete future without requiring `async_trait`'s box. The
-method body can still allocate for other reasons. Public traits must decide
+uses an opaque concrete future without requiring `async_trait`'s box, although
+the method body can still allocate for other reasons. Public traits must decide
 future bounds such as `Send` up front, and native async methods are not
 dyn-compatible. Choose from the substitution and ownership contract rather
 than applying a blanket migration.

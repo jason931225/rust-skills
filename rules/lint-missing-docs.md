@@ -26,7 +26,7 @@ For strict enforcement:
 #![deny(missing_docs)]
 ```
 
-## What It Catches
+## Bad
 
 ```rust
 #![warn(missing_docs)]

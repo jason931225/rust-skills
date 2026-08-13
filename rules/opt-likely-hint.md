@@ -6,7 +6,12 @@
 
 CPU branch prediction and compiler block layout can affect a measured hot path, but source ordering, an early `return`, or the first `match` arm is not a stable likelihood annotation. Optimizers use their own heuristics and profile information. A wrong hint can make code slower, and a right hint can become stale as traffic changes. Keep normal code structured for correctness/readability; add an explicit hint only after representative evidence identifies a material branch.
 
-## Stable Rust
+## Bad
+
+Add branch hints from intuition, retain them after the workload changes, or
+skip the benchmark and generated-code comparison.
+
+## Good
 
 Rust 1.95 stabilized `std::hint::cold_path`, a hint that the execution path containing the call is unlikely:
 
