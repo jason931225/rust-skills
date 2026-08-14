@@ -32,7 +32,12 @@ if [[ ! -d "$MICROSOFT_RUST_GUIDELINES_ROOT/.git" ]]; then
     git clone --filter=blob:none https://github.com/microsoft/rust-guidelines.git \
         "$MICROSOFT_RUST_GUIDELINES_ROOT"
 fi
-git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" fetch --depth 1 origin "$MICROSOFT_COMMIT"
+if ! git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" cat-file -e "$MICROSOFT_COMMIT^{commit}"; then
+    # GitHub does not advertise arbitrary commit IDs to upload-pack. Fetch the
+    # named branch that owns the pin, then verify the exact object below.
+    git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" fetch --filter=blob:none origin main
+fi
+git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" cat-file -e "$MICROSOFT_COMMIT^{commit}"
 git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" checkout --detach "$MICROSOFT_COMMIT"
 export MICROSOFT_RUST_GUIDELINES_ROOT
 
