@@ -72,10 +72,10 @@ requires an exact rule edge, a typed difference with detail, a named reviewer,
 and a review bound to the source file digest; mapped rules must resolve to real
 files in `rules/`.
 
-Semantic review requires the source. Fetch the exact commit and point the
-validator at it to recompute the whole inventory from the checkout — chapter
-set, per-file digests, unit ordering, line ranges, and unit digests — instead
-of trusting the ledger:
+Validation requires the source. Fetch the exact commit and point the validator
+at it to recompute the whole inventory from the checkout — chapter set,
+per-file digests, unit ordering, line ranges, and unit digests — instead of
+trusting hashes repeated inside the ledger:
 
 ```bash
 git clone https://github.com/microsoft/RustTraining /path/to/rusttraining
@@ -83,9 +83,9 @@ git -C /path/to/rusttraining checkout --detach 9d19c482d66ef3995dca794bda74c7852
 MICROSOFT_RUSTTRAINING_ROOT=/path/to/rusttraining python3 checks/validate.py
 ```
 
-Without that checkout the ledger's identity, counts, digests, uniqueness, typed
-fields, and rule references are still enforced against the pinned constants;
-only the independent re-extraction is skipped.
+Without that checkout validation fails closed. Ledger-only digests can detect
+accidental row drift, but they cannot independently prove that repeated source
+and unit hashes still identify the pinned bytes.
 
 For a standalone source-backed Microsoft validation, point the validator at an
 exact checkout:

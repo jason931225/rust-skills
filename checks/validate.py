@@ -986,7 +986,8 @@ if training is not None:
             err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no uncertainty record")
 
         disposition = unit.get("disposition")
-        if unit.get("audit_disposition") not in allowed_training_dispositions:
+        audit_disposition = unit.get("audit_disposition")
+        if audit_disposition not in allowed_training_dispositions:
             err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid audit disposition")
         if disposition not in allowed_training_dispositions:
             err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid disposition")
@@ -1064,6 +1065,11 @@ if training is not None:
 
         if disposition == "unreviewed":
             # An unreviewed unit may not carry any coverage claim.
+            if audit_disposition != "unreviewed":
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but "
+                    "claims an assessed audit disposition"
+                )
             if mapped:
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but maps rules")
             if difference.get("kind") != "unassessed":
@@ -1087,13 +1093,22 @@ if training is not None:
                     "a reviewer"
                 )
         else:
+            if audit_disposition == "unreviewed":
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is reviewed but "
+                    "retains an unreviewed audit disposition"
+                )
             if not mapped and disposition in {"covered", "documented-deviation"}:
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is {disposition} without a rule")
             if difference.get("kind") == "unassessed":
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no exact difference")
             if unit.get("rationale_class") == "pending-semantic-review":
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is dispositioned but unreviewed")
-            if review.get("status") != "reviewed" or not str(review.get("reviewer") or "").strip():
+            if (
+                review.get("status") != "reviewed"
+                or not isinstance(review.get("reviewer"), str)
+                or not review["reviewer"].strip()
+            ):
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no named reviewer")
 
     actual_training_summary = {
@@ -1143,7 +1158,12 @@ if training is not None:
 
     # Optional source-backed run: recompute the whole inventory from a checkout.
     training_root_value = os.environ.get("MICROSOFT_RUSTTRAINING_ROOT")
-    if training_root_value:
+    if not training_root_value:
+        err(
+            "MICROSOFT_RUSTTRAINING_ROOT is required to bind RustTraining row "
+            "hashes to the pinned source checkout"
+        )
+    else:
         training_root = pathlib.Path(training_root_value).resolve()
         try:
             actual_training_commit = subprocess.run(
