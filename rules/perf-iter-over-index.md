@@ -1,15 +1,26 @@
 # perf-iter-over-index
 
-> Prefer iterators over manual indexing
+> Traverse with iterators by default; keep indices when the index itself is part of the contract
 
 ## Why It Matters
 
-Iterators are the idiomatic way to traverse collections in Rust. They enable bounds check elimination, SIMD auto-vectorization, and cleaner code. Manual indexing (`for i in 0..len`) often prevents these optimizations and introduces off-by-one error risks.
+An iterator states the traversal contract in the source: visit every element of
+this collection, in order, exactly once. A manual `for i in 0..len` loop
+restates that contract as arithmetic the reader and every later editor must
+re-verify — bounds coupling between collections, off-by-one ranges, and repeated
+`data[i]` lookups that must all agree.
+
+Performance is not the argument. Both forms are ordinary code to LLVM: it can
+eliminate bounds checks from an indexed loop and fail to vectorize an iterator
+chain, or the reverse. Source syntax does not decide which checks survive, and
+no traversal style guarantees SIMD. Choose the form that states the contract;
+if a loop is hot, benchmark both and inspect the optimized code before claiming
+either is faster.
 
 ## Bad
 
 ```rust
-// Manual indexing - bounds checked every iteration
+// Index exists only to reach the element, and each element is looked up twice.
 fn sum_squares(data: &[i32]) -> i64 {
     let mut sum = 0i64;
     for i in 0..data.len() {
@@ -18,7 +29,8 @@ fn sum_squares(data: &[i32]) -> i64 {
     sum
 }
 
-// Index-based iteration with multiple collections
+// The loop bound silently truncates to the shorter input instead of stating
+// whether unequal lengths are a caller error.
 fn dot_product(a: &[f64], b: &[f64]) -> f64 {
     let mut sum = 0.0;
     for i in 0..a.len().min(b.len()) {
@@ -27,7 +39,7 @@ fn dot_product(a: &[f64], b: &[f64]) -> f64 {
     sum
 }
 
-// Mutating with indices
+// Hand-written range to visit every element in place.
 fn double_values(data: &mut [i32]) {
     for i in 0..data.len() {
         data[i] *= 2;
@@ -38,22 +50,23 @@ fn double_values(data: &mut [i32]) {
 ## Good
 
 ```rust
-// Iterator - bounds checks eliminated, SIMD-friendly
+// Each element is named once; there is no range to get wrong.
 fn sum_squares(data: &[i32]) -> i64 {
     data.iter()
         .map(|&x| (x as i64) * (x as i64))
         .sum()
 }
 
-// Zip iterators - no manual length handling
+// The length contract is explicit, and zip carries the pairing.
 fn dot_product(a: &[f64], b: &[f64]) -> f64 {
+    assert_eq!(a.len(), b.len(), "vectors must have equal length");
     a.iter()
         .zip(b.iter())
         .map(|(&x, &y)| x * y)
         .sum()
 }
 
-// Mutable iteration
+// In-place traversal with no index arithmetic.
 fn double_values(data: &mut [i32]) {
     for x in data.iter_mut() {
         *x *= 2;
@@ -61,50 +74,72 @@ fn double_values(data: &mut [i32]) {
 }
 ```
 
-## When Indexing Is Needed
+## When Indexing Is Appropriate
 
-Sometimes you genuinely need indices:
+Keep an index when the index is semantically required, when access is not a
+single forward pass, or when a benchmark on the real workload shows the indexed
+form is faster.
 
 ```rust
-// Need the index for output or processing
+// The index is part of the output, so bind it explicitly.
 for (i, value) in data.iter().enumerate() {
     println!("Index {}: {}", i, value);
 }
 
-// Non-sequential access patterns
+// Random access: positions are computed, not visited in order.
 fn interleave(data: &mut [i32]) {
     let mid = data.len() / 2;
     for i in 0..mid {
         data.swap(i * 2, mid + i);
     }
 }
+
+// Several aligned buffers whose relationship is positional and asserted once.
+fn blend(out: &mut [f32], a: &[f32], b: &[f32], weights: &[f32]) {
+    assert!(out.len() == a.len() && a.len() == b.len() && b.len() == weights.len());
+    for i in 0..out.len() {
+        out[i] = a[i] * weights[i] + b[i] * (1.0 - weights[i]);
+    }
+}
 ```
 
-## Performance Comparison
+## Contract Comparison
 
-| Pattern | Bounds Checks | SIMD Potential | Clarity |
-|---------|---------------|----------------|---------|
-| `for i in 0..len` | Every access | Limited | Medium |
-| `for &x in slice` | None | High | High |
-| `.iter().enumerate()` | None | Medium | High |
-| `get_unchecked` | None (unsafe) | High | Low |
+| Pattern | Source-level contract | Failure mode it removes |
+|---------|-----------------------|-------------------------|
+| `for i in 0..len` | Reader re-derives the valid range | — |
+| `for &x in slice` | Visit every element once | Off-by-one, duplicated lookup |
+| `.iter().enumerate()` | Value paired with its position | Index/value drift |
+| `a.iter().zip(b)` | Pairwise over two sources | Silent length truncation |
+| `data.swap(i, j)` | Deliberate positional access | Aliasing two `&mut` elements |
 
-## Iterator Advantages
+## Composition
 
 ```rust
-// Chaining operations - single pass
+// Adapters compose into one pass without an intermediate collection.
 let result: Vec<_> = data.iter()
-    .filter(|x| **x > 0)
+    .filter(|&&x| x > 0)
     .map(|x| x * 2)
     .collect();
 
-// Early termination optimized
+// Short-circuits on the first match by definition, not by optimization.
 let found = data.iter().any(|&x| x == target);
 
-// Parallel iteration (with rayon)
+// Same traversal contract, parallel execution (with rayon).
 use rayon::prelude::*;
 let sum: i64 = data.par_iter().map(|&x| x as i64).sum();
 ```
+
+## Verify Before Claiming a Win
+
+```bash
+cargo bench                                   # Measure the real workload
+cargo asm --release my_crate::hot_function    # Read the whole loop, not one mnemonic
+```
+
+Rewriting an indexed loop as an iterator chain is a clarity change until a
+benchmark says otherwise. If the indexed form measures faster on the target,
+keep it and record the measurement next to the loop.
 
 ## See Also
 
