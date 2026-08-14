@@ -22,6 +22,8 @@ semantic versioning for the rule set.
 - A 162-entry Rust 1.95.0–1.97.1 release-note ledger records every language,
   library, Cargo, rustdoc, platform, compatibility, internal, and patch item
   with its disposition, evidence, executable check, and uncertainty.
+- A source-bound inventory records all 2,124 Microsoft RustTraining units as
+  explicit unreviewed backlog without assigning semantic coverage credit.
 
 ### Changed
 - Pinned the compile-check toolchain and CI to Rust 1.97.1 and updated existing
@@ -33,6 +35,13 @@ semantic versioning for the rule set.
   mutable-ledger checksums, and recorded the semantic audit as blocked until
   the pinned purchased PDF can be independently reread.
 - Added bounded dependency admission and SLO-driven operational signal rules.
+- Replaced universal release-profile and optimization prescriptions with
+  measured artifact policy, and narrowed Miri and iterator guidance to the
+  behavior those tools and constructs can establish.
+
+### Fixed
+- Corrected the non-`Copy` `Email(String)` newtype example, parent-subtree
+  visibility guidance for `pub(super)` and `pub(crate)`, and the CI push branch.
 
 Now 345 rules across 27 categories.
 

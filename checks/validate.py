@@ -738,7 +738,7 @@ allowed_training_rationale_classes = {
 } | allowed_book_rationale_classes
 allowed_training_applicability = {"inventory-parity-only", "behavior-assertion"}
 training_heading_re = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
-training_fence_re = re.compile(r"^\s*(```+|~~~+)")
+training_fence_re = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 training_link_re = re.compile(r"\[[^]]+\]\(([^)#]+\.md)(?:#[^)]+)?\)")
 
 
@@ -775,6 +775,12 @@ def training_source_units(source_root, book):
     chapters = []
     for relative in training_link_re.findall((src / "SUMMARY.md").read_text(encoding="utf-8")):
         candidate = (src / relative).resolve()
+        try:
+            candidate.relative_to(src)
+        except ValueError as exc:
+            raise ValueError(
+                f"{book} SUMMARY.md link escapes its src directory: {relative}"
+            ) from exc
         if candidate not in chapters:
             chapters.append(candidate)
     units = []
@@ -789,11 +795,20 @@ def training_source_units(source_root, book):
         fence = None
         for number, line in enumerate(text.splitlines(), 1):
             fence_match = training_fence_re.match(line)
-            if fence_match:
-                mark = fence_match.group(1)[0]
-                fence = None if fence == mark else (mark if fence is None else fence)
+            if fence is None and fence_match:
+                marker = fence_match.group(1)
+                fence = (marker[0], len(marker))
                 continue
             if fence is not None:
+                if fence_match:
+                    marker = fence_match.group(1)
+                    remainder = fence_match.group(2)
+                    if (
+                        marker[0] == fence[0]
+                        and len(marker) >= fence[1]
+                        and not remainder.strip()
+                    ):
+                        fence = None
                 continue
             heading_match = training_heading_re.match(line)
             if heading_match:
@@ -1116,7 +1131,7 @@ if training is not None:
         for group_id, book, count, digest in EXPECTED_TRAINING_GROUPS:
             try:
                 files, source_units = training_source_units(training_root, book)
-            except OSError as exc:
+            except (OSError, ValueError) as exc:
                 err(f"RustTraining source checkout cannot be read for {book}: {exc}")
                 continue
             source_digest = hashlib.sha256(

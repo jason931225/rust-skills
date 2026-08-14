@@ -51,7 +51,8 @@ jobs:
 
       # Feature set chosen so every selected test is interpretable:
       # the `native-codec` feature links C code Miri cannot execute.
-      # One filter per invocation: libtest treats extra positionals as an error.
+      # One module per step keeps a failure tied to that module in the job log;
+      # libtest ORs multiple positional filters when they share an invocation.
       - name: Interpret the raw-pointer module
         run: |
           cargo +"$MIRI_TOOLCHAIN" miri test -p ring-buffer --lib \
