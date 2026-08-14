@@ -83,11 +83,14 @@ for (i, value) in data.iter().enumerate() {
     println!("Index {}: {}", i, value);
 }
 
-// Random access: positions are computed, not visited in order.
-fn interleave(data: &mut [i32]) {
+// In-place interleaving: insertion positions are computed from two equal halves.
+fn interleave_halves(data: &mut [i32]) {
+    assert_eq!(data.len() % 2, 0, "interleaving requires two equal halves");
     let mid = data.len() / 2;
     for i in 0..mid {
-        data.swap(i * 2, mid + i);
+        let target = i * 2 + 1;
+        let source = mid + i;
+        data[target..=source].rotate_right(1);
     }
 }
 
@@ -107,7 +110,7 @@ fn blend(out: &mut [f32], a: &[f32], b: &[f32], weights: &[f32]) {
 | `for i in 0..len` | Reader re-derives the valid range | — |
 | `for &x in slice` | Visit every element once | Off-by-one, duplicated lookup |
 | `.iter().enumerate()` | Value paired with its position | Index/value drift |
-| `a.iter().zip(b)` | Pairwise over two sources | Silent length truncation |
+| `assert_eq!(a.len(), b.len()); a.iter().zip(b)` | Equal-length pairwise traversal | Silent length truncation |
 | `data.swap(i, j)` | Deliberate positional access | Aliasing two `&mut` elements |
 
 ## Composition

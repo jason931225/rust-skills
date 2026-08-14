@@ -770,10 +770,11 @@ def microsoft_training_inventory_parity(rows_by_book):
 
 
 def training_source_units(source_root, book):
-    """Extract (relative, ordinal, level, heading, start, end, digest) from source."""
+    """Extract the SUMMARY digest, chapter digests, and source heading units."""
     src = source_root / book / "src"
+    summary_bytes = (src / "SUMMARY.md").read_bytes()
     chapters = []
-    for relative in training_link_re.findall((src / "SUMMARY.md").read_text(encoding="utf-8")):
+    for relative in training_link_re.findall(summary_bytes.decode(encoding="utf-8")):
         candidate = (src / relative).resolve()
         try:
             candidate.relative_to(src)
@@ -792,6 +793,7 @@ def training_source_units(source_root, book):
         text = data.decode(errors="replace")
         file_lines = text.splitlines(keepends=True)
         headings = []
+        heading_stack = []
         fence = None
         for number, line in enumerate(text.splitlines(), 1):
             fence_match = training_fence_re.match(line)
@@ -812,10 +814,15 @@ def training_source_units(source_root, book):
                 continue
             heading_match = training_heading_re.match(line)
             if heading_match:
+                level = len(heading_match.group(1))
+                heading = heading_match.group(2)
+                while heading_stack and heading_stack[-1][0] >= level:
+                    heading_stack.pop()
+                heading_stack.append((level, heading))
                 headings.append(
-                    (number, len(heading_match.group(1)), heading_match.group(2))
+                    (number, level, [item[1] for item in heading_stack])
                 )
-        for ordinal, (number, level, heading) in enumerate(headings, 1):
+        for ordinal, (number, level, heading_path) in enumerate(headings, 1):
             following = (
                 headings[ordinal][0] if ordinal < len(headings) else len(file_lines) + 1
             )
@@ -829,13 +836,13 @@ def training_source_units(source_root, book):
                     relative,
                     ordinal,
                     level,
-                    heading,
+                    heading_path,
                     number,
                     end_line,
                     hashlib.sha256(body.encode()).hexdigest(),
                 )
             )
-    return files, units
+    return hashlib.sha256(summary_bytes).hexdigest(), files, units
 
 
 try:
@@ -911,6 +918,17 @@ if training is not None:
             "from the audited source"
         )
 
+    expected_book_order = [
+        book
+        for _, book, count, _ in EXPECTED_TRAINING_GROUPS
+        for _ in range(count)
+    ]
+    if [unit.get("book") for unit in training_units] != expected_book_order:
+        err(
+            f"{MICROSOFT_TRAINING_COVERAGE.name}: unit rows do not preserve "
+            "contiguous declared book order"
+        )
+
     rows_by_book = {book: [] for book in training_books}
     seen_unit_ids = set()
     seen_positions = set()
@@ -945,6 +963,20 @@ if training is not None:
         for field in ("ordinal", "heading_level", "chapter_index", "start_line", "end_line"):
             if not isinstance(unit.get(field), int) or unit[field] < 1:
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid {field}")
+        source_prefix = f"{book}/src/"
+        if (
+            source_path.startswith(source_prefix)
+            and source_path.endswith(".md")
+            and isinstance(unit.get("start_line"), int)
+            and unit["start_line"] >= 1
+        ):
+            chapter = source_path[len(source_prefix) : -len(".md")]
+            expected_unit_id = f"{book}:{chapter}:L{unit['start_line']}"
+            if unit_id != expected_unit_id:
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} does not match "
+                    f"source coordinate {expected_unit_id}"
+                )
         if not isinstance(unit.get("claim"), str) or not unit["claim"].strip():
             err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no claim")
         if (
@@ -1130,14 +1162,18 @@ if training is not None:
                 )
         for group_id, book, count, digest in EXPECTED_TRAINING_GROUPS:
             try:
-                files, source_units = training_source_units(training_root, book)
+                summary_digest, files, source_units = training_source_units(
+                    training_root, book
+                )
             except (OSError, ValueError) as exc:
                 err(f"RustTraining source checkout cannot be read for {book}: {exc}")
                 continue
             source_digest = hashlib.sha256(
                 "\n".join(
-                    training_inventory_line(relative, ordinal, level, heading)
-                    for relative, ordinal, level, heading, _, _, _ in source_units
+                    training_inventory_line(
+                        relative, ordinal, level, heading_path[-1]
+                    )
+                    for relative, ordinal, level, heading_path, _, _, _ in source_units
                 ).encode()
             ).hexdigest()
             if len(source_units) != count or source_digest != digest:
@@ -1146,9 +1182,12 @@ if training is not None:
                 "\n".join(f"{relative}:{file_digest}" for relative, file_digest in files).encode()
             ).hexdigest()
             group = declared_groups.get(book, {})
-            if group.get("chapter_count") != len(files) or group.get(
-                "chapter_inventory_sha256"
-            ) != chapter_digest:
+            if group.get("summary_sha256") != summary_digest:
+                err(f"RustTraining checkout SUMMARY.md for {book} differs from the ledger")
+            if (
+                group.get("chapter_count") != len(files)
+                or group.get("chapter_inventory_sha256") != chapter_digest
+            ):
                 err(f"RustTraining checkout chapters for {book} differ from the ledger")
             file_digests = dict(files)
             rows = rows_by_book.get(book, [])
@@ -1156,13 +1195,20 @@ if training is not None:
                 err(f"RustTraining checkout unit count for {book} differs from the ledger")
                 continue
             for row, source_unit in zip(rows, source_units):
-                relative, ordinal, level, heading, start, end, unit_digest = source_unit
-                heading_path = row.get("heading_path") or [None]
+                (
+                    relative,
+                    ordinal,
+                    level,
+                    heading_path,
+                    start,
+                    end,
+                    unit_digest,
+                ) = source_unit
                 if (
                     row.get("source_path") != f"{book}/src/{relative}"
                     or row.get("ordinal") != ordinal
                     or row.get("heading_level") != level
-                    or heading_path[-1] != heading
+                    or row.get("heading_path") != heading_path
                     or row.get("start_line") != start
                     or row.get("end_line") != end
                     or row.get("unit_sha256") != unit_digest
