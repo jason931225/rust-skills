@@ -67,7 +67,7 @@ impl Widget {
 |------------|-----------------|
 | `pub` | Everywhere |
 | `pub(crate)` | Current crate only |
-| `pub(super)` | Parent module only |
+| `pub(super)` | Parent module and its descendants |
 | `pub(in path)` | Specific module path |
 | (private) | Current module only |
 
@@ -148,6 +148,6 @@ public item even when the defining crate does not.
 
 ## See Also
 
-- [proj-pub-super-parent](./proj-pub-super-parent.md) - Parent-only visibility
+- [proj-pub-super-parent](./proj-pub-super-parent.md) - Visibility scoped to the parent module subtree
 - [proj-pub-use-reexport](./proj-pub-use-reexport.md) - Clean re-exports
 - [api-non-exhaustive](./api-non-exhaustive.md) - Future-proof structs
