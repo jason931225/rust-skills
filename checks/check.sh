@@ -33,8 +33,11 @@ if [[ ! -d "$MICROSOFT_RUST_GUIDELINES_ROOT/.git" ]]; then
     git clone --filter=blob:none https://github.com/microsoft/rust-guidelines.git \
         "$MICROSOFT_RUST_GUIDELINES_ROOT"
 fi
-if [[ "$(git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" remote get-url origin)" != \
-    "https://github.com/microsoft/rust-guidelines.git" ]]; then
+MICROSOFT_RUST_GUIDELINES_ORIGIN="$(
+    git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" remote get-url origin
+)"
+if [[ "${MICROSOFT_RUST_GUIDELINES_ORIGIN%.git}" != \
+    "https://github.com/microsoft/rust-guidelines" ]]; then
     echo "unexpected rust-guidelines origin" >&2
     exit 1
 fi
@@ -53,8 +56,11 @@ if [[ ! -d "$MICROSOFT_RUSTTRAINING_ROOT/.git" ]]; then
     git -C "$MICROSOFT_RUSTTRAINING_ROOT" sparse-checkout init --cone
     git -C "$MICROSOFT_RUSTTRAINING_ROOT" sparse-checkout set "${MICROSOFT_TRAINING_BOOKS[@]}"
 fi
-if [[ "$(git -C "$MICROSOFT_RUSTTRAINING_ROOT" remote get-url origin)" != \
-    "https://github.com/microsoft/RustTraining.git" ]]; then
+MICROSOFT_RUSTTRAINING_ORIGIN="$(
+    git -C "$MICROSOFT_RUSTTRAINING_ROOT" remote get-url origin
+)"
+if [[ "${MICROSOFT_RUSTTRAINING_ORIGIN%.git}" != \
+    "https://github.com/microsoft/RustTraining" ]]; then
     echo "unexpected RustTraining origin" >&2
     exit 1
 fi

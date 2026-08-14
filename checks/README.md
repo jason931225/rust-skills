@@ -72,28 +72,24 @@ requires an exact rule edge, a typed difference with detail, a named reviewer,
 and a review bound to the source file digest; mapped rules must resolve to real
 files in `rules/`.
 
-Validation requires the source. Fetch the exact commit and point the validator
-at it to recompute the whole inventory from the checkout — chapter set,
-per-file digests, unit ordering, line ranges, and unit digests — instead of
-trusting hashes repeated inside the ledger:
+Validation requires both exact source checkouts. Point the validator at them to
+recompute the RustTraining inventory — chapter set, per-file digests, unit
+ordering, line ranges, and unit digests — and to verify the Microsoft guidance
+manifest instead of trusting hashes repeated inside either ledger:
 
 ```bash
+git clone https://github.com/microsoft/rust-guidelines /path/to/microsoft-rust-guidelines
+git -C /path/to/microsoft-rust-guidelines checkout --detach bbf7b03f3a51548f187888fb8c516e8118ebb1c2
 git clone https://github.com/microsoft/RustTraining /path/to/rusttraining
 git -C /path/to/rusttraining checkout --detach 9d19c482d66ef3995dca794bda74c7852134e0b7
-MICROSOFT_RUSTTRAINING_ROOT=/path/to/rusttraining python3 checks/validate.py
-```
-
-Without that checkout validation fails closed. Ledger-only digests can detect
-accidental row drift, but they cannot independently prove that repeated source
-and unit hashes still identify the pinned bytes.
-
-For a standalone source-backed Microsoft validation, point the validator at an
-exact checkout:
-
-```bash
 MICROSOFT_RUST_GUIDELINES_ROOT=/path/to/microsoft-rust-guidelines \
+MICROSOFT_RUSTTRAINING_ROOT=/path/to/rusttraining \
   python3 checks/validate.py
 ```
+
+Without either checkout validation fails closed. Ledger-only digests can detect
+accidental row drift, but they cannot independently prove that repeated source
+and unit hashes still identify the pinned bytes.
 
 ## Updating the baseline
 

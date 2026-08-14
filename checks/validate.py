@@ -961,13 +961,13 @@ if training is not None:
         ):
             err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no heading path")
         for field in ("ordinal", "heading_level", "chapter_index", "start_line", "end_line"):
-            if not isinstance(unit.get(field), int) or unit[field] < 1:
+            if type(unit.get(field)) is not int or unit[field] < 1:
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid {field}")
         source_prefix = f"{book}/src/"
         if (
             source_path.startswith(source_prefix)
             and source_path.endswith(".md")
-            and isinstance(unit.get("start_line"), int)
+            and type(unit.get("start_line")) is int
             and unit["start_line"] >= 1
         ):
             chapter = source_path[len(source_prefix) : -len(".md")]
@@ -977,8 +977,27 @@ if training is not None:
                     f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} does not match "
                     f"source coordinate {expected_unit_id}"
                 )
-        if not isinstance(unit.get("claim"), str) or not unit["claim"].strip():
+        claim = unit.get("claim")
+        if not isinstance(claim, str) or not claim.strip():
             err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no claim")
+        elif (
+            isinstance(heading_path, list)
+            and heading_path
+            and source_path.startswith(source_prefix)
+            and source_path.endswith(".md")
+            and type(unit.get("heading_level")) is int
+            and type(unit.get("ordinal")) is int
+        ):
+            relative = source_path[len(source_prefix) :]
+            expected_claim = (
+                f"{heading_path[-1]} (H{unit['heading_level']} "
+                f"at {relative}#{unit['ordinal']})"
+            )
+            if claim != expected_claim:
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} claim does "
+                    "not match its pinned heading"
+                )
         if (
             not isinstance(unit.get("remaining_uncertainty"), str)
             or not unit["remaining_uncertainty"].strip()
@@ -1142,11 +1161,15 @@ if training is not None:
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {row.get('unit_id')} has out-of-order chapter")
             if row.get("ordinal") != previous_ordinal + 1:
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {row.get('unit_id')} breaks ordinal order")
-            if not isinstance(row.get("start_line"), int) or row["start_line"] <= previous_line:
+            if type(row.get("start_line")) is not int or row["start_line"] <= previous_line:
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {row.get('unit_id')} breaks line order")
             else:
                 previous_line = row["start_line"]
-            previous_ordinal = row.get("ordinal") if isinstance(row.get("ordinal"), int) else previous_ordinal + 1
+            previous_ordinal = (
+                row.get("ordinal")
+                if type(row.get("ordinal")) is int
+                else previous_ordinal + 1
+            )
 
     recomputed = microsoft_training_inventory_parity(rows_by_book)
     for group_id, book, count, digest in EXPECTED_TRAINING_GROUPS:
