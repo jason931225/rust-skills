@@ -14,7 +14,7 @@ benchmark when the loop is actually hot.
 ## Bad
 
 ```rust
-// Manual indexing - bounds checked every access
+// Manual indexing - index and length coordination is hand-written
 fn sum_squares(data: &[i32]) -> i64 {
     let mut result = 0i64;
     for i in 0..data.len() {
@@ -51,8 +51,9 @@ fn sum_squares(data: &[i32]) -> i64 {
         .sum()
 }
 
-// Zip - handles length mismatch automatically
+// Zip stops at the shorter input, so state the length contract explicitly
 fn dot_product(a: &[f64], b: &[f64]) -> f64 {
+    assert_eq!(a.len(), b.len(), "dot product operands must have equal length");
     a.iter()
         .zip(b.iter())
         .map(|(&x, &y)| x * y)
@@ -78,9 +79,10 @@ for (i, item) in items.iter().enumerate() {
     println!("{}: {}", i, item);
 }
 
-// Non-sequential access
-for i in (0..len).step_by(2) {
-    swap(&mut data[i], &mut data[i + 1]);
+// Non-sequential access: `swap` is the positional API, because two indexed
+// mutable borrows of the same slice in one call do not compile
+for i in (0..data.len().saturating_sub(1)).step_by(2) {
+    data.swap(i, i + 1);
 }
 
 // Multi-dimensional iteration
@@ -107,16 +109,18 @@ for i in 0..rows {
 | `for i in 0..v.len()` | `for x in &v` |
 | `v[0]` | `v.first()` |
 | `v[v.len()-1]` | `v.last()` |
-| `for i in 0..a.len() { a[i] + b[i] }` | `a.iter().zip(&b)` |
+| `for i in 0..a.len() { a[i] + b[i] }` | `a.iter().zip(&b)` (assert equal lengths first) |
 | `for i in 0..v.len() { v[i] *= 2 }` | `for x in &mut v { *x *= 2 }` |
 
 ## Performance Note
 
+Both forms below usually compile to the same loop; neither syntax guarantees
+bounds check elimination or vectorization. Decide with a benchmark and by
+inspecting the generated code, not by the shape of the source.
+
 ```rust
-// Iterator version can auto-vectorize
 let sum: i32 = data.iter().sum();
 
-// Manual indexing prevents vectorization
 let mut sum = 0;
 for i in 0..data.len() {
     sum += data[i];
@@ -125,6 +129,6 @@ for i in 0..data.len() {
 
 ## See Also
 
-- [perf-iter-over-index](./perf-iter-over-index.md) - Performance details
+- [perf-iter-over-index](./perf-iter-over-index.md) - Traversal contract and when indices are genuinely needed
 - [opt-bounds-check](./opt-bounds-check.md) - Bounds check elimination
 - [perf-iter-lazy](./perf-iter-lazy.md) - Lazy iterators
