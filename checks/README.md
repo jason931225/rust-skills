@@ -42,6 +42,51 @@ CI cannot redistribute or independently read the purchased PDF, so the ledger
 records `blocked-source-reread` until that exact PDF is available for an
 independent semantic review.
 
+`microsoft_training_coverage.json` inventories all 2,124 semantic units of the
+Microsoft *RustTraining* books at commit
+`9d19c482d66ef3995dca794bda74c7852134e0b7`: type-driven correctness 240, Rust
+patterns 295, async 142, engineering 181, C/C++ 468, C# 477, and Python 321.
+A unit is one ATX heading outside fenced code blocks in a `SUMMARY.md`-linked
+chapter of `<book>/src`. Chapters are ordered by first reference in
+`SUMMARY.md`, and each unit records its source path, per-file ordinal, heading
+path, line range, and the SHA-256 of its source lines. Only heading text is
+retained; unit bodies are kept as digests, so the ledger is not a copy of the
+upstream books.
+
+Three digests pin that inventory. A book's `unit_inventory_sha256` is the
+SHA-256 of its `<chapter-relative-path>:<ordinal>:<heading level>:<heading
+text>` lines joined by LF; `chapter_inventory_sha256` is the same construction
+over `<chapter-relative-path>:<file sha256>`; and
+`aggregate_inventory_sha256` (`df9e3cd5b41145ebae2c4440adc1024eda17f915522f19c2f292c9d77e6514ec`)
+is the SHA-256 of `<book>:<unit_inventory_sha256>` lines in declared book
+order. `validate.py` recomputes all three from the ledger rows themselves, so
+reordering, editing, dropping, or inventing a row fails the gate.
+
+Every unit is `unreviewed`. That is a backlog state, not a coverage claim: no
+unit has been read against the rule library, and a shared heading or topic is
+not traceability. An unreviewed row must carry no mapped rule, an `unassessed`
+typed `exact_difference`, the `pending-semantic-review` rationale class, the
+`inventory-parity-only` executable applicability, and no reviewer — the
+validator rejects any row that claims more. Moving a unit off `unreviewed`
+requires an exact rule edge, a typed difference with detail, a named reviewer,
+and a review bound to the source file digest; mapped rules must resolve to real
+files in `rules/`.
+
+Semantic review requires the source. Fetch the exact commit and point the
+validator at it to recompute the whole inventory from the checkout — chapter
+set, per-file digests, unit ordering, line ranges, and unit digests — instead
+of trusting the ledger:
+
+```bash
+git clone https://github.com/microsoft/RustTraining /path/to/rusttraining
+git -C /path/to/rusttraining checkout --detach 9d19c482d66ef3995dca794bda74c7852134e0b7
+MICROSOFT_RUSTTRAINING_ROOT=/path/to/rusttraining python3 checks/validate.py
+```
+
+Without that checkout the ledger's identity, counts, digests, uniqueness, typed
+fields, and rule references are still enforced against the pinned constants;
+only the independent re-extraction is skipped.
+
 For a standalone source-backed Microsoft validation, point the validator at an
 exact checkout:
 
