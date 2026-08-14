@@ -6,16 +6,13 @@
 
 An iterator states the traversal contract in the source: visit every element of
 this collection, in order, exactly once. A manual `for i in 0..len` loop
-restates that contract as arithmetic the reader and every later editor must
-re-verify — bounds coupling between collections, off-by-one ranges, and repeated
-`data[i]` lookups that must all agree.
-
-Performance is not the argument. Both forms are ordinary code to LLVM: it can
-eliminate bounds checks from an indexed loop and fail to vectorize an iterator
-chain, or the reverse. Source syntax does not decide which checks survive, and
-no traversal style guarantees SIMD. Choose the form that states the contract;
-if a loop is hot, benchmark both and inspect the optimized code before claiming
-either is faster.
+restates that contract as arithmetic every later editor must re-verify — length
+coupling between collections, off-by-one ranges, and repeated `data[i]` lookups
+that must all agree. Performance is not the argument: LLVM can eliminate bounds
+checks from an indexed loop and fail to vectorize an iterator chain, or the
+reverse, so source syntax guarantees neither elision nor SIMD. Choose the form
+that states the contract, and if a loop is hot, benchmark both and inspect the
+optimized code before claiming either is faster.
 
 ## Bad
 
