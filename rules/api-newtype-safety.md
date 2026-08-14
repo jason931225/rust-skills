@@ -79,7 +79,8 @@ struct ProductId(u64);
 ## Constructor Patterns
 
 ```rust
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+// An owned `String` field is not `Copy`, so this newtype derives `Clone` only.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct Email(String);
 
 impl Email {
