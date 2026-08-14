@@ -140,7 +140,7 @@ Reference these guidelines when:
 
 - [`unsafe-safety-comment`](rules/unsafe-safety-comment.md) - Write a `// SAFETY:` comment above every `unsafe` block and a `# Safety` section in every `unsafe fn`.
 - [`unsafe-minimize-scope`](rules/unsafe-minimize-scope.md) - Keep each unsafe block limited to operations covered by one local proof
-- [`unsafe-miri-ci`](rules/unsafe-miri-ci.md) - Run `cargo miri test` in CI for every crate that contains `unsafe` code.
+- [`unsafe-miri-ci`](rules/unsafe-miri-ci.md) - Run pinned Miri jobs over the unsafe paths Miri can execute, and read a clean run as evidence about those executions, not as a soundness proof
 - [`unsafe-maybeuninit`](rules/unsafe-maybeuninit.md) - Use `MaybeUninit<T>` for uninitialized memory; never use `mem::uninitialized()` or `mem::zeroed()` for types with validity invariants.
 - [`unsafe-extern-block`](rules/unsafe-extern-block.md) - In Rust 2024, wrap `extern` blocks in `unsafe extern { }` and annotate each item as `safe` or `unsafe`.
 - [`unsafe-send-sync-manual`](rules/unsafe-send-sync-manual.md) - Manually implement `Send` or `Sync` only with a complete ownership and concurrency proof
@@ -415,7 +415,7 @@ Reference these guidelines when:
 
 ### 23. Performance Patterns (MEDIUM)
 
-- [`perf-iter-over-index`](rules/perf-iter-over-index.md) - Prefer iterators over manual indexing
+- [`perf-iter-over-index`](rules/perf-iter-over-index.md) - Traverse with iterators by default; keep indices when the index itself is part of the contract
 - [`perf-iter-lazy`](rules/perf-iter-lazy.md) - Keep iterators lazy, collect only when needed
 - [`perf-collect-once`](rules/perf-collect-once.md) - Don't collect intermediate iterators
 - [`perf-entry-api`](rules/perf-entry-api.md) - Use entry API for map insert-or-update
@@ -438,7 +438,7 @@ Reference these guidelines when:
 - [`proj-flat-small`](rules/proj-flat-small.md) - Keep small projects flat
 - [`proj-mod-rs-dir`](rules/proj-mod-rs-dir.md) - Use mod.rs for multi-file modules
 - [`proj-pub-crate-internal`](rules/proj-pub-crate-internal.md) - Use pub(crate) for internal APIs
-- [`proj-pub-super-parent`](rules/proj-pub-super-parent.md) - Use pub(super) for parent-only visibility
+- [`proj-pub-super-parent`](rules/proj-pub-super-parent.md) - Use pub(super) to share items across the parent module and everything inside it
 - [`proj-pub-use-reexport`](rules/proj-pub-use-reexport.md) - Give each owned item one public path; let callers import foreign types from their defining crate
 - [`proj-prelude-module`](rules/proj-prelude-module.md) - Prefer named imports; provide a curated prelude only when a cohesive trait-heavy API needs one
 - [`proj-bin-dir`](rules/proj-bin-dir.md) - Put multiple binaries in src/bin/

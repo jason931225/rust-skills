@@ -14,6 +14,19 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET="x86_64-unknown-linux-gnu"
 MICROSOFT_COMMIT="bbf7b03f3a51548f187888fb8c516e8118ebb1c2"
 MICROSOFT_RUST_GUIDELINES_ROOT="${MICROSOFT_RUST_GUIDELINES_ROOT:-$ROOT/checks/target/microsoft-rust-guidelines-$MICROSOFT_COMMIT}"
+MICROSOFT_TRAINING_COMMIT="9d19c482d66ef3995dca794bda74c7852134e0b7"
+MICROSOFT_RUSTTRAINING_ROOT="${MICROSOFT_RUSTTRAINING_ROOT:-$ROOT/checks/target/microsoft-rusttraining-$MICROSOFT_TRAINING_COMMIT}"
+# The seven book roots the RustTraining ledger is audited against; nothing else
+# in that repository is read, so the checkout stays sparse.
+MICROSOFT_TRAINING_BOOKS=(
+    type-driven-correctness-book
+    rust-patterns-book
+    async-book
+    engineering-book
+    c-cpp-book
+    csharp-book
+    python-book
+)
 
 if [[ ! -d "$MICROSOFT_RUST_GUIDELINES_ROOT/.git" ]]; then
     git clone --filter=blob:none https://github.com/microsoft/rust-guidelines.git \
@@ -22,6 +35,16 @@ fi
 git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" fetch --depth 1 origin "$MICROSOFT_COMMIT"
 git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" checkout --detach "$MICROSOFT_COMMIT"
 export MICROSOFT_RUST_GUIDELINES_ROOT
+
+if [[ ! -d "$MICROSOFT_RUSTTRAINING_ROOT/.git" ]]; then
+    git clone --filter=blob:none --no-checkout https://github.com/microsoft/RustTraining.git \
+        "$MICROSOFT_RUSTTRAINING_ROOT"
+    git -C "$MICROSOFT_RUSTTRAINING_ROOT" sparse-checkout init --cone
+    git -C "$MICROSOFT_RUSTTRAINING_ROOT" sparse-checkout set "${MICROSOFT_TRAINING_BOOKS[@]}"
+fi
+git -C "$MICROSOFT_RUSTTRAINING_ROOT" fetch --depth 1 origin "$MICROSOFT_TRAINING_COMMIT"
+git -C "$MICROSOFT_RUSTTRAINING_ROOT" checkout --detach "$MICROSOFT_TRAINING_COMMIT"
+export MICROSOFT_RUSTTRAINING_ROOT
 
 echo "==> structure, links, and index parity"
 python3 "$ROOT/checks/validate.py"
