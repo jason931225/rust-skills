@@ -511,26 +511,24 @@ Reference these guidelines when:
 
 ## Recommended Cargo.toml Settings
 
+There is no profile preset that is correct for every crate. Start from Cargo's
+built-in `dev` and `release` defaults and change them only as a named, measured
+artifact policy.
+
 ```toml
-[profile.release]
-opt-level = 3
-lto = "fat"
-codegen-units = 1
-panic = "abort"
-strip = true
-
-[profile.bench]
+# Candidate artifact profile: inherits release, keeps symbols, and carries only
+# settings justified by benchmarks of this product on its target.
+[profile.release-service]
 inherits = "release"
-debug = true
-strip = false
-
-[profile.dev]
-opt-level = 0
-debug = true
-
-[profile.dev.package."*"]
-opt-level = 3  # Optimize dependencies in dev
+debug = "line-tables-only"
+strip = "none"
 ```
+
+- Benchmark, test, and ship the same named profile; a rebuilt binary is not the promoted artifact.
+- Treat `lto`, `codegen-units`, `opt-level`, and `target-cpu` as candidates that stay only with representative measurements — see [`perf-release-profile`](rules/perf-release-profile.md), [`opt-lto-release`](rules/opt-lto-release.md), [`opt-codegen-units`](rules/opt-codegen-units.md), and [`opt-target-cpu`](rules/opt-target-cpu.md).
+- Keep symbols for the exact shipped bytes somewhere; `strip = true` is acceptable only when a matching symbol artifact is retained.
+- `panic` is a reliability contract, not a size switch: `"abort"` ends the process and disables `catch_unwind`, so choose it from the product's isolation and restart model ([`err-catch-unwind-boundary`](rules/err-catch-unwind-boundary.md)).
+- Keep `overflow-checks` identical between the profile you test and the profile you ship.
 
 ---
 
