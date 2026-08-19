@@ -74,6 +74,26 @@ communicated to another system.
   tests can advance time deterministically.
 - Assume timestamps arriving from other systems are skewed; do not order
   events by them without an explicit tolerance.
+- A wire or FFI timestamp is only meaningful with its epoch, unit, signedness,
+  and width stated: UNIX time counts seconds since 1970, NTP since 1900,
+  Windows `FILETIME` in 100 ns units since 1601, and `time_t`'s width and
+  signedness vary by platform. Convert through one named function per format,
+  not an `as i64` at the call site.
+- Leap seconds mean a duplicate or backward civil timestamp is a legitimate
+  input, not evidence of a bug — code that indexes a log or a lock by
+  "the current second" as if it were unique has to account for it.
+- A CPU cycle counter (`RDTSC` or similar) is not a clock: cores can run at
+  different frequencies, skew relative to each other, and reorder around the
+  read on an out-of-order pipeline. Use `Instant` for elapsed time even when
+  a cycle counter is available and looks cheaper.
+- Keep timezone as part of the type (a zoned `DateTime` distinct from a naive
+  one) and let arithmetic between zoned and naive values fail to compile;
+  "local wall time" and "an instant" are different questions with different
+  answers under a DST transition.
+- Correct a clock estimate by slewing — applying a bounded fraction of the
+  error per cycle — rather than stepping straight to the new value; a single
+  bad sample or a disagreement between time sources should not be able to
+  yank a monotonic-feeling wall clock by seconds.
 
 ## See Also
 

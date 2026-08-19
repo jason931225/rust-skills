@@ -80,6 +80,38 @@ fn main() {
   it rather than installing a raw handler beside it.
 - `SIGKILL` and `SIGSTOP` cannot be caught at all; a grace period is the only
   protection against the follow-up kill.
+- Register with `sigaction`, not the C89 `signal()` function: System V
+  `signal()` semantics reset the disposition to the default *after* delivery,
+  so a second copy of the same signal arriving while the handler runs — two
+  rapid `SIGTERM`s is enough — kills the process instead of invoking the
+  handler again. Re-registering from inside the handler is a racy workaround,
+  not a fix.
+- `SIGPIPE` terminates the process by default the first time a write targets
+  a closed pipe or socket; a long-running network server needs to install a
+  handler for it (or explicitly ignore it) or a single disconnected peer ends
+  the whole process. `SIG_IGN` and `SIG_DFL` (ignore, and restore the
+  original default) are dispositions in their own right, not only something
+  you replace with a custom function.
+- Signal, interrupt, and language "exception" name different things: a signal
+  is the OS notifying the process of an event and can often be ignored; an
+  interrupt is a CPU/hardware event the core cannot decline to service; a
+  Rust panic is neither. Reaching for the wrong API — `sigaction` for a
+  hardware fault, or an interrupt vector for a peer request — is the usual
+  symptom of conflating them.
+- `SIGINT` is ordinarily a person at a terminal; `SIGTERM` is a peer asking
+  for a graceful stop; `SIGHUP` traditionally means "the controlling
+  terminal went away" and by daemon convention now means "reread
+  configuration," not "crash."
+- On Windows, install `SetConsoleCtrlHandler` instead of a POSIX signal
+  handler; code that only calls `sigaction`/`signal` compiles on Windows and
+  silently never fires there. The portable pattern is "OS callback sets an
+  atomic flag, ordinary code polls it" — the callback registration is what
+  changes per platform.
+- Never use `setjmp`/`longjmp` (or the LLVM `sjlj` unwind mechanism) to leave
+  a Rust stack frame: the jump teleports the instruction pointer without
+  running any `Drop` implementations on the frames it skips, so held locks,
+  open file descriptors, and RAII guards leak or stay locked. This is
+  distinct from ordinary Rust unwinding, which does run `Drop`.
 
 ## See Also
 
