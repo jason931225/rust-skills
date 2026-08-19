@@ -37,11 +37,19 @@ that prose mappings are semantically complete. Static API guidance is checked
 through manifest review, link/index parity, and extracted-example compilation.
 
 The validator also checks the 431-unit *Zero To Production In Rust* disposition
-ledger. Its PDF, TOC, page, and extraction digests identify the reviewed source
-without locking mutable interpretations behind a second hard-coded checksum.
-CI cannot redistribute or independently read the purchased PDF, so the ledger
-records `blocked-source-reread` until that exact PDF is available for an
-independent semantic review.
+ledger. It was written against a PDF with SHA-256 `5de8b3ef…20f75e`, which is
+not the binary issue #1 names authoritative. `rebind_zero2production.py`
+re-anchored it to the authoritative `f122f6e8…c168cf47b` on content identity
+rather than position: every one of the 429 placed rows matched exactly one page
+whose layout-mode extracted text is byte-identical to the page its disposition
+was written against, with a single uniform offset of +1 and no ambiguous or
+unmatched row. Because the bytes are the same, the dispositions carry across;
+no row was transferred by title, page, or ordinal, which issue #1 forbids.
+
+The ledger records that evidence in a `rebinding` block, and the validator
+rejects it unless the block accounts for every placed row with zero ambiguous
+and zero unmatched. Re-running the tool against the authoritative binary
+verifies each row and fails if any page's text has moved.
 
 `microsoft_training_coverage.json` inventories all 2,124 semantic units of the
 Microsoft *RustTraining* books at commit
