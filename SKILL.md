@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 384 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 380 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 384 rules across 27 categories, prioritized by impact for use by
+Contains 380 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -55,7 +55,7 @@ Reference these guidelines when:
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 12 |
-| 2 | Error Handling | CRITICAL | `err-` | 19 |
+| 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 11 |
 | 5 | API Design | HIGH | `api-` | 46 |
@@ -72,11 +72,11 @@ Reference these guidelines when:
 | 16 | Macros | MEDIUM | `macro-` | 12 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
-| 19 | Naming Conventions | MEDIUM | `name-` | 18 |
+| 19 | Naming Conventions | MEDIUM | `name-` | 17 |
 | 20 | Testing | MEDIUM | `test-` | 23 |
-| 21 | Documentation | MEDIUM | `doc-` | 16 |
+| 21 | Documentation | MEDIUM | `doc-` | 15 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
-| 23 | Performance Patterns | MEDIUM | `perf-` | 16 |
+| 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
 | 24 | Project Structure | LOW | `proj-` | 32 |
 | 25 | FFI & Interop | LOW | `ffi-` | 7 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
@@ -113,7 +113,6 @@ Reference these guidelines when:
 - [`err-from-impl`](rules/err-from-impl.md) - Implement `From<E>` for error conversions to enable `?` operator
 - [`err-source-chain`](rules/err-source-chain.md) - Preserve error chains with `#[source]` or `source()` method
 - [`err-lowercase-msg`](rules/err-lowercase-msg.md) - Start error messages lowercase, no trailing punctuation
-- [`err-doc-errors`](rules/err-doc-errors.md) - Document error conditions with `# Errors` section in doc comments
 - [`err-custom-type`](rules/err-custom-type.md) - Define custom error types for domain-specific failures
 - [`err-catch-unwind-boundary`](rules/err-catch-unwind-boundary.md) - Use `catch_unwind` only at a task, FFI, or process isolation edge, and pair it with a restart policy
 - [`err-canonical-struct`](rules/err-canonical-struct.md) - Keep extensible library errors opaque, preserve `source()`, and expose only stable recovery queries
@@ -384,7 +383,6 @@ Reference these guidelines when:
 - [`name-no-get-prefix`](rules/name-no-get-prefix.md) - Omit get_ prefix for simple getters
 - [`name-is-has-bool`](rules/name-is-has-bool.md) - Use `is_`, `has_`, `can_`, `should_` prefixes for boolean-returning methods
 - [`name-iter-convention`](rules/name-iter-convention.md) - Use iter/iter_mut/into_iter for iterator methods
-- [`name-iter-method`](rules/name-iter-method.md) - Name iterator methods `iter()`, `iter_mut()`, and `into_iter()` consistently
 - [`name-iter-type-match`](rules/name-iter-type-match.md) - Name iterator types after their source method
 - [`name-acronym-word`](rules/name-acronym-word.md) - Treat acronyms as words in identifiers: `HttpServer`, not `HTTPServer`
 - [`name-crate-no-rs`](rules/name-crate-no-rs.md) - Don't suffix crate names with `-rs` or `-rust`
@@ -428,7 +426,6 @@ Reference these guidelines when:
 - [`doc-question-mark`](rules/doc-question-mark.md) - Use `?` in examples, not `.unwrap()`
 - [`doc-hidden-setup`](rules/doc-hidden-setup.md) - Use `# ` prefix to hide example setup code
 - [`doc-intra-links`](rules/doc-intra-links.md) - Use intra-doc links to reference types and items
-- [`doc-link-types`](rules/doc-link-types.md) - Use intra-doc links to connect related types and functions
 - [`doc-cargo-metadata`](rules/doc-cargo-metadata.md) - Fill `Cargo.toml` metadata for published crates
 - [`doc-crate-readme`](rules/doc-crate-readme.md) - Unify the README and crate root docs with `#![doc = include_str!("../README.md")]`
 - [`doc-first-sentence`](rules/doc-first-sentence.md) - Write the first rustdoc sentence as one short standalone line — about fifteen words — that still makes sense in the module index
@@ -453,7 +450,6 @@ Reference these guidelines when:
 
 - [`perf-iter-over-index`](rules/perf-iter-over-index.md) - Traverse with iterators by default; keep indices when the index itself is part of the contract
 - [`perf-iter-lazy`](rules/perf-iter-lazy.md) - Keep iterators lazy, collect only when needed
-- [`perf-collect-once`](rules/perf-collect-once.md) - Don't collect intermediate iterators
 - [`perf-entry-api`](rules/perf-entry-api.md) - Use entry API for map insert-or-update
 - [`perf-drain-reuse`](rules/perf-drain-reuse.md) - Use drain to reuse allocations
 - [`perf-extend-batch`](rules/perf-extend-batch.md) - Use extend for batch insertions

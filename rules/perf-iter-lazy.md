@@ -116,8 +116,45 @@ let total: i64 = data.iter()
     .sum();
 ```
 
+## When Intermediate Collection Is Needed
+
+
+```rust
+// Need to iterate multiple times
+let items: Vec<_> = data.iter()
+    .filter(|x| x.is_valid())
+    .collect();
+
+let count = items.len();
+let first = items.first();
+for item in &items {
+    process(item);
+}
+
+// Need to sort (requires concrete collection)
+let mut sorted: Vec<_> = data.iter()
+    .filter(|x| x.is_active)
+    .collect();
+sorted.sort_by_key(|x| x.priority);
+```
+
+## Pattern: Collect with Capacity
+
+
+When you must collect, pre-allocate:
+
+```rust
+// With estimated capacity
+let mut result = Vec::with_capacity(items.len());
+result.extend(
+    items.iter()
+        .filter(|x| x.is_valid())
+        .map(|x| x.clone())
+);
+```
+
 ## See Also
 
-- [perf-collect-once](./perf-collect-once.md) - Single collect
+- [perf-iter-lazy](perf-iter-lazy.md) - keep iterators lazy and collect once
 - [perf-iter-over-index](./perf-iter-over-index.md) - Prefer iterators
 - [anti-collect-intermediate](./anti-collect-intermediate.md) - Anti-pattern
