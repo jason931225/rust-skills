@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 380,
+  "rule_count": 381,
   "ledger_mapped": 235,
-  "typed_justification": 145,
+  "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
@@ -14,7 +14,7 @@
     "rust-performance-book": 9,
     "rust-reference": 26,
     "rustonomicon": 3,
-    "std-docs": 33,
+    "std-docs": 34,
     "synthesized-practice": 14
   },
   "entries": [
@@ -224,6 +224,13 @@
       "ledgers": [
         "zero2production_coverage.json"
       ]
+    },
+    {
+      "rule_id": "api-fallible-self-return",
+      "provenance": "typed-justification",
+      "source_class": "std-docs",
+      "justification": "The contract is the standard library's own convention for consuming fallible methods \u2014 String::from_utf8 returns the bytes inside FromUtf8Error, BufWriter::into_inner returns the writer inside IntoInnerError, and Rc::try_unwrap returns the original Rc \u2014 so a recoverable failure does not destroy an irreplaceable receiver.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
       "rule_id": "api-free-functions",

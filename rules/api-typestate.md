@@ -69,11 +69,15 @@ impl Connection<Disconnected> {
 }
 
 impl Connection<Connected> {
-    fn authenticate(self, password: &str) -> Result<Connection<Authenticated>, Error> {
-        let session = do_auth(&self.state.socket, password)?;
-        Ok(Connection {
-            state: Authenticated { socket: self.state.socket, session }
-        })
+    // A wrong password is recoverable, so the error hands the connection back
+    // rather than destroying a live socket the caller cannot rebuild.
+    fn authenticate(self, password: &str) -> Result<Connection<Authenticated>, (Error, Self)> {
+        match do_auth(&self.state.socket, password) {
+            Ok(session) => Ok(Connection {
+                state: Authenticated { socket: self.state.socket, session },
+            }),
+            Err(error) => Err((error, self)),
+        }
     }
 }
 
@@ -199,3 +203,4 @@ impl Transaction<InProgress> {
 - [api-builder-pattern](./api-builder-pattern.md) - Basic builder pattern
 - [api-parse-dont-validate](./api-parse-dont-validate.md) - Type-driven invariants
 - [api-sealed-trait](./api-sealed-trait.md) - Restricting trait implementations
+- [api-fallible-self-return](./api-fallible-self-return.md) - hand the receiver back when a consuming transition fails

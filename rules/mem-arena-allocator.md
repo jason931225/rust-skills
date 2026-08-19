@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Arena allocators (bump allocators) allocate memory from a contiguous region, making allocation extremely fast (just bump a pointer). All allocations are freed at once when the arena is dropped. Perfect for request-scoped or parse-tree allocations.
+Arena allocators (bump allocators) allocate from a contiguous region, making allocation extremely fast — just bump a pointer — and reclaim the whole region at once when the arena is dropped, which suits request-scoped and parse-tree data. Reclaiming the region is **not** the same as dropping the values in it. A bump arena runs no destructors, so anything owning a resource — a file handle, a socket, a lock guard, or its own heap allocation such as a `Vec` or `String` — leaks when the arena goes away. Arena-allocate plain data only.
 
 ## Bad
 
@@ -163,6 +163,21 @@ confirm the benefit in your specific use case.
 // - But eliminates per-allocation metadata overhead
 // - Frees everything in O(1) with a single bump reset
 ```
+
+## What May Live in an Arena
+
+- Types with no `Drop` impl, transitively: integers, plain structs of such fields,
+  and slices of them.
+- Not `Vec`, `String`, `Box`, `File`, `TcpStream`, a lock guard, or any struct
+  containing one — the arena reclaims their handle without running their
+  destructor, so the underlying resource is lost.
+- `bumpalo::collections::Vec` and `bumpalo::collections::String` exist for this
+  reason: they allocate their storage *in* the arena instead of the global heap.
+- Where a `Drop` type must be arena-adjacent, keep it outside and store a plain
+  index or reference to it in the arena.
+- Assert it: allocate a type whose `Drop` increments a counter, drop the arena,
+  and check the counter is still zero. That test documents the hazard better
+  than a comment.
 
 ## See Also
 

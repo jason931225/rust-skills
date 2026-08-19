@@ -55,6 +55,11 @@
       "justification": "This applies the API Guidelines' builder-pattern guidance together with its convention of flagging returned values that are useless when discarded, so a chained `-> Self` builder method cannot be silently dropped; Clippy's `return_self_not_must_use` and `must_use_candidate` are listed only as enforcement."
     },
     {
+      "rule_id": "api-fallible-self-return",
+      "source_class": "std-docs",
+      "justification": "The contract is the standard library's own convention for consuming fallible methods \u2014 String::from_utf8 returns the bytes inside FromUtf8Error, BufWriter::into_inner returns the writer inside IntoInnerError, and Rc::try_unwrap returns the original Rc \u2014 so a recoverable failure does not destroy an irreplaceable receiver."
+    },
+    {
       "rule_id": "api-from-not-into",
       "source_class": "std-docs",
       "justification": "The rule's whole argument is the standard library's documented blanket impl `impl<T, U> Into<U> for T where U: From<T>` in `core::convert`, which is why implementing `From` is sufficient and implementing `Into` directly is not; Clippy's `from_over_into` lint only enforces that std contract."
