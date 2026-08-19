@@ -111,9 +111,9 @@
     }
   ],
   "summary": {
-    "covered": 46,
+    "covered": 48,
     "project-specific": 1,
-    "unreviewed": 1278
+    "unreviewed": 1276
   },
   "units": [
     {
@@ -4532,26 +4532,28 @@
       "page": 212,
       "page_text_sha256": "ee13a37efe5fc081cac8fb4eab23c0dce5b330b8a8430361f64aea4e699d08ae",
       "claim": "Watering holes (depth 1 at Black Hat Rust.pdf page 212)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-unicode-identity"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit covers watering-hole and bitsquatting attacks, including generating ASCII near-miss domains and registering visually similar hostnames to lure victims to a phishing page; it does not name the Unicode-homoglyph/IDNA variant of the same attack or state a canonicalize-before-trust defense, so the rule extends it to that adjacent identity-spoofing class and gives the Rust-side construction discipline"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4",
         "page-text-sha256:ee13a37efe5fc081cac8fb4eab23c0dce5b330b8a8430361f64aea4e699d08ae"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_label_with_a_non_ascii_lookalike_cannot_reach_an_identity_comparison"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the source page discusses ASCII bitsquatting specifically; the rule's homoglyph/Punycode framing is drawn from general IDN-homograph knowledge rather than from this page, which is recorded as an extension rather than a restatement",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4"
       }
     },
@@ -6814,26 +6816,28 @@
       "page": 345,
       "page_text_sha256": "ad628d0b89a22acd4a5e6e60407959bfdb1a268597273988398a12d1bb669b88",
       "claim": "More advanced techniques for your RAT (depth 1 at Black Hat Rust.pdf page 345)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-update-signature"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit's advanced-techniques section covers signing auto-update payloads with a private key so an unsigned channel cannot be used for remote takeover of every agent; the rule states the full verify-before-install contract the source only sketches: embedding the verification key at build time (not fetching it from the update channel), verifying the exact installed bytes rather than a pointer to them, rejecting version replay/rollback, and failing closed when verification itself cannot run"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4",
         "page-text-sha256:ad628d0b89a22acd4a5e6e60407959bfdb1a268597273988398a12d1bb669b88"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::an_update_that_fails_verification_or_rollback_is_never_installed"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the source states the goal (sign updates) in a few sentences without a worked Rust example; the rollback-replay requirement and the build-time key-embedding discipline are this rule's own additions, not restatements of source text",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4"
       }
     },
