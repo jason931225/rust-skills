@@ -1001,6 +1001,48 @@
       },
       "remaining_uncertainty": "the assertion proves the failure-partway case with an injected write error; it cannot prove the ordering that sync_all and the directory sync buy, which only a power loss or a filesystem fault injector would show",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0138",
+      "title": "Watering holes",
+      "page_text_sha256": "ee13a37efe5fc081cac8fb4eab23c0dce5b330b8a8430361f64aea4e699d08ae",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-unicode-identity"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit covers watering-hole and bitsquatting attacks, including generating ASCII near-miss domains and registering visually similar hostnames to lure victims to a phishing page; it does not name the Unicode-homoglyph/IDNA variant of the same attack or state a canonicalize-before-trust defense, so the rule extends it to that adjacent identity-spoofing class and gives the Rust-side construction discipline"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_label_with_a_non_ascii_lookalike_cannot_reach_an_identity_comparison"
+      },
+      "remaining_uncertainty": "the source page discusses ASCII bitsquatting specifically; the rule's homoglyph/Punycode framing is drawn from general IDN-homograph knowledge rather than from this page, which is recorded as an extension rather than a restatement",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0209",
+      "title": "More advanced techniques for your RAT",
+      "page_text_sha256": "ad628d0b89a22acd4a5e6e60407959bfdb1a268597273988398a12d1bb669b88",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-update-signature"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit's advanced-techniques section covers signing auto-update payloads with a private key so an unsigned channel cannot be used for remote takeover of every agent; the rule states the full verify-before-install contract the source only sketches: embedding the verification key at build time (not fetching it from the update channel), verifying the exact installed bytes rather than a pointer to them, rejecting version replay/rollback, and failing closed when verification itself cannot run"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::an_update_that_fails_verification_or_rollback_is_never_installed"
+      },
+      "remaining_uncertainty": "the source states the goal (sign updates) in a few sentences without a worked Rust example; the rollback-replay requirement and the build-time key-embedding discipline are this rule's own additions, not restatements of source text",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
     }
   ]
 }
