@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 368 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 373 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 368 rules across 27 categories, prioritized by impact for use by
+Contains 373 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,12 +58,12 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 19 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 10 |
-| 5 | API Design | HIGH | `api-` | 42 |
+| 5 | API Design | HIGH | `api-` | 43 |
 | 6 | Async/Await | HIGH | `async-` | 25 |
-| 7 | Concurrency | HIGH | `conc-` | 6 |
+| 7 | Concurrency | HIGH | `conc-` | 7 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 18 |
+| 10 | Type Safety | MEDIUM | `type-` | 19 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -76,9 +76,9 @@ Reference these guidelines when:
 | 20 | Testing | MEDIUM | `test-` | 22 |
 | 21 | Documentation | MEDIUM | `doc-` | 16 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
-| 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
+| 23 | Performance Patterns | MEDIUM | `perf-` | 16 |
 | 24 | Project Structure | LOW | `proj-` | 31 |
-| 25 | FFI & Interop | LOW | `ffi-` | 5 |
+| 25 | FFI & Interop | LOW | `ffi-` | 6 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
 
@@ -201,6 +201,7 @@ Reference these guidelines when:
 - [`api-error-schema`](rules/api-error-schema.md) - Return errors in the same media type and documented schema as successes, including framework-generated ones
 - [`api-record-checksum`](rules/api-record-checksum.md) - Store an integrity check with every persisted or transmitted record and verify it before trusting the bytes
 - [`api-subprocess-args`](rules/api-subprocess-args.md) - Launch subprocesses with an explicit argument vector; never build a command line from untrusted input
+- [`api-dir-enumeration`](rules/api-dir-enumeration.md) - Treat a directory walk as a stream of fallible entries, and never depend on the order it yields
 
 ### 6. Async/Await (HIGH)
 
@@ -238,6 +239,7 @@ Reference these guidelines when:
 - [`conc-thread-local`](rules/conc-thread-local.md) - Prefer `thread_local!` with `Cell`/`RefCell` over `static mut`
 - [`conc-db-transaction-boundary`](rules/conc-db-transaction-boundary.md) - Keep one atomic business change inside one short database transaction
 - [`conc-atomic-update`](rules/conc-atomic-update.md) - Use atomic `update` / `try_update` instead of hand-written compare-exchange loops
+- [`conc-signal-handler-safety`](rules/conc-signal-handler-safety.md) - Let a signal handler set an atomic flag and return; do everything else in ordinary code
 
 ### 8. Compiler Optimization (HIGH)
 
@@ -283,6 +285,7 @@ Reference these guidelines when:
 - [`type-time-domain`](rules/type-time-domain.md) - Measure elapsed time with `Instant`; use `SystemTime` only for timestamps that leave the process
 - [`type-variance`](rules/type-variance.md) - Keep generic types covariant where you can; reach for an extra lifetime parameter before accepting invariance
 - [`type-path-not-string`](rules/type-path-not-string.md) - Carry filesystem paths as `Path`/`PathBuf`; convert to text only for display
+- [`type-text-decode-policy`](rules/type-text-decode-policy.md) - Decide at the byte-to-text boundary whether invalid encoding is an error or a replacement, and make the choice visible
 
 ### 11. Trait & Generics Design (MEDIUM)
 
@@ -454,6 +457,7 @@ Reference these guidelines when:
 - [`perf-io-buffering`](rules/perf-io-buffering.md) - Wrap `Read`/`Write` in `BufReader`/`BufWriter` for many small operations
 - [`perf-global-allocator`](rules/perf-global-allocator.md) - Pick the process global allocator on purpose in application crates; leave libraries on the system default
 - [`perf-batch-throughput`](rules/perf-batch-throughput.md) - Optimize for items finished per CPU cycle with batches, independent slices, and no idle spinning
+- [`perf-hoist-loop-invariant`](rules/perf-hoist-loop-invariant.md) - Build expensive input-independent values once, outside the loop that uses them
 
 ### 24. Project Structure (LOW)
 
@@ -496,6 +500,7 @@ Reference these guidelines when:
 - [`ffi-native-escape-hatch`](rules/ffi-native-escape-hatch.md) - Give native-handle wrappers `from_native` / `into_native` / `as_native` so FFI code can cross the boundary without leaking the raw type everywhere
 - [`ffi-sys-crate-builds`](rules/ffi-sys-crate-builds.md) - Keep `-sys` crates hermetic: build verifiable vendored sources with Rust tooling and offer static or dynamic loading
 - [`ffi-dll-portable-state`](rules/ffi-dll-portable-state.md) - Share only portable, repr-stable values across Rust dynamic libraries; keep allocations, statics, TLS, and TypeId local to the DLL that created them
+- [`ffi-status-to-result`](rules/ffi-status-to-result.md) - Check the status a foreign call returns and convert failure into a `Result` at the boundary
 
 ### 26. Clippy & Linting (LOW)
 
