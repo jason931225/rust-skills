@@ -9,7 +9,8 @@ says which layout produced them. Add a field, reorder two, or widen an integer
 and yesterday's file decodes into today's struct without complaint —
 misaligned, not rejected. Named formats survive this because a decoder can
 match keys; `bincode` and hand-rolled records cannot. A magic identifier tells
-you the file is yours at all, and a version tells you which reader applies.
+a decoder the file belongs to this format at all, and a version says which
+reader applies.
 
 ## Bad
 
