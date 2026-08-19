@@ -7,6 +7,22 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Thirteen rules derived from the eight authenticated PDF sources, each bound to
+  the source unit it came from: `api-path-containment`, `api-outbound-target`,
+  `api-resource-limits`, `api-crypto-primitives`, `type-time-domain`,
+  `type-secret-material`, `type-variance`, `test-fuzz-target`,
+  `test-sanitizers`, `test-cli-blackbox`, `proj-cli-contract`,
+  `proj-semver-contract`, and `proj-dependency-policy`.
+- Nine behavior assertions in `checks/tests/pdf_corpus_guidance.rs` covering
+  path containment, outbound target authorization, request ceilings,
+  constant-time secret comparison, monotonic elapsed time, secret redaction,
+  variance, the fuzz property, and the CLI stream/exit contract.
+- A 1,325-unit inventory of the eight authenticated PDF sources
+  (`checks/pdf_corpus_coverage.json`), rebuilt by `checks/build_pdf_ledger.py`
+  from binaries authenticated against their pinned SHA-256 digests, with
+  dispositions supplied by the reviewed `checks/pdf_corpus_review.json`.
+  Twenty-three units are reviewed; the remaining 1,302 stay explicitly
+  `unreviewed` and receive no semantic coverage credit.
 - Microsoft Pragmatic Rust Guidelines (v2026.6) coverage.
   The source audit adds original rules and revises existing guidance where
   topic-level mappings omitted caveats or taught the inverse.
