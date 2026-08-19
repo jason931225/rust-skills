@@ -136,8 +136,37 @@ map.keys()      // &K
 map.values()    // &V
 ```
 
+## Iterator Convention Summary
+
+
+| Method | Receiver | Yields | Use Case |
+|--------|----------|--------|----------|
+| `iter()` | `&self` | `&T` | Read-only iteration |
+| `iter_mut()` | `&mut self` | `&mut T` | In-place modification |
+| `into_iter()` | `self` | `T` | Consuming iteration |
+
+## For Loop Integration
+
+
+```rust
+let col = Collection { items: vec![1, 2, 3] };
+
+// These all work with proper IntoIterator impls
+for item in &col {           // Calls (&col).into_iter() -> iter()
+    println!("{}", item);    // &i32
+}
+
+for item in &mut col {       // Calls (&mut col).into_iter() -> iter_mut()
+    *item += 1;              // &mut i32
+}
+
+for item in col {            // Calls col.into_iter()
+    process(item);           // i32, consumes col
+}
+```
+
 ## See Also
 
 - [name-iter-type-match](./name-iter-type-match.md) - Iterator type naming
-- [name-iter-method](./name-iter-method.md) - Iterator method names
+- [name-iter-convention](name-iter-convention.md) - name iterator methods iter/iter_mut/into_iter
 - [perf-iter-over-index](./perf-iter-over-index.md) - Prefer iterators

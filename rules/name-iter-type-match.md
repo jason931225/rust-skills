@@ -150,5 +150,5 @@ pub struct Iter<'a, T>(std::slice::Iter<'a, T>);
 ## See Also
 
 - [name-iter-convention](./name-iter-convention.md) - iter/iter_mut/into_iter
-- [name-iter-method](./name-iter-method.md) - Iterator method names
+- [name-iter-convention](name-iter-convention.md) - name iterator methods iter/iter_mut/into_iter
 - [api-common-traits](./api-common-traits.md) - Implementing common traits

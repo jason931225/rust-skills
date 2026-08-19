@@ -73,6 +73,24 @@ If the compile gate reports a real bug, fix the example. If you intentionally
 added a new fragment-style snippet, refresh the baseline (see
 `checks/README.md`).
 
+## The `anti-` category is deliberately redundant
+
+Rules under `anti-` restate a positive rule as the failure mode it prevents:
+`anti-clone-excessive` pairs with `own-borrow-over-clone`, `anti-panic-expected`
+with `err-result-over-panic`, `anti-vec-for-slice` with `own-slice-over-vec`.
+That overlap is the point — the category is a REFERENCE index for code review,
+where the reviewer starts from the smell rather than from the principle.
+
+Do not "de-duplicate" an `anti-` rule into its positive counterpart. A rule
+audit will keep reporting these pairs as duplicates, because by any test of
+overlapping obligations they are; the answer is that the redundancy is
+intentional. When the two drift apart in substance, fix the drift rather than
+merging them.
+
+Genuine duplication is two rules in *different* categories teaching the same
+contract with no such intent — for example a `# Errors` documentation rule
+living in both Error Handling and Documentation. Those should be merged.
+
 ## Style
 
 - Be concrete and example-driven, not preachy.

@@ -63,6 +63,16 @@ semantic versioning for the rule set.
   explicit unreviewed backlog without assigning semantic coverage credit.
 
 ### Changed
+- Four pairs of rules that taught the same contract in different categories are
+  merged, taking the rule count from 384 to 380: `err-doc-errors` into
+  `doc-errors-section`, `doc-link-types` into `doc-intra-links`,
+  `name-iter-method` into `name-iter-convention`, and `perf-collect-once` into
+  `perf-iter-lazy`. Each survivor keeps the sections the retired rule alone had,
+  and every inbound cross-link is repointed.
+- `CONTRIBUTING.md` now records why the `anti-` category is deliberately
+  redundant with its positive counterparts, so a future audit does not merge
+  away a REFERENCE index that exists to be reached from the smell rather than
+  the principle.
 - Pinned the compile-check toolchain and CI to Rust 1.97.1 and updated existing
   conversion, `NonZero`, workspace, collection, cfg, lint, and unsafe/FFI
   guidance for the 1.95–1.97 releases.

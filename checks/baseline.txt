@@ -29,7 +29,7 @@ async-joinset-structured.md :: Abort on Drop :: E0069
 async-select-racing.md :: Racing Multiple of Same Type :: E0107
 async-spawn-blocking.md :: What Counts as Blocking :: P:expected one of `!`, `.`,
 async-watch-latest.md :: Configuration Reload Pattern :: E0308,E0369
-doc-link-types.md :: Linking to Trait Items :: E0046
+doc-intra-links.md :: Linking to Trait Items :: E0046
 doc-question-mark.md :: Doctest Wrapper Pattern :: P:expected item after doc comment
 err-anyhow-app.md :: Main Function Pattern :: E0428
 err-context-chain.md :: Building Context Chains :: E0107
