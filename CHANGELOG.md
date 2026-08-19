@@ -93,6 +93,16 @@ semantic versioning for the rule set.
   behavior those tools and constructs can establish.
 
 ### Fixed
+- `mem-arena-allocator` said a bump arena "frees all allocations at once" and
+  never mentioned that it runs **no destructors**, so the rule as written
+  invited placing a `File`, socket, guard, or `Vec` in an arena and leaking the
+  resource. It now states what may live in an arena and why
+  `bumpalo::collections` exists, with an assertion that reclaiming a block runs
+  no `Drop`.
+- `api-typestate` destroyed a live connection on a wrong password: its
+  `authenticate` consumed `self` and returned only an error, leaving no way to
+  retry. It now returns the receiver in the error variant, and the general
+  contract is stated in the new `api-fallible-self-return`.
 - Seven rules made falsifiable runtime claims that nothing tested; each now has
   an assertion, and writing two of them corrected the rules. `perf-io-buffering`
   said a dropped `BufWriter` "attempts to flush" — it writes the buffer out

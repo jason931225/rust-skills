@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 380 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 381 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 380 rules across 27 categories, prioritized by impact for use by
+Contains 381 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,7 +58,7 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 11 |
-| 5 | API Design | HIGH | `api-` | 46 |
+| 5 | API Design | HIGH | `api-` | 47 |
 | 6 | Async/Await | HIGH | `async-` | 25 |
 | 7 | Concurrency | HIGH | `conc-` | 7 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
@@ -205,6 +205,7 @@ Reference these guidelines when:
 - [`api-credential-scope`](rules/api-credential-scope.md) - Bind every stored credential to the origin it was issued for, and re-check that binding before sending it
 - [`api-upload-serving`](rules/api-upload-serving.md) - Serve user-uploaded files inertly: fixed content type, forced download, separate origin
 - [`api-datagram-trust`](rules/api-datagram-trust.md) - On connectionless transports, verify the sender and match replies with an unpredictable identifier
+- [`api-fallible-self-return`](rules/api-fallible-self-return.md) - When a fallible method consumes `self`, hand the receiver back in the error
 
 ### 6. Async/Await (HIGH)
 
