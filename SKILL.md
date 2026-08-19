@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 385 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 390 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 385 rules across 27 categories, prioritized by impact for use by
+Contains 390 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -57,9 +57,9 @@ Reference these guidelines when:
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 12 |
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
-| 4 | Unsafe Code | CRITICAL | `unsafe-` | 11 |
+| 4 | Unsafe Code | CRITICAL | `unsafe-` | 12 |
 | 5 | API Design | HIGH | `api-` | 48 |
-| 6 | Async/Await | HIGH | `async-` | 25 |
+| 6 | Async/Await | HIGH | `async-` | 27 |
 | 7 | Concurrency | HIGH | `conc-` | 8 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
@@ -73,11 +73,11 @@ Reference these guidelines when:
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 17 |
-| 20 | Testing | MEDIUM | `test-` | 23 |
+| 20 | Testing | MEDIUM | `test-` | 24 |
 | 21 | Documentation | MEDIUM | `doc-` | 15 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
-| 24 | Project Structure | LOW | `proj-` | 32 |
+| 24 | Project Structure | LOW | `proj-` | 33 |
 | 25 | FFI & Interop | LOW | `ffi-` | 7 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -156,6 +156,7 @@ Reference these guidelines when:
 - [`unsafe-justify-use`](rules/unsafe-justify-use.md) - Use `unsafe` only for a novel abstraction, a measured hot path, or FFI / platform code — never as an ad-hoc shortcut
 - [`unsafe-sound-abstractions`](rules/unsafe-sound-abstractions.md) - Never expose a safe API that can hit undefined behavior; if the caller must uphold a UB precondition, the function is `unsafe`
 - [`unsafe-volatile-mmio`](rules/unsafe-volatile-mmio.md) - Reach memory-mapped hardware through `read_volatile`/`write_volatile`, never through an ordinary reference
+- [`unsafe-pin-address-stable`](rules/unsafe-pin-address-stable.md) - Opt address-dependent types out of `Unpin` with `PhantomPinned` and expose their mutation only through `Pin<&mut Self>`
 
 ### 5. API Design (HIGH)
 
@@ -235,6 +236,8 @@ Reference these guidelines when:
 - [`async-http-client-reuse`](rules/async-http-client-reuse.md) - Reuse one configured HTTP client per service and require deadlines on every outbound call
 - [`async-durable-worker`](rules/async-durable-worker.md) - Claim durable work atomically, bound retries with backoff and jitter, and make worker shutdown explicit
 - [`async-bounded-dependency`](rules/async-bounded-dependency.md) - Bound dependency admission and calls with explicit deadlines and observable failures
+- [`async-poll-contract`](rules/async-poll-contract.md) - Return from every hand-written `poll` without blocking, re-check readiness instead of trusting the wake, re-register the waker before each `Pending`, and never poll after `Ready`
+- [`async-sync-core`](rules/async-sync-core.md) - Keep business rules in sync functions that take I/O results as arguments; confine async to the outermost shell that fetches and orchestrates
 
 ### 7. Concurrency (HIGH)
 
@@ -419,6 +422,7 @@ Reference these guidelines when:
 - [`test-fuzz-target`](rules/test-fuzz-target.md) - Fuzz every parser and decoder that touches untrusted bytes, and keep crashers as regression tests
 - [`test-sanitizers`](rules/test-sanitizers.md) - Run the tests that exercise unsafe, FFI, or concurrency under sanitizers in CI, and treat a report as a bug
 - [`test-env-independent`](rules/test-env-independent.md) - Assert what the program decides; normalize or exclude everything the host decides
+- [`test-compile-fail-guarantees`](rules/test-compile-fail-guarantees.md) - Pin every type-system-only guarantee with a committed compile-fail test
 
 ### 21. Documentation (MEDIUM)
 
@@ -503,6 +507,7 @@ Reference these guidelines when:
 - [`proj-semver-contract`](rules/proj-semver-contract.md) - Version by what breaks callers, depend on the earliest version you actually need, and keep a written changelog
 - [`proj-secret-file-mode`](rules/proj-secret-file-mode.md) - Create credential files owner-only, in an owner-only directory, before writing anything into them
 - [`proj-append-log-recovery`](rules/proj-append-log-recovery.md) - Make a truncated trailing record a clean end of log, and a malformed interior record a loud failure
+- [`proj-build-target-cfg`](rules/proj-build-target-cfg.md) - Write `build.rs` against the target, not the host: read `TARGET`, `HOST`, and `CARGO_CFG_TARGET_*` instead of `cfg!`
 
 ### 25. FFI & Interop (LOW)
 

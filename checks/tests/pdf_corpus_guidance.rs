@@ -1472,3 +1472,256 @@ fn a_lent_resource_is_restored_on_every_path_out_of_the_closure() {
     assert_eq!(outcome, Err("failed early"));
     assert_eq!(terminal.mode, Mode::Normal, "restored despite the error path");
 }
+
+// --- async-poll-contract -----------------------------------------
+
+#[test]
+fn a_hand_written_poll_rechecks_readiness_and_reregisters_its_waker() {
+    use std::future::Future;
+    use std::pin::Pin;
+    use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+    use std::sync::{Arc, Mutex};
+    use std::task::{Context, Poll, Wake, Waker};
+
+    #[derive(Default)]
+    struct Signal {
+        raised: AtomicBool,
+        waker: Mutex<Option<Waker>>,
+    }
+
+    impl Signal {
+        fn raise(&self) {
+            self.raised.store(true, Ordering::Release);
+            if let Some(waker) = self.waker.lock().expect("signal mutex").take() {
+                waker.wake();
+            }
+        }
+    }
+
+    struct Raised {
+        signal: Arc<Signal>,
+        finished: bool,
+    }
+
+    impl Future for Raised {
+        type Output = ();
+
+        fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {
+            let this = self.get_mut();
+            assert!(!this.finished, "Raised polled after returning Ready");
+            if this.signal.raised.load(Ordering::Acquire) {
+                this.finished = true;
+                return Poll::Ready(());
+            }
+            *this.signal.waker.lock().expect("signal mutex") = Some(cx.waker().clone());
+            if this.signal.raised.load(Ordering::Acquire) {
+                this.finished = true;
+                Poll::Ready(())
+            } else {
+                Poll::Pending
+            }
+        }
+    }
+
+    #[derive(Default)]
+    struct CountingWaker {
+        wakes: AtomicUsize,
+    }
+
+    impl Wake for CountingWaker {
+        fn wake(self: Arc<Self>) {
+            self.wakes.fetch_add(1, Ordering::Relaxed);
+        }
+    }
+
+    let signal = Arc::new(Signal::default());
+    let mut future = Raised { signal: Arc::clone(&signal), finished: false };
+
+    let counter = Arc::new(CountingWaker::default());
+    let waker = Waker::from(Arc::clone(&counter));
+    let mut cx = Context::from_waker(&waker);
+
+    // Not ready yet: Pending, with the current waker registered.
+    assert!(Pin::new(&mut future).poll(&mut cx).is_pending());
+    assert!(signal.waker.lock().expect("signal mutex").is_some());
+
+    // A spurious poll re-checks the state instead of trusting the wake, and
+    // leaves a waker registered for the next notification.
+    assert!(Pin::new(&mut future).poll(&mut cx).is_pending());
+    assert!(signal.waker.lock().expect("signal mutex").is_some());
+    assert_eq!(counter.wakes.load(Ordering::Relaxed), 0);
+
+    // Readiness published from outside reaches the registered waker.
+    signal.raise();
+    assert_eq!(counter.wakes.load(Ordering::Relaxed), 1);
+    assert_eq!(Pin::new(&mut future).poll(&mut cx), Poll::Ready(()));
+
+    // Polling after Ready is a contract violation, not a silent repeat.
+    let previous = std::panic::take_hook();
+    std::panic::set_hook(Box::new(|_| {}));
+    let replayed = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        Pin::new(&mut future).poll(&mut cx)
+    }));
+    std::panic::set_hook(previous);
+    assert!(replayed.is_err(), "a future must not be polled again after Ready");
+}
+
+// --- unsafe-pin-address-stable -----------------------------------
+
+#[test]
+fn a_phantom_pinned_value_keeps_its_address_while_an_unpin_value_escapes_the_pin() {
+    use std::marker::PhantomPinned;
+    use std::pin::Pin;
+    use std::ptr;
+
+    struct Anchored {
+        data: [u8; 4],
+        anchor: *const u8,
+        _pin: PhantomPinned,
+    }
+
+    impl Anchored {
+        fn pinned(data: [u8; 4]) -> Pin<Box<Self>> {
+            let mut boxed = Box::pin(Anchored { data, anchor: ptr::null(), _pin: PhantomPinned });
+            let anchor = boxed.data.as_ptr();
+            // SAFETY: `anchor` is not structurally pinned and nothing moves out.
+            unsafe { Pin::as_mut(&mut boxed).get_unchecked_mut().anchor = anchor };
+            boxed
+        }
+
+        fn is_anchored(&self) -> bool {
+            ptr::eq(self.anchor, self.data.as_ptr())
+        }
+    }
+
+    struct Loose {
+        data: [u8; 4],
+        anchor: *const u8,
+    }
+
+    impl Loose {
+        fn pinned(data: [u8; 4]) -> Pin<Box<Self>> {
+            let mut boxed = Box::pin(Loose { data, anchor: ptr::null() });
+            let anchor = boxed.data.as_ptr();
+            boxed.anchor = anchor;
+            boxed
+        }
+
+        fn is_anchored(&self) -> bool {
+            ptr::eq(self.anchor, self.data.as_ptr())
+        }
+    }
+
+    let anchored = Anchored::pinned([1, 2, 3, 4]);
+    assert!(anchored.is_anchored());
+    let still_pinned = anchored;
+    assert!(
+        still_pinned.is_anchored(),
+        "moving the Pin handle does not move the pinned value"
+    );
+
+    let loose = Loose::pinned([1, 2, 3, 4]);
+    assert!(loose.is_anchored());
+    let escaped = *Pin::into_inner(loose);
+    assert!(
+        !escaped.is_anchored(),
+        "an Unpin type lets safe code move the value out of the Pin, invalidating its address invariant"
+    );
+}
+
+// --- async-sync-core ---------------------------------------------
+
+#[test]
+fn the_pricing_rule_decides_out_of_stock_without_a_runtime() {
+    #[derive(Debug, PartialEq)]
+    enum OrderError {
+        EmptyOrder,
+        OutOfStock { available: u32 },
+    }
+
+    // The core takes the fetched stock level and discount as arguments, so it
+    // is an ordinary function that a plain `#[test]` can call directly.
+    fn price_order(
+        quantity: u32,
+        unit_price_cents: u64,
+        available: u32,
+        discount_percent: u64,
+    ) -> Result<u64, OrderError> {
+        if quantity == 0 {
+            return Err(OrderError::EmptyOrder);
+        }
+        if available < quantity {
+            return Err(OrderError::OutOfStock { available });
+        }
+        let gross = u64::from(quantity) * unit_price_cents;
+        Ok(gross - gross * discount_percent / 100)
+    }
+
+    assert_eq!(price_order(4, 250, 10, 25), Ok(750));
+    assert_eq!(price_order(0, 250, 10, 25), Err(OrderError::EmptyOrder));
+    assert_eq!(
+        price_order(4, 250, 3, 25),
+        Err(OrderError::OutOfStock { available: 3 })
+    );
+}
+
+// --- proj-build-target-cfg ------------------------------------------------
+
+/// The facts a build script may act on, all sourced from the environment Cargo
+/// sets for the artifact's target — never from `cfg!`, which describes the
+/// machine the script itself was compiled for.
+#[derive(Debug, PartialEq, Eq)]
+struct BuildTarget {
+    triple: String,
+    os: String,
+    cross_compiling: bool,
+}
+
+fn build_var(env: &std::collections::HashMap<&str, &str>, key: &str) -> Result<String, String> {
+    env.get(key)
+        .map(|value| (*value).to_owned())
+        .ok_or_else(|| format!("{key} is unset; this script must run under cargo"))
+}
+
+impl BuildTarget {
+    fn from_env(env: &std::collections::HashMap<&str, &str>) -> Result<Self, String> {
+        let triple = build_var(env, "TARGET")?;
+        let host = build_var(env, "HOST")?;
+        Ok(Self {
+            cross_compiling: triple != host,
+            os: build_var(env, "CARGO_CFG_TARGET_OS")?,
+            triple,
+        })
+    }
+}
+
+#[test]
+fn a_build_script_reads_the_target_from_the_environment_not_the_host() {
+    use std::collections::HashMap;
+
+    // Cross build: a Linux host producing a Windows artifact. `cfg!(windows)`
+    // in the script would be false here, which is exactly the bug.
+    let cross = HashMap::from([
+        ("TARGET", "x86_64-pc-windows-msvc"),
+        ("HOST", "x86_64-unknown-linux-gnu"),
+        ("CARGO_CFG_TARGET_OS", "windows"),
+    ]);
+    let target = BuildTarget::from_env(&cross).expect("cargo sets these");
+    assert_eq!(target.os, "windows", "the artifact's OS, not the builder's");
+    assert!(target.cross_compiling);
+
+    // Native build: same variables, and the logic does not special-case it.
+    let native = HashMap::from([
+        ("TARGET", "x86_64-unknown-linux-gnu"),
+        ("HOST", "x86_64-unknown-linux-gnu"),
+        ("CARGO_CFG_TARGET_OS", "linux"),
+    ]);
+    let target = BuildTarget::from_env(&native).expect("cargo sets these");
+    assert_eq!(target.os, "linux");
+    assert!(!target.cross_compiling);
+
+    // Run outside cargo: the script says so rather than guessing from the host.
+    let bare: HashMap<&str, &str> = HashMap::new();
+    assert!(BuildTarget::from_env(&bare).unwrap_err().contains("must run under cargo"));
+}
+
