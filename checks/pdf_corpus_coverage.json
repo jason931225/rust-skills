@@ -111,9 +111,9 @@
     }
   ],
   "summary": {
-    "covered": 36,
+    "covered": 40,
     "project-specific": 1,
-    "unreviewed": 1288
+    "unreviewed": 1284
   },
   "units": [
     {
@@ -3008,26 +3008,29 @@
       "page": 146,
       "page_text_sha256": "37d6ae18f92a972531a48e47e9bc43f227ddbe55a5d56dc256ba8a7fddda1dd7",
       "claim": "XSS (depth 1 at Black Hat Rust.pdf page 146)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-upload-serving"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit shows a stored cross-site scripting payload delivered as an uploaded SVG that an application accepts and serves back to its users; the rule states the serving contract that neutralizes it \u2014 server-chosen type, forced download, nosniff, separate origin"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4",
         "page-text-sha256:37d6ae18f92a972531a48e47e9bc43f227ddbe55a5d56dc256ba8a7fddda1dd7"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::scriptable_uploads_are_served_inertly"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "origin separation and CSP are stated as contract items; the assertion covers the header decision only",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4"
       }
     },
@@ -15288,11 +15291,12 @@
       "audit_disposition": "covered",
       "disposition": "covered",
       "mapped_rule_ids": [
-        "proj-secret-file-mode"
+        "proj-secret-file-mode",
+        "api-credential-scope"
       ],
       "exact_difference": {
         "kind": "rule-extends-source",
-        "detail": "the unit stores session credentials in a file on disk; the rule adds the permission contract for creating that file and its directory"
+        "detail": "the unit stores a session \u2014 auth, token, headers and cookies \u2014 in a file whose path is derived from the host it belongs to; proj-secret-file-mode adds the permission contract for creating that file, and api-credential-scope states the binding as scheme, host and port, re-checked at attach time and dropped across redirects"
       },
       "rationale_class": "security",
       "supporting_evidence": [
@@ -15303,7 +15307,7 @@
         "applicability": "behavior-assertion",
         "assertion_id": "checks/tests/pdf_corpus_guidance.rs::credential_files_are_created_owner_only"
       },
-      "remaining_uncertainty": "Windows DACL handling is stated as a contract item but not asserted",
+      "remaining_uncertainty": "one entry carries two rules: the assertion named here covers the file mode, and a_credential_is_withheld_from_every_other_origin covers the origin binding",
       "semantic_review": {
         "status": "reviewed",
         "reviewer": "Jason Lee <jason931225@gmail.com>",
@@ -16379,26 +16383,29 @@
       "page": 28,
       "page_text_sha256": "03aa66fa86a2b6a443f3b66b74ae7eba05fe77ba5720e72cbabb6a5e9412a651",
       "claim": "Traits and Trait Bounds (depth 1 at Rust for Rustaceans.pdf page 28)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "opt-monomorph-outline"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit describes monomorphization's cost in compile time, binary size and instruction cache, and gives the non-generic inner function pattern with the warning not to place the helper in a generic impl block; the rule states that contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0",
         "page-text-sha256:03aa66fa86a2b6a443f3b66b74ae7eba05fe77ba5720e72cbabb6a5e9412a651"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_generic_shell_delegates_to_one_non_generic_body"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the size win is not asserted: it is a code-size property, and perf-profile-first governs measuring it",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0"
       }
     },
@@ -17196,26 +17203,29 @@
       "page": 106,
       "page_text_sha256": "ac02b4573ac68ec8b926a39a5564dace70f56270605d1a29270f58b466b2067f",
       "claim": "Declarative Macros (depth 1 at Rust for Rustaceans.pdf page 106)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "macro-absolute-std-paths"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit states that macro hygiene does not cover types, that exported macros must use fully specified paths such as ::core::option::Option and ::alloc::boxed::Box, that $crate names the defining crate, and that ::std should be avoided so macros work in no_std crates"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0",
         "page-text-sha256:ac02b4573ac68ec8b926a39a5564dace70f56270605d1a29270f58b466b2067f"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "documentation-only",
+        "assertion_id": null
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "no runtime assertion: the property is name resolution, demonstrated by the rule's example compiling under shadowed Result and Option",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0"
       }
     },
@@ -23674,26 +23684,29 @@
       "page": 254,
       "page_text_sha256": "92673a0b5a3db3069846207eb18f03a793d5462f321b95596b5a92cc481be4a2",
       "claim": "7.7.1 Initializing the ActionKV struct (depth 3 at Rust in Action.pdf page 254)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-append-log-recovery"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit's load loop breaks on UnexpectedEof while returning every other error, and its sidebar explains that EOF is a convention rather than a marker in the file; the rule turns that into a contract separating a torn tail from interior corruption, with the recovered length and idempotent replay"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:92673a0b5a3db3069846207eb18f03a793d5462f321b95596b5a92cc481be4a2"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_torn_tail_ends_recovery_cleanly_but_interior_damage_does_not"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the unit's format carries a per-record checksum, which api-record-checksum covers; this rule assumes that check exists",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },

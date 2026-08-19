@@ -7,6 +7,11 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Five more corpus rules covering stored uploads, credential scoping, log
+  recovery, monomorphization cost, and macro path hygiene:
+  `api-upload-serving`, `api-credential-scope`, `proj-append-log-recovery`,
+  `opt-monomorph-outline`, and `macro-absolute-std-paths`. Four carry behavior
+  assertions; the corpus ledger now records 41 reviewed units.
 - Five further corpus rules covering the process and filesystem boundary:
   `conc-signal-handler-safety`, `api-dir-enumeration`, `type-text-decode-policy`,
   `perf-hoist-loop-invariant`, and `ffi-status-to-result`. Four carry behavior
