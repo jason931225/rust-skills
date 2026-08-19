@@ -1,0 +1,499 @@
+{
+  "schema_version": 1,
+  "description": "Semantic review of individual units in pdf_corpus_coverage.json. Each entry is bound to the page-text digest it was reviewed against; build_pdf_ledger.py refuses to apply an entry whose unit or digest has changed.",
+  "reviewer": "Jason Lee <jason931225@gmail.com>",
+  "reviewed_on": "2026-08-18",
+  "entries": [
+    {
+      "unit_id": "black-hat-rust:0092",
+      "title": "Server Side Request Forgery (SSRF)",
+      "page_text_sha256": "db3cad58f895411994ad0479d78c09b6e5214f5cc708e51175ae7b38f9ac0cb7",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-outbound-target"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit requires an allowlist for caller-supplied fetch targets and forbids returning the upstream response; the rule adds resolved-address authorization, per-redirect re-authorization, and the DNS-rebinding window"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::outbound_targets_are_authorized_by_scheme_host_and_resolved_address"
+      },
+      "remaining_uncertainty": "the rule's address policy is stated for IPv4 and IPv6 ranges the unit does not enumerate; deployments behind egress proxies may need a different enforcement point",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0096",
+      "title": "Arbitrary file read",
+      "page_text_sha256": "421a5dd68406c7cf257849943aa741742b0cfdb589e3119e9f8e701e7eee90dd",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-path-containment"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit shows a read path built by concatenating a caller-supplied id onto a root, exploited with ..; the rule states the containment contract that rejects it"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::caller_supplied_keys_cannot_escape_the_storage_root"
+      },
+      "remaining_uncertainty": "symlink traversal inside the root is stated as a contract item but is platform-dependent to enforce",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0098",
+      "title": "Arbitrary file write",
+      "page_text_sha256": "9f3490cfb816b4e91d558a4ce5cec7e58656eede0dc614ca4ca1c993b30bd87d",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-path-containment"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit shows the write-side of the same defect, where an uploaded file name escapes the upload directory; the rule covers read, write, and delete alike"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::caller_supplied_keys_cannot_escape_the_storage_root"
+      },
+      "remaining_uncertainty": "none beyond the read-side entry",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0097",
+      "title": "Denial of Service (DoS)",
+      "page_text_sha256": "e51a5d72975cc15ec1f149ca1800f69ede989ec3e7cacf64598757ae0c57a9bc",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-resource-limits",
+        "async-spawn-blocking"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit describes denial of service through resource exhaustion and notes that blocking the async event loop lets a small number of requests stall a service; the rule adds explicit byte, deadline, and concurrency ceilings"
+      },
+      "rationale_class": "production-scalability",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::oversized_bodies_are_rejected_without_buffering_the_whole_input"
+      },
+      "remaining_uncertainty": "the rule does not prescribe values; limits are per-route capacity decisions",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0170",
+      "title": "Authenticated encryption (AEAD)",
+      "page_text_sha256": "9863f460d92640c6678d8fb4b3ba636d9cf46473d1d155b9ddd93a6927fe0ec6",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-crypto-primitives"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit introduces authenticated encryption as the construction that removes block-cipher and MAC composition footguns; the rule requires an AEAD"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::secret_comparison_examines_every_byte_regardless_of_where_it_differs"
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0176",
+      "title": "Common problems and pitfalls with cryptography",
+      "page_text_sha256": "076519c17468844641584a249ae9177c0623aeeb68dd8452715adafc7e737a1f",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-crypto-primitives"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit states that key management is hard, that AEAD should be preferred, that primitives should not be implemented locally, and that side channels and non-constant-time code defeat correctness testing; the rule states the same contract"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::secret_comparison_examines_every_byte_regardless_of_where_it_differs"
+      },
+      "remaining_uncertainty": "constant-time behaviour cannot be proven by a portable test; the assertion covers the comparison contract, not the generated code",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0178",
+      "title": "The Rust cryptography ecosystem",
+      "page_text_sha256": "59460ee023734720ad3c4736528e8bf5b32bdf3c06ef6225df72acd581653a17",
+      "disposition": "project-specific",
+      "audit_disposition": "project-specific",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "the unit is a 2021 survey of Rust cryptography crates; crate-by-crate recommendations age out and are not a durable coding contract for this library"
+      },
+      "rationale_class": "obsolescence",
+      "executable_check": {
+        "applicability": "documentation-only",
+        "assertion_id": null
+      },
+      "remaining_uncertainty": "if a future rule names specific crates, it must be re-derived from current advisories rather than this survey",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0205",
+      "title": "Vendoring dependencies",
+      "page_text_sha256": "f877fd279b4044b435a42e8131da775bca23e6ea37da933149285fcbec5e4f59",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-dependency-policy"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit gives the reasons to vendor dependencies (offline builds, privacy, reviewable update diffs) and the repository-size cost, with a private registry as the alternative; the rule states the same trade-off"
+      },
+      "rationale_class": "production-scalability",
+      "executable_check": {
+        "applicability": "documentation-only",
+        "assertion_id": null
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0111",
+      "title": "Automated audits",
+      "page_text_sha256": "7097be2a62c225fa44358d4dc2098d89c90f7007719de9e577d48f1d6fba5412",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-dependency-policy",
+        "lint-static-verification"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit covers automated auditing of a dependency tree, including advisory scanning; the rules place that in the CI gate and in the admission policy"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "documentation-only",
+        "assertion_id": null
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "command-line-rust:0016",
+      "title": "Writing and Running Integration Tests",
+      "page_text_sha256": "9689fee4501595c6a3a4c17448e441e82027e40bf83e4b3820e9e153fed8f85f",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-cli-contract",
+        "test-cli-blackbox"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit establishes POSIX exit status (0 success, non-zero failure) and black-box testing of the built binary; the rules add stream routing, broken-pipe handling, and the stdin conventions"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::cli_output_stops_cleanly_on_a_closed_pipe_and_failures_reach_the_exit_status"
+      },
+      "remaining_uncertainty": "the rules describe the pattern with std process APIs; the unit uses assert_cmd, which is named in the rule text but not depended on",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "command-line-rust:0035",
+      "title": "How cat Works",
+      "page_text_sha256": "ea34b5969b0301bc2e2a3d9218a19fb75ef12e7cff608519211424dc9a16c9a6",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-cli-contract"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit documents the convention that a file argument of - means standard input, and that absent arguments read stdin; the rule states it as contract"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::cli_output_stops_cleanly_on_a_closed_pipe_and_failures_reach_the_exit_status"
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "command-line-rust:0172",
+      "title": "Notes from the Testing Underground",
+      "page_text_sha256": "1ddb91dccdb89a595e7f80a1912896518b00806034456771b112b8294f3c2689",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "test-cli-blackbox"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit collects the testing practices used across the book's programs, including golden output and temporary directories; the rule states them as a contract"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::cli_output_stops_cleanly_on_a_closed_pipe_and_failures_reach_the_exit_status"
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0004",
+      "title": "Borrowing and Lifetimes",
+      "page_text_sha256": "2bc03041a38ff3156e8b8450e3885d0de8c4d3094255e17eb88ff2424d7be2a0",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-variance"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit derives variance from subtyping, shows that &mut T is invariant in T, and shows the two-lifetime remedy for a struct holding &'a mut &'b str; the rule states that contract"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::separate_lifetimes_keep_a_mutable_field_usable_after_the_borrow_ends"
+      },
+      "remaining_uncertainty": "the PhantomData guidance in the rule is stated more briefly than the unit's later treatment of pointer types",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0025",
+      "title": "Conditional Compilation",
+      "page_text_sha256": "c5647af133a7f04d66bdebee37deb8628199cb93daea60728a6cc06d044f3dd6",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-dependency-policy"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit recommends auditing dependencies with cargo-deny and cargo-audit for advisories, duplicate major versions, unmaintained crates, and license policy; the rule states the same admission and audit policy"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "documentation-only",
+        "assertion_id": null
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0026",
+      "title": "Versioning",
+      "page_text_sha256": "5f362db863523280f080fa83359f275dc4592dee28292422e1fc0c48911b3616",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-semver-contract"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit covers Cargo semantic versioning, the MSRV minor-bump technique, minimal dependency versions, changelogs, and prerelease versioning between releases; the rule states each as contract"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "documentation-only",
+        "assertion_id": null
+      },
+      "remaining_uncertainty": "minimal-version resolution remains an unstable Cargo flag, so the rule's verification step depends on nightly",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0030",
+      "title": "Additional Testing Tools",
+      "page_text_sha256": "09f49356ebe76d76b19bbd33c41985fcb446bf912d2c6c7414db4b2e96b7a068",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "test-fuzz-target",
+        "test-sanitizers",
+        "test-proptest-properties",
+        "unsafe-miri-ci",
+        "test-loom-concurrency",
+        "test-criterion-bench"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit covers fuzzing, property testing, Miri, Loom, and benchmark variance; the mapped rules state each, with fuzzing and sanitizers newly added"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::the_fuzz_property_holds_over_the_seed_corpus_and_past_crashers"
+      },
+      "remaining_uncertainty": "the unit is an early-access edition; tool names were re-checked against current releases before the rules were written",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0046",
+      "title": "Coping with Fear",
+      "page_text_sha256": "ef13e548b5bafa57ce593d9d8a86240a92a4974e9b568bd360d2b38b862ca2d8",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "test-sanitizers",
+        "unsafe-miri-ci"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit requires running unsafe code through Miri and sanitizers in CI, notes that both only observe executed paths, and asks for assertions in unsafe code; the rules state the same"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "documentation-only",
+        "assertion_id": null
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0053",
+      "title": "Sane Concurrency",
+      "page_text_sha256": "a9a66f9fc520323fb4d7bf0ee086fe377d8bc37d055dce001cdf20b8565d86fe",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "test-sanitizers",
+        "test-loom-concurrency"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit covers ThreadSanitizer for larger concurrent tests, its constant-factor overhead, and its nightly -Zsanitizer=thread requirement; the rule states it"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "documentation-only",
+        "assertion_id": null
+      },
+      "remaining_uncertainty": "sanitizer availability is target-specific, which the rule notes but cannot enumerate",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "zero-to-production-in-rust:0114",
+      "title": "Protect Your Secrets - secrecy",
+      "page_text_sha256": "3354b3b48a63b4d8d5086bbe20b8cd01ade486a331cc22b7c26d329ee250c298",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-secret-material"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit introduces a secret wrapper because instrumentation captures arguments by default, and identifies the masked Debug implementation as the key property, with wiping as a nice-to-have; the rule states that contract"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::secrets_are_redacted_in_debug_output_of_enclosing_types"
+      },
+      "remaining_uncertainty": "the rule shows a local wrapper so the example compiles without the crate; production use should take the maintained crate",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0211",
+      "title": "9.2 Sources of time",
+      "page_text_sha256": "37963d88b9b9ea884ea5371b746a4dce2a1dc3b098888dd6e7dfd1eceda43897",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-time-domain"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit distinguishes the sources of time available to a process, including the real-time clock and the operating system's system clock"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::elapsed_time_comes_from_the_monotonic_clock"
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0212",
+      "title": "9.3 Definitions",
+      "page_text_sha256": "37963d88b9b9ea884ea5371b746a4dce2a1dc3b098888dd6e7dfd1eceda43897",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-time-domain"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit defines absolute time, the system clock and its jumps, monotonicity, and steady clocks with equal-length seconds suited to measuring durations; the rule states which clock each use requires"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::elapsed_time_comes_from_the_monotonic_clock"
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0221",
+      "title": "9.7 clock v0.1.2: Setting the time",
+      "page_text_sha256": "2ce0c24bab7dc5c009f288ee7dadc9670c06bbc7c7ceed386c95f8e4b452bd20",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-time-domain"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit warns that setting the system clock makes it jump and can destabilize applications that expect monotonically increasing time; the rule turns that into a type-level split between measurement and timestamps"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::elapsed_time_comes_from_the_monotonic_clock"
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0227",
+      "title": "9.9 clock v0.1.3: Resolving differences between clocks with the Network Time Protocol (NTP)",
+      "page_text_sha256": "aa3268211125981cc2742e42d2587b869884c389e4c47a02c37a52ee7c777cfc",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-time-domain"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "the unit builds an NTP client that adjusts the local clock toward server time, which is the mechanism that makes wall-clock differences unreliable for measurement"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::elapsed_time_comes_from_the_monotonic_clock"
+      },
+      "remaining_uncertainty": "none",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    }
+  ]
+}

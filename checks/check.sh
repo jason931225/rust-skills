@@ -84,6 +84,9 @@ cargo test --test source_guidance
 echo "==> language-guidance behavior checks"
 cargo test --test language_guidance
 
+echo "==> corpus-guidance behavior checks"
+cargo test --test pdf_corpus_guidance
+
 echo "==> generating example files from rules"
 python3 gen.py
 

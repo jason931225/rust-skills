@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 345 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 358 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -23,12 +23,17 @@ metadata:
     - ripgrep, tokio, serde, polars, axum, cargo codebases
     - Microsoft Pragmatic Rust Guidelines
     - Zero To Production In Rust
+    - Rust for Rustaceans
+    - Rust in Action
+    - Black Hat Rust (defensive guidance only)
+    - Command-Line Rust
+    - Fullstack Rust
 ---
 
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 345 rules across 27 categories, prioritized by impact for use by
+Contains 358 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -53,12 +58,12 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 16 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 10 |
-| 5 | API Design | HIGH | `api-` | 35 |
+| 5 | API Design | HIGH | `api-` | 39 |
 | 6 | Async/Await | HIGH | `async-` | 25 |
 | 7 | Concurrency | HIGH | `conc-` | 6 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 14 |
+| 10 | Type Safety | MEDIUM | `type-` | 17 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -68,11 +73,11 @@ Reference these guidelines when:
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 18 |
-| 20 | Testing | MEDIUM | `test-` | 19 |
+| 20 | Testing | MEDIUM | `test-` | 22 |
 | 21 | Documentation | MEDIUM | `doc-` | 16 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
-| 24 | Project Structure | LOW | `proj-` | 27 |
+| 24 | Project Structure | LOW | `proj-` | 30 |
 | 25 | FFI & Interop | LOW | `ffi-` | 5 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -186,6 +191,10 @@ Reference these guidelines when:
 - [`api-browser-security`](rules/api-browser-security.md) - Escape untrusted output, protect state-changing browser requests from CSRF, and authenticate redirect state
 - [`api-password-reset`](rules/api-password-reset.md) - Make password change and recovery single-use, time-bounded, rate-limited security workflows
 - [`api-tls-required`](rules/api-tls-required.md) - Require authenticated TLS for production network hops and never silently downgrade certificate validation
+- [`api-crypto-primitives`](rules/api-crypto-primitives.md) - Use vetted authenticated primitives and compare secrets in constant time; never implement your own
+- [`api-outbound-target`](rules/api-outbound-target.md) - Resolve and authorize every caller-influenced outbound request target before connecting
+- [`api-path-containment`](rules/api-path-containment.md) - Resolve caller-supplied path components against a fixed root and reject anything that escapes it
+- [`api-resource-limits`](rules/api-resource-limits.md) - Give every request an explicit ceiling on bytes, time, and concurrency, and reject past it
 
 ### 6. Async/Await (HIGH)
 
@@ -264,6 +273,9 @@ Reference these guidelines when:
 - [`type-display-vs-debug`](rules/type-display-vs-debug.md) - Use `Display` for user-facing output and `Debug` for diagnostics; never swap them
 - [`type-numeric-fmt`](rules/type-numeric-fmt.md) - Implement `LowerHex`, `UpperHex`, `Octal`, and `Binary` for numeric newtypes
 - [`type-unicode-length`](rules/type-unicode-length.md) - Define whether text limits count bytes, scalar values, or grapheme clusters
+- [`type-secret-material`](rules/type-secret-material.md) - Carry credentials in a wrapper type that redacts its `Debug`, withholds `Display`, and wipes on drop
+- [`type-time-domain`](rules/type-time-domain.md) - Measure elapsed time with `Instant`; use `SystemTime` only for timestamps that leave the process
+- [`type-variance`](rules/type-variance.md) - Keep generic types covariant where you can; reach for an extra lifetime parameter before accepting invariance
 
 ### 11. Trait & Generics Design (MEDIUM)
 
@@ -380,6 +392,9 @@ Reference these guidelines when:
 - [`test-util-feature`](rules/test-util-feature.md) - Put safe testing utilities behind an additive feature; never use a feature to weaken a production invariant
 - [`test-observable-coverage`](rules/test-observable-coverage.md) - Cover observable behavior and failure modes so refactors can proceed without implementation-shaped tests
 - [`test-http-blackbox`](rules/test-http-blackbox.md) - Test HTTP behavior through the production router and a real ephemeral listener
+- [`test-cli-blackbox`](rules/test-cli-blackbox.md) - Test a command-line program by running the built binary and asserting on exit status, stdout, and stderr
+- [`test-fuzz-target`](rules/test-fuzz-target.md) - Fuzz every parser and decoder that touches untrusted bytes, and keep crashers as regression tests
+- [`test-sanitizers`](rules/test-sanitizers.md) - Run the tests that exercise unsafe, FFI, or concurrency under sanitizers in CI, and treat a report as a bug
 
 ### 21. Documentation (MEDIUM)
 
@@ -460,6 +475,9 @@ Reference these guidelines when:
 - [`proj-stable-toolchain`](rules/proj-stable-toolchain.md) - Build and run production applications on a pinned stable toolchain and test upgrades continuously
 - [`proj-stateless-process`](rules/proj-stateless-process.md) - Keep durable application state outside individual service processes
 - [`proj-cfg-select`](rules/proj-cfg-select.md) - Use `cfg_select!` for one-of-many conditional items or expressions
+- [`proj-cli-contract`](rules/proj-cli-contract.md) - Exit 0 only on success, send results to stdout and diagnostics to stderr, and read `-` as standard input
+- [`proj-dependency-policy`](rules/proj-dependency-policy.md) - Admit dependencies deliberately, commit the lockfile for anything you ship, and audit the tree continuously
+- [`proj-semver-contract`](rules/proj-semver-contract.md) - Version by what breaks callers, depend on the earliest version you actually need, and keep a written changelog
 
 ### 25. FFI & Interop (LOW)
 

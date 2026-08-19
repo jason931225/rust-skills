@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-345-blue)
+![rules](https://img.shields.io/badge/rules-358-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-345 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+358 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,7 +66,7 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-345 rules split into 27 categories:
+358 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
@@ -74,12 +74,12 @@ fn first_word(s: &str) -> Option<&str> {
 | **Error Handling** | 16 | thiserror for libs, anyhow for apps, the `?` operator |
 | **Memory** | 18 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
 | **Unsafe Code** | 10 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
-| **API Design** | 35 | Builder pattern, newtypes, sealed traits, `FromIterator` |
+| **API Design** | 39 | Builder pattern, newtypes, sealed traits, `FromIterator` |
 | **Async** | 25 | Tokio patterns, channels, async fn in traits, cancel safety |
 | **Concurrency** | 6 | rayon, scoped threads, atomic ordering, thread-locals |
 | **Optimization** | 12 | LTO, inlining, PGO, SIMD |
 | **Numeric & Arithmetic** | 6 | Overflow handling, `as` vs `TryFrom`, float compare, `NonZero` |
-| **Type Safety** | 14 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
+| **Type Safety** | 17 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
 | **Trait & Generics Design** | 7 | dyn vs generic, associated types, blanket impls, object safety, orphan rule |
 | **Conversions** | 3 | `TryFrom`, `FromStr`, `AsMut` |
 | **Const & Compile-Time** | 5 | `const fn`, const vs static, const generics, `const {}` blocks |
@@ -89,11 +89,11 @@ fn first_word(s: &str) -> Option<&str> {
 | **Closures** | 5 | Fn/FnMut/FnOnce bounds, returning `impl Fn`, move & disjoint capture |
 | **Collections** | 4 | HashMap/BTreeMap/IndexMap, Vec/VecDeque, sets, `BinaryHeap` |
 | **Naming** | 18 | Following Rust API Guidelines |
-| **Testing** | 19 | Proptest, mockall, criterion, loom, snapshot tests |
+| **Testing** | 22 | Proptest, mockall, criterion, loom, snapshot tests |
 | **Docs** | 16 | Doc examples, intra-doc links, README/crate-doc unification |
 | **Observability** | 10 | tracing over log, spans, structured fields, redacting secrets |
 | **Performance** | 15 | Iterators, entry API, faster hashers, I/O buffering |
-| **Project Structure** | 27 | Workspaces, module layout, features, MSRV |
+| **Project Structure** | 30 | Workspaces, module layout, features, MSRV |
 | **FFI & Interop** | 5 | ABI boundaries, native handles, `-sys` crates, dynamic libraries |
 | **Linting** | 16 | Clippy config, CI setup, `unexpected_cfgs` |
 | **Anti-patterns** | 16 | Common mistakes and how to fix them |
@@ -261,6 +261,17 @@ These rules are an independent synthesis of official Rust guidance, well-known b
 - [Effective Rust](https://effective-rust.com/) — David Drysdale
 - [Zero To Production In Rust](https://www.zero2prod.com/) — Luca Palmieri (audited PDF revision created 2022-03-15)
 - [Microsoft Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guidelines/) v2026.6 — Microsoft ([MIT](https://github.com/microsoft/rust-guidelines/blob/main/LICENSE.md))
+- [Rust for Rustaceans](https://nostarch.com/rust-rustaceans) — Jon Gjengset
+- [Rust in Action](https://www.manning.com/books/rust-in-action) — Tim McNamara
+- [Black Hat Rust](https://kerkour.com/black-hat-rust) — Sylvain Kerkour (offensive material is carried over only as defensive guidance)
+- [Command-Line Rust](https://www.oreilly.com/library/view/command-line-rust/9781098109424/) — Ken Youens-Clark
+- [Fullstack Rust](https://www.newline.co/fullstack-rust) — Andrew Weiss
+- [Lets Get Rusty cheat sheet](https://letsgetrusty.com/) — Bogdan Pshonyak
+- [Rust container cheat sheet](https://docs.google.com/presentation/d/1q-c7UAyrUlM-eZyTo1pd8SZ0qwA_wYxmPZVOQkoDmH4/edit) — Raph Levien (CC BY)
+
+Each of the eight PDF sources above is pinned by SHA-256 in
+[`checks/pdf_corpus_coverage.json`](./checks/pdf_corpus_coverage.json); the
+binaries themselves are purchased and are not redistributed here.
 
 **Tooling**
 - [Clippy lint documentation](https://rust-lang.github.io/rust-clippy/)
@@ -269,7 +280,7 @@ These rules are an independent synthesis of official Rust guidance, well-known b
 **Real-world codebases studied for idioms**
 - ripgrep, tokio, serde, clap, polars, axum, cargo, hyper, bevy, rayon, and dtolnay's crates (thiserror, anyhow, syn)
 
-This project is MIT-licensed. Referenced upstream materials remain under their own licenses and copyrights — the official Rust documentation and API Guidelines are dual [MIT](https://github.com/rust-lang/rust/blob/master/LICENSE-MIT) / [Apache-2.0](https://github.com/rust-lang/rust/blob/master/LICENSE-APACHE), the Microsoft Pragmatic Rust Guidelines are MIT-licensed, and *Zero To Production In Rust* remains copyright Luca Palmieri.
+This project is MIT-licensed. Referenced upstream materials remain under their own licenses and copyrights — the official Rust documentation and API Guidelines are dual [MIT](https://github.com/rust-lang/rust/blob/master/LICENSE-MIT) / [Apache-2.0](https://github.com/rust-lang/rust/blob/master/LICENSE-APACHE), the Microsoft Pragmatic Rust Guidelines are MIT-licensed, and the purchased books above — including *Zero To Production In Rust* and *Rust for Rustaceans* — remain the copyright of their respective authors and publishers. No substantial text from any of them is reproduced in this repository.
 
 ## Contributing
 
