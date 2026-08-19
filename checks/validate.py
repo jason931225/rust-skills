@@ -129,9 +129,9 @@ for name in sorted(rule_names):
 
 # Source-coverage manifests.
 ZERO2PROD_COVERAGE = HERE / "zero2production_coverage.json"
-EXPECTED_ZERO2PROD_TOC_DIGEST = "bd500a774e3fa5a2d97adb2d6d8c167b201fe76ca33917bda1037e5fd9402d0f"
-EXPECTED_ZERO2PROD_EXTRACT_DIGEST = "8a6efbac878df8c1b397e35aeda5d30b44b733c5458f03fc67b3d7ad45b8ef26"
-EXPECTED_ZERO2PROD_SOURCE_SHA256 = "5de8b3ef43e1175f18579130c9bef9ef492f63c527deb5ac65a9a1bb6320f75e"
+EXPECTED_ZERO2PROD_TOC_DIGEST = "66caa6e24248c2491dc94ecc2381c8c98d2b47e2891925f2f0bbc41bc30dddba"
+EXPECTED_ZERO2PROD_SOURCE_SHA256 = "f122f6e8f68ecdbf8bd5f5b9f06506e73822a993bc71194530894a3c168cf47b"
+SUPERSEDED_ZERO2PROD_SHA256 = "5de8b3ef43e1175f18579130c9bef9ef492f63c527deb5ac65a9a1bb6320f75e"
 allowed_book_audit_dispositions = {
     "covered",
     "partial",
@@ -178,7 +178,7 @@ if book_coverage is not None:
     physical_pages = book_coverage.get("source", {}).get("physical_pages")
     declared_summary = book_coverage.get("summary")
     audit_status = book_coverage.get("audit_status", {})
-    extract_entries = book_coverage.get("extraction", {}).get("chapter_extracts", [])
+    rebinding = book_coverage.get("rebinding", {})
     continuation_pages = book_coverage.get("extraction", {}).get(
         "unlisted_continuation_pages"
     )
@@ -188,12 +188,6 @@ if book_coverage is not None:
         for unit in units
     ]
     toc_digest = hashlib.sha256("\n".join(toc_lines).encode()).hexdigest()
-    extract_lines = [
-        f"{item.get('name')}:{item.get('sha256')}"
-        for item in extract_entries
-        if isinstance(item, dict)
-    ]
-    extract_digest = hashlib.sha256("\n".join(sorted(extract_lines)).encode()).hexdigest()
     if expected_units != 431 or len(units) != 431:
         err(f"{ZERO2PROD_COVERAGE.name}: expected exactly 431 TOC units")
     if source_sha256 != EXPECTED_ZERO2PROD_SOURCE_SHA256:
@@ -204,12 +198,24 @@ if book_coverage is not None:
         err(f"{ZERO2PROD_COVERAGE.name}: duplicate section dispositions")
     if toc_digest != EXPECTED_ZERO2PROD_TOC_DIGEST or source_toc_digest != toc_digest:
         err(f"{ZERO2PROD_COVERAGE.name}: TOC inventory differs from reviewed source")
-    if len(extract_entries) != 11 or extract_digest != EXPECTED_ZERO2PROD_EXTRACT_DIGEST:
-        err(f"{ZERO2PROD_COVERAGE.name}: chapter extraction evidence differs from source audit")
-    if continuation_pages != [272, 390]:
+    # The ledger was written against a superseded binary and re-anchored to the
+    # authoritative one by page-text identity. That claim is only meaningful if
+    # every placed row was matched, with no ambiguity and no unmatched rows.
+    placed_rows = sum(1 for unit in units if isinstance(unit, dict) and unit.get("page"))
+    if (
+        rebinding.get("authoritative_sha256") != EXPECTED_ZERO2PROD_SOURCE_SHA256
+        or rebinding.get("superseded_sha256") != SUPERSEDED_ZERO2PROD_SHA256
+        or rebinding.get("rows_ambiguous") != 0
+        or rebinding.get("rows_unmatched") != 0
+        or rebinding.get("rows_matched") != placed_rows
+        or rebinding.get("rows_with_page") != placed_rows
+        or not isinstance(rebinding.get("page_offset"), int)
+    ):
+        err(f"{ZERO2PROD_COVERAGE.name}: rebinding evidence does not account for every placed row")
+    if continuation_pages != [273, 391]:
         err(f"{ZERO2PROD_COVERAGE.name}: unlisted continuation pages are not accounted for")
-    if audit_status.get("semantic_status") != "blocked-source-reread":
-        err(f"{ZERO2PROD_COVERAGE.name}: semantic source-reread status is not explicit")
+    if audit_status.get("semantic_status") != "source-rebound":
+        err(f"{ZERO2PROD_COVERAGE.name}: semantic source status is not explicit")
     if not audit_status.get("reason") or not audit_status.get("required_evidence"):
         err(f"{ZERO2PROD_COVERAGE.name}: semantic source-reread evidence is incomplete")
     actual_summary = {

@@ -56,6 +56,13 @@ semantic versioning for the rule set.
   behavior those tools and constructs can establish.
 
 ### Fixed
+- The *Zero To Production In Rust* ledger was bound to a superseded PDF and
+  stuck at `blocked-source-reread`. It is now re-anchored to the authoritative
+  binary by page-text identity — 429 of 429 placed rows matched exactly one
+  page, uniform offset +1, none ambiguous or unmatched — so its dispositions
+  rest on the bytes they were written against. `checks/rebind_zero2production.py`
+  reproduces and re-verifies that binding; validation rejects any rebinding
+  claim that does not account for every placed row.
 - Corrected the non-`Copy` `Email(String)` newtype example, parent-subtree
   visibility guidance for `pub(super)` and `pub(crate)`, and the CI push branch.
 - `async-cancellation-token` waited only on `ctrl_c()`, so a service following
