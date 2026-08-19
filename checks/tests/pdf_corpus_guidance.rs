@@ -74,11 +74,14 @@ fn is_public(address: IpAddr) -> bool {
             || v4.is_link_local()
             || v4.is_broadcast()
             || v4.is_documentation()
+            || v4.is_multicast()
             || v4.is_unspecified()
             || v4.octets()[0] == 0
-            || (v4.octets()[0] == 100 && (64..128).contains(&v4.octets()[1]))),
+            || (v4.octets()[0] == 100 && (64..128).contains(&v4.octets()[1]))
+            || v4.octets()[0] >= 240),
         IpAddr::V6(v6) => !(v6.is_loopback()
             || v6.is_unspecified()
+            || v6.is_multicast()
             || (v6.segments()[0] & 0xfe00) == 0xfc00
             || (v6.segments()[0] & 0xffc0) == 0xfe80),
     }
@@ -121,6 +124,10 @@ fn outbound_targets_are_authorized_by_scheme_host_and_resolved_address() {
         IpAddr::V4(Ipv4Addr::new(100, 64, 0, 1)),
         IpAddr::V6(Ipv6Addr::LOCALHOST),
         IpAddr::V6(Ipv6Addr::new(0xfd00, 0, 0, 0, 0, 0, 0, 1)),
+        IpAddr::V4(Ipv4Addr::new(224, 0, 0, 1)),
+        IpAddr::V4(Ipv4Addr::new(240, 0, 0, 1)),
+        IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
+        IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 1)),
     ] {
         assert_eq!(
             authorize_hop("https", "api.partner.example", &allowed, &[hostile]),
