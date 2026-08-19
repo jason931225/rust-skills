@@ -1609,6 +1609,116 @@ def validate_pdf_corpus():
 
 validate_pdf_corpus()
 
+
+# --- rule provenance ---------------------------------------------------------
+#
+# Every rule is either named by a source-coverage ledger, or carries a typed
+# justification saying where its contract comes from. A rule added without
+# either fails here, so the library cannot silently accumulate guidance of
+# unknown origin.
+
+RULE_PROVENANCE = HERE / "rule_provenance.json"
+RULE_PROVENANCE_REVIEW = HERE / "rule_provenance_review.json"
+allowed_provenance_classes = {
+    "rust-api-guidelines",
+    "rust-reference",
+    "rustonomicon",
+    "std-docs",
+    "cargo-book",
+    "rust-performance-book",
+    "clippy-docs",
+    "crate-docs",
+    "edition-guide",
+    "synthesized-practice",
+}
+COVERAGE_LEDGER_NAMES = [
+    "microsoft_guidelines_coverage.json",
+    "zero2production_coverage.json",
+    "rust_release_coverage.json",
+    "microsoft_training_coverage.json",
+    "pdf_corpus_coverage.json",
+]
+# A justification names documents, APIs, lints, and crates. A locator — a URL,
+# a section number, a page — is something a reviewer cannot verify from the
+# text and an agent can invent, so it is rejected outright.
+fabricated_locator_re = re.compile(
+    r"https?://|www\.|§|\bpage\s+\d|\bp\.\s*\d|\bchapter\s+\d|\bsection\s+\d+(\.\d+)*\b",
+    re.IGNORECASE,
+)
+
+
+def validate_rule_provenance():
+    try:
+        provenance = json.loads(RULE_PROVENANCE.read_text(encoding="utf-8"))
+        review = json.loads(RULE_PROVENANCE_REVIEW.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        err(f"{RULE_PROVENANCE.name}: cannot read provenance ledger: {exc}")
+        return
+
+    name = RULE_PROVENANCE.name
+    if provenance.get("schema_version") != 1:
+        err(f"{name}: expected schema version 1")
+
+    known = {p.stem for p in RULES.glob("*.md")}
+    entries = provenance.get("entries", [])
+    listed = [entry.get("rule_id") for entry in entries]
+    if sorted(listed) != sorted(known):
+        missing = sorted(known - set(listed))
+        extra = sorted(set(listed) - known)
+        err(f"{name}: provenance does not cover the rule set (missing {missing}, unknown {extra})")
+    if len(listed) != len(set(listed)):
+        err(f"{name}: a rule appears more than once")
+
+    # Recompute which rules the coverage ledgers name, so a stale mapping fails.
+    mapped = {}
+    for ledger_name in COVERAGE_LEDGER_NAMES:
+        path = HERE / ledger_name
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        found = set(re.findall(r'"([a-z]+-[a-z0-9-]+)\.md"', text))
+        found |= set(re.findall(r'"rules/([a-z0-9-]+)\.md"', text))
+        found |= {m for m in re.findall(r'"([a-z]+-[a-z0-9-]+)"', text) if m in known}
+        for rule in found & known:
+            mapped.setdefault(rule, []).append(ledger_name)
+
+    reviewed = {entry.get("rule_id"): entry for entry in review.get("entries", [])}
+    for entry in entries:
+        rule = entry.get("rule_id")
+        kind = entry.get("provenance")
+        if kind == "ledger-mapped":
+            if rule not in mapped:
+                err(f"{name}: {rule} claims a ledger mapping that no ledger makes")
+            elif sorted(entry.get("ledgers", [])) != sorted(mapped[rule]):
+                err(f"{name}: {rule} lists the wrong ledgers")
+        elif kind == "typed-justification":
+            if rule in mapped:
+                err(f"{name}: {rule} is ledger-mapped and must not carry a written justification")
+            if entry.get("source_class") not in allowed_provenance_classes:
+                err(f"{name}: {rule} has an invalid source class")
+            justification = entry.get("justification", "")
+            if not isinstance(justification, str) or len(justification.strip()) < 20:
+                err(f"{name}: {rule} has no usable justification")
+            elif fabricated_locator_re.search(justification):
+                err(
+                    f"{name}: {rule} cites a locator (URL, page, or section) that cannot be "
+                    "verified from the text; name the document instead"
+                )
+            if not str(entry.get("reviewer", "")).strip():
+                err(f"{name}: {rule} has no named reviewer")
+            if rule not in reviewed:
+                err(f"{name}: {rule} has a justification with no review entry")
+        else:
+            err(f"{name}: {rule} has an unknown provenance kind {kind!r}")
+
+    if provenance.get("ledger_mapped") != len(mapped):
+        err(f"{name}: declared ledger-mapped count differs from the ledgers")
+    if provenance.get("rule_count") != len(known):
+        err(f"{name}: declared rule count differs from rules/")
+
+
+validate_rule_provenance()
+
 if errors:
     print(f"VALIDATION FAILED ({len(errors)} problem(s)):\n")
     for e in errors:

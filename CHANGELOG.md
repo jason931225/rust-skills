@@ -7,6 +7,12 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `checks/rule_provenance.json` records where every rule comes from: 235 are
+  named by a source-coverage ledger, and the other 145 now carry a typed source
+  class and a one-sentence justification. `validate.py` fails if a rule has
+  neither, so the library can no longer accumulate guidance of unknown origin,
+  and it rejects any justification carrying a URL, page, section, or version
+  locator — the shape a fabricated citation takes.
 - Six rules completing the confirmed-gap queue from the corpus survey:
   `api-datagram-trust`, `type-time-sample-once`, `unsafe-volatile-mmio`,
   `type-case-insensitive-match`, `test-env-independent`, and

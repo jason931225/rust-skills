@@ -184,6 +184,38 @@ must either name mapped rules or record `out-of-scope`, which maps none.
 No substantial text from any purchased source is stored here. The ledger holds
 digests, titles, page numbers, and dispositions; the rules are original prose.
 
+## Rule provenance
+
+`rule_provenance.json` answers, for every rule in `rules/`, where its contract
+came from. A rule is either **ledger-mapped** — one of the source-coverage
+ledgers names it, so its origin is already evidence-bound — or it carries a
+**typed justification**: a source class and one sentence saying what in that
+source it derives from.
+
+```bash
+python3 checks/build_rule_provenance.py
+```
+
+The generator recomputes the ledger mapping from the coverage files on every
+run and merges the reviewed justifications in `rule_provenance_review.json`.
+It refuses a justification for a rule the ledgers already cover, and refuses to
+write at all if any rule has neither.
+
+`validate.py` re-derives the same mapping rather than trusting the file, and
+requires every rule to appear exactly once. It also rejects any justification
+containing a **URL, page, section, or version locator**. Naming a document, an
+API, a lint, or a crate is checkable by a reader; a locator is not, and it is
+the shape a fabricated citation takes — the classification pass that produced
+this ledger did assert one stabilization version and one section number that
+had to be removed.
+
+Current split: 235 ledger-mapped, 145 justified — `std-docs` 33, `crate-docs`
+27, `rust-reference` 26, `rust-api-guidelines` 21, `synthesized-practice` 14,
+`rust-performance-book` 9, `clippy-docs` 6, `cargo-book` 4, `rustonomicon` 3,
+`edition-guide` 2. `synthesized-practice` is the honest answer for a rule with
+no single upstream document; it is also where uncertainty hides, so it is worth
+re-reading when it grows.
+
 ## Updating the baseline
 
 `baseline.txt` lists the currently accepted suspects (fragments/pseudocode the
