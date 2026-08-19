@@ -111,9 +111,9 @@
     }
   ],
   "summary": {
-    "covered": 32,
+    "covered": 36,
     "project-specific": 1,
-    "unreviewed": 1292
+    "unreviewed": 1288
   },
   "units": [
     {
@@ -9029,11 +9029,12 @@
       "audit_disposition": "covered",
       "disposition": "covered",
       "mapped_rule_ids": [
-        "err-short-read"
+        "err-short-read",
+        "type-text-decode-policy"
       ],
       "exact_difference": {
-        "kind": "no-difference",
-        "detail": "the unit reads a fixed number of bytes from a file and shows that the count returned is what bounds the valid contents; the rule states the contract for both the exact and short-read cases"
+        "kind": "rule-extends-source",
+        "detail": "the unit reads a fixed number of bytes from a file and converts them lossily when they may not be valid UTF-8; err-short-read states the contract for the returned count, and type-text-decode-policy makes the strict-versus-lossy choice explicit and requires the substitution to be visible to the caller"
       },
       "rationale_class": "source-aligned",
       "supporting_evidence": [
@@ -9044,7 +9045,7 @@
         "applicability": "behavior-assertion",
         "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_short_read_is_reported_rather_than_padding_the_buffer"
       },
-      "remaining_uncertainty": "the rule also covers the write side, which the unit does not discuss",
+      "remaining_uncertainty": "one entry carries two rules: the assertion named here covers the short-read half, and strict_and_lossy_decoding_are_distinguishable_choices covers the decode half",
       "semantic_review": {
         "status": "reviewed",
         "reviewer": "Jason Lee <jason931225@gmail.com>",
@@ -9957,26 +9958,29 @@
       "page": 253,
       "page_text_sha256": "2d0583b158ea67927f8ca10ff5f86711a4b53eece5ed2459daa61e954cb2c2bf",
       "claim": "Solution (depth 1 at Command-Line Rust.pdf page 253)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-dir-enumeration"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit walks directories and handles each entry's Result individually, printing failures to stderr and continuing; the rule adds the ordering, symlink, and bounding requirements"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec",
         "page-text-sha256:2d0583b158ea67927f8ca10ff5f86711a4b53eece5ed2459daa61e954cb2c2bf"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_directory_listing_is_sorted_and_survives_a_bad_entry"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the unit uses a walker crate; the rule states the contract with std so it holds for either",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec"
       }
     },
@@ -11333,26 +11337,29 @@
       "page": 403,
       "page_text_sha256": "d1e6993aefb6fbdeaacf50cd0152e6a7b9d90d8140f5fbbcecd9d467675815f9",
       "claim": "Processing the Files (depth 2 at Command-Line Rust.pdf page 403)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "perf-hoist-loop-invariant"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit lifts a compiled pattern out of the per-line loop into a lazily initialized static; the rule states that as a contract with the buffer and immutability caveats"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec",
         "page-text-sha256:d1e6993aefb6fbdeaacf50cd0152e6a7b9d90d8140f5fbbcecd9d467675815f9"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "documentation-only",
+        "assertion_id": null
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "no runtime assertion: the property is a cost, not an observable behavior, and perf-profile-first governs how to confirm it",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec"
       }
     },
@@ -25282,26 +25289,29 @@
       "page": 339,
       "page_text_sha256": "c68dad75e16f30f308b3d9b31a20f0565fdb584371056d4a7cd71afc55a96a4e",
       "claim": "9.8 Improving error handling (depth 2 at Rust in Action.pdf page 339)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "ffi-status-to-result"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit checks the status returned by a system call and converts failure through the OS error state into a Rust error; the rule states that boundary contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:c68dad75e16f30f308b3d9b31a20f0565fdb584371056d4a7cd71afc55a96a4e"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_foreign_status_becomes_a_result_at_the_boundary"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the rule's handle-ownership and out-parameter points are stated but not asserted",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -27525,26 +27535,29 @@
       "page": 426,
       "page_text_sha256": "89751a83c020055d987b1b3067cfaf4b1a5d59e51e05c8455a8ebeb35f2ba870",
       "claim": "12.6 Handling signals with custom actions (depth 2 at Rust in Action.pdf page 426)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "conc-signal-handler-safety"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit states that signal handlers have reduced scope, must avoid code that can itself raise signals, and should do nothing but set a flag the application polls; the rule keeps that contract and replaces the unit's `static mut` with an atomic static, since accessing a mutable static is unsafe and racy with a second handler"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "newer-rust-behavior",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:89751a83c020055d987b1b3067cfaf4b1a5d59e51e05c8455a8ebeb35f2ba870"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_signal_handler_only_flips_a_flag_that_ordinary_code_observes"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "signal registration is platform-specific and is described rather than asserted; the test covers the flag contract only",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },

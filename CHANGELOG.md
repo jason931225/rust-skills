@@ -7,6 +7,10 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Five further corpus rules covering the process and filesystem boundary:
+  `conc-signal-handler-safety`, `api-dir-enumeration`, `type-text-decode-policy`,
+  `perf-hoist-loop-invariant`, and `ffi-status-to-result`. Four carry behavior
+  assertions; the corpus ledger now records 37 reviewed units.
 - Ten further rules from the authenticated PDF corpus, found by a parallel gap
   survey of the previously unmined slices and confirmed against the rule
   library: `err-short-read`, `err-debug-assert-scope`, `err-send-sync-static`,
