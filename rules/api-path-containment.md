@@ -91,5 +91,5 @@ containment against the canonical root before opening.
 - [api-parse-dont-validate](api-parse-dont-validate.md) - turn the key into a contained type once
 - [api-extract-or-reject](api-extract-or-reject.md) - reject before any filesystem effect
 - [err-edge-mapping](err-edge-mapping.md) - do not leak paths or I/O errors to callers
-- [async-tokio-fs](async-tokio-fs.md) - bound and isolate the file work itself
 - [type-newtype-validated](type-newtype-validated.md) - keep the validated key distinct from a raw string
+- [async-tokio-fs](async-tokio-fs.md) - bound and isolate the file work itself

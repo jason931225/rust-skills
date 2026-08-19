@@ -62,14 +62,19 @@ def sha256_text(text):
     return sha256_bytes(text.encode("utf-8"))
 
 
-def page_digests(reader):
-    """SHA-256 of each page's extracted text, in page order."""
+def page_digests(reader, file_name):
+    """SHA-256 of each page's extracted text, in page order.
+
+    A page that legitimately holds no text hashes the empty string; a page that
+    fails to extract is a broken run, not an empty page, so it stops the build
+    rather than silently binding a unit to `sha256("")`.
+    """
     digests = []
-    for page in reader.pages:
+    for number, page in enumerate(reader.pages, start=1):
         try:
             text = page.extract_text() or ""
-        except Exception:
-            text = ""
+        except Exception as exc:
+            sys.exit(f"{file_name}: page {number} failed to extract: {exc}")
         digests.append(sha256_text(text))
     return digests
 
@@ -89,12 +94,12 @@ def walk_outline(reader, node, depth=0, out=None):
     return out
 
 
-def enumerate_units(reader):
+def enumerate_units(reader, file_name):
     """Returns (kind, [(depth, title, page), ...]) for one source."""
     try:
         outline = walk_outline(reader, reader.outline)
-    except Exception:
-        outline = []
+    except Exception as exc:
+        sys.exit(f"{file_name}: outline could not be read: {exc}")
     if outline:
         return "pdf-outline", outline
     return "pdf-page", [(0, f"page {n}", n) for n in range(1, len(reader.pages) + 1)]
@@ -117,8 +122,8 @@ def build(root):
             sys.exit(f"{file_name}: binary does not match the pinned identity")
 
         reader = PdfReader(str(path))
-        pages = page_digests(reader)
-        kind, entries = enumerate_units(reader)
+        pages = page_digests(reader, file_name)
+        kind, entries = enumerate_units(reader, file_name)
 
         lines = []
         for ordinal, (depth, unit_title, page) in enumerate(entries, start=1):

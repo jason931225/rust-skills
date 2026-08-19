@@ -1371,6 +1371,12 @@ def validate_pdf_corpus():
         err(f"{name}: source identities differ from the pinned corpus")
     if len(units) != EXPECTED_PDF_UNITS:
         err(f"{name}: expected {EXPECTED_PDF_UNITS} units, found {len(units)}")
+    if ledger.get("corpus", {}).get("unit_count") != len(units):
+        err(f"{name}: declared unit count differs from the rows")
+    for source in sources:
+        for field in ("sha256", "unit_inventory_sha256", "page_inventory_sha256"):
+            if not re.fullmatch(r"[0-9a-f]{64}", str(source.get(field, ""))):
+                err(f"{name}: {source.get('slug')} has an invalid {field}")
 
     # Rows must arrive grouped by source, in declared order, with contiguous
     # ordinals, so a reordered or spliced ledger cannot pass.

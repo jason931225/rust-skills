@@ -13,22 +13,6 @@ with the system clock means a backwards adjustment can produce a negative or
 absurd interval — which shows up as a negative latency metric, a timeout that
 never fires, or a rate limiter that resets itself.
 
-## Contract
-
-- Durations, timeouts, backoff, rate limits, caches, and latency metrics use
-  `Instant`, which is monotonic.
-- Values that must be stored, compared across machines, or shown to a person
-  use `SystemTime` (or a date-time type over it) — those are timestamps, not
-  measurements.
-- Never subtract one `SystemTime` from another to time an operation, and never
-  assume the difference is positive: `duration_since` returns a `Result`.
-- Do not persist an `Instant` or send it anywhere. It is meaningful only within
-  one process's boot epoch.
-- Take the clock from an injected source in code that has to be tested, so
-  tests can advance time deterministically.
-- Assume timestamps arriving from other systems are skewed; do not order
-  events by them without an explicit tolerance.
-
 ## Bad
 
 ```rust
@@ -75,10 +59,25 @@ Deadlines follow the same split: compute them as `Instant::now() + budget`
 inside the process, and convert to a wall-clock time only when one has to be
 communicated to another system.
 
+## Key Points
+
+- Durations, timeouts, backoff, rate limits, caches, and latency metrics use
+  `Instant`, which is monotonic.
+- Values that must be stored, compared across machines, or shown to a person
+  use `SystemTime` (or a date-time type over it) — those are timestamps, not
+  measurements.
+- Never subtract one `SystemTime` from another to time an operation, and never
+  assume the difference is positive: `duration_since` returns a `Result`.
+- Do not persist an `Instant` or send it anywhere. It is meaningful only within
+  one process's boot epoch.
+- Take the clock from an injected source in code that has to be tested, so
+  tests can advance time deterministically.
+- Assume timestamps arriving from other systems are skewed; do not order
+  events by them without an explicit tolerance.
+
 ## See Also
 
 - [test-mock-traits](test-mock-traits.md) - inject the clock so tests control time
 - [async-bounded-dependency](async-bounded-dependency.md) - deadlines are monotonic budgets
 - [obs-operational-signals](obs-operational-signals.md) - latency signals must not go negative
-- [api-idempotency-key](api-idempotency-key.md) - retention windows are wall-clock, expiry checks are not free of skew
 - [async-durable-worker](async-durable-worker.md) - backoff and retry budgets use the steady clock
