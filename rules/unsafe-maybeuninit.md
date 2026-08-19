@@ -64,6 +64,7 @@ fn fill_vec(v: &mut Vec<u8>, extra: usize) {
 - `Vec::spare_capacity_mut` returns `&mut [MaybeUninit<T>]` — the idiomatic way to write into Vec capacity before extending its length.
 - For zeroed memory where zero is a valid bit pattern for all fields (e.g. `u8`, `i32`, plain C structs with no references), `mem::zeroed()` is technically sound but `MaybeUninit` is still preferred for clarity.
 - `mem::uninitialized` is not just deprecated — it is `#[deprecated(since = "1.39.0")]` and has no safe migration; replace every usage with `MaybeUninit`.
+- Commit ownership — `Vec::set_len`, publishing a length field, anything that tells later code "these elements are initialized" — only *after* every element in that range is actually written. Initializing elements one at a time with a fallible or panicking step (a `T: Default` that panics, a `?` on a per-element conversion) and calling `set_len` first is unsound: an unwind between the two leaves the collection believing uninitialized memory is valid `T`, and its `Drop` then runs destructors on garbage. On panic partway through, drop only the initialized prefix (or `mem::forget`/leak the rest) — never drop a partially initialized value as if it were whole.
 
 ## See Also
 

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 404,
-  "ledger_mapped": 258,
+  "rule_count": 409,
+  "ledger_mapped": 263,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 258,
+    "ledger-mapped": 263,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -137,6 +137,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "api-auto-trait-contract",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -1113,11 +1120,25 @@
       ]
     },
     {
+      "rule_id": "ffi-c-bitflag-enum",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
       "rule_id": "ffi-dll-portable-state",
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
         "rust_release_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "ffi-foreign-resource-binding",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -2805,6 +2826,13 @@
       ]
     },
     {
+      "rule_id": "unsafe-dropck-phantom",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
       "rule_id": "unsafe-extern-block",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -2867,6 +2895,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_training_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "unsafe-pointer-provenance",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
       ]
     },
     {

@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 404 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 409 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 404 rules across 27 categories, prioritized by impact for use by
+Contains 409 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -57,8 +57,8 @@ Reference these guidelines when:
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 13 |
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
-| 4 | Unsafe Code | CRITICAL | `unsafe-` | 14 |
-| 5 | API Design | HIGH | `api-` | 51 |
+| 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
+| 5 | API Design | HIGH | `api-` | 52 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 8 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
@@ -78,7 +78,7 @@ Reference these guidelines when:
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
 | 24 | Project Structure | LOW | `proj-` | 35 |
-| 25 | FFI & Interop | LOW | `ffi-` | 8 |
+| 25 | FFI & Interop | LOW | `ffi-` | 10 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
 
@@ -160,6 +160,8 @@ Reference these guidelines when:
 - [`unsafe-pin-address-stable`](rules/unsafe-pin-address-stable.md) - Opt address-dependent types out of `Unpin` with `PhantomPinned` and expose their mutation only through `Pin<&mut Self>`
 - [`unsafe-byte-slice-cast`](rules/unsafe-byte-slice-cast.md) - Reinterpret bytes as a typed value only through a length- and alignment-checked conversion
 - [`unsafe-pin-projection`](rules/unsafe-pin-projection.md) - Decide once whether each field of a `!Unpin` type is structurally pinned, and keep every accessor consistent with that choice
+- [`unsafe-dropck-phantom`](rules/unsafe-dropck-phantom.md) - Add `PhantomData<T>` to any type that drops or accesses a `T` only through a raw pointer, so the borrow checker knows it and rejects programs that let `T` expire too early
+- [`unsafe-pointer-provenance`](rules/unsafe-pointer-provenance.md) - Keep every `offset`/`add`/`sub` result inside the allocation it started from, even when the result is never dereferenced
 
 ### 5. API Design (HIGH)
 
@@ -214,6 +216,7 @@ Reference these guidelines when:
 - [`api-sql-parameters`](rules/api-sql-parameters.md) - Build every statement from fixed text with bound parameters; allowlist the identifiers that cannot be bound
 - [`api-typed-response`](rules/api-typed-response.md) - Build an outbound payload by serializing a typed value, not by assembling an untyped tree in the handler
 - [`api-update-signature`](rules/api-update-signature.md) - Verify a signature over every self-update payload before installing or executing it, using a key the running binary did not just download
+- [`api-auto-trait-contract`](rules/api-auto-trait-contract.md) - Pin every auto trait a public type promises — `Send`, `Sync`, `Unpin`, `UnwindSafe` — with a compile-only assertion, so a private-field change that silently drops one is caught before release
 
 ### 6. Async/Await (HIGH)
 
@@ -532,6 +535,8 @@ Reference these guidelines when:
 - [`ffi-status-to-result`](rules/ffi-status-to-result.md) - Check the status a foreign call returns and convert failure into a `Result` at the boundary
 - [`ffi-wasm-memory-view`](rules/ffi-wasm-memory-view.md) - Treat a host view into WebAssembly linear memory as invalidated by any call that can allocate
 - [`ffi-opaque-handle-lifecycle`](rules/ffi-opaque-handle-lifecycle.md) - Hand C an opaque pointer from `Box::into_raw` and exactly one paired free, and validate it on every call
+- [`ffi-c-bitflag-enum`](rules/ffi-c-bitflag-enum.md) - Model a C bitmask constant group as a newtype integer with associated constants, not as a `#[repr(C)]` fieldless enum
+- [`ffi-foreign-resource-binding`](rules/ffi-foreign-resource-binding.md) - Return a foreign pointer to the allocator that produced it, and wrap distinct foreign handle kinds in their own opaque types so they cannot be swapped
 
 ### 26. Clippy & Linting (LOW)
 

@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-404-blue)
+![rules](https://img.shields.io/badge/rules-409-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-404 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+409 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,15 +66,15 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-404 rules split into 27 categories:
+409 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
 | **Ownership & Borrowing** | 13 | When to borrow vs clone, Arc/Rc, lifetimes |
 | **Error Handling** | 18 | thiserror for libs, anyhow for apps, the `?` operator |
 | **Memory** | 18 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
-| **Unsafe Code** | 14 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
-| **API Design** | 51 | Builder pattern, newtypes, sealed traits, `FromIterator` |
+| **Unsafe Code** | 16 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
+| **API Design** | 52 | Builder pattern, newtypes, sealed traits, `FromIterator` |
 | **Async** | 29 | Tokio patterns, channels, async fn in traits, cancel safety |
 | **Concurrency** | 8 | rayon, scoped threads, atomic ordering, thread-locals |
 | **Optimization** | 13 | LTO, inlining, PGO, SIMD |
@@ -94,7 +94,7 @@ fn first_word(s: &str) -> Option<&str> {
 | **Observability** | 10 | tracing over log, spans, structured fields, redacting secrets |
 | **Performance** | 15 | Iterators, entry API, faster hashers, I/O buffering |
 | **Project Structure** | 35 | Workspaces, module layout, features, MSRV |
-| **FFI & Interop** | 8 | ABI boundaries, native handles, `-sys` crates, dynamic libraries |
+| **FFI & Interop** | 10 | ABI boundaries, native handles, `-sys` crates, dynamic libraries |
 | **Linting** | 16 | Clippy config, CI setup, `unexpected_cfgs` |
 | **Anti-patterns** | 16 | Common mistakes and how to fix them |
 
