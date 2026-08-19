@@ -2294,3 +2294,170 @@ fn an_update_that_fails_verification_or_rollback_is_never_installed() {
         Err(UpdateError::Rollback { installed: 1, offered: 1 })
     );
 }
+
+// --- unsafe-pointer-provenance ------------------------------------------------
+
+/// Every intermediate pointer stays within `[data, data + len]`; `add(len)`
+/// itself is allowed as a one-past-the-end sentinel, `add(len + 1)` is not.
+fn rfr_sum_via_pointers(data: &[u32]) -> u32 {
+    let mut total = 0u32;
+    let mut cursor = data.as_ptr();
+    let end = unsafe { data.as_ptr().add(data.len()) };
+    while cursor < end {
+        total = total.wrapping_add(unsafe { *cursor });
+        cursor = unsafe { cursor.add(1) };
+    }
+    total
+}
+
+#[test]
+fn pointer_arithmetic_never_forms_a_pointer_past_the_allocations_end() {
+    let data = [1u32, 2, 3, 4];
+    assert_eq!(rfr_sum_via_pointers(&data), 10);
+
+    let empty: [u32; 0] = [];
+    assert_eq!(rfr_sum_via_pointers(&empty), 0);
+}
+
+// --- unsafe-dropck-phantom ----------------------------------------------------
+
+struct RfrStorage<T> {
+    ptr: *mut T,
+    _owns_t: std::marker::PhantomData<T>,
+}
+
+impl<T> RfrStorage<T> {
+    fn new(value: T) -> Self {
+        RfrStorage { ptr: Box::into_raw(Box::new(value)), _owns_t: std::marker::PhantomData }
+    }
+
+    fn get(&self) -> &T {
+        unsafe { &*self.ptr }
+    }
+}
+
+impl<T> Drop for RfrStorage<T> {
+    fn drop(&mut self) {
+        drop(unsafe { Box::from_raw(self.ptr) });
+    }
+}
+
+#[test]
+fn a_value_held_behind_a_raw_pointer_is_dropped_exactly_once() {
+    use std::cell::Cell;
+
+    struct Recorder<'a>(&'a Cell<u32>);
+    impl Drop for Recorder<'_> {
+        fn drop(&mut self) {
+            self.0.set(self.0.get() + 1);
+        }
+    }
+
+    let drops = Cell::new(0);
+    {
+        let storage = RfrStorage::new(Recorder(&drops));
+        assert_eq!(storage.get().0.get(), 0);
+    }
+    assert_eq!(drops.get(), 1, "the raw-pointer-held value was dropped exactly once");
+}
+
+// --- ffi-c-bitflag-enum -------------------------------------------------------
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct RfrPermissions(u8);
+
+impl RfrPermissions {
+    const NONE: Self = Self(0);
+    const READ: Self = Self(1);
+    const WRITE: Self = Self(2);
+    const EXEC: Self = Self(4);
+
+    fn contains(self, flag: Self) -> bool {
+        self.0 & flag.0 == flag.0
+    }
+}
+
+impl std::ops::BitOr for RfrPermissions {
+    type Output = Self;
+    fn bitor(self, rhs: Self) -> Self {
+        Self(self.0 | rhs.0)
+    }
+}
+
+impl std::ops::BitOrAssign for RfrPermissions {
+    fn bitor_assign(&mut self, rhs: Self) {
+        self.0 |= rhs.0;
+    }
+}
+
+#[test]
+fn combined_c_bitflags_are_a_legal_value_with_no_matching_enum_variant() {
+    let combined = RfrPermissions::READ | RfrPermissions::WRITE;
+    assert!(combined.contains(RfrPermissions::READ));
+    assert!(combined.contains(RfrPermissions::WRITE));
+    assert!(!combined.contains(RfrPermissions::EXEC));
+
+    let mut mask = RfrPermissions::NONE;
+    mask |= RfrPermissions::EXEC;
+    assert_eq!(mask, RfrPermissions::EXEC);
+}
+
+// --- ffi-foreign-resource-binding ---------------------------------------------
+
+#[repr(transparent)]
+#[non_exhaustive]
+struct RfrDevice(*mut std::os::raw::c_void);
+
+#[repr(transparent)]
+#[non_exhaustive]
+struct RfrContext(*mut std::os::raw::c_void);
+
+impl RfrContext {
+    fn from_raw(ptr: *mut std::os::raw::c_void) -> Self {
+        Self(ptr)
+    }
+
+    fn open_device<'ctx>(&'ctx self) -> RfrBorrowedDevice<'ctx> {
+        RfrBorrowedDevice { device: RfrDevice(self.0), _owner: std::marker::PhantomData }
+    }
+}
+
+struct RfrBorrowedDevice<'ctx> {
+    device: RfrDevice,
+    _owner: std::marker::PhantomData<&'ctx RfrContext>,
+}
+
+impl RfrBorrowedDevice<'_> {
+    fn handle(&self) -> &RfrDevice {
+        &self.device
+    }
+}
+
+#[test]
+fn a_device_handle_borrowed_from_a_context_carries_its_lifetime() {
+    let raw = std::ptr::NonNull::dangling().as_ptr();
+    let ctx = RfrContext::from_raw(raw);
+    let device = ctx.open_device();
+    assert_eq!(device.handle().0, raw);
+    drop(device);
+    drop(ctx);
+}
+
+// --- api-auto-trait-contract ---------------------------------------------------
+
+struct RfrJobHandle {
+    #[allow(dead_code)]
+    id: u64,
+    #[allow(dead_code)]
+    buffer: Vec<u8>,
+}
+
+const fn rfr_assert_send_sync<T: Send + Sync>() {}
+
+const _: () = rfr_assert_send_sync::<RfrJobHandle>();
+
+#[test]
+fn a_public_types_send_and_sync_status_is_pinned_by_a_compiled_assertion() {
+    rfr_assert_send_sync::<RfrJobHandle>();
+}

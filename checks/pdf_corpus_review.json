@@ -546,18 +546,19 @@
       "disposition": "covered",
       "audit_disposition": "covered",
       "mapped_rule_ids": [
-        "err-send-sync-static"
+        "err-send-sync-static",
+        "api-auto-trait-contract"
       ],
       "exact_difference": {
         "kind": "rule-extends-source",
-        "detail": "the unit shows that Send and Sync are hidden promises of a public interface, that losing one through a private field is a breaking change, and recommends asserting them in the test suite; the rule applies that to public error types, where the same bounds also decide whether a caller can box, wrap, or move them"
+        "detail": "the unit (\"Constrained\", pp.54-59) covers auto traits (Send, Sync, Unpin, UnwindSafe, and leakage through impl Trait) as hidden promises of any public type, and recommends pinning them with a compile-only generic function; err-send-sync-static already covered the error-type specialization of this (errors must be Send + Sync + 'static for downcast), and api-auto-trait-contract generalizes it to any public type with a working compile-only assertion and the semver consequence of a private-field regression"
       },
       "rationale_class": "source-aligned",
       "executable_check": {
         "applicability": "behavior-assertion",
-        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::public_errors_can_cross_threads_and_be_wrapped"
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_public_types_send_and_sync_status_is_pinned_by_a_compiled_assertion"
       },
-      "remaining_uncertainty": "the unit is about auto-traits on public types generally; the error-specific consequences in the rule are derived, not stated there",
+      "remaining_uncertainty": "the source's compile-only assertion example (fn is_normal<T: Sized + Send + Sync + Unpin>()) is restated with different bound choices; the assertion in this ledger proves the happy-path case compiles, not that a regression is caught, which would need a compile-fail harness",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
@@ -1042,6 +1043,92 @@
         "assertion_id": "checks/tests/pdf_corpus_guidance.rs::an_update_that_fails_verification_or_rollback_is_never_installed"
       },
       "remaining_uncertainty": "the source states the goal (sign updates) in a few sentences without a worked Rust example; the rollback-replay requirement and the build-time key-embedding discipline are this rule's own additions, not restatements of source text",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0044",
+      "title": "Great Power",
+      "page_text_sha256": "55c9f7e3804a8f11a53e31399ee6c928b1fc4133e1eb44cda4c8364f99ec17cf",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-pointer-provenance"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Great Power\", pp.148-151) states that offset/add/sub are UB if the result leaves the original allocation \"even if you never dereference\" it; the rule restates this as a falsifiable contract with a bounded-walk example and a Miri-verification requirement the source states only in prose"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::pointer_arithmetic_never_forms_a_pointer_past_the_allocations_end"
+      },
+      "remaining_uncertainty": "the source states the provenance rule in a few sentences without a worked bounds-respecting traversal; the loop-with-a-one-past-the-end-sentinel construction is this rule's own addition",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0045",
+      "title": "Great Responsibility",
+      "page_text_sha256": "64f228753e080fb7e9be41eefde9c3d828720c225a2482e1e2456d0dbe8e4141",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-dropck-phantom"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Great Responsibility\", pp.157-166) covers drop-check and the #[may_dangle]+PhantomData interaction, including the nightly-only escape hatch; the rule states the stable-Rust half only \u2014 a raw-pointer-holding wrapper needs PhantomData<T> for drop-check to see it as owning a T at all \u2014 since #[may_dangle] cannot appear in a stable-toolchain compiled example"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_value_held_behind_a_raw_pointer_is_dropped_exactly_once"
+      },
+      "remaining_uncertainty": "#[may_dangle] itself (feature dropck_eyepatch) is nightly-only and is mentioned in this rule's prose only, not compiled; the assertion proves the ordinary PhantomData<T> case runs a value's destructor exactly once, not the lifetime-rejection half of dropck, which would need a compile-fail harness",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0057",
+      "title": "Types Across Language Boundaries",
+      "page_text_sha256": "a44b1858e7626d0c6b3d93a739e897f1bf8474f1c4ed9425cb53ca2fbb3bf559",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "ffi-c-bitflag-enum",
+        "ffi-foreign-resource-binding"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Types Across Language Boundaries\", pp.204-211) covers C enumerations that are bitsets (a repr(C) fieldless enum's only valid values are its listed discriminants), allocator identity for pointers crossing FFI, caller- vs callee-owned buffers, tying a foreign object's lifetime to a Rust borrow, and typed opaque pointers instead of void*; the two rules split this into the enum/bitflag half and the resource-ownership/typed-handle half, each with its own worked example the source states only in prose"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::combined_c_bitflags_are_a_legal_value_with_no_matching_enum_variant"
+      },
+      "remaining_uncertainty": "the source's tagged-union layout guidance for data-carrying repr(C) enums is not covered by either rule and remains a documented gap",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0015",
+      "title": "Constrained",
+      "page_text_sha256": "e5759854b1913dd90614b4616e1e71742e22c2e553e31c5bcd87815a60b13279",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "err-send-sync-static",
+        "api-auto-trait-contract"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Constrained\", pp.54-59) covers auto traits (Send, Sync, Unpin, UnwindSafe, and leakage through impl Trait) as hidden promises of any public type, and recommends pinning them with a compile-only generic function; err-send-sync-static already covered the error-type specialization of this (errors must be Send + Sync + 'static for downcast), and api-auto-trait-contract generalizes it to any public type with a working compile-only assertion and the semver consequence of a private-field regression"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_public_types_send_and_sync_status_is_pinned_by_a_compiled_assertion"
+      },
+      "remaining_uncertainty": "the source's compile-only assertion example (fn is_normal<T: Sized + Send + Sync + Unpin>()) is restated with different bound choices; the assertion in this ledger proves the happy-path case compiles, not that a regression is caught, which would need a compile-fail harness",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     }
   ]
