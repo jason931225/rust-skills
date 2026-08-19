@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 390 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 394 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 390 rules across 27 categories, prioritized by impact for use by
+Contains 394 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,8 +58,8 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 12 |
-| 5 | API Design | HIGH | `api-` | 48 |
-| 6 | Async/Await | HIGH | `async-` | 27 |
+| 5 | API Design | HIGH | `api-` | 49 |
+| 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 8 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
@@ -73,7 +73,7 @@ Reference these guidelines when:
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 17 |
-| 20 | Testing | MEDIUM | `test-` | 24 |
+| 20 | Testing | MEDIUM | `test-` | 25 |
 | 21 | Documentation | MEDIUM | `doc-` | 15 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
@@ -208,6 +208,7 @@ Reference these guidelines when:
 - [`api-datagram-trust`](rules/api-datagram-trust.md) - On connectionless transports, verify the sender and match replies with an unpredictable identifier
 - [`api-fallible-self-return`](rules/api-fallible-self-return.md) - When a fallible method consumes `self`, hand the receiver back in the error
 - [`api-scoped-closure-access`](rules/api-scoped-closure-access.md) - Lend a resource that needs setup and teardown through a closure, not through paired open and close methods
+- [`api-sql-parameters`](rules/api-sql-parameters.md) - Build every statement from fixed text with bound parameters; allowlist the identifiers that cannot be bound
 
 ### 6. Async/Await (HIGH)
 
@@ -238,6 +239,8 @@ Reference these guidelines when:
 - [`async-bounded-dependency`](rules/async-bounded-dependency.md) - Bound dependency admission and calls with explicit deadlines and observable failures
 - [`async-poll-contract`](rules/async-poll-contract.md) - Return from every hand-written `poll` without blocking, re-check readiness instead of trusting the wake, re-register the waker before each `Pending`, and never poll after `Ready`
 - [`async-sync-core`](rules/async-sync-core.md) - Keep business rules in sync functions that take I/O results as arguments; confine async to the outermost shell that fetches and orchestrates
+- [`async-explicit-close`](rules/async-explicit-close.md) - Give a resource whose release must await an explicit `close` method; leave `Drop` as a best-effort fallback
+- [`async-runtime-agnostic-lib`](rules/async-runtime-agnostic-lib.md) - A library takes futures and returns futures; the binary that owns `main` picks the runtime
 
 ### 7. Concurrency (HIGH)
 
@@ -423,6 +426,7 @@ Reference these guidelines when:
 - [`test-sanitizers`](rules/test-sanitizers.md) - Run the tests that exercise unsafe, FFI, or concurrency under sanitizers in CI, and treat a report as a bug
 - [`test-env-independent`](rules/test-env-independent.md) - Assert what the program decides; normalize or exclude everything the host decides
 - [`test-compile-fail-guarantees`](rules/test-compile-fail-guarantees.md) - Pin every type-system-only guarantee with a committed compile-fail test
+- [`test-drop-release-paths`](rules/test-drop-release-paths.md) - Assert that a `Drop`-based release actually happens on an early return and during a panic
 
 ### 21. Documentation (MEDIUM)
 
