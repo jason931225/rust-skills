@@ -58,6 +58,13 @@ semantic versioning for the rule set.
 ### Fixed
 - Corrected the non-`Copy` `Email(String)` newtype example, parent-subtree
   visibility guidance for `pub(super)` and `pub(crate)`, and the CI push branch.
+- `async-cancellation-token` waited only on `ctrl_c()`, so a service following
+  its shutdown example was killed by the orchestrator instead of draining.
+  The example now waits on `SIGTERM` and `SIGINT`, states the ordering
+  (fail readiness, let routing observe it, cancel, drain within a budget below
+  the platform grace period, abort the remainder), and compiles — its
+  compile-suspect baseline entry is retired. A behavior test asserts the
+  ordering and the bounded drain.
 
 Now 345 rules across 27 categories.
 
