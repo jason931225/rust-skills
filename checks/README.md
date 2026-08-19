@@ -40,16 +40,31 @@ The validator also checks the 431-unit *Zero To Production In Rust* disposition
 ledger. It was written against a PDF with SHA-256 `5de8b3ef…20f75e`, which is
 not the binary issue #1 names authoritative. `rebind_zero2production.py`
 re-anchored it to the authoritative `f122f6e8…c168cf47b` on content identity
-rather than position: every one of the 429 placed rows matched exactly one page
-whose layout-mode extracted text is byte-identical to the page its disposition
-was written against, with a single uniform offset of +1 and no ambiguous or
-unmatched row. Because the bytes are the same, the dispositions carry across;
-no row was transferred by title, page, or ordinal, which issue #1 forbids.
+rather than position: all 431 rows — including the two that carry no page
+number — matched exactly one page whose layout-mode extracted text is
+byte-identical to the page the disposition was written against, with a single
+uniform offset of +1 and no ambiguous or unmatched row. Because the bytes are
+the same, the dispositions carry across; no row was transferred by title, page,
+or ordinal, which issue #1 forbids.
 
-The ledger records that evidence in a `rebinding` block, and the validator
-rejects it unless the block accounts for every placed row with zero ambiguous
-and zero unmatched. Re-running the tool against the authoritative binary
-verifies each row and fails if any page's text has moved.
+**What that proves and what it does not.** The rows name 256 of the 433
+physical pages, and those are proven identical. The other 177 carry no stored
+digest: the superseded binary is gone, so no evidence about them survives. A
+disposition summarizes a section, so an edit inside a reviewed section that
+left its heading page untouched would not be detected. The ledger says so —
+`audit_status.semantic_status` is `source-rebound-partial-proof`, and the
+`rebinding` block records `pages_proven_identical` alongside a `proof_scope`
+statement. Closing that gap needs a reread, not a digest comparison.
+
+The validator enforces the evidence rather than trusting it: the rebinding
+block must account for every row with zero ambiguous and zero unmatched, must
+state its proof scope and page count, and must carry a `binding_digest` that
+validate.py recomputes from `<section>:<page>:<page digest>` over every row and
+compares against a pinned constant — so a digest swapped for another
+well-formed hex value fails in CI, where the PDF cannot be opened. The tool
+itself refuses to run under any pypdf other than 6.6.0, the extractor that
+produced the stored digests, and refuses to rebind a ledger that names neither
+the authoritative nor the superseded binary.
 
 `microsoft_training_coverage.json` inventories all 2,124 semantic units of the
 Microsoft *RustTraining* books at commit
