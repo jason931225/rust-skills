@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 394 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 398 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 394 rules across 27 categories, prioritized by impact for use by
+Contains 398 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -54,11 +54,11 @@ Reference these guidelines when:
 
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
-| 1 | Ownership & Borrowing | CRITICAL | `own-` | 12 |
+| 1 | Ownership & Borrowing | CRITICAL | `own-` | 13 |
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
-| 4 | Unsafe Code | CRITICAL | `unsafe-` | 12 |
-| 5 | API Design | HIGH | `api-` | 49 |
+| 4 | Unsafe Code | CRITICAL | `unsafe-` | 13 |
+| 5 | API Design | HIGH | `api-` | 50 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 8 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
@@ -78,7 +78,7 @@ Reference these guidelines when:
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
 | 24 | Project Structure | LOW | `proj-` | 33 |
-| 25 | FFI & Interop | LOW | `ffi-` | 7 |
+| 25 | FFI & Interop | LOW | `ffi-` | 8 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
 
@@ -100,6 +100,7 @@ Reference these guidelines when:
 - [`own-clone-explicit`](rules/own-clone-explicit.md) - Use explicit `Clone` for types where copying has meaningful cost
 - [`own-move-large`](rules/own-move-large.md) - Borrow large values by default; box only when measured moves or type shape justify allocation
 - [`own-lifetime-elision`](rules/own-lifetime-elision.md) - Rely on lifetime elision rules; add explicit lifetimes only when required
+- [`own-split-borrow-fields`](rules/own-split-borrow-fields.md) - Group a wide struct's fields into named sub-structs so independent operations borrow disjoint state
 
 ### 2. Error Handling (CRITICAL)
 
@@ -157,6 +158,7 @@ Reference these guidelines when:
 - [`unsafe-sound-abstractions`](rules/unsafe-sound-abstractions.md) - Never expose a safe API that can hit undefined behavior; if the caller must uphold a UB precondition, the function is `unsafe`
 - [`unsafe-volatile-mmio`](rules/unsafe-volatile-mmio.md) - Reach memory-mapped hardware through `read_volatile`/`write_volatile`, never through an ordinary reference
 - [`unsafe-pin-address-stable`](rules/unsafe-pin-address-stable.md) - Opt address-dependent types out of `Unpin` with `PhantomPinned` and expose their mutation only through `Pin<&mut Self>`
+- [`unsafe-byte-slice-cast`](rules/unsafe-byte-slice-cast.md) - Reinterpret bytes as a typed value only through a length- and alignment-checked conversion
 
 ### 5. API Design (HIGH)
 
@@ -209,6 +211,7 @@ Reference these guidelines when:
 - [`api-fallible-self-return`](rules/api-fallible-self-return.md) - When a fallible method consumes `self`, hand the receiver back in the error
 - [`api-scoped-closure-access`](rules/api-scoped-closure-access.md) - Lend a resource that needs setup and teardown through a closure, not through paired open and close methods
 - [`api-sql-parameters`](rules/api-sql-parameters.md) - Build every statement from fixed text with bound parameters; allowlist the identifiers that cannot be bound
+- [`api-typed-response`](rules/api-typed-response.md) - Build an outbound payload by serializing a typed value, not by assembling an untyped tree in the handler
 
 ### 6. Async/Await (HIGH)
 
@@ -522,6 +525,7 @@ Reference these guidelines when:
 - [`ffi-dll-portable-state`](rules/ffi-dll-portable-state.md) - Share only portable, repr-stable values across Rust dynamic libraries; keep allocations, statics, TLS, and TypeId local to the DLL that created them
 - [`ffi-status-to-result`](rules/ffi-status-to-result.md) - Check the status a foreign call returns and convert failure into a `Result` at the boundary
 - [`ffi-wasm-memory-view`](rules/ffi-wasm-memory-view.md) - Treat a host view into WebAssembly linear memory as invalidated by any call that can allocate
+- [`ffi-opaque-handle-lifecycle`](rules/ffi-opaque-handle-lifecycle.md) - Hand C an opaque pointer from `Box::into_raw` and exactly one paired free, and validate it on every call
 
 ### 26. Clippy & Linting (LOW)
 

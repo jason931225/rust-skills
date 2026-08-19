@@ -1874,3 +1874,129 @@ async fn an_unclosed_async_resource_is_observable_rather_than_silently_leaked() 
     assert_eq!(session.close().await, Ok(()));
     assert!(!leaked.load(Ordering::SeqCst), "closing is not a leak");
 }
+
+// --- api-typed-response -----------------------------------------------------
+
+#[derive(Debug, PartialEq, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct OrderResponse {
+    order_id: u64,
+    total_cents: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    cancelled_at: Option<String>,
+}
+
+#[test]
+fn a_typed_response_fixes_its_wire_names_and_omits_absent_fields() {
+    let response = OrderResponse { order_id: 7, total_cents: 1250, cancelled_at: None };
+    let body = serde_json::to_string(&response).expect("serializes");
+
+    assert_eq!(body, r#"{"orderId":7,"totalCents":1250}"#);
+    // Absent rather than null, and the field names are the contract's, not
+    // Rust's — the two things a hand-built json! tree gets wrong silently.
+    assert!(!body.contains("null"));
+    assert!(!body.contains("order_id"));
+
+    let cancelled = OrderResponse {
+        order_id: 8,
+        total_cents: 0,
+        cancelled_at: Some("2026-08-19T00:00:00Z".to_owned()),
+    };
+    assert!(serde_json::to_string(&cancelled).expect("serializes").contains("cancelledAt"));
+}
+
+// --- own-split-borrow-fields ------------------------------------------------
+
+#[derive(Debug, Default)]
+struct Audio {
+    volume: u8,
+}
+
+#[derive(Debug, Default)]
+struct Physics {
+    steps: u32,
+}
+
+#[derive(Debug, Default)]
+struct Engine {
+    audio: Audio,
+    physics: Physics,
+}
+
+fn tick_audio(audio: &mut Audio) {
+    audio.volume = audio.volume.saturating_add(1);
+}
+
+fn tick_physics(physics: &mut Physics) {
+    physics.steps += 1;
+}
+
+#[test]
+fn grouped_fields_let_two_mutable_borrows_of_one_value_coexist() {
+    let mut engine = Engine::default();
+
+    // Both borrows are live at once. A pair of `&mut self` methods on Engine
+    // could not do this — that is the entire point of the grouping.
+    let audio = &mut engine.audio;
+    let physics = &mut engine.physics;
+    tick_audio(audio);
+    tick_physics(physics);
+    tick_audio(audio);
+
+    assert_eq!(engine.audio.volume, 2);
+    assert_eq!(engine.physics.steps, 1);
+}
+
+// --- unsafe-byte-slice-cast -------------------------------------------------
+
+#[derive(Debug, PartialEq)]
+struct FrameHeader {
+    version: u16,
+    length: u16,
+}
+
+#[derive(Debug, PartialEq)]
+enum FrameError {
+    Truncated,
+    UnsupportedVersion(u16),
+}
+
+fn decode_header(buffer: &[u8]) -> Result<FrameHeader, FrameError> {
+    let bytes: [u8; 4] = buffer
+        .get(..4)
+        .ok_or(FrameError::Truncated)?
+        .try_into()
+        .map_err(|_| FrameError::Truncated)?;
+    let version = u16::from_be_bytes([bytes[0], bytes[1]]);
+    if version != 1 {
+        return Err(FrameError::UnsupportedVersion(version));
+    }
+    Ok(FrameHeader { version, length: u16::from_be_bytes([bytes[2], bytes[3]]) })
+}
+
+#[test]
+fn bytes_are_decoded_field_by_field_because_a_slice_carries_no_alignment() {
+    let frame = [0x00u8, 0x01, 0x00, 0x20, 0xff];
+    assert_eq!(decode_header(&frame), Ok(FrameHeader { version: 1, length: 32 }));
+    assert_eq!(decode_header(&frame[..3]), Err(FrameError::Truncated));
+    assert_eq!(
+        decode_header(&[0x00, 0x09, 0, 0]),
+        Err(FrameError::UnsupportedVersion(9))
+    );
+
+    // The property that matters: decoding is correct from *any* offset,
+    // because it never forms a reference to a wider type. A pointer cast
+    // would be undefined behaviour at whichever offsets happen to be
+    // misaligned — and which those are depends on where the buffer landed,
+    // which is exactly why it cannot be tested into safety.
+    let mut padded = vec![0xffu8; 8];
+    for offset in 0..4 {
+        padded[offset..offset + 4].copy_from_slice(&[0x00, 0x01, 0x00, 0x20]);
+        assert_eq!(
+            decode_header(&padded[offset..]),
+            Ok(FrameHeader { version: 1, length: 32 }),
+            "decoding must not depend on the slice's alignment (offset {offset})"
+        );
+        padded[offset..offset + 4].copy_from_slice(&[0xff; 4]);
+    }
+}
