@@ -733,6 +733,17 @@ allowed_training_difference_kinds = {
     "contradicts-rule",
     "out-of-scope",
 }
+# A reviewed row's typed difference has to agree with its disposition: coverage
+# credit requires agreement with the mapped rule, a documented deviation
+# requires a stated divergence, and the two non-adopting states require an
+# out-of-scope or contradicting judgement. `unassessed` belongs to no reviewed
+# disposition.
+reviewed_training_difference_kinds = {
+    "covered": {"no-difference"},
+    "documented-deviation": {"extends-rule", "contradicts-rule"},
+    "project-specific": {"out-of-scope"},
+    "reject": {"contradicts-rule", "out-of-scope"},
+}
 allowed_training_rationale_classes = {
     "pending-semantic-review"
 } | allowed_book_rationale_classes
@@ -1117,10 +1128,27 @@ if training is not None:
                     f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is reviewed but "
                     "retains an unreviewed audit disposition"
                 )
-            if not mapped and disposition in {"covered", "documented-deviation"}:
-                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is {disposition} without a rule")
-            if difference.get("kind") == "unassessed":
-                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no exact difference")
+            kind = difference.get("kind")
+            if kind not in reviewed_training_difference_kinds.get(disposition, set()):
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is {disposition} with "
+                    f"difference kind {kind!r}, which that disposition does not allow"
+                )
+            # Every reviewed row states its relationship to the rule library:
+            # it names the rules it was judged against, or it records
+            # `out-of-scope`, the one typed difference that asserts no rule
+            # edge exists. Silence is not a disposition.
+            if kind == "out-of-scope":
+                if mapped:
+                    err(
+                        f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is out-of-scope but "
+                        "maps rules"
+                    )
+            elif not mapped:
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is {disposition} without "
+                    "a rule edge"
+                )
             if unit.get("rationale_class") == "pending-semantic-review":
                 err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is dispositioned but unreviewed")
             if (
