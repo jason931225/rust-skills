@@ -1028,3 +1028,188 @@ fn a_generic_shell_delegates_to_one_non_generic_body() {
     assert_eq!(from_str, 8);
     assert_eq!([from_path, from_owned, from_pathbuf], [from_str; 3]);
 }
+
+// --- api-datagram-trust -----------------------------------------------------
+
+#[derive(Debug, PartialEq)]
+enum Reject {
+    WrongPeer,
+    UnknownId,
+}
+
+struct Pending {
+    peer: std::net::SocketAddr,
+    id: u16,
+}
+
+impl Pending {
+    fn accept<'a>(&self, from: std::net::SocketAddr, datagram: &'a [u8]) -> Result<&'a [u8], Reject> {
+        if from != self.peer {
+            return Err(Reject::WrongPeer);
+        }
+        let (id, payload) = datagram.split_at(2);
+        if u16::from_be_bytes([id[0], id[1]]) != self.id {
+            return Err(Reject::UnknownId);
+        }
+        Ok(payload)
+    }
+}
+
+#[test]
+fn a_forged_datagram_fails_on_either_the_sender_or_the_identifier() {
+    let server = std::net::SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 0, 0, 53)), 53);
+    let pending = Pending { peer: server, id: 0xa17f };
+
+    let mut reply = 0xa17f_u16.to_be_bytes().to_vec();
+    reply.extend_from_slice(b"answer");
+    assert_eq!(pending.accept(server, &reply), Ok(&b"answer"[..]));
+
+    // Right identifier, wrong sender: an off-path forgery.
+    let elsewhere = std::net::SocketAddr::new(IpAddr::V4(Ipv4Addr::new(198, 51, 100, 7)), 53);
+    assert_eq!(pending.accept(elsewhere, &reply), Err(Reject::WrongPeer));
+
+    // Right sender, guessed identifier: a blind forgery from the path.
+    let mut forged = 0x0001_u16.to_be_bytes().to_vec();
+    forged.extend_from_slice(b"poison");
+    assert_eq!(pending.accept(server, &forged), Err(Reject::UnknownId));
+}
+
+// --- type-time-sample-once --------------------------------------------------
+
+#[test]
+fn one_clock_reading_makes_every_derived_field_agree() {
+    use std::time::{Duration, SystemTime};
+
+    fn issue(now: SystemTime, lifetime: Duration) -> (SystemTime, SystemTime) {
+        (now, now + lifetime)
+    }
+
+    let now = SystemTime::UNIX_EPOCH + Duration::from_secs(1_700_000_000);
+    let (issued, expires) = issue(now, Duration::from_secs(3600));
+
+    assert_eq!(issued, now);
+    assert_eq!(expires.duration_since(issued).expect("later"), Duration::from_secs(3600));
+    // Deterministic without reading a clock, so the test cannot be flaky.
+    assert_eq!(issue(now, Duration::from_secs(3600)), (issued, expires));
+}
+
+// --- unsafe-volatile-mmio ---------------------------------------------------
+
+/// # Safety
+///
+/// `framebuffer` must point to a mapping of at least `(cell + 1) * 2` bytes
+/// valid for writes, with no concurrent writer.
+unsafe fn write_cell(framebuffer: *mut u8, cell: usize, byte: u8, colour: u8) {
+    // SAFETY: the caller guarantees the mapping covers this cell; the writes
+    // are volatile because the effect is on the device, not on memory the
+    // program reads back.
+    unsafe {
+        framebuffer.add(cell * 2).write_volatile(byte);
+        framebuffer.add(cell * 2 + 1).write_volatile(colour);
+    }
+}
+
+#[test]
+fn volatile_writes_reach_the_mapping_in_order() {
+    let mut buffer = vec![0u8; 8];
+    let pointer = buffer.as_mut_ptr();
+
+    // SAFETY: `buffer` is four cells and outlives the call.
+    unsafe {
+        write_cell(pointer, 0, b'O', 0x0f);
+        write_cell(pointer, 1, b'K', 0x0f);
+    }
+
+    assert_eq!(&buffer[..4], &[b'O', 0x0f, b'K', 0x0f]);
+    assert_eq!(&buffer[4..], &[0u8; 4], "no write landed outside the cells");
+}
+
+// --- type-case-insensitive-match --------------------------------------------
+
+struct Matcher {
+    needle: String,
+    case_insensitive: bool,
+}
+
+impl Matcher {
+    fn matches(&self, line: &str) -> bool {
+        if self.case_insensitive {
+            line.to_ascii_lowercase().contains(&self.needle.to_ascii_lowercase())
+        } else {
+            line.contains(&self.needle)
+        }
+    }
+}
+
+#[test]
+fn case_insensitivity_is_a_matcher_setting_and_leaves_the_data_alone() {
+    let sensitive = Matcher { needle: "Error".into(), case_insensitive: false };
+    let insensitive = Matcher { needle: "Error".into(), case_insensitive: true };
+
+    let line = "ERROR: disk full";
+    assert!(!sensitive.matches(line));
+    assert!(insensitive.matches(line));
+    assert!(sensitive.matches("Error: disk full"));
+
+    // The record keeps its original casing for output and storage.
+    assert_eq!(line, "ERROR: disk full");
+}
+
+// --- test-env-independent ---------------------------------------------------
+
+/// `ls -l`: mode, links, owner, group, size, month, day, time, name. Only the
+/// mode, link count, and name are decided by the program under test.
+fn normalize_listing(line: &str) -> String {
+    let fields: Vec<&str> = line.split_whitespace().collect();
+    if fields.len() < 9 {
+        return line.to_owned();
+    }
+    let name = fields[8..].join(" ");
+    format!("{} {} <host> <host> <host> <date> {}", fields[0], fields[1], name)
+}
+
+#[test]
+fn golden_output_asserts_program_fields_and_normalizes_host_fields() {
+    let recorded = "-rw-r--r-- 1 kyclark staff 217 Aug 11 08:26 Cargo.toml";
+    let elsewhere = "-rw-r--r-- 1 ci nogroup 219 Jan 2 03:04 Cargo.toml";
+    assert_eq!(normalize_listing(recorded), normalize_listing(elsewhere));
+
+    // Still catches what the program decides.
+    let wrong_mode = "-rwxr-xr-x 1 ci nogroup 219 Jan 2 03:04 Cargo.toml";
+    assert_ne!(normalize_listing(recorded), normalize_listing(wrong_mode));
+    let wrong_name = "-rw-r--r-- 1 ci nogroup 219 Jan 2 03:04 Other.toml";
+    assert_ne!(normalize_listing(recorded), normalize_listing(wrong_name));
+}
+
+// --- ffi-wasm-memory-view ---------------------------------------------------
+
+struct Linear {
+    bytes: Vec<u8>,
+}
+
+impl Linear {
+    fn view(&self) -> &[u8] {
+        &self.bytes
+    }
+
+    fn allocate(&mut self, extra: usize) -> usize {
+        let offset = self.bytes.len();
+        self.bytes.resize(offset + extra, 0);
+        offset
+    }
+}
+
+#[test]
+fn a_view_into_linear_memory_is_reacquired_after_growth() {
+    let mut memory = Linear { bytes: vec![0; 4] };
+    assert_eq!(memory.view().len(), 4);
+
+    // Growth invalidates the earlier view; the borrow checker enforces here
+    // what the host boundary cannot.
+    let offset = memory.allocate(4);
+    memory.bytes[offset..].copy_from_slice(b"data");
+
+    let view = memory.view();
+    assert_eq!(view.len(), 8);
+    assert_eq!(&view[offset..], b"data");
+}
