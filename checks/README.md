@@ -15,6 +15,7 @@ bash checks/check.sh
 cd checks
 cargo test --test source_guidance
 cargo test --test language_guidance
+cargo test --test pdf_corpus_guidance
 
 # individual example compile-check
 python3 gen.py                                              # extract blocks -> examples/
@@ -100,6 +101,65 @@ MICROSOFT_RUSTTRAINING_ROOT=/path/to/rusttraining \
 Without either checkout validation fails closed. Ledger-only digests can detect
 accidental row drift, but they cannot independently prove that repeated source
 and unit hashes still identify the pinned bytes.
+
+## Authenticated PDF corpus
+
+`pdf_corpus_coverage.json` inventories 1,325 units across the eight purchased
+PDF sources, each pinned by byte length and SHA-256: *Black Hat Rust*,
+*Command-Line Rust*, *Fullstack Rust*, the *Lets Get Rusty* cheat sheet, the
+*Rust container* cheat sheet, *Rust for Rustaceans*, *Rust in Action*, and
+*Zero to Production in Rust* (binary `f122f6e8…c168cf47b`, which is a different
+identity from the one the legacy `zero2production_coverage.json` was built
+against — no row transfers between them).
+
+The enumeration rule is mechanical: a PDF with an outline contributes one unit
+per outline entry, in document order, carrying its title, depth, and
+destination page; a PDF with no outline contributes one unit per page, because
+no finer structure is recoverable from the binary. That yields 219, 177, 91,
+11, 1, 59, 336, and 431 units respectively. The two cheat sheets are therefore
+enumerated at page granularity, which is coarser than the 91 and 24 units
+recorded in issue #1 by an earlier process whose enumeration rule was not
+preserved.
+
+`build_pdf_ledger.py` regenerates the ledger from the binaries — it refuses to
+run unless every file matches its pinned length and digest — and applies
+dispositions from `pdf_corpus_review.json`, refusing any review entry whose
+unit title or page-text digest has moved. The generated ledger is never
+hand-edited; review state lives in the review file:
+
+```bash
+RUST_PDF_CORPUS_ROOT=/path/to/pdfs python3 checks/build_pdf_ledger.py
+```
+
+`validate.py` always enforces structural parity from the rows themselves: the
+declared source order and contiguous ordinals, unit IDs derived from source and
+ordinal, claims derived from title/depth/file/page, per-source and aggregate
+inventory digests, mapped rules that resolve to real files, assertion IDs that
+resolve to real symbols, the disposition summary, and exact agreement between
+the ledger and the review file. When `RUST_PDF_CORPUS_ROOT` is set it
+additionally re-authenticates each binary against its pinned digest.
+
+CI cannot perform that second pass: these are purchased, non-redistributable
+binaries, so no CI run can prove source identity for this corpus. Structural
+parity detects drift within the ledger; it is not a substitute for holding the
+files. The rules derived from this corpus do not depend on that distinction —
+each states its own contract and, where runtime behavior exists, is backed by
+an assertion in `tests/pdf_corpus_guidance.rs`.
+
+Twenty-three units are reviewed: 22 `covered` and one `project-specific`. The
+other 1,302 are explicitly `unreviewed` — a backlog state carrying no mapped
+rule, an `unassessed` difference, the `pending-semantic-review` rationale
+class, and no reviewer. Moving a unit off `unreviewed` requires the same
+evidence the RustTraining ledger demands, with one extra difference kind:
+`rule-extends-source`, for a rule that states more than its source unit does.
+Reviewed rows must take a difference kind their disposition allows — `covered`
+accepts `no-difference` or `rule-extends-source`, `documented-deviation`
+accepts `extends-rule` or `contradicts-rule`, `project-specific` accepts
+`out-of-scope`, and `reject` accepts `contradicts-rule` or `out-of-scope` — and
+must either name mapped rules or record `out-of-scope`, which maps none.
+
+No substantial text from any purchased source is stored here. The ledger holds
+digests, titles, page numbers, and dispositions; the rules are original prose.
 
 ## Updating the baseline
 
