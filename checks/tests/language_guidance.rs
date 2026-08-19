@@ -161,3 +161,97 @@ fn mutable_insert_returns_the_inserted_value() {
         ["front-ready", "back-ready"]
     );
 }
+
+// --- mem-drop-order ---------------------------------------------------------
+
+/// Records its label when dropped, so drop order becomes observable.
+struct Loud(&'static str, std::rc::Rc<std::cell::RefCell<Vec<&'static str>>>);
+
+impl Drop for Loud {
+    fn drop(&mut self) {
+        self.1.borrow_mut().push(self.0);
+    }
+}
+
+fn take_two(_first: Loud, _second: Loud) {}
+
+#[test]
+fn drop_order_runs_fields_in_declaration_order_and_locals_in_reverse() {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    // Struct fields drop top to bottom.
+    let log = Rc::new(RefCell::new(Vec::new()));
+    {
+        struct Pair {
+            _first: Loud,
+            _second: Loud,
+        }
+        let _pair = Pair {
+            _first: Loud("field-1", Rc::clone(&log)),
+            _second: Loud("field-2", Rc::clone(&log)),
+        };
+    }
+    assert_eq!(*log.borrow(), ["field-1", "field-2"]);
+
+    // Locals drop in reverse declaration order.
+    let log = Rc::new(RefCell::new(Vec::new()));
+    {
+        let _a = Loud("local-a", Rc::clone(&log));
+        let _b = Loud("local-b", Rc::clone(&log));
+        let _c = Loud("local-c", Rc::clone(&log));
+    }
+    assert_eq!(*log.borrow(), ["local-c", "local-b", "local-a"]);
+
+    // Function parameters drop in reverse parameter order.
+    let log = Rc::new(RefCell::new(Vec::new()));
+    take_two(Loud("arg-1", Rc::clone(&log)), Loud("arg-2", Rc::clone(&log)));
+    assert_eq!(*log.borrow(), ["arg-2", "arg-1"]);
+}
+
+// --- serde-enum-representation ----------------------------------------------
+
+#[test]
+fn each_enum_tagging_choice_produces_the_documented_json() {
+    use serde::Serialize;
+
+    #[derive(Serialize)]
+    enum External {
+        Circle { radius: u8 },
+    }
+
+    #[derive(Serialize)]
+    #[serde(tag = "type")]
+    enum Internal {
+        Circle { radius: u8 },
+    }
+
+    #[derive(Serialize)]
+    #[serde(tag = "t", content = "c")]
+    enum Adjacent {
+        Circle { radius: u8 },
+    }
+
+    #[derive(Serialize)]
+    #[serde(untagged)]
+    enum Untagged {
+        Circle { radius: u8 },
+    }
+
+    assert_eq!(
+        serde_json::to_string(&External::Circle { radius: 5 }).unwrap(),
+        r#"{"Circle":{"radius":5}}"#
+    );
+    assert_eq!(
+        serde_json::to_string(&Internal::Circle { radius: 5 }).unwrap(),
+        r#"{"type":"Circle","radius":5}"#
+    );
+    assert_eq!(
+        serde_json::to_string(&Adjacent::Circle { radius: 5 }).unwrap(),
+        r#"{"t":"Circle","c":{"radius":5}}"#
+    );
+    assert_eq!(
+        serde_json::to_string(&Untagged::Circle { radius: 5 }).unwrap(),
+        r#"{"radius":5}"#
+    );
+}

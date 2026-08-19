@@ -1,6 +1,6 @@
 # proj-mod-rs-dir
 
-> Use mod.rs for multi-file modules
+> Pick one multi-file module layout — `mod.rs` or the adjacent file — and apply it consistently
 
 ## Why It Matters
 

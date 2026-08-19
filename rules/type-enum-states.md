@@ -130,30 +130,6 @@ fn find_user(id: u64) -> Option<User> { ... }
 fn parse_config(s: &str) -> Result<Config, ParseError> { ... }
 ```
 
-## Avoid Boolean Flags
-
-```rust
-// Bad: boolean flags
-struct Task {
-    is_running: bool,
-    is_completed: bool,
-    is_failed: bool,
-    error: Option<Error>,
-}
-
-// Good: enum state
-enum TaskState {
-    Pending,
-    Running { started_at: Instant },
-    Completed { result: Output },
-    Failed { error: Error },
-}
-
-struct Task {
-    state: TaskState,
-}
-```
-
 ## See Also
 
 - [api-typestate](./api-typestate.md) - Type-level state machines
