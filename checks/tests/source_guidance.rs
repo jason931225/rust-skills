@@ -308,3 +308,57 @@ fn socket_smoke_test_exchanges_a_complete_http_message() {
     assert!(response.contains("Content-Type: text/plain\r\n"));
     assert!(response.ends_with("\r\n\r\nok"));
 }
+
+/// Shutdown ordering: readiness must fail before cancellation, so routing stops
+/// sending work the process is about to refuse, and the drain must be bounded so
+/// a task that ignores its token cannot hold the process open until it is killed.
+#[tokio::test]
+async fn graceful_shutdown_fails_readiness_before_cancelling_and_bounds_the_drain() {
+    use std::sync::Arc;
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use tokio::task::JoinSet;
+    use tokio_util::sync::CancellationToken;
+
+    // Scaled-down stand-ins for the propagation delay and the drain budget.
+    const READINESS_PROPAGATION: Duration = Duration::from_millis(5);
+    const DRAIN_BUDGET: Duration = Duration::from_millis(25);
+
+    let ready = Arc::new(AtomicBool::new(true));
+    let ready_was_false_at_cancel = Arc::new(AtomicBool::new(false));
+    let shutdown = CancellationToken::new();
+    let mut tasks = JoinSet::new();
+
+    // Records what readiness said at the moment cancellation was observed.
+    {
+        let ready = Arc::clone(&ready);
+        let observed = Arc::clone(&ready_was_false_at_cancel);
+        let token = shutdown.child_token();
+        tasks.spawn(async move {
+            token.cancelled().await;
+            observed.store(!ready.load(Ordering::SeqCst), Ordering::SeqCst);
+        });
+    }
+    // A task that never observes its token: it must be aborted, not waited on.
+    tasks.spawn(async { std::future::pending::<()>().await });
+
+    ready.store(false, Ordering::SeqCst);
+    tokio::time::sleep(READINESS_PROPAGATION).await;
+    shutdown.cancel();
+
+    let drained = tokio::time::timeout(DRAIN_BUDGET, async {
+        while tasks.join_next().await.is_some() {}
+    })
+    .await;
+
+    assert!(
+        ready_was_false_at_cancel.load(Ordering::SeqCst),
+        "readiness must already be failing when cancellation reaches the tasks"
+    );
+    assert!(
+        drained.is_err(),
+        "a task that ignores cancellation must hit the drain budget"
+    );
+
+    tasks.shutdown().await;
+    assert_eq!(tasks.len(), 0, "aborting the JoinSet must leave nothing running");
+}
