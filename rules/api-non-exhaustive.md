@@ -145,6 +145,47 @@ match msg {
 }
 ```
 
+## Parsing a Foreign Wire Format
+
+`#[non_exhaustive]` is about *your* public enum's semver contract — it does
+not help when the enum is decoding a value *someone else's* protocol
+controls. A wire format's discriminant, opcode, or status field is versioned
+on its own schedule, and a peer running a newer version can legitimately send
+a value your local enum has no variant for. Failing the whole message because
+one field holds an unrecognized-but-well-formed value breaks interoperability
+with any peer newer than the code parsing it.
+
+```rust
+// The DNS/HTTP/protobuf-style shape: unknown values are data, not errors.
+#[derive(Debug, PartialEq)]
+enum RecordType {
+    A,
+    Aaaa,
+    Cname,
+    /// Any discriminant this build doesn't name yet — carried through
+    /// rather than rejected, so a newer peer's message still parses.
+    Unknown(u16),
+}
+
+impl From<u16> for RecordType {
+    fn from(value: u16) -> Self {
+        match value {
+            1 => RecordType::A,
+            28 => RecordType::Aaaa,
+            5 => RecordType::Cname,
+            other => RecordType::Unknown(other),
+        }
+    }
+}
+
+fn main() {
+    assert_eq!(RecordType::from(1), RecordType::A);
+    // A code this build doesn't recognize still parses successfully instead
+    // of failing the whole message.
+    assert_eq!(RecordType::from(65534), RecordType::Unknown(65534));
+}
+```
+
 ## When to Use
 
 ```rust

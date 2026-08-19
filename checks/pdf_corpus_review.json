@@ -1130,6 +1130,90 @@
       },
       "remaining_uncertainty": "the source's compile-only assertion example (fn is_normal<T: Sized + Send + Sync + Unpin>()) is restated with different bound choices; the assertion in this ledger proves the happy-path case compiles, not that a regression is caught, which would need a compile-fail harness",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0036",
+      "title": "1.9.1 Heartbleed",
+      "page_text_sha256": "a3754443f6877ef87721738f4778363e643f3741f8e961d3400939910102d707",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-buffer-disclosure"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"1.9.1 Heartbleed\", p.47) names the case study by name but does not state the general contract; the rule states it as a falsifiable pattern (disclose the written count, not the buffer's length or capacity) with a reused-buffer example showing a shorter response never carries a longer prior response's leftover tail"
+      },
+      "rationale_class": "security",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_shorter_response_never_discloses_the_previous_requests_leftover_tail"
+      },
+      "remaining_uncertainty": "the source page is a two-paragraph case-study summary; the rule's reused-buffer construction and its assertion are this rule's own addition, not restated from the source",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0196",
+      "title": "8.4.1 What is a port number?",
+      "page_text_sha256": "0a61ba4244cedc7e8453f45e365f0debe39f23c893530d45c68607b75462429c",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-http-connection-lifecycle"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"8.4.1 What is a port number?\", starting p.287) sits at the point in the chapter where the source states that a one-shot HTTP/1.1 client must force Connection: close and that TcpStream::connect has already forgotten the hostname by the time Host: must be sent; the rule states both as one falsifiable contract with a worked request-builder"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_one_shot_http_request_states_host_and_connection_close"
+      },
+      "remaining_uncertainty": "the source demonstrates this with a live TCP connection to a real host; the rule's example builds the request string and asserts its headers rather than opening a socket, since the compile-check harness has no network access",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0239",
+      "title": "10.2.4 Effect of spawning many threads",
+      "page_text_sha256": "f1fe019286945cb010ca387bf1f48bb38b5f749a6d2f13cf0e0d71400c0f9e3f",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "conc-thread-budget"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"10.2.4 Effect of spawning many threads\", p.359) demonstrates that a CPU-bound workload's throughput collapses past physical-core thread count, and that thread::sleep is a request to the scheduler rather than a deadline; the rule states both as a falsifiable contract plus the yield_now-vs-spin_loop distinction the source covers in the surrounding pages"
+      },
+      "rationale_class": "production-scalability",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_cpu_bound_pool_is_sized_to_cores_and_a_precise_pause_never_returns_early"
+      },
+      "remaining_uncertainty": "the source's demonstration is a benchmark run on the author's machine; the rule's assertion proves the pool-sizing function and the sleep-then-spin pause never returns early, not the throughput-collapse curve itself, which needs a real multi-core benchmark to observe",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0156",
+      "title": "6.4.1 Background",
+      "page_text_sha256": "38ee281194ebc97c11d0997ef94e8ddd1656c7b6bdba8a01f42254efad362416",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "mem-page-commit"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"6.4.1 Background\", p.228) opens the virtual memory chapter this rule draws on: allocation success does not mean physical backing, and the first write to a page is where the real commit and OOM risk occur; the rule states the first-touch benchmarking discipline this observation implies"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::every_page_in_an_allocation_is_actually_touched_not_just_reserved"
+      },
+      "remaining_uncertainty": "the source explains virtual memory as OS background for scanning a process's own address space, not specifically as a benchmarking pitfall; the first-touch-before-timing framing and its assertion are this rule's own addition",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
     }
   ]
 }
