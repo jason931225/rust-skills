@@ -7,6 +7,19 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Two gaps surfaced by delegating a survey of the previously-unread Black Hat
+  Rust chapters (pp. 206-350: phishing/WASM, RAT architecture, end-to-end
+  crypto, cross-platform builds, worm propagation) to Grok 4.6 at xhigh
+  reasoning effort, then independently verified against the existing rule set
+  before landing anything: `type-unicode-identity` (canonicalize a hostname to
+  ASCII/Punycode before it is trusted, and never decode it back to Unicode on
+  a surface a person uses to make a security decision) and
+  `api-update-signature` (verify a signature over a self-update payload with
+  a key that never traveled over the update channel, and reject rollback).
+  Most of the survey's other flagged passages turned out to already be
+  covered — autoescaping, SQL parameterization, AEAD/KDF choice, enum-shaped
+  state, transaction boundaries, graceful shutdown — which is recorded rather
+  than re-landed.
 - `proj-atomic-file-replace`, extracted from a paragraph inside `async-tokio-fs`
   whose subject is blocking isolation. Replacing a whole file safely — a
   same-directory temporary, `sync_all`, a rename rather than a truncate, then a

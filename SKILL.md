@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 402 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 404 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 402 rules across 27 categories, prioritized by impact for use by
+Contains 404 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,12 +58,12 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 14 |
-| 5 | API Design | HIGH | `api-` | 50 |
+| 5 | API Design | HIGH | `api-` | 51 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 8 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 24 |
+| 10 | Type Safety | MEDIUM | `type-` | 25 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -213,6 +213,7 @@ Reference these guidelines when:
 - [`api-scoped-closure-access`](rules/api-scoped-closure-access.md) - Lend a resource that needs setup and teardown through a closure, not through paired open and close methods
 - [`api-sql-parameters`](rules/api-sql-parameters.md) - Build every statement from fixed text with bound parameters; allowlist the identifiers that cannot be bound
 - [`api-typed-response`](rules/api-typed-response.md) - Build an outbound payload by serializing a typed value, not by assembling an untyped tree in the handler
+- [`api-update-signature`](rules/api-update-signature.md) - Verify a signature over every self-update payload before installing or executing it, using a key the running binary did not just download
 
 ### 6. Async/Await (HIGH)
 
@@ -308,6 +309,7 @@ Reference these guidelines when:
 - [`type-generational-handle`](rules/type-generational-handle.md) - Pair a reused slot index with a generation counter, and reject a handle whose generation has moved on
 - [`type-single-use-token`](rules/type-single-use-token.md) - Give an at-most-once permission a type that is neither `Clone` nor `Copy`, so a second use will not compile
 - [`type-capability-token`](rules/type-capability-token.md) - Make a privileged operation take an unforgeable token, so authority appears in the signature
+- [`type-unicode-identity`](rules/type-unicode-identity.md) - Canonicalize a hostname or domain to its ASCII/Punycode form before it is trusted as an identity, stored, compared, or shown to a person making a security decision
 
 ### 11. Trait & Generics Design (MEDIUM)
 

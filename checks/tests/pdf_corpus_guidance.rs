@@ -2187,3 +2187,110 @@ fn a_replacement_that_fails_partway_leaves_the_previous_file_intact() {
 
     std::fs::remove_dir_all(&dir).expect("the temporary directory is removed");
 }
+
+// --- type-unicode-identity ---------------------------------------------------
+
+/// Stand-in for a maintained IDNA implementation (the `idna` crate);
+/// production code calls `idna::domain_to_ascii`, which also normalizes and
+/// validates labels this narrow check does not attempt.
+#[derive(Debug, PartialEq)]
+struct Hostname(String);
+
+#[derive(Debug, PartialEq)]
+struct NotCanonical;
+
+impl Hostname {
+    fn canonicalize(raw: &str) -> Result<Self, NotCanonical> {
+        if raw.is_ascii() && !raw.is_empty() {
+            Ok(Hostname(raw.to_ascii_lowercase()))
+        } else {
+            Err(NotCanonical)
+        }
+    }
+
+    fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+fn is_allowed(host: &Hostname, allowlist: &[&str]) -> bool {
+    allowlist.contains(&host.as_str())
+}
+
+#[test]
+fn a_label_with_a_non_ascii_lookalike_cannot_reach_an_identity_comparison() {
+    let allowlist = ["apple.com"];
+
+    let genuine = Hostname::canonicalize("Apple.com").expect("ascii label canonicalizes");
+    assert!(is_allowed(&genuine, &allowlist));
+
+    // The Cyrillic "а" (U+0430) renders identically to Latin "a" but is a
+    // different scalar value. It never becomes a Hostname at all, so it
+    // cannot reach the allowlist comparison, and it is never available to be
+    // decoded back to Unicode for a reviewer to misread.
+    assert_eq!(
+        Hostname::canonicalize("\u{430}pple.com"),
+        Err(NotCanonical)
+    );
+}
+
+// --- api-update-signature ----------------------------------------------------
+
+/// Stand-in for a real signature scheme (Ed25519 via `ed25519-dalek`, or an
+/// OS code-signing API); this keyed checksum has none of the unforgeability
+/// a real signature needs and exists only to exercise the verify-then-install
+/// control flow below.
+fn bhr_sign(payload: &[u8], key: u8) -> u8 {
+    payload.iter().fold(key, |acc, byte| acc ^ byte)
+}
+
+fn bhr_verify(payload: &[u8], signature: u8, key: u8) -> bool {
+    bhr_sign(payload, key) == signature
+}
+
+const BHR_RELEASE_KEY: u8 = 0x5a;
+
+struct SignedUpdate {
+    version: u32,
+    payload: Vec<u8>,
+    signature: u8,
+}
+
+#[derive(Debug, PartialEq)]
+enum UpdateError {
+    BadSignature,
+    Rollback { installed: u32, offered: u32 },
+}
+
+fn verify_update(update: &SignedUpdate, installed_version: u32) -> Result<&[u8], UpdateError> {
+    if update.version <= installed_version {
+        return Err(UpdateError::Rollback {
+            installed: installed_version,
+            offered: update.version,
+        });
+    }
+    if !bhr_verify(&update.payload, update.signature, BHR_RELEASE_KEY) {
+        return Err(UpdateError::BadSignature);
+    }
+    Ok(&update.payload)
+}
+
+#[test]
+fn an_update_that_fails_verification_or_rollback_is_never_installed() {
+    let payload = b"binary contents go here".to_vec();
+    let signature = bhr_sign(&payload, BHR_RELEASE_KEY);
+
+    let genuine = SignedUpdate { version: 2, payload: payload.clone(), signature };
+    assert_eq!(verify_update(&genuine, 1), Ok(payload.as_slice()));
+
+    let tampered = SignedUpdate { version: 2, payload: b"different bytes".to_vec(), signature };
+    assert_eq!(verify_update(&tampered, 1), Err(UpdateError::BadSignature));
+
+    // Same valid signature, but offered at a version no newer than what is
+    // already installed: rejected before the signature is even consulted.
+    let replay = SignedUpdate { version: 1, payload, signature };
+    assert_eq!(
+        verify_update(&replay, 1),
+        Err(UpdateError::Rollback { installed: 1, offered: 1 })
+    );
+}
