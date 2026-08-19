@@ -68,9 +68,19 @@ not traceability. An unreviewed row must carry no mapped rule, an `unassessed`
 typed `exact_difference`, the `pending-semantic-review` rationale class, the
 `inventory-parity-only` executable applicability, and no reviewer — the
 validator rejects any row that claims more. Moving a unit off `unreviewed`
-requires an exact rule edge, a typed difference with detail, a named reviewer,
-and a review bound to the source file digest; mapped rules must resolve to real
-files in `rules/`.
+requires a stated rule relationship, a typed difference with detail, a named
+reviewer, an assessed `audit_disposition`, and a review bound to the source
+file digest; mapped rules must resolve to real files in `rules/`.
+
+The typed difference must agree with the disposition, so no row can take
+coverage credit for a unit it also says diverges: `covered` allows only
+`no-difference`, `documented-deviation` allows `extends-rule` or
+`contradicts-rule`, `project-specific` allows only `out-of-scope`, and `reject`
+allows `contradicts-rule` or `out-of-scope`. A reviewed row states its
+relationship to the rule library exactly one way: it names the rules it was
+judged against, or it records `out-of-scope` — the one difference kind that
+asserts no rule edge exists, and which must then map no rules. Any other
+reviewed row with an empty `mapped_rule_ids` fails the gate.
 
 Validation requires both exact source checkouts. Point the validator at them to
 recompute the RustTraining inventory — chapter set, per-file digests, unit

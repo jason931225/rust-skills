@@ -29,7 +29,9 @@ MICROSOFT_TRAINING_BOOKS=(
     python-book
 )
 
-if [[ ! -d "$MICROSOFT_RUST_GUIDELINES_ROOT/.git" ]]; then
+# A linked worktree stores `.git` as a file, so ask git whether the path is a
+# checkout instead of looking for a directory.
+if ! git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
     git clone --filter=blob:none https://github.com/microsoft/rust-guidelines.git \
         "$MICROSOFT_RUST_GUIDELINES_ROOT"
 fi
@@ -50,7 +52,7 @@ git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" cat-file -e "$MICROSOFT_COMMIT^{commit}
 git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" checkout --detach "$MICROSOFT_COMMIT"
 export MICROSOFT_RUST_GUIDELINES_ROOT
 
-if [[ ! -d "$MICROSOFT_RUSTTRAINING_ROOT/.git" ]]; then
+if ! git -C "$MICROSOFT_RUSTTRAINING_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
     git clone --filter=blob:none --no-checkout https://github.com/microsoft/RustTraining.git \
         "$MICROSOFT_RUSTTRAINING_ROOT"
     git -C "$MICROSOFT_RUSTTRAINING_ROOT" sparse-checkout init --cone
