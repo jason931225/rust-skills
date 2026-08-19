@@ -117,9 +117,6 @@ rustflags = ["-C", "target-cpu=x86-64-v3"]
 [target.aarch64-unknown-linux-gnu]
 rustflags = ["-C", "target-cpu=neoverse-n1"]
 
-# Intel server deployment
-[target.x86_64-unknown-linux-gnu.deployment]
-rustflags = ["-C", "target-cpu=skylake-avx512"]
 ```
 
 This policy belongs to final application builds. A library's local target

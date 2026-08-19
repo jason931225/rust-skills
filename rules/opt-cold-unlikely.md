@@ -67,12 +67,21 @@ fn cold_non_ascii_error() -> Result<Data, ValidationError> {
 }
 ```
 
-## What #[cold] Does
+## What #[cold] May Influence
 
-1. **Code placement**: Cold functions are placed in separate code sections, away from hot code
-2. **Branch prediction**: Compiler generates branch hints favoring the non-cold path
-3. **Inlining decisions**: Cold functions are not inlined into hot paths
-4. **Optimization budget**: Compiler spends less effort optimizing cold code
+`#[cold]` is a hint. It tells the code generator that a function is unlikely to
+be called; none of the following is guaranteed, and all of them may differ
+between backends, optimization levels, and releases:
+
+1. **Code placement**: the function may be emitted away from hot code, so hot
+   paths pack more densely into instruction cache lines.
+2. **Branch weighting**: branches reaching it may be weighted as unlikely.
+3. **Inlining**: it is less likely to be inlined into a hot caller, though
+   `#[inline(never)]` is what actually forbids that.
+4. **Optimization effort**: the backend may spend less budget on it.
+
+Verify the generated code before relying on any of these — see the
+verification note below.
 
 ## Common Cold Patterns
 
