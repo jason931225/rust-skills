@@ -2461,3 +2461,101 @@ const _: () = rfr_assert_send_sync::<RfrJobHandle>();
 fn a_public_types_send_and_sync_status_is_pinned_by_a_compiled_assertion() {
     rfr_assert_send_sync::<RfrJobHandle>();
 }
+
+// --- api-buffer-disclosure ----------------------------------------------------
+
+struct RiaEchoServer {
+    scratch: Vec<u8>,
+}
+
+impl RiaEchoServer {
+    fn new() -> Self {
+        Self { scratch: vec![0u8; 4096] }
+    }
+
+    fn respond(&mut self, payload: &[u8]) -> &[u8] {
+        let written = payload.len().min(self.scratch.len());
+        self.scratch[..written].copy_from_slice(&payload[..written]);
+        &self.scratch[..written]
+    }
+}
+
+#[test]
+fn a_shorter_response_never_discloses_the_previous_requests_leftover_tail() {
+    let mut server = RiaEchoServer::new();
+
+    let first = server.respond(b"a much larger first payload here");
+    assert_eq!(first, b"a much larger first payload here");
+
+    let second = server.respond(b"hi");
+    assert_eq!(second, b"hi");
+    assert_eq!(second.len(), 2);
+}
+
+// --- api-http-connection-lifecycle --------------------------------------------
+
+fn ria_one_shot_request(host: &str, path: &str) -> String {
+    format!("GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n")
+}
+
+#[test]
+fn a_one_shot_http_request_states_host_and_connection_close() {
+    let request = ria_one_shot_request("example.com", "/status");
+    assert!(request.contains("Host: example.com"));
+    assert!(request.contains("Connection: close"));
+}
+
+// --- conc-thread-budget --------------------------------------------------------
+
+fn ria_cpu_bound_pool_size(available_cores: usize) -> usize {
+    available_cores.max(1)
+}
+
+fn ria_precise_pause(target: std::time::Duration) {
+    let start = std::time::Instant::now();
+    let sleep_portion = target.saturating_sub(std::time::Duration::from_millis(2));
+    if !sleep_portion.is_zero() {
+        std::thread::sleep(sleep_portion);
+    }
+    while start.elapsed() < target {
+        std::hint::spin_loop();
+    }
+}
+
+#[test]
+fn a_cpu_bound_pool_is_sized_to_cores_and_a_precise_pause_never_returns_early() {
+    assert_eq!(ria_cpu_bound_pool_size(8), 8);
+    assert_eq!(ria_cpu_bound_pool_size(0), 1);
+
+    let target = std::time::Duration::from_millis(5);
+    let start = std::time::Instant::now();
+    ria_precise_pause(target);
+    assert!(start.elapsed() >= target);
+}
+
+// --- mem-page-commit -----------------------------------------------------------
+
+const RIA_PAGE: usize = 4096;
+
+fn ria_allocate_and_first_touch(size: usize) -> (Vec<u8>, usize) {
+    let mut buffer = vec![0u8; size];
+    let mut touched = 0;
+    let mut offset = 0;
+    while offset < buffer.len() {
+        buffer[offset] = 1;
+        touched += 1;
+        offset += RIA_PAGE;
+    }
+    (buffer, touched)
+}
+
+#[test]
+fn every_page_in_an_allocation_is_actually_touched_not_just_reserved() {
+    let size = 16 * RIA_PAGE;
+    let (buffer, touched) = ria_allocate_and_first_touch(size);
+
+    assert_eq!(touched, 16);
+    for page in 0..touched {
+        assert_eq!(buffer[page * RIA_PAGE], 1);
+    }
+}
