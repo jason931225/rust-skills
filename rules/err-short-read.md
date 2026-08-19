@@ -72,8 +72,8 @@ fn main() {
   returns `Ok(0)`, and treat `Ok(0)` as end of stream, not as an error.
 - Slice every downstream operation by the returned count. A buffer reused
   across iterations makes stale bytes look like fresh input.
-- `Write::write` has the same contract in reverse — use `write_all` unless you
-  handle the partial count yourself.
+- `Write::write` has the same contract in reverse — use `write_all` unless the
+  partial count is handled explicitly.
 - Watch for this at every framing boundary: length prefixes, fixed-size
   headers, and record readers are where the padding becomes data.
 
