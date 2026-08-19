@@ -24,7 +24,6 @@ api-serde-optional.md :: Multiple Optional Dependencies :: P:expected `;`, found
 api-serde-optional.md :: When to Make Serde Required :: P:expected `;`, found `serde`
 async-bounded-channel.md :: Worker Pool Pattern :: E0107
 async-cancellation-token.md :: CancellationToken API :: E0069
-async-cancellation-token.md :: Graceful Shutdown Pattern :: E0107,E0752
 async-cancellation-token.md :: Hierarchical Cancellation :: E0277
 async-fn-in-trait.md :: Caveats :: P:expected one of `!` or
 async-joinset-structured.md :: Abort on Drop :: E0069

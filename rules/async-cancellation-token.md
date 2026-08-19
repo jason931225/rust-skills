@@ -131,50 +131,85 @@ async fn handle_connection(socket: TcpStream, token: CancellationToken) {
 
 ## Graceful Shutdown Pattern
 
-```rust
-use tokio::signal;
+A container runtime or service manager asks a process to stop with `SIGTERM`,
+not `SIGINT`, and follows it with `SIGKILL` after a grace period. Listening
+only for Ctrl+C means production shutdowns are always kills: connections are
+severed mid-request and in-flight work is lost.
 
-async fn main() -> Result<()> {
-    let shutdown = CancellationToken::new();
-    
-    // Spawn signal handler
-    let shutdown_trigger = shutdown.clone();
-    tokio::spawn(async move {
-        signal::ctrl_c().await.expect("failed to listen for Ctrl+C");
-        println!("Received Ctrl+C, initiating shutdown...");
-        shutdown_trigger.cancel();
-    });
-    
-    // Run application with shutdown token
-    run_app(shutdown).await
+```rust
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::Duration;
+use tokio::task::JoinSet;
+use tokio_util::sync::CancellationToken;
+
+/// Drain budget, deliberately shorter than the platform's grace period so the
+/// process exits on its own terms instead of being killed mid-drain.
+const DRAIN_BUDGET: Duration = Duration::from_secs(25);
+/// Time for load balancers to observe the failing readiness probe.
+const READINESS_PROPAGATION: Duration = Duration::from_secs(5);
+
+/// Resolves when the process is asked to stop. `SIGTERM` is what orchestrators
+/// send; `SIGINT` covers an interactive run.
+async fn shutdown_signal() -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        use tokio::signal::unix::{SignalKind, signal};
+
+        let mut terminate = signal(SignalKind::terminate())?;
+        let mut interrupt = signal(SignalKind::interrupt())?;
+        tokio::select! {
+            _ = terminate.recv() => {}
+            _ = interrupt.recv() => {}
+        }
+        Ok(())
+    }
+    #[cfg(not(unix))]
+    {
+        tokio::signal::ctrl_c().await
+    }
 }
 
-async fn run_app(shutdown: CancellationToken) -> Result<()> {
+async fn serve(_shutdown: CancellationToken) {}
+async fn worker(_shutdown: CancellationToken) {}
+
+async fn run(ready: Arc<AtomicBool>) -> std::io::Result<()> {
+    let shutdown = CancellationToken::new();
     let mut tasks = JoinSet::new();
-    
-    tasks.spawn(worker_task(shutdown.child_token()));
-    tasks.spawn(server_task(shutdown.child_token()));
-    
-    // Wait for shutdown or task completion
-    tokio::select! {
-        _ = shutdown.cancelled() => {
-            println!("Shutdown requested, waiting for tasks...");
-        }
-        Some(result) = tasks.join_next() => {
-            // A task completed/failed
-            result??;
-        }
+    tasks.spawn(serve(shutdown.child_token()));
+    tasks.spawn(worker(shutdown.child_token()));
+
+    shutdown_signal().await?;
+    tracing::info!(event = "shutdown.started", "draining");
+
+    // 1. Fail readiness first, so routing stops sending new requests while the
+    //    process is still able to finish the ones it already has.
+    ready.store(false, Ordering::SeqCst);
+    tokio::time::sleep(READINESS_PROPAGATION).await;
+
+    // 2. Then cancel: accept loops stop taking work and in-flight tasks observe
+    //    the token at their next cancellation point.
+    shutdown.cancel();
+
+    // 3. Drain within the budget; abort whatever is left rather than hanging
+    //    until the runtime sends SIGKILL.
+    let drained = tokio::time::timeout(DRAIN_BUDGET, async {
+        while tasks.join_next().await.is_some() {}
+    })
+    .await;
+    if drained.is_err() {
+        tracing::warn!(event = "shutdown.drain_timeout", "aborting unfinished tasks");
+        tasks.shutdown().await;
     }
-    
-    // Wait for remaining tasks with timeout
-    tokio::time::timeout(
-        Duration::from_secs(30),
-        async { while tasks.join_next().await.is_some() {} }
-    ).await.ok();
-    
     Ok(())
 }
 ```
+
+Order matters: cancelling before readiness fails sheds requests that were
+already accepted, and exiting before the drain budget elapses truncates work
+that would have finished. `SIGKILL` cannot be handled at all, so the budget
+here must stay below the platform's grace period — 30 seconds by default in
+Kubernetes, configurable per workload.
 
 ## DropGuard Pattern
 
@@ -201,3 +236,4 @@ drop(guard);  // Automatically calls token.cancel()
 - [async-joinset-structured](./async-joinset-structured.md) - Managing multiple tasks
 - [async-select-racing](./async-select-racing.md) - select! for cancellation
 - [async-tokio-runtime](./async-tokio-runtime.md) - Runtime shutdown
+- [api-health-probes](./api-health-probes.md) - Readiness is what stops new work arriving
