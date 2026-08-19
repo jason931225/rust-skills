@@ -7,6 +7,25 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Five gaps from surveying "Rust for Rustaceans" (Jon Gjengset) via a Grok
+  4.6 xhigh-effort pass across all twelve chapters, filtered to skip anything
+  this library already states at that level of detail and independently
+  verified before landing: `unsafe-pointer-provenance` (offset/add/sub is UB
+  the moment the result leaves the original allocation, even if never
+  dereferenced), `unsafe-dropck-phantom` (a raw-pointer-holding wrapper needs
+  `PhantomData<T>` for drop-check to see it as owning a `T` at all),
+  `ffi-c-bitflag-enum` (a `#[repr(C)]` fieldless enum is not a bitset; model
+  C bitmask groups as a newtype with associated constants instead),
+  `ffi-foreign-resource-binding` (return a foreign pointer to the allocator
+  that produced it, and give each foreign handle kind its own type so they
+  cannot be swapped), and `api-auto-trait-contract` (pin a public type's
+  `Send`/`Sync`/`Unpin` status with a compile-only assertion, since auto
+  traits are part of the contract without appearing in any signature). Two
+  existing rules gained a bullet each: `num-nonzero` (the same niche makes
+  `Option<extern "C" fn(...)>` the FFI-correct nullable function pointer) and
+  `unsafe-maybeuninit` (commit a length or ownership marker only after every
+  element is initialized, so an unwind partway through cannot leave a
+  collection believing uninitialized memory is valid).
 - Two gaps surfaced by delegating a survey of the previously-unread Black Hat
   Rust chapters (pp. 206-350: phishing/WASM, RAT architecture, end-to-end
   crypto, cross-platform builds, worm propagation) to Grok 4.6 at xhigh
