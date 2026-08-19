@@ -150,11 +150,16 @@ if tx.is_closed() {
     tx.send(result).ok();
 }
 
-// Async wait for close
-let tx_clone = tx.clone();  // Note: can't actually clone, just showing concept
+// Async wait for close: `Sender` is not `Clone`, and `closed` borrows it
+// mutably, so the same sender is used in both branches.
+let (mut tx, rx) = oneshot::channel::<i32>();
 tokio::select! {
-    _ = tx.closed() => println!("Receiver dropped"),
-    result = compute() => { tx.send(result).ok(); }
+    _ = tx.closed() => {
+        // The receiver went away; drop the work.
+    }
+    result = expensive_computation_async() => {
+        let _ = tx.send(result);
+    }
 }
 ```
 

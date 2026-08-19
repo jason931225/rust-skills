@@ -64,8 +64,6 @@ Create `rustfmt.toml` for custom settings:
 edition = "2021"
 max_width = 100
 use_small_heuristics = "Max"
-imports_granularity = "Module"
-group_imports = "StdExternalCrate"
 reorder_imports = true
 ```
 
@@ -77,8 +75,8 @@ reorder_imports = true
 | `tab_spaces` | 4 | Spaces per indent |
 | `edition` | "2015" | Rust edition |
 | `use_small_heuristics` | "Default" | Layout heuristics |
-| `imports_granularity` | "Preserve" | Import grouping |
-| `group_imports` | "Preserve" | Import ordering |
+| `imports_granularity` | "Preserve" | Import grouping (**nightly only**) |
+| `group_imports` | "Preserve" | Import ordering (**nightly only**) |
 
 ## Running Locally
 
