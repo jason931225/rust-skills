@@ -7,6 +7,27 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Four gaps from surveying "Rust in Action" (Tim McNamara) via a five-chunk
+  Grok 4.6 xhigh-effort pass across the whole book (language foundations
+  through kernels and signals), independently verified before landing:
+  `api-buffer-disclosure` (a Heartbleed-class leak — disclose the bytes a
+  request actually wrote, never a reused buffer's length or capacity),
+  `api-http-connection-lifecycle` (force `Connection: close` on a one-shot
+  HTTP/1.1 client, and resend the hostname in `Host:` since the transport
+  layer forgot it), `conc-thread-budget` (size a CPU-bound pool to physical
+  cores, not job count; `thread::sleep` is a request, not a deadline), and
+  `mem-page-commit` (the first write to freshly allocated memory is the real
+  cost and the real OOM risk, not the allocation call). Five existing rules
+  gained bullets from the same survey: `type-time-domain` (epoch/unit/
+  signedness as part of any wire timestamp, leap-second duplicate
+  timestamps, CPU cycle counters are not clocks, timezone-in-the-type, slew
+  not step), `conc-signal-handler-safety` (`sigaction` not `signal()`,
+  `SIGPIPE`'s default disposition, the signal/interrupt/panic taxonomy,
+  `SetConsoleCtrlHandler` on Windows, and why `setjmp`/`longjmp` is
+  RAII-unsound), `api-non-exhaustive` (keep an unrecognized wire-protocol
+  discriminant as data, not a parse failure), `mem-with-capacity` (capacity
+  is not length for a buffer an OS call like `recv_from` writes into), and
+  `type-text-decode-policy` (wire framing bytes are not platform text).
 - Five gaps from surveying "Rust for Rustaceans" (Jon Gjengset) via a Grok
   4.6 xhigh-effort pass across all twelve chapters, filtered to skip anything
   this library already states at that level of detail and independently

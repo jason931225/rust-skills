@@ -111,9 +111,9 @@
     }
   ],
   "summary": {
-    "covered": 51,
+    "covered": 55,
     "project-specific": 1,
-    "unreviewed": 1273
+    "unreviewed": 1269
   },
   "units": [
     {
@@ -19219,26 +19219,28 @@
       "page": 47,
       "page_text_sha256": "a3754443f6877ef87721738f4778363e643f3741f8e961d3400939910102d707",
       "claim": "1.9.1 Heartbleed (depth 2 at Rust in Action.pdf page 47)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-buffer-disclosure"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"1.9.1 Heartbleed\", p.47) names the case study by name but does not state the general contract; the rule states it as a falsifiable pattern (disclose the written count, not the buffer's length or capacity) with a reused-buffer example showing a shorter response never carries a longer prior response's leftover tail"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:a3754443f6877ef87721738f4778363e643f3741f8e961d3400939910102d707"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_shorter_response_never_discloses_the_previous_requests_leftover_tail"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the source page is a two-paragraph case-study summary; the rule's reused-buffer construction and its assertion are this rule's own addition, not restated from the source",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -23062,26 +23064,28 @@
       "page": 228,
       "page_text_sha256": "38ee281194ebc97c11d0997ef94e8ddd1656c7b6bdba8a01f42254efad362416",
       "claim": "6.4.1 Background (depth 3 at Rust in Action.pdf page 228)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "mem-page-commit"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"6.4.1 Background\", p.228) opens the virtual memory chapter this rule draws on: allocation success does not mean physical backing, and the first write to a page is where the real commit and OOM risk occur; the rule states the first-touch benchmarking discipline this observation implies"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:38ee281194ebc97c11d0997ef94e8ddd1656c7b6bdba8a01f42254efad362416"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::every_page_in_an_allocation_is_actually_touched_not_just_reserved"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the source explains virtual memory as OS background for scanning a process's own address space, not specifically as a benchmarking pitfall; the first-touch-before-timing framing and its assertion are this rule's own addition",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -24356,26 +24360,28 @@
       "page": 287,
       "page_text_sha256": "0a61ba4244cedc7e8453f45e365f0debe39f23c893530d45c68607b75462429c",
       "claim": "8.4.1 What is a port number? (depth 3 at Rust in Action.pdf page 287)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-http-connection-lifecycle"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"8.4.1 What is a port number?\", starting p.287) sits at the point in the chapter where the source states that a one-shot HTTP/1.1 client must force Connection: close and that TcpStream::connect has already forgotten the hostname by the time Host: must be sent; the rule states both as one falsifiable contract with a worked request-builder"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:0a61ba4244cedc7e8453f45e365f0debe39f23c893530d45c68607b75462429c"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_one_shot_http_request_states_host_and_connection_close"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the source demonstrates this with a live TCP connection to a real host; the rule's example builds the request string and asserts its headers rather than opening a socket, since the compile-check harness has no network access",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -25750,26 +25756,28 @@
       "page": 359,
       "page_text_sha256": "f1fe019286945cb010ca387bf1f48bb38b5f749a6d2f13cf0e0d71400c0f9e3f",
       "claim": "10.2.4 Effect of spawning many threads (depth 3 at Rust in Action.pdf page 359)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "conc-thread-budget"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"10.2.4 Effect of spawning many threads\", p.359) demonstrates that a CPU-bound workload's throughput collapses past physical-core thread count, and that thread::sleep is a request to the scheduler rather than a deadline; the rule states both as a falsifiable contract plus the yield_now-vs-spin_loop distinction the source covers in the surrounding pages"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:f1fe019286945cb010ca387bf1f48bb38b5f749a6d2f13cf0e0d71400c0f9e3f"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_cpu_bound_pool_is_sized_to_cores_and_a_precise_pause_never_returns_early"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the source's demonstration is a benchmark run on the author's machine; the rule's assertion proves the pool-sizing function and the sleep-then-spin pause never returns early, not the throughput-collapse curve itself, which needs a real multi-core benchmark to observe",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },

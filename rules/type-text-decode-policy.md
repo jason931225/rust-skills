@@ -77,6 +77,11 @@ fn main() {
   U+FFFD is not a transcoding strategy.
 - Filesystem paths and process arguments are OS strings, not UTF-8, and have
   their own rule.
+- A wire protocol's line terminator and framing bytes are part of the
+  protocol, not the host's text convention: write `b"\r\n\r\n"` or the
+  protocol's literal bytes, not `writeln!` or a `&str` built with `\n` — a
+  platform newline is not the same bytes as CRLF, and a `&str` also commits
+  to an encoding the protocol may not share.
 
 ## See Also
 

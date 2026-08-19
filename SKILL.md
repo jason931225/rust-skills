@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 409 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 413 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 409 rules across 27 categories, prioritized by impact for use by
+Contains 413 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -56,11 +56,11 @@ Reference these guidelines when:
 |----------|----------|--------|--------|-------|
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 13 |
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
-| 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
+| 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
-| 5 | API Design | HIGH | `api-` | 52 |
+| 5 | API Design | HIGH | `api-` | 54 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
-| 7 | Concurrency | HIGH | `conc-` | 8 |
+| 7 | Concurrency | HIGH | `conc-` | 9 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
 | 10 | Type Safety | MEDIUM | `type-` | 25 |
@@ -143,6 +143,7 @@ Reference these guidelines when:
 - [`mem-take-replace`](rules/mem-take-replace.md) - Use `mem::take` / `mem::replace` to move a value out of a `&mut` without cloning
 - [`mem-drop-order`](rules/mem-drop-order.md) - Know and control drop order: struct fields drop top-to-bottom, locals in reverse
 - [`mem-shrink-to-fit`](rules/mem-shrink-to-fit.md) - Reclaim measured, long-lived collection slack after growth has finished; do not assume an exact capacity
+- [`mem-page-commit`](rules/mem-page-commit.md) - Treat the first write to freshly allocated memory as the real cost and the real out-of-memory risk, not the allocation call
 
 ### 4. Unsafe Code (CRITICAL)
 
@@ -217,6 +218,8 @@ Reference these guidelines when:
 - [`api-typed-response`](rules/api-typed-response.md) - Build an outbound payload by serializing a typed value, not by assembling an untyped tree in the handler
 - [`api-update-signature`](rules/api-update-signature.md) - Verify a signature over every self-update payload before installing or executing it, using a key the running binary did not just download
 - [`api-auto-trait-contract`](rules/api-auto-trait-contract.md) - Pin every auto trait a public type promises — `Send`, `Sync`, `Unpin`, `UnwindSafe` — with a compile-only assertion, so a private-field change that silently drops one is caught before release
+- [`api-buffer-disclosure`](rules/api-buffer-disclosure.md) - Disclose only the bytes a request actually filled, never the reused buffer's full length
+- [`api-http-connection-lifecycle`](rules/api-http-connection-lifecycle.md) - Force connection close on a one-shot HTTP client, and resend the hostname in every request even though the connection already resolved it
 
 ### 6. Async/Await (HIGH)
 
@@ -260,6 +263,7 @@ Reference these guidelines when:
 - [`conc-atomic-update`](rules/conc-atomic-update.md) - Use atomic `update` / `try_update` instead of hand-written compare-exchange loops
 - [`conc-signal-handler-safety`](rules/conc-signal-handler-safety.md) - Let a signal handler set an atomic flag and return; do everything else in ordinary code
 - [`conc-condvar-predicate-loop`](rules/conc-condvar-predicate-loop.md) - Re-check a condition variable's predicate in a loop under its mutex; a wakeup is a hint, not proof
+- [`conc-thread-budget`](rules/conc-thread-budget.md) - Bound OS-thread count by what the workload actually does — CPU-bound work collapses past the physical core count, sleeping threads do not
 
 ### 8. Compiler Optimization (HIGH)
 

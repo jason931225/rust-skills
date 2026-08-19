@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 409,
-  "ledger_mapped": 263,
+  "rule_count": 413,
+  "ledger_mapped": 267,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 263,
+    "ledger-mapped": 267,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -154,6 +154,13 @@
       ]
     },
     {
+      "rule_id": "api-buffer-disclosure",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
       "rule_id": "api-builder-must-use",
       "provenance": "typed-justification",
       "source_class": "rust-api-guidelines",
@@ -258,6 +265,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "api-http-connection-lifecycle",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -813,6 +827,13 @@
     },
     {
       "rule_id": "conc-signal-handler-safety",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "conc-thread-budget",
       "provenance": "ledger-mapped",
       "ledgers": [
         "pdf_corpus_coverage.json"
@@ -1453,6 +1474,13 @@
       "source_class": "rust-reference",
       "justification": "The rule states the language's destructor semantics \u2014 struct fields and tuple/array elements drop in declaration order, locals in reverse declaration order, temporaries at end of statement \u2014 which is defined by the language rather than by any library contract.",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "rule_id": "mem-page-commit",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "mem-reuse-collections",
