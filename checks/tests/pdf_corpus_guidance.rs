@@ -1213,3 +1213,107 @@ fn a_view_into_linear_memory_is_reacquired_after_growth() {
     assert_eq!(view.len(), 8);
     assert_eq!(&view[offset..], b"data");
 }
+
+// --- mem-arena-allocator (destructor hazard) --------------------------------
+
+/// Stands in for an arena: it owns a block of bytes and hands out slices of it.
+/// Reclaiming the block runs no destructors, which is the property under test.
+struct Arena {
+    block: Vec<u8>,
+    used: std::cell::Cell<usize>,
+}
+
+impl Arena {
+    fn new(bytes: usize) -> Self {
+        Self { block: vec![0; bytes], used: std::cell::Cell::new(0) }
+    }
+
+    /// Only plain data may be placed here; see the rule.
+    fn alloc_bytes(&self, data: &[u8]) -> usize {
+        let at = self.used.get();
+        self.used.set(at + data.len());
+        at
+    }
+
+    fn len(&self) -> usize {
+        self.block.len()
+    }
+}
+
+thread_local! {
+    static DROPS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+struct Owns;
+
+impl Drop for Owns {
+    fn drop(&mut self) {
+        DROPS.with(|d| d.set(d.get() + 1));
+    }
+}
+
+#[test]
+fn reclaiming_an_arena_block_does_not_run_destructors() {
+    DROPS.with(|d| d.set(0));
+    {
+        let arena = Arena::new(64);
+        assert_eq!(arena.alloc_bytes(b"plain data"), 0);
+        assert_eq!(arena.len(), 64);
+        // A Drop type placed in arena-owned storage would have its destructor
+        // skipped when the block is reclaimed; the rule therefore forbids it.
+        std::mem::forget(Owns);
+    }
+    assert_eq!(
+        DROPS.with(|d| d.get()),
+        0,
+        "the destructor did not run — which is exactly why a Drop type must not live in an arena"
+    );
+
+    // The same value dropped normally does run its destructor.
+    drop(Owns);
+    assert_eq!(DROPS.with(|d| d.get()), 1);
+}
+
+// --- api-fallible-self-return -----------------------------------------------
+
+#[derive(Debug, PartialEq)]
+enum AuthError {
+    WrongPassword,
+    Fatal,
+}
+
+#[derive(Debug)]
+struct Connected {
+    handle: u32,
+}
+
+struct Authenticated {
+    handle: u32,
+}
+
+impl Connected {
+    fn authenticate(self, password: &str) -> Result<Authenticated, (AuthError, Self)> {
+        match password {
+            "correct-horse" => Ok(Authenticated { handle: self.handle }),
+            "" => Err((AuthError::Fatal, self)),
+            _ => Err((AuthError::WrongPassword, self)),
+        }
+    }
+}
+
+#[test]
+fn a_recoverable_failure_returns_the_receiver_so_the_caller_can_retry() {
+    let connection = Connected { handle: 7 };
+
+    let connection = match connection.authenticate("guess") {
+        Ok(_) => unreachable!("the password is wrong"),
+        Err((error, recovered)) => {
+            assert_eq!(error, AuthError::WrongPassword);
+            recovered
+        }
+    };
+
+    // The retry uses the same connection, not a rebuilt one.
+    let authenticated = connection.authenticate("correct-horse").expect("retry succeeds");
+    assert_eq!(authenticated.handle, 7);
+}
