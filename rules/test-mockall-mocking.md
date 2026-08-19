@@ -144,12 +144,15 @@ mock.expect_count().returning(|| 42);
 // Based on input
 mock.expect_double().returning(|x| x * 2);
 
-// Different values per call
-mock.expect_next()
-    .times(3)
-    .returning(|| 1)
-    .returning(|| 2)
-    .returning(|| 3);
+// Different values per call: each `returning` replaces the previous closure,
+// so chaining three of them yields 3, 3, 3. Use one expectation per call.
+let mut sequence = mockall::Sequence::new();
+for value in [1, 2, 3] {
+    mock.expect_next()
+        .times(1)
+        .in_sequence(&mut sequence)
+        .returning(move || value);
+}
 
 // Return owned values
 mock.expect_get_name()

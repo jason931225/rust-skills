@@ -107,21 +107,33 @@ fn invalid_input_returns_error() {
 }
 ```
 
-## Combining with Result
+## Return Type
+
+A `#[should_panic]` test must return `()`; the compiler rejects a `Result`
+return with "functions using `#[should_panic]` must return `()`". Fallible
+setup inside such a test therefore uses `expect` rather than `?`:
 
 ```rust
-#[test]
-#[should_panic]
-fn test_panics() -> Result<(), Error> {
-    // Can combine with Result for setup
-    let data = setup_test_data()?;
-    
-    // This should panic
-    process_invalid(&data);
-    
-    Ok(())  // Never reached
+fn setup() -> Result<Vec<u8>, String> {
+    Ok(vec![1, 2, 3])
 }
+
+fn process_invalid(_data: &[u8]) {
+    panic!("invalid record");
+}
+
+#[test]
+#[should_panic(expected = "invalid record")]
+fn rejects_invalid_records() {
+    let data = setup().expect("test setup failed");
+    process_invalid(&data);
+}
+
+fn main() {}
 ```
+
+Use `Result`-returning tests with `?` for the cases that should *not* panic,
+and keep the panicking assertion in its own test.
 
 ## See Also
 

@@ -119,7 +119,7 @@ for item in all.iter().flat_map(|slice| slice.iter()) {
 }
 ```
 
-## Performance Impact
+## Per-Item Overhead (external iteration only)
 
 | Pattern | Per-Item Overhead |
 |---------|-------------------|
@@ -128,6 +128,12 @@ for item in all.iter().flat_map(|slice| slice.iter()) {
 | `chain(a, b, c)` | 2 branches per item |
 | Nested chains | Compounds |
 | Separate loops | None (but code duplication) |
+
+These costs apply to `next()`-driven consumption — a `for` loop, or an adaptor
+that pulls one item at a time. `Chain` specializes `fold`, `try_fold` and
+`for_each`, walking each half separately, so internally-driven consumers such
+as `sum`, `count`, `for_each`, `find` and `collect` pay no per-item branch.
+Measure before restructuring a chain that feeds one of those.
 
 ## See Also
 

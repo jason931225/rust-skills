@@ -133,23 +133,46 @@ pub trait ValidConfig: private::Sealed {}
 
 ## Partially Sealed
 
+Sealing is all-or-nothing *per trait*: the supertrait bound makes every
+external `impl Plugin for T` impossible, so no method of a sealed trait can be
+left open for callers to override. Splitting the surface into two traits is
+what gives a partially open API.
+
 ```rust
-// Allow implementing some methods but not all
 mod private {
     pub trait SealedCore {}
 }
 
+/// Sealed: only this crate implements it, and methods may be added without a
+/// major version bump.
 pub trait Plugin: private::SealedCore {
-    // Sealed - only we implement
     fn initialize(&self);
     fn shutdown(&self);
-    
-    // Open - users can override
-    fn name(&self) -> &str { "unnamed" }
 }
 
-// Only we can add new required sealed methods
-// Users can customize open methods
+/// Unsealed companion: callers may implement or override this.
+pub trait PluginName {
+    fn name(&self) -> &str {
+        "unnamed"
+    }
+}
+
+struct Builtin;
+impl private::SealedCore for Builtin {}
+impl Plugin for Builtin {
+    fn initialize(&self) {}
+    fn shutdown(&self) {}
+}
+// A downstream crate can do this, because `PluginName` is not sealed.
+impl PluginName for Builtin {
+    fn name(&self) -> &str {
+        "builtin"
+    }
+}
+
+fn main() {
+    assert_eq!(Builtin.name(), "builtin");
+}
 ```
 
 ## When to Seal

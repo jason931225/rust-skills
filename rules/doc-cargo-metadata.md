@@ -44,8 +44,6 @@ homepage = "https://my-awesome-crate.dev"
 include = ["src/**/*", "Cargo.toml", "LICENSE*", "README.md"]
 exclude = ["tests/fixtures/*", ".github/*"]
 
-[badges]
-maintenance = { status = "actively-developed" }
 
 [dependencies]
 # ...

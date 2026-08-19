@@ -56,7 +56,9 @@ let guard = mutex.lock().expect("mutex poisoned");
 let re = Regex::new(r"^\d{4}$").expect("invalid regex");
 
 // Thread spawn failure is unrecoverable
-let handle = thread::spawn(|| work()).expect("failed to spawn thread");
+let handle = thread::Builder::new()
+    .spawn(|| work())
+    .expect("failed to spawn thread");
 
 // Static data that must be valid
 let config: Config = toml::from_str(EMBEDDED_CONFIG)

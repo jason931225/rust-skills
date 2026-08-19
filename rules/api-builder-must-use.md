@@ -123,9 +123,11 @@ return_self_not_must_use = "warn"  # Specifically for -> Self methods
 ## Standard Library Examples
 
 ```rust
-// std::Option - must_use on map, and, or
+// std::Option is not itself #[must_use], and neither are `map`, `and`, `or`:
+// discarding them is silent. The attribute is applied where dropping the value
+// is almost always a bug, not to every combinator.
 let x: Option<i32> = Some(5);
-x.map(|v| v * 2);  // Warning: unused return value
+x.map(|v| v * 2);  // no warning
 
 // std::Result - must_use on the type itself
 #[must_use = "this `Result` may be an `Err` variant, which should be handled"]
