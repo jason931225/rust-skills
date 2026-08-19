@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 358 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 368 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 358 rules across 27 categories, prioritized by impact for use by
+Contains 368 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -55,19 +55,19 @@ Reference these guidelines when:
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 12 |
-| 2 | Error Handling | CRITICAL | `err-` | 16 |
+| 2 | Error Handling | CRITICAL | `err-` | 19 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 10 |
-| 5 | API Design | HIGH | `api-` | 39 |
+| 5 | API Design | HIGH | `api-` | 42 |
 | 6 | Async/Await | HIGH | `async-` | 25 |
 | 7 | Concurrency | HIGH | `conc-` | 6 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 12 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 17 |
+| 10 | Type Safety | MEDIUM | `type-` | 18 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
-| 14 | Serde | MEDIUM | `serde-` | 8 |
+| 14 | Serde | MEDIUM | `serde-` | 10 |
 | 15 | Pattern Matching | MEDIUM | `pat-` | 6 |
 | 16 | Macros | MEDIUM | `macro-` | 11 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
@@ -77,7 +77,7 @@ Reference these guidelines when:
 | 21 | Documentation | MEDIUM | `doc-` | 16 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
-| 24 | Project Structure | LOW | `proj-` | 30 |
+| 24 | Project Structure | LOW | `proj-` | 31 |
 | 25 | FFI & Interop | LOW | `ffi-` | 5 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -119,6 +119,9 @@ Reference these guidelines when:
 - [`err-canonical-struct`](rules/err-canonical-struct.md) - Keep extensible library errors opaque, preserve `source()`, and expose only stable recovery queries
 - [`err-panic-message`](rules/err-panic-message.md) - Give every intentional production panic a message that identifies the violated contract and relevant values
 - [`err-edge-mapping`](rules/err-edge-mapping.md) - Keep domain and infrastructure errors protocol-neutral; map them to safe, actionable responses at the entrypoint
+- [`err-debug-assert-scope`](rules/err-debug-assert-scope.md) - Guard internal invariants with `debug_assert!`; validate boundary data with checks that survive `--release`
+- [`err-send-sync-static`](rules/err-send-sync-static.md) - Make public error types `Send + Sync + 'static` so callers can move, wrap, and downcast them
+- [`err-short-read`](rules/err-short-read.md) - Trust the byte count a read returns, not the length you asked for
 
 ### 3. Memory Optimization (CRITICAL)
 
@@ -195,6 +198,9 @@ Reference these guidelines when:
 - [`api-outbound-target`](rules/api-outbound-target.md) - Resolve and authorize every caller-influenced outbound request target before connecting
 - [`api-path-containment`](rules/api-path-containment.md) - Resolve caller-supplied path components against a fixed root and reject anything that escapes it
 - [`api-resource-limits`](rules/api-resource-limits.md) - Give every request an explicit ceiling on bytes, time, and concurrency, and reject past it
+- [`api-error-schema`](rules/api-error-schema.md) - Return errors in the same media type and documented schema as successes, including framework-generated ones
+- [`api-record-checksum`](rules/api-record-checksum.md) - Store an integrity check with every persisted or transmitted record and verify it before trusting the bytes
+- [`api-subprocess-args`](rules/api-subprocess-args.md) - Launch subprocesses with an explicit argument vector; never build a command line from untrusted input
 
 ### 6. Async/Await (HIGH)
 
@@ -276,6 +282,7 @@ Reference these guidelines when:
 - [`type-secret-material`](rules/type-secret-material.md) - Carry credentials in a wrapper type that redacts its `Debug`, withholds `Display`, and wipes on drop
 - [`type-time-domain`](rules/type-time-domain.md) - Measure elapsed time with `Instant`; use `SystemTime` only for timestamps that leave the process
 - [`type-variance`](rules/type-variance.md) - Keep generic types covariant where you can; reach for an extra lifetime parameter before accepting invariance
+- [`type-path-not-string`](rules/type-path-not-string.md) - Carry filesystem paths as `Path`/`PathBuf`; convert to text only for display
 
 ### 11. Trait & Generics Design (MEDIUM)
 
@@ -311,6 +318,8 @@ Reference these guidelines when:
 - [`serde-deny-unknown-fields`](rules/serde-deny-unknown-fields.md) - Reject unexpected keys with `#[serde(deny_unknown_fields)]`
 - [`serde-custom-with`](rules/serde-custom-with.md) - Customize a field's (de)serialization with `with` / `serialize_with` / `deserialize_with`
 - [`serde-try-from-validate`](rules/serde-try-from-validate.md) - Validate while deserializing with `#[serde(try_from = "Raw")]`
+- [`serde-byte-order`](rules/serde-byte-order.md) - Declare a byte order for every multi-byte value that leaves the process, and convert explicitly at the boundary
+- [`serde-format-version`](rules/serde-format-version.md) - Start every persisted binary format with a magic identifier and a version, and reject versions you do not understand
 
 ### 15. Pattern Matching (MEDIUM)
 
@@ -478,6 +487,7 @@ Reference these guidelines when:
 - [`proj-cli-contract`](rules/proj-cli-contract.md) - Exit 0 only on success, send results to stdout and diagnostics to stderr, and read `-` as standard input
 - [`proj-dependency-policy`](rules/proj-dependency-policy.md) - Admit dependencies deliberately, commit the lockfile for anything you ship, and audit the tree continuously
 - [`proj-semver-contract`](rules/proj-semver-contract.md) - Version by what breaks callers, depend on the earliest version you actually need, and keep a written changelog
+- [`proj-secret-file-mode`](rules/proj-secret-file-mode.md) - Create credential files owner-only, in an owner-only directory, before writing anything into them
 
 ### 25. FFI & Interop (LOW)
 
