@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 402,
-  "ledger_mapped": 256,
+  "rule_count": 404,
+  "ledger_mapped": 258,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 256,
+    "ledger-mapped": 258,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -478,6 +478,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "api-update-signature",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -2764,6 +2771,13 @@
     },
     {
       "rule_id": "type-time-sample-once",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "type-unicode-identity",
       "provenance": "ledger-mapped",
       "ledgers": [
         "pdf_corpus_coverage.json"
