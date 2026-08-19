@@ -20,10 +20,10 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 13,
+    "covered": 17,
     "project-specific": 532,
     "reject": 327,
-    "unreviewed": 1252
+    "unreviewed": 1248
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -7076,27 +7076,29 @@
       "end_line": 324,
       "unit_sha256": "2697501e671c3414969ff8475fbc5978b1efa3403a23872f02bd23ef3bdfe27b",
       "claim": "Section 1 \u2014 Response Builder Type-State: \"Construct, Don't Serialize\" (ch07 Inverted) (H2 at ch18-redfish-server-walkthrough.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-typed-response"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit builds outbound payloads by constructing a typed response rather than serializing an ad-hoc tree; the rule states the producer-side contract the library previously left to the inbound rules"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:d52f7e1ac808307ec002c1aacb3cc96c99586c9cb91bf3f1bdd4d607bcf45f1a",
         "unit-sha256:2697501e671c3414969ff8475fbc5978b1efa3403a23872f02bd23ef3bdfe27b"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_typed_response_fixes_its_wire_names_and_omits_absent_fields"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "a rename that still compiles is caught only by a snapshot, which the rule requires but this assertion does not perform",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "d52f7e1ac808307ec002c1aacb3cc96c99586c9cb91bf3f1bdd4d607bcf45f1a"
       }
     },
@@ -18076,27 +18078,29 @@
       "end_line": 419,
       "unit_sha256": "29b3e15c749d121cea1366099beec4379811a532103a64d7ddb4f9223afe6fbe",
       "claim": "zerocopy and bytemuck \u2014 Safe Transmutation (H3 at ch11-serialization-zero-copy-and-binary-data.md#8)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-byte-slice-cast"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers safe transmutation crates that check length and alignment before reinterpreting bytes; the rule states the contract and why field-by-field decoding avoids the obligation entirely"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763",
         "unit-sha256:29b3e15c749d121cea1366099beec4379811a532103a64d7ddb4f9223afe6fbe"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::bytes_are_decoded_field_by_field_because_a_slice_carries_no_alignment"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule names reviewed crates rather than depending on one, so the assertion covers the decode path only",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763"
       }
     },
@@ -47618,27 +47622,29 @@
       "end_line": 46,
       "unit_sha256": "d85d036e6a6db8ba1ce2432973fc0c5911e5896f0a612047c7e7715ad59b4f56",
       "claim": "The Rust Solution: DiagContext with Lifetime Borrowing (H2 at ch16-cases-3-5-lifetime-borrowing.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "own-split-borrow-fields"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit's Rust solution for a C++ lifetime case study is composable state structs so independent operations borrow disjoint fields; the rule states that as an ownership contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:a470d9256f2132ff8322dd9e98d4940c9e3942593b8da79255144edf05b8dc27",
         "unit-sha256:d85d036e6a6db8ba1ce2432973fc0c5911e5896f0a612047c7e7715ad59b4f56"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::grouped_fields_let_two_mutable_borrows_of_one_value_coexist"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "a470d9256f2132ff8322dd9e98d4940c9e3942593b8da79255144edf05b8dc27"
       }
     },
@@ -68332,14 +68338,16 @@
       "end_line": 321,
       "unit_sha256": "d761c5365df4f6f9c6831ec4f28a4205a2ac78fd2ac30053836177da86347e19",
       "claim": "End-to-End Example: Opaque Handle with Lifecycle Management (H3 at ch14-unsafe-rust-and-ffi.md#9)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "ffi-opaque-handle-lifecycle"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit gives an end-to-end opaque-handle example with paired construction and release across the C ABI; the rule states the lifecycle contract including null checks and unwinding"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:2c245e84db567b40d9b98e39b5b32fd3717a61dba7f386f9d10e336d2f4c794e",
@@ -68347,12 +68355,12 @@
       ],
       "executable_check": {
         "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the example is an extern \"C\" shim; this repository has no C caller, so the contract is stated rather than exercised across a real ABI",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "2c245e84db567b40d9b98e39b5b32fd3717a61dba7f386f9d10e336d2f4c794e"
       }
     },
