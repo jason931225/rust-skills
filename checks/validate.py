@@ -1290,6 +1290,279 @@ if training is not None:
                         "the source checkout"
                     )
 
+
+# --- authenticated PDF corpus ------------------------------------------------
+#
+# The eight binaries are purchased and non-redistributable, so CI cannot fetch
+# them. Structural parity is always enforced from the ledger's own rows; the
+# source-identity pass runs only when RUST_PDF_CORPUS_ROOT points at the exact
+# binaries, and the ledger states which of the two ran.
+
+PDF_CORPUS_COVERAGE = HERE / "pdf_corpus_coverage.json"
+PDF_CORPUS_REVIEW = HERE / "pdf_corpus_review.json"
+EXPECTED_PDF_UNITS = 1325
+EXPECTED_PDF_AGGREGATE = "4d799f52c65cf150edf0bf8e02769ee6c44b5c8c876f5339b893b8482a5f685e"
+# (slug, file name, bytes, sha256, pages, unit count) in declared corpus order.
+EXPECTED_PDF_SOURCES = [
+    ("black-hat-rust", "Black Hat Rust.pdf", 4086487,
+     "63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4", 357, 219),
+    ("command-line-rust", "Command-Line Rust.pdf", 2412243,
+     "8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec", 615, 177),
+    ("fullstack-rust", "Fullstack Rust.pdf", 2211377,
+     "c46e30de610e560a5dbde27d3c6a38b060c77c3d03d1aaef3fdd71ae3bbe1468", 320, 91),
+    ("lets-get-rusty-cheat-sheet", "Lets Get Rusty Cheat Sheet.pdf", 184513,
+     "607709cd075904b05d1e808b622f2e8b477916a5f67ccb1e9edef2ecabd5b9d5", 11, 11),
+    ("rust-container-cheat-sheet", "Rust container cheat sheet.pdf", 39516,
+     "78a2c41f81fca378b22921ce26daed2fb38faa5f4ab706789f2fd3ba43e28234", 1, 1),
+    ("rust-for-rustaceans", "Rust for Rustaceans.pdf", 12423910,
+     "455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0", 214, 59),
+    ("rust-in-action", "Rust in Action.pdf", 19173152,
+     "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1", 457, 336),
+    ("zero-to-production-in-rust", "Zero to Production in Rust.pdf", 2408159,
+     "f122f6e8f68ecdbf8bd5f5b9f06506e73822a993bc71194530894a3c168cf47b", 433, 431),
+]
+allowed_pdf_dispositions = {
+    "unreviewed", "covered", "documented-deviation", "project-specific", "reject",
+}
+allowed_pdf_difference_kinds = {
+    "unassessed", "no-difference", "rule-extends-source", "extends-rule",
+    "contradicts-rule", "out-of-scope",
+}
+# A reviewed row's typed difference must agree with its disposition.
+reviewed_pdf_difference_kinds = {
+    "covered": {"no-difference", "rule-extends-source"},
+    "documented-deviation": {"extends-rule", "contradicts-rule"},
+    "project-specific": {"out-of-scope"},
+    "reject": {"contradicts-rule", "out-of-scope"},
+}
+allowed_pdf_rationale_classes = {"pending-semantic-review"} | allowed_book_rationale_classes
+allowed_pdf_applicability = {"inventory-parity-only", "behavior-assertion", "documentation-only"}
+
+
+def is_exact_int(value):
+    """JSON booleans are `int` instances; source coordinates are not."""
+    return type(value) is int
+
+
+def pdf_inventory_line(slug, ordinal, depth, page, title):
+    return f"{slug}:{ordinal}:{depth}:{page}:{title}"
+
+
+def validate_pdf_corpus():
+    try:
+        ledger = json.loads(PDF_CORPUS_COVERAGE.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        err(f"{PDF_CORPUS_COVERAGE.name}: cannot read corpus ledger: {exc}")
+        return
+    try:
+        review = json.loads(PDF_CORPUS_REVIEW.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        err(f"{PDF_CORPUS_REVIEW.name}: cannot read review ledger: {exc}")
+        return
+
+    name = PDF_CORPUS_COVERAGE.name
+    if ledger.get("schema_version") != 1:
+        err(f"{name}: expected schema version 1")
+
+    sources = ledger.get("sources", [])
+    units = ledger.get("units", [])
+    if [(s.get("slug"), s.get("file_name"), s.get("bytes"), s.get("sha256"),
+         s.get("pages"), s.get("unit_count")) for s in sources] != EXPECTED_PDF_SOURCES:
+        err(f"{name}: source identities differ from the pinned corpus")
+    if len(units) != EXPECTED_PDF_UNITS:
+        err(f"{name}: expected {EXPECTED_PDF_UNITS} units, found {len(units)}")
+
+    # Rows must arrive grouped by source, in declared order, with contiguous
+    # ordinals, so a reordered or spliced ledger cannot pass.
+    order = [slug for slug, *_ in EXPECTED_PDF_SOURCES]
+    expected_rows = []
+    for slug, _, _, _, _, count in EXPECTED_PDF_SOURCES:
+        expected_rows.extend((slug, ordinal) for ordinal in range(1, count + 1))
+    actual_rows = [(unit.get("source"), unit.get("ordinal")) for unit in units]
+    if actual_rows != expected_rows:
+        err(f"{name}: unit rows are not the declared sources in order with contiguous ordinals")
+
+    lines_by_source = {slug: [] for slug in order}
+    seen_ids = set()
+    for unit in units:
+        unit_id = unit.get("unit_id")
+        slug = unit.get("source")
+        if unit_id in seen_ids:
+            err(f"{name}: duplicate unit id {unit_id!r}")
+        seen_ids.add(unit_id)
+
+        ordinal, depth, page = unit.get("ordinal"), unit.get("depth"), unit.get("page")
+        if not all(is_exact_int(value) for value in (ordinal, depth)) or ordinal < 1 or depth < 0:
+            err(f"{name}: {unit_id} has invalid unit coordinates")
+            continue
+        if unit_id != f"{slug}:{ordinal:04d}":
+            err(f"{name}: {unit_id} does not match its source and ordinal")
+        source = next((s for s in sources if s.get("slug") == slug), None)
+        if source is None:
+            err(f"{name}: {unit_id} names an unknown source")
+            continue
+        if page is not None and (not is_exact_int(page) or not 1 <= page <= source["pages"]):
+            err(f"{name}: {unit_id} has a page outside the source")
+        title = unit.get("title")
+        if not isinstance(title, str) or not title.strip():
+            err(f"{name}: {unit_id} has no title")
+            title = ""
+        digest = unit.get("page_text_sha256")
+        if digest is not None and not re.fullmatch(r"[0-9a-f]{64}", str(digest)):
+            err(f"{name}: {unit_id} has an invalid page digest")
+        expected_claim = f"{title} (depth {depth} at {source['file_name']} page {page})"
+        if unit.get("claim") != expected_claim:
+            err(f"{name}: {unit_id} claim does not match its pinned coordinates")
+        evidence = unit.get("supporting_evidence")
+        required = [f"source-sha256:{source['sha256']}", f"page-text-sha256:{digest}"]
+        if not isinstance(evidence, list) or any(item not in evidence for item in required):
+            err(f"{name}: {unit_id} lacks source-bound evidence")
+        if not isinstance(unit.get("remaining_uncertainty"), str) or not unit["remaining_uncertainty"].strip():
+            err(f"{name}: {unit_id} has no uncertainty record")
+        lines_by_source[slug].append(pdf_inventory_line(slug, ordinal, depth, page, title))
+
+        disposition = unit.get("disposition")
+        if disposition not in allowed_pdf_dispositions:
+            err(f"{name}: {unit_id} has an invalid disposition")
+        if unit.get("audit_disposition") not in allowed_pdf_dispositions:
+            err(f"{name}: {unit_id} has an invalid audit disposition")
+        if unit.get("rationale_class") not in allowed_pdf_rationale_classes:
+            err(f"{name}: {unit_id} has an invalid rationale class")
+
+        difference = unit.get("exact_difference")
+        if (not isinstance(difference, dict)
+                or difference.get("kind") not in allowed_pdf_difference_kinds
+                or not isinstance(difference.get("detail"), str)
+                or not difference["detail"].strip()):
+            err(f"{name}: {unit_id} has no typed difference with a kind and detail")
+            difference = {}
+
+        mapped = unit.get("mapped_rule_ids")
+        if not isinstance(mapped, list):
+            err(f"{name}: {unit_id} has invalid mapped rule ids")
+            mapped = []
+        for rule_id in mapped:
+            if not isinstance(rule_id, str) or f"{rule_id}.md" not in rule_names:
+                err(f"{name}: {unit_id} maps unknown rule {rule_id!r}")
+
+        check = unit.get("executable_check")
+        if not isinstance(check, dict) or check.get("applicability") not in allowed_pdf_applicability:
+            err(f"{name}: {unit_id} has no check applicability")
+            check = {}
+        assertion_id = check.get("assertion_id")
+        if check.get("applicability") in {"behavior-assertion", "inventory-parity-only"}:
+            if not isinstance(assertion_id, str) or "::" not in assertion_id:
+                err(f"{name}: {unit_id} has no assertion id")
+            else:
+                check_path, _, symbol = assertion_id.partition("::")
+                resolved = ROOT / check_path
+                keyword = "def" if resolved.suffix == ".py" else "fn"
+                if not resolved.is_file():
+                    err(f"{name}: {unit_id} check path is missing")
+                elif not re.search(rf"\b{keyword}\s+{re.escape(symbol)}\s*\(", resolved.read_text(encoding="utf-8")):
+                    err(f"{name}: {unit_id} check symbol is missing")
+        elif assertion_id is not None:
+            err(f"{name}: {unit_id} records an assertion for a documentation-only check")
+
+        review_state = unit.get("semantic_review")
+        if not isinstance(review_state, dict) or review_state.get("status") not in {"unreviewed", "reviewed"}:
+            err(f"{name}: {unit_id} has no semantic review status")
+            review_state = {}
+        if review_state.get("source_sha256") != source.get("sha256"):
+            err(f"{name}: {unit_id} review is not bound to the source digest")
+
+        if disposition == "unreviewed":
+            if unit.get("audit_disposition") != "unreviewed":
+                err(f"{name}: {unit_id} is unreviewed but claims an assessed audit disposition")
+            if mapped:
+                err(f"{name}: {unit_id} is unreviewed but maps rules")
+            if difference.get("kind") != "unassessed":
+                err(f"{name}: {unit_id} is unreviewed but claims an assessed difference")
+            if unit.get("rationale_class") != "pending-semantic-review":
+                err(f"{name}: {unit_id} is unreviewed but claims a resolved rationale class")
+            if check.get("applicability") != "inventory-parity-only":
+                err(f"{name}: {unit_id} is unreviewed but claims a check")
+            if review_state.get("status") != "unreviewed" or review_state.get("reviewer") is not None:
+                err(f"{name}: {unit_id} is unreviewed but records a reviewer")
+        else:
+            if unit.get("audit_disposition") == "unreviewed":
+                err(f"{name}: {unit_id} is reviewed but retains an unreviewed audit disposition")
+            kind = difference.get("kind")
+            if kind not in reviewed_pdf_difference_kinds.get(disposition, set()):
+                err(f"{name}: {unit_id} is {disposition} with difference kind {kind!r}, "
+                    "which that disposition does not allow")
+            if kind == "out-of-scope":
+                if mapped:
+                    err(f"{name}: {unit_id} is out-of-scope but maps rules")
+            elif not mapped:
+                err(f"{name}: {unit_id} is {disposition} without a rule edge")
+            if unit.get("rationale_class") == "pending-semantic-review":
+                err(f"{name}: {unit_id} is dispositioned but unreviewed")
+            if (review_state.get("status") != "reviewed"
+                    or not isinstance(review_state.get("reviewer"), str)
+                    or not review_state["reviewer"].strip()):
+                err(f"{name}: {unit_id} has no named reviewer")
+
+    # Inventory digests are recomputed from the rows themselves, so editing,
+    # dropping, or inventing a row fails the gate.
+    for source in sources:
+        recomputed = hashlib.sha256(
+            "\n".join(lines_by_source.get(source.get("slug"), [])).encode("utf-8")
+        ).hexdigest()
+        if source.get("unit_inventory_sha256") != recomputed:
+            err(f"{name}: {source.get('slug')} unit inventory digest differs from its rows")
+    aggregate = hashlib.sha256(
+        "\n".join(f"{s.get('slug')}:{s.get('unit_inventory_sha256')}" for s in sources).encode("utf-8")
+    ).hexdigest()
+    if aggregate != EXPECTED_PDF_AGGREGATE or ledger.get("corpus", {}).get("aggregate_inventory_sha256") != aggregate:
+        err(f"{name}: aggregate inventory digest differs from the pinned corpus")
+
+    actual_summary = {}
+    for unit in units:
+        actual_summary[unit.get("disposition")] = actual_summary.get(unit.get("disposition"), 0) + 1
+    if ledger.get("summary") != {key: actual_summary[key] for key in sorted(actual_summary)}:
+        err(f"{name}: disposition summary differs from the unit ledger")
+
+    # The generated ledger must be exactly what the reviewed source file says.
+    by_id = {unit.get("unit_id"): unit for unit in units}
+    reviewed_ids = set()
+    for entry in review.get("entries", []):
+        unit_id = entry.get("unit_id")
+        reviewed_ids.add(unit_id)
+        unit = by_id.get(unit_id)
+        if unit is None:
+            err(f"{PDF_CORPUS_REVIEW.name}: {unit_id} names a unit that does not exist")
+            continue
+        if entry.get("title") != unit.get("title") or entry.get("page_text_sha256") != unit.get("page_text_sha256"):
+            err(f"{PDF_CORPUS_REVIEW.name}: {unit_id} was reviewed against different source bytes")
+        for field in ("disposition", "audit_disposition", "mapped_rule_ids",
+                      "exact_difference", "rationale_class", "executable_check",
+                      "remaining_uncertainty"):
+            if entry.get(field) != unit.get(field):
+                err(f"{PDF_CORPUS_REVIEW.name}: {unit_id} {field} differs from the generated ledger")
+        if unit.get("semantic_review", {}).get("reviewer") != entry.get("reviewer"):
+            err(f"{PDF_CORPUS_REVIEW.name}: {unit_id} reviewer differs from the generated ledger")
+    for unit in units:
+        if unit.get("disposition") != "unreviewed" and unit.get("unit_id") not in reviewed_ids:
+            err(f"{name}: {unit.get('unit_id')} is dispositioned without a review entry")
+
+    # Source-identity pass: only possible where the exact binaries are present.
+    corpus_root = os.environ.get("RUST_PDF_CORPUS_ROOT")
+    if not corpus_root:
+        return
+    root = pathlib.Path(corpus_root)
+    for slug, file_name, size, sha, pages, _ in EXPECTED_PDF_SOURCES:
+        path = root / file_name
+        if not path.is_file():
+            err(f"{name}: {file_name} is missing from RUST_PDF_CORPUS_ROOT")
+            continue
+        data = path.read_bytes()
+        if len(data) != size or hashlib.sha256(data).hexdigest() != sha:
+            err(f"{name}: {file_name} does not match the pinned binary identity")
+
+
+validate_pdf_corpus()
+
 if errors:
     print(f"VALIDATION FAILED ({len(errors)} problem(s)):\n")
     for e in errors:
