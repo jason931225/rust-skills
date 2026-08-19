@@ -119,6 +119,15 @@ for p in rule_files:
 
 # SKILL.md index parity
 skill = SKILL.read_text(encoding="utf-8")
+# AGENTS.md and CLAUDE.md are symlinks to SKILL.md, so any tool that "adds agent
+# instructions to AGENTS.md" writes into the published skill instead. `bd init`
+# does exactly that. Catch the injection here rather than relying on a reviewer
+# to spot it in a diff.
+for marker in re.findall(r"(?m)^<!--\s*BEGIN\s+(\w[\w -]*)", skill):
+    err(
+        f"{SKILL.name}: contains an injected '{marker.strip()}' block — AGENTS.md and "
+        "CLAUDE.md are symlinks to this published file; keep tool instructions out of it"
+    )
 linked = set(re.findall(r'rules/([a-z0-9-]+\.md)', skill))
 for tgt in sorted(linked):
     if tgt not in rule_names:

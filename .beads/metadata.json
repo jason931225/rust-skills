@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "rust_skills",
+  "project_id": "0670250c-116a-4bcc-833a-d3028aaefc1b"
+}
