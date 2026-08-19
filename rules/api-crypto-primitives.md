@@ -10,9 +10,9 @@ which a correctness test detects. Unauthenticated block-cipher and MAC
 compositions leave room for forgery and oracle attacks, and a byte-by-byte
 comparison of a MAC or token leaks the answer through timing. Memory safety
 does not make an implementation constant time — and an empirical study of
-cryptographic libraries found the majority of their reported vulnerabilities
-were memory-safety issues rather than cryptographic ones, which is an argument
-for writing crypto in Rust, not for writing your own.
+cryptographic libraries found more of their reported vulnerabilities were
+memory-safety issues than cryptographic ones, which is an argument for writing
+crypto libraries in Rust, not for hand-rolling primitives in application code.
 
 ## Contract
 
@@ -80,5 +80,5 @@ leak — MAC and token lengths are public.
 - [api-password-auth](api-password-auth.md) - password hashing is a separate, memory-hard scheme
 - [type-secret-material](type-secret-material.md) - the type that carries keys and tokens
 - [api-tls-required](api-tls-required.md) - transport security uses the same rule: no hand-rolled stacks
-- [api-session-security](api-session-security.md) - session tokens are secrets compared the same way
 - [obs-no-sensitive-data](obs-no-sensitive-data.md) - keep key material out of telemetry
+- [api-session-security](api-session-security.md) - session tokens are secrets compared the same way

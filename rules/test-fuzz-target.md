@@ -12,23 +12,6 @@ and violated invariants, so any function that turns bytes into a structure can
 be fuzzed with a few lines. For code with an unsafe or arithmetic-heavy core,
 a fuzzer plus a sanitizer finds the bugs that a review will not.
 
-## Contract
-
-- Fuzz every boundary decoder: wire formats, file formats, query and header
-  parsing, decompression, and deserialization of untrusted input.
-- Keep targets total: pass bytes in, ignore expected `Err` results, and let the
-  fuzzer look for panics, aborts, and timeouts.
-- Use `arbitrary` to turn raw bytes into structured inputs, and drive a
-  sequence of operations through an `Operation` enum when the bug you fear is
-  stateful rather than single-call.
-- Assert real invariants inside the target — round-trip equality, or agreement
-  with a slow reference implementation — so the fuzzer can find wrong answers,
-  not only crashes.
-- Check in the seed corpus and every minimized crasher as an ordinary
-  regression test, so a fixed bug stays fixed.
-- Run fuzzing on a schedule with a time budget in CI; an unbounded fuzz job
-  never finishes on its own.
-
 ## Bad
 
 ```rust
@@ -80,10 +63,26 @@ fuzz_target!(|data: &[u8]| { parse_is_total_and_lossless(data) });
 Keeping the property in the crate — not in the fuzz harness — is what lets the
 corpus double as a normal test.
 
+## Key Points
+
+- Fuzz every boundary decoder: wire formats, file formats, query and header
+  parsing, decompression, and deserialization of untrusted input.
+- Keep targets total: pass bytes in, ignore expected `Err` results, and let the
+  fuzzer look for panics, aborts, and timeouts.
+- Use `arbitrary` to turn raw bytes into structured inputs, and drive a
+  sequence of operations through an `Operation` enum when the suspected bug is
+  stateful rather than single-call.
+- Assert real invariants inside the target — round-trip equality, or agreement
+  with a slow reference implementation — so the fuzzer can find wrong answers,
+  not only crashes.
+- Check in the seed corpus and every minimized crasher as an ordinary
+  regression test, so a fixed bug stays fixed.
+- Run fuzzing on a schedule with a time budget in CI; an unbounded fuzz job
+  never finishes on its own.
+
 ## See Also
 
 - [test-proptest-properties](test-proptest-properties.md) - property testing states the expected answer; fuzzing hunts for crashes
 - [test-sanitizers](test-sanitizers.md) - run fuzz targets under a sanitizer to catch silent corruption
-- [unsafe-miri-ci](unsafe-miri-ci.md) - Miri checks the executions your tests reach
+- [unsafe-miri-ci](unsafe-miri-ci.md) - Miri checks the executions the tests reach
 - [api-parse-dont-validate](api-parse-dont-validate.md) - the parsers worth fuzzing are the ones at the boundary
-- [api-resource-limits](api-resource-limits.md) - a hang on crafted input is a denial of service
