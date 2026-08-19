@@ -7,6 +7,15 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- The last three production-relevant gaps from the RustTraining survey:
+  `type-capability-token` (authority appears in the signature as an unforgeable
+  token, rather than as a flag each privileged function must remember to
+  check), `unsafe-pin-projection` (classify each field of a `!Unpin` type once
+  and keep every accessor consistent with that choice), and `proj-libc-floor`
+  (choose the C library floor the fleet must satisfy and verify the shipped
+  binary against it). The library is at 401 rules; the six remaining confirmed
+  gaps are a bare-metal cluster left unlanded pending a decision about whether
+  embedded Rust is an audience this library serves.
 - Four more rules from the same deep read: `api-typed-response` (build the
   outbound payload by serializing a typed value, the producer-side mirror of
   the inbound boundary rules), `own-split-borrow-fields` (group a wide struct's
