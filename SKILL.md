@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 401 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 402 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 401 rules across 27 categories, prioritized by impact for use by
+Contains 402 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -77,7 +77,7 @@ Reference these guidelines when:
 | 21 | Documentation | MEDIUM | `doc-` | 15 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
-| 24 | Project Structure | LOW | `proj-` | 34 |
+| 24 | Project Structure | LOW | `proj-` | 35 |
 | 25 | FFI & Interop | LOW | `ffi-` | 8 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -518,6 +518,7 @@ Reference these guidelines when:
 - [`proj-append-log-recovery`](rules/proj-append-log-recovery.md) - Make a truncated trailing record a clean end of log, and a malformed interior record a loud failure
 - [`proj-build-target-cfg`](rules/proj-build-target-cfg.md) - Write `build.rs` against the target, not the host: read `TARGET`, `HOST`, and `CARGO_CFG_TARGET_*` instead of `cfg!`
 - [`proj-libc-floor`](rules/proj-libc-floor.md) - Choose the C library and dynamic-link floor the fleet must satisfy, and verify the shipped binary against it
+- [`proj-atomic-file-replace`](rules/proj-atomic-file-replace.md) - Replace a whole file through a same-directory temporary, a sync, and a rename — never by truncating the original
 
 ### 25. FFI & Interop (LOW)
 

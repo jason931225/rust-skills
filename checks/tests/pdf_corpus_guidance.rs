@@ -2117,3 +2117,73 @@ fn each_field_of_a_pinned_type_is_reached_the_one_way_its_classification_allows(
     *machine.as_mut().counter() += 1;
     assert_eq!(machine.as_mut().buffer().as_ptr(), address, "the pinned field did not move");
 }
+
+// --- proj-atomic-file-replace -----------------------------------------------
+
+/// A writer that stops after `budget` bytes, standing in for a full disk, a
+/// serialization error, or a process killed mid-write.
+fn write_partial(file: &mut std::fs::File, bytes: &[u8], budget: usize) -> io::Result<()> {
+    let sent = budget.min(bytes.len());
+    file.write_all(&bytes[..sent])?;
+    if sent < bytes.len() {
+        return Err(io::Error::new(io::ErrorKind::Other, "the write ran out"));
+    }
+    Ok(())
+}
+
+/// Truncate-in-place: the shape the rule argues against.
+fn save_in_place(path: &Path, bytes: &[u8], budget: usize) -> io::Result<()> {
+    let mut file = std::fs::File::create(path)?;
+    write_partial(&mut file, bytes, budget)
+}
+
+/// Temporary, sync, rename: the shape the rule requires.
+fn replace_atomically(path: &Path, bytes: &[u8], budget: usize) -> io::Result<()> {
+    let dir = path.parent().expect("the destination has a directory");
+    let name = path.file_name().expect("the destination has a file name");
+    let temp = dir.join(format!(".{}.tmp", name.to_string_lossy()));
+
+    let written = (|| {
+        let mut file = std::fs::File::create(&temp)?;
+        write_partial(&mut file, bytes, budget)?;
+        file.sync_all()
+    })();
+    if let Err(err) = written {
+        let _ = std::fs::remove_file(&temp);
+        return Err(err);
+    }
+    std::fs::rename(&temp, path)
+}
+
+#[test]
+fn a_replacement_that_fails_partway_leaves_the_previous_file_intact() {
+    let dir = std::env::temp_dir().join(format!("atomic-replace-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("the temporary directory is created");
+
+    let victim = dir.join("in-place.json");
+    let survivor = dir.join("replaced.json");
+    let old = br#"{"version":1}"#;
+    let new = br#"{"version":2,"more":"data"}"#;
+    std::fs::write(&victim, old).expect("the first version is written");
+    std::fs::write(&survivor, old).expect("the first version is written");
+
+    // Truncate-in-place: the destination now holds neither version.
+    assert!(save_in_place(&victim, new, 8).is_err());
+    let wreckage = std::fs::read(&victim).expect("the destination still exists");
+    assert_ne!(wreckage, old, "the previous version was destroyed");
+    assert_ne!(wreckage, new, "the new version never landed");
+
+    // Temporary and rename: the same failure leaves the destination untouched.
+    assert!(replace_atomically(&survivor, new, 8).is_err());
+    assert_eq!(std::fs::read(&survivor).expect("the destination survived"), old);
+    assert!(
+        !dir.join(".replaced.json.tmp").exists(),
+        "the failed write left no temporary behind"
+    );
+
+    // And the successful path swaps in exactly one complete version.
+    replace_atomically(&survivor, new, new.len()).expect("the full write succeeds");
+    assert_eq!(std::fs::read(&survivor).expect("the destination is readable"), new);
+
+    std::fs::remove_dir_all(&dir).expect("the temporary directory is removed");
+}

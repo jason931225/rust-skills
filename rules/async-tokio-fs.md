@@ -104,7 +104,7 @@ async fn write_temp(path: &std::path::Path, bytes: &[u8]) -> std::io::Result<()>
 }
 ```
 
-`flush` moves buffered userspace data toward the operating system; it is not a durable-storage guarantee. Crash-safe replacement requires a same-filesystem temporary file, explicit file synchronization, an atomic rename supported by the platform/filesystem, and directory synchronization where required. Test the exact storage class and failure model rather than describing `fs::write` as durable.
+`flush` moves buffered userspace data toward the operating system; it is not a durable-storage guarantee, and neither is a successful `write_all`. Sync explicitly, and replace a whole file through the temporary-and-rename sequence in [proj-atomic-file-replace](proj-atomic-file-replace.md) rather than describing `fs::write` as durable. Test the exact storage class and failure model.
 
 ## Cancellation And Shutdown
 
@@ -124,3 +124,4 @@ A mapping can avoid copying payload bytes for measured random-access workloads, 
 - [async-bounded-channel](async-bounded-channel.md) - put backpressure before scheduled work
 - [async-tokio-runtime](./async-tokio-runtime.md) - configure and observe runtime resources
 - [err-context-chain](./err-context-chain.md) - preserve path context without leaking secrets
+- [proj-atomic-file-replace](proj-atomic-file-replace.md) - the crash-safe whole-file replacement sequence
