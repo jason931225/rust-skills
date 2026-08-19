@@ -7,6 +7,11 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Six rules completing the confirmed-gap queue from the corpus survey:
+  `api-datagram-trust`, `type-time-sample-once`, `unsafe-volatile-mmio`,
+  `type-case-insensitive-match`, `test-env-independent`, and
+  `ffi-wasm-memory-view`. All six carry behavior assertions; the corpus ledger
+  now records 46 reviewed units.
 - Five more corpus rules covering stored uploads, credential scoping, log
   recovery, monomorphization cost, and macro path hygiene:
   `api-upload-serving`, `api-credential-scope`, `proj-append-log-recovery`,

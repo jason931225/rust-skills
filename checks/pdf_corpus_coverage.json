@@ -111,9 +111,9 @@
     }
   ],
   "summary": {
-    "covered": 40,
+    "covered": 45,
     "project-specific": 1,
-    "unreviewed": 1284
+    "unreviewed": 1279
   },
   "units": [
     {
@@ -10636,26 +10636,29 @@
       "page": 322,
       "page_text_sha256": "0d6e5c7669bb5f39150577f3e6ff13406c63849e59ba846f1742e3525bd730b0",
       "claim": "Defining the Arguments (depth 2 at Command-Line Rust.pdf page 322)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-case-insensitive-match"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit builds its matcher with a case-insensitivity setting driven by a flag instead of folding the input; the rule states that contract and the Unicode caveat"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec",
         "page-text-sha256:0d6e5c7669bb5f39150577f3e6ff13406c63849e59ba846f1742e3525bd730b0"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::case_insensitivity_is_a_matcher_setting_and_leaves_the_data_alone"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec"
       }
     },
@@ -12207,26 +12210,29 @@
       "page": 466,
       "page_text_sha256": "0868bdebb6e6a1a3ac292cde37ad71018c45f6c455039c7434a584858b0fb773",
       "claim": "Defining and Validating the Arguments (depth 2 at Command-Line Rust.pdf page 466)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-time-sample-once"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit reads the current date once and passes it to the code that formats and highlights it, rather than re-reading the clock per use; the rule states that as a contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec",
         "page-text-sha256:0868bdebb6e6a1a3ac292cde37ad71018c45f6c455039c7434a584858b0fb773"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::one_clock_reading_makes_every_derived_field_agree"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec"
       }
     },
@@ -12661,11 +12667,12 @@
       "audit_disposition": "covered",
       "disposition": "covered",
       "mapped_rule_ids": [
-        "test-cli-blackbox"
+        "test-cli-blackbox",
+        "test-env-independent"
       ],
       "exact_difference": {
-        "kind": "no-difference",
-        "detail": "the unit collects the testing practices used across the book's programs, including golden output and temporary directories; the rule states them as a contract"
+        "kind": "rule-extends-source",
+        "detail": "the unit collects the book's testing practices, including golden output and the note that listings carry owners and modification times which differ per machine; test-cli-blackbox states the process-level assertions and test-env-independent the normalization contract"
       },
       "rationale_class": "source-aligned",
       "supporting_evidence": [
@@ -12676,7 +12683,7 @@
         "applicability": "behavior-assertion",
         "assertion_id": "checks/tests/pdf_corpus_guidance.rs::cli_output_stops_cleanly_on_a_closed_pipe_and_failures_reach_the_exit_status"
       },
-      "remaining_uncertainty": "none",
+      "remaining_uncertainty": "one entry carries two rules: the assertion named here covers the CLI stream contract, and golden_output_asserts_program_fields_and_normalizes_host_fields covers normalization",
       "semantic_review": {
         "status": "reviewed",
         "reviewer": "Jason Lee <jason931225@gmail.com>",
@@ -15032,26 +15039,29 @@
       "page": 177,
       "page_text_sha256": "b3a7218b58a558f73ca0c9db9740f46242eb7c445f492c14cf71c0f09bf6f55d",
       "claim": "Working with complex types (depth 1 at Fullstack Rust.pdf page 177)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "ffi-wasm-memory-view"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit constructs a host-side typed array over the module's linear memory and frees what it allocated in a finally block; the rule adds that any call which can grow memory invalidates that view"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:c46e30de610e560a5dbde27d3c6a38b060c77c3d03d1aaef3fdd71ae3bbe1468",
         "page-text-sha256:b3a7218b58a558f73ca0c9db9740f46242eb7c445f492c14cf71c0f09bf6f55d"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_view_into_linear_memory_is_reacquired_after_growth"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the invalidation is demonstrated through Rust's borrow checker rather than across a real wasm boundary",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "c46e30de610e560a5dbde27d3c6a38b060c77c3d03d1aaef3fdd71ae3bbe1468"
       }
     },
@@ -24365,26 +24375,29 @@
       "page": 287,
       "page_text_sha256": "0a61ba4244cedc7e8453f45e365f0debe39f23c893530d45c68607b75462429c",
       "claim": "8.4.2 Converting a hostname to an IP address (depth 3 at Rust in Action.pdf page 287)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-datagram-trust"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit resolves a hostname over UDP with a DNS client that generates a random, never-zero message identifier per query; the rule states the defensive contract \u2014 verify the source address and match the reply identifier before parsing \u2014 and notes that neither check is authentication"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:0a61ba4244cedc7e8453f45e365f0debe39f23c893530d45c68607b75462429c"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_forged_datagram_fails_on_either_the_sender_or_the_identifier"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the unit does not discuss forged replies directly; the threat model is supplied by the rule",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -26492,26 +26505,29 @@
       "page": 396,
       "page_text_sha256": "5e264d773e08eb8d72b9ae86cb14c1e9a611e7ea0e21f8446f5b4e6a20030971",
       "claim": "11.2.3 Source code listings (depth 3 at Rust in Action.pdf page 396)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-volatile-mmio"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit writes to a memory-mapped framebuffer through write_volatile inside an unsafe block; the rule states why volatile is required and what it does not provide"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:5e264d773e08eb8d72b9ae86cb14c1e9a611e7ea0e21f8446f5b4e6a20030971"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::volatile_writes_reach_the_mapping_in_order"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the rule's access-width and ownership points extend beyond the unit's single example",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
