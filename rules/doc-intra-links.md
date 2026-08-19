@@ -131,6 +131,70 @@ RUSTDOCFLAGS="-D warnings" cargo doc --no-deps
 
 This fails if any intra-doc links are broken.
 
+## Linking to Trait Items
+
+
+```rust
+/// Implements [`Iterator`] for lazy evaluation.
+///
+/// The [`Iterator::next`] method advances the cursor.
+/// 
+/// For parallel iteration, see [`rayon::ParallelIterator`].
+pub struct MyIterator { ... }
+
+impl Iterator for MyIterator {
+    /// Advances and returns the next value.
+    ///
+    /// See also [`Iterator::nth`] for skipping elements.
+    fn next(&mut self) -> Option<Self::Item> { ... }
+}
+```
+
+## Broken Link Detection
+
+
+```bash
+# Catch broken intra-doc links
+RUSTDOCFLAGS="-D warnings" cargo doc
+
+# Or in CI
+cargo doc --no-deps 2>&1 | grep "warning: unresolved link"
+```
+
+```toml
+# Cargo.toml - deny broken links
+[lints.rustdoc]
+broken_intra_doc_links = "deny"
+```
+
+## Module-Level Documentation
+
+
+```rust
+//! # Parser Module
+//!
+//! This module provides parsing utilities.
+//!
+//! ## Main Types
+//!
+//! - [`Parser`] - The main parser struct
+//! - [`Token`] - Tokens produced by tokenization
+//! - [`Ast`] - The abstract syntax tree
+//!
+//! ## Functions
+//!
+//! - [`parse`] - Parse a string
+//! - [`parse_file`] - Parse a file
+//!
+//! ## Errors
+//!
+//! All functions return [`ParseError`] on failure.
+
+pub struct Parser { ... }
+pub enum Token { ... }
+pub struct Ast { ... }
+```
+
 ## See Also
 
 - [doc-all-public](./doc-all-public.md) - Documenting public items
