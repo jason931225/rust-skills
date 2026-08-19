@@ -86,6 +86,12 @@ semantic versioning for the rule set.
   explicit unreviewed backlog without assigning semantic coverage credit.
 
 ### Changed
+- 859 RustTraining units across 65 chapters leave the review backlog with a
+  stated reason: 532 as `project-specific` cross-language onboarding and 327 as
+  `reject` tutorial scaffolding, none of them mapping a rule. The 66 chapters
+  an agent judged already covered were deliberately left `unreviewed`, since a
+  chapter-level coverage claim applied to a dozen headings is the unearned
+  credit these ledgers exist to prevent. 1,256 units remain unreviewed.
 - Four pairs of rules that taught the same contract in different categories are
   merged, taking the rule count from 384 to 380: `err-doc-errors` into
   `doc-errors-section`, `doc-link-types` into `doc-intra-links`,
