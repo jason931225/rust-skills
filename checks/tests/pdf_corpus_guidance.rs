@@ -853,3 +853,178 @@ fn a_foreign_status_becomes_a_result_at_the_boundary() {
     // A sentinel integer does not travel further into the program.
     assert!(error.raw_os_error().is_some() || error.kind() != io::ErrorKind::Other);
 }
+
+// --- proj-append-log-recovery -----------------------------------------------
+
+const LOG_HEADER: usize = 2;
+
+fn log_checksum(payload: &[u8]) -> u8 {
+    payload.iter().fold(0u8, |acc, byte| acc ^ byte)
+}
+
+#[derive(Debug, PartialEq)]
+enum Recovery {
+    Clean { records: usize },
+    PartialTail { records: usize, discarded: usize },
+}
+
+#[derive(Debug, PartialEq)]
+enum Corruption {
+    Interior { offset: usize },
+}
+
+fn recover(log: &[u8]) -> Result<Recovery, Corruption> {
+    let mut offset = 0;
+    let mut records = 0;
+    while offset < log.len() {
+        let rest = &log[offset..];
+        if rest.len() < LOG_HEADER || rest.len() < LOG_HEADER + usize::from(rest[0]) {
+            return Ok(Recovery::PartialTail { records, discarded: rest.len() });
+        }
+        let len = usize::from(rest[0]);
+        let payload = &rest[LOG_HEADER..LOG_HEADER + len];
+        if log_checksum(payload) != rest[1] {
+            return Err(Corruption::Interior { offset });
+        }
+        records += 1;
+        offset += LOG_HEADER + len;
+    }
+    Ok(Recovery::Clean { records })
+}
+
+fn log_record(payload: &[u8]) -> Vec<u8> {
+    let mut out = vec![payload.len() as u8, log_checksum(payload)];
+    out.extend_from_slice(payload);
+    out
+}
+
+#[test]
+fn a_torn_tail_ends_recovery_cleanly_but_interior_damage_does_not() {
+    let mut log = log_record(b"one");
+    log.extend(log_record(b"two"));
+    assert_eq!(recover(&log), Ok(Recovery::Clean { records: 2 }));
+
+    // An interrupted append: short header, and short payload.
+    for truncate_to in [1, 4] {
+        let mut torn = log.clone();
+        torn.extend(log_record(b"three")[..truncate_to].to_vec());
+        assert_eq!(
+            recover(&torn),
+            Ok(Recovery::PartialTail { records: 2, discarded: truncate_to })
+        );
+    }
+
+    // A flipped bit with data after it is corruption, not a torn write, and
+    // must not be silently treated as the end of the log.
+    let mut damaged = log.clone();
+    damaged[2] ^= 0b1;
+    assert_eq!(recover(&damaged), Err(Corruption::Interior { offset: 0 }));
+}
+
+// --- api-upload-serving -----------------------------------------------------
+
+const INLINE_KINDS: [(&str, &str); 3] = [
+    ("png", "image/png"),
+    ("jpg", "image/jpeg"),
+    ("pdf", "application/pdf"),
+];
+
+fn sanitize_filename(name: &str) -> String {
+    name.chars()
+        .filter(|c| !matches!(c, '"' | '\\' | '\r' | '\n'))
+        .collect()
+}
+
+fn serve_headers(verified_kind: &str, display_name: &str) -> (&'static str, String) {
+    match INLINE_KINDS.iter().find(|(kind, _)| *kind == verified_kind) {
+        Some((_, content_type)) => (
+            content_type,
+            format!("inline; filename=\"{}\"", sanitize_filename(display_name)),
+        ),
+        None => (
+            "application/octet-stream",
+            format!("attachment; filename=\"{}\"", sanitize_filename(display_name)),
+        ),
+    }
+}
+
+#[test]
+fn scriptable_uploads_are_served_inertly() {
+    let (content_type, disposition) = serve_headers("png", "holiday.png");
+    assert_eq!(content_type, "image/png");
+    assert!(disposition.starts_with("inline"));
+
+    // SVG and HTML are markup: never rendered from the app's own origin.
+    for kind in ["svg", "html", "xml", "exe"] {
+        let (content_type, disposition) = serve_headers(kind, "payload");
+        assert_eq!(content_type, "application/octet-stream", "{kind} must not render");
+        assert!(disposition.starts_with("attachment"));
+    }
+
+    // A filename cannot inject a header.
+    let (_, disposition) = serve_headers("svg", "a\"\r\nSet-Cookie: x=1");
+    assert!(!disposition.contains('\r'));
+    assert!(!disposition.contains('\n'));
+    assert_eq!(disposition.matches('"').count(), 2, "only the delimiters remain");
+}
+
+// --- api-credential-scope ---------------------------------------------------
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+struct Origin {
+    scheme: &'static str,
+    host: &'static str,
+    port: u16,
+}
+
+struct Credential {
+    origin: Origin,
+    token: &'static str,
+}
+
+impl Credential {
+    fn for_target(&self, target: &Origin) -> Option<&'static str> {
+        (self.origin == *target).then_some(self.token)
+    }
+}
+
+#[test]
+fn a_credential_is_withheld_from_every_other_origin() {
+    let issued = Origin { scheme: "https", host: "api.example.com", port: 443 };
+    let credential = Credential { origin: issued.clone(), token: "t-secret" };
+
+    assert_eq!(credential.for_target(&issued), Some("t-secret"));
+
+    for target in [
+        Origin { scheme: "http", host: "api.example.com", port: 443 },
+        Origin { scheme: "https", host: "api.example.com", port: 8443 },
+        Origin { scheme: "https", host: "evil.example.com", port: 443 },
+        Origin { scheme: "https", host: "api.example.com.evil.test", port: 443 },
+    ] {
+        assert_eq!(credential.for_target(&target), None, "{target:?} must not receive it");
+    }
+}
+
+// --- opt-monomorph-outline --------------------------------------------------
+
+fn load_config<P: AsRef<Path>>(path: P) -> Result<usize, String> {
+    // Non-generic body: compiled once regardless of how many caller types the
+    // generic shell is instantiated with.
+    fn inner(path: &Path) -> Result<usize, String> {
+        path.to_str()
+            .map(str::len)
+            .ok_or_else(|| "path is not utf-8".to_owned())
+    }
+    inner(path.as_ref())
+}
+
+#[test]
+fn a_generic_shell_delegates_to_one_non_generic_body() {
+    let from_str = load_config("app.conf").expect("loads");
+    let from_path = load_config(Path::new("app.conf")).expect("loads");
+    let from_owned = load_config(String::from("app.conf")).expect("loads");
+    let from_pathbuf = load_config(PathBuf::from("app.conf")).expect("loads");
+
+    assert_eq!(from_str, 8);
+    assert_eq!([from_path, from_owned, from_pathbuf], [from_str; 3]);
+}

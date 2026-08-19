@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 373 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 378 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 373 rules across 27 categories, prioritized by impact for use by
+Contains 378 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,10 +58,10 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 19 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 10 |
-| 5 | API Design | HIGH | `api-` | 43 |
+| 5 | API Design | HIGH | `api-` | 45 |
 | 6 | Async/Await | HIGH | `async-` | 25 |
 | 7 | Concurrency | HIGH | `conc-` | 7 |
-| 8 | Compiler Optimization | HIGH | `opt-` | 12 |
+| 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
 | 10 | Type Safety | MEDIUM | `type-` | 19 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
@@ -69,7 +69,7 @@ Reference these guidelines when:
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
 | 14 | Serde | MEDIUM | `serde-` | 10 |
 | 15 | Pattern Matching | MEDIUM | `pat-` | 6 |
-| 16 | Macros | MEDIUM | `macro-` | 11 |
+| 16 | Macros | MEDIUM | `macro-` | 12 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 18 |
@@ -77,7 +77,7 @@ Reference these guidelines when:
 | 21 | Documentation | MEDIUM | `doc-` | 16 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 16 |
-| 24 | Project Structure | LOW | `proj-` | 31 |
+| 24 | Project Structure | LOW | `proj-` | 32 |
 | 25 | FFI & Interop | LOW | `ffi-` | 6 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -202,6 +202,8 @@ Reference these guidelines when:
 - [`api-record-checksum`](rules/api-record-checksum.md) - Store an integrity check with every persisted or transmitted record and verify it before trusting the bytes
 - [`api-subprocess-args`](rules/api-subprocess-args.md) - Launch subprocesses with an explicit argument vector; never build a command line from untrusted input
 - [`api-dir-enumeration`](rules/api-dir-enumeration.md) - Treat a directory walk as a stream of fallible entries, and never depend on the order it yields
+- [`api-credential-scope`](rules/api-credential-scope.md) - Bind every stored credential to the origin it was issued for, and re-check that binding before sending it
+- [`api-upload-serving`](rules/api-upload-serving.md) - Serve user-uploaded files inertly: fixed content type, forced download, separate origin
 
 ### 6. Async/Await (HIGH)
 
@@ -255,6 +257,7 @@ Reference these guidelines when:
 - [`opt-bounds-check`](rules/opt-bounds-check.md) - Prefer safe traversal that exposes bounds; verify optimized hot loops before considering unchecked access
 - [`opt-simd-portable`](rules/opt-simd-portable.md) - Add explicit SIMD only after representative benchmarks beat optimized scalar code
 - [`opt-cache-friendly`](rules/opt-cache-friendly.md) - Organize data for cache-efficient access patterns
+- [`opt-monomorph-outline`](rules/opt-monomorph-outline.md) - Split a generic shell from a non-generic body so only the type-dependent part is duplicated
 
 ### 9. Numeric & Arithmetic Safety (HIGH)
 
@@ -346,6 +349,7 @@ Reference these guidelines when:
 - [`macro-no-rewrite-item`](rules/macro-no-rewrite-item.md) - Do not let a macro change an item's kind, signature, or async-ness from what the source shows
 - [`macro-declarative-before-proc`](rules/macro-declarative-before-proc.md) - Prefer `macro_rules!` over a procedural macro whenever the transform can be written by example
 - [`macro-no-implied-items`](rules/macro-no-implied-items.md) - Do not let a macro invent extra items the caller never wrote, especially public types
+- [`macro-absolute-std-paths`](rules/macro-absolute-std-paths.md) - In exported macros, name standard items by absolute `::core` paths and your own by `$crate`
 
 ### 17. Closures (MEDIUM)
 
@@ -492,6 +496,7 @@ Reference these guidelines when:
 - [`proj-dependency-policy`](rules/proj-dependency-policy.md) - Admit dependencies deliberately, commit the lockfile for anything you ship, and audit the tree continuously
 - [`proj-semver-contract`](rules/proj-semver-contract.md) - Version by what breaks callers, depend on the earliest version you actually need, and keep a written changelog
 - [`proj-secret-file-mode`](rules/proj-secret-file-mode.md) - Create credential files owner-only, in an owner-only directory, before writing anything into them
+- [`proj-append-log-recovery`](rules/proj-append-log-recovery.md) - Make a truncated trailing record a clean end of log, and a malformed interior record a loud failure
 
 ### 25. FFI & Interop (LOW)
 

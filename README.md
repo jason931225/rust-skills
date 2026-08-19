@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-373-blue)
+![rules](https://img.shields.io/badge/rules-378-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-373 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+378 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,7 +66,7 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-373 rules split into 27 categories:
+378 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
@@ -74,10 +74,10 @@ fn first_word(s: &str) -> Option<&str> {
 | **Error Handling** | 19 | thiserror for libs, anyhow for apps, the `?` operator |
 | **Memory** | 18 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
 | **Unsafe Code** | 10 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
-| **API Design** | 43 | Builder pattern, newtypes, sealed traits, `FromIterator` |
+| **API Design** | 45 | Builder pattern, newtypes, sealed traits, `FromIterator` |
 | **Async** | 25 | Tokio patterns, channels, async fn in traits, cancel safety |
 | **Concurrency** | 7 | rayon, scoped threads, atomic ordering, thread-locals |
-| **Optimization** | 12 | LTO, inlining, PGO, SIMD |
+| **Optimization** | 13 | LTO, inlining, PGO, SIMD |
 | **Numeric & Arithmetic** | 6 | Overflow handling, `as` vs `TryFrom`, float compare, `NonZero` |
 | **Type Safety** | 19 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
 | **Trait & Generics Design** | 7 | dyn vs generic, associated types, blanket impls, object safety, orphan rule |
@@ -85,7 +85,7 @@ fn first_word(s: &str) -> Option<&str> {
 | **Const & Compile-Time** | 5 | `const fn`, const vs static, const generics, `const {}` blocks |
 | **Serde** | 10 | rename_all, default, flatten, enum tagging, validate-on-deserialize |
 | **Pattern Matching** | 6 | `let-else`, `matches!`, if-let chains, exhaustive matches |
-| **Macros** | 11 | `macro_rules!` hygiene, fragment specifiers, proc-macros with syn/quote |
+| **Macros** | 12 | `macro_rules!` hygiene, fragment specifiers, proc-macros with syn/quote |
 | **Closures** | 5 | Fn/FnMut/FnOnce bounds, returning `impl Fn`, move & disjoint capture |
 | **Collections** | 4 | HashMap/BTreeMap/IndexMap, Vec/VecDeque, sets, `BinaryHeap` |
 | **Naming** | 18 | Following Rust API Guidelines |
@@ -93,7 +93,7 @@ fn first_word(s: &str) -> Option<&str> {
 | **Docs** | 16 | Doc examples, intra-doc links, README/crate-doc unification |
 | **Observability** | 10 | tracing over log, spans, structured fields, redacting secrets |
 | **Performance** | 16 | Iterators, entry API, faster hashers, I/O buffering |
-| **Project Structure** | 31 | Workspaces, module layout, features, MSRV |
+| **Project Structure** | 32 | Workspaces, module layout, features, MSRV |
 | **FFI & Interop** | 6 | ABI boundaries, native handles, `-sys` crates, dynamic libraries |
 | **Linting** | 16 | Clippy config, CI setup, `unexpected_cfgs` |
 | **Anti-patterns** | 16 | Common mistakes and how to fix them |
