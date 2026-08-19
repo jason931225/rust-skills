@@ -30,8 +30,17 @@ MICROSOFT_TRAINING_BOOKS=(
 )
 
 # A linked worktree stores `.git` as a file, so ask git whether the path is a
-# checkout instead of looking for a directory.
-if ! git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+# checkout instead of looking for a directory. `--git-dir` alone would also
+# accept an ordinary directory nested inside some other repository, so require
+# that the path is itself the top level of the checkout it reports.
+is_checkout() {
+    local dir="$1" toplevel
+    toplevel="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)" || return 1
+    [[ -n "$toplevel" ]] || return 1
+    [[ "$(cd "$dir" && pwd -P)" == "$(cd "$toplevel" && pwd -P)" ]]
+}
+
+if ! is_checkout "$MICROSOFT_RUST_GUIDELINES_ROOT"; then
     git clone --filter=blob:none https://github.com/microsoft/rust-guidelines.git \
         "$MICROSOFT_RUST_GUIDELINES_ROOT"
 fi
@@ -52,7 +61,7 @@ git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" cat-file -e "$MICROSOFT_COMMIT^{commit}
 git -C "$MICROSOFT_RUST_GUIDELINES_ROOT" checkout --detach "$MICROSOFT_COMMIT"
 export MICROSOFT_RUST_GUIDELINES_ROOT
 
-if ! git -C "$MICROSOFT_RUSTTRAINING_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+if ! is_checkout "$MICROSOFT_RUSTTRAINING_ROOT"; then
     git clone --filter=blob:none --no-checkout https://github.com/microsoft/RustTraining.git \
         "$MICROSOFT_RUSTTRAINING_ROOT"
     git -C "$MICROSOFT_RUSTTRAINING_ROOT" sparse-checkout init --cone
