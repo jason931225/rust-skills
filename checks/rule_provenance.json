@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 381,
-  "ledger_mapped": 235,
+  "rule_count": 385,
+  "ledger_mapped": 239,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 235,
+    "ledger-mapped": 239,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -402,6 +402,13 @@
       ]
     },
     {
+      "rule_id": "api-scoped-closure-access",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "api-sealed-trait",
       "provenance": "typed-justification",
       "source_class": "rust-api-guidelines",
@@ -718,6 +725,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "rust_release_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "conc-condvar-predicate-loop",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -2537,6 +2551,13 @@
       ]
     },
     {
+      "rule_id": "type-generational-handle",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "type-generic-bounds",
       "provenance": "typed-justification",
       "source_class": "synthesized-practice",
@@ -2620,6 +2641,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "pdf_corpus_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "type-single-use-token",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {

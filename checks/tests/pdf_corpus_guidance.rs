@@ -1317,3 +1317,158 @@ fn a_recoverable_failure_returns_the_receiver_so_the_caller_can_retry() {
     let authenticated = connection.authenticate("correct-horse").expect("retry succeeds");
     assert_eq!(authenticated.handle, 7);
 }
+
+// --- conc-condvar-predicate-loop --------------------------------------------
+
+#[test]
+fn a_condvar_waiter_rechecks_its_predicate_rather_than_trusting_the_wakeup() {
+    use std::collections::VecDeque;
+    use std::sync::{Arc, Condvar, Mutex};
+
+    struct Queue {
+        jobs: Mutex<VecDeque<u32>>,
+        ready: Condvar,
+    }
+
+    let queue = Arc::new(Queue {
+        jobs: Mutex::new(VecDeque::new()),
+        ready: Condvar::new(),
+    });
+
+    let consumer = {
+        let queue = Arc::clone(&queue);
+        std::thread::spawn(move || {
+            let guard = queue.jobs.lock().expect("not poisoned");
+            // wait_while re-acquires and re-tests on every wakeup, so a
+            // spurious one — or the notify below that arrives before anything
+            // is queued — cannot produce an empty pop.
+            let mut guard = queue
+                .ready
+                .wait_while(guard, |jobs| jobs.is_empty())
+                .expect("not poisoned");
+            guard.pop_front().expect("the predicate guarantees an element")
+        })
+    };
+
+    // A notification with the queue still empty: the waiter must not proceed.
+    queue.ready.notify_all();
+    std::thread::sleep(Duration::from_millis(20));
+
+    queue.jobs.lock().expect("not poisoned").push_back(42);
+    queue.ready.notify_one();
+
+    assert_eq!(consumer.join().expect("consumer finished"), 42);
+}
+
+// --- type-generational-handle -----------------------------------------------
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct Handle {
+    index: usize,
+    generation: u32,
+}
+
+struct Slot<T> {
+    value: Option<T>,
+    generation: u32,
+}
+
+struct Pool<T> {
+    slots: Vec<Slot<T>>,
+}
+
+impl<T> Pool<T> {
+    fn new() -> Self {
+        Self { slots: Vec::new() }
+    }
+
+    fn insert(&mut self, value: T) -> Handle {
+        if let Some((index, slot)) = self
+            .slots
+            .iter_mut()
+            .enumerate()
+            .find(|(_, slot)| slot.value.is_none())
+        {
+            slot.value = Some(value);
+            return Handle { index, generation: slot.generation };
+        }
+        self.slots.push(Slot { value: Some(value), generation: 0 });
+        Handle { index: self.slots.len() - 1, generation: 0 }
+    }
+
+    fn remove(&mut self, handle: Handle) -> Option<T> {
+        let slot = self.slots.get_mut(handle.index)?;
+        if slot.generation != handle.generation {
+            return None;
+        }
+        slot.generation = slot.generation.wrapping_add(1);
+        slot.value.take()
+    }
+
+    fn get(&self, handle: Handle) -> Option<&T> {
+        let slot = self.slots.get(handle.index)?;
+        (slot.generation == handle.generation).then(|| slot.value.as_ref())?
+    }
+}
+
+#[test]
+fn a_stale_handle_does_not_resolve_to_the_value_that_reused_its_slot() {
+    let mut pool = Pool::new();
+    let first = pool.insert("session-a");
+    assert_eq!(pool.get(first), Some(&"session-a"));
+
+    assert_eq!(pool.remove(first), Some("session-a"));
+    let second = pool.insert("session-b");
+
+    // The slot is reused — this is the exact situation a bare index gets wrong.
+    assert_eq!(second.index, first.index);
+    assert_eq!(pool.get(first), None, "the stale handle must not resolve");
+    assert_eq!(pool.get(second), Some(&"session-b"));
+    // Removing with a stale handle must not remove someone else's value.
+    assert_eq!(pool.remove(first), None);
+    assert_eq!(pool.get(second), Some(&"session-b"));
+}
+
+// --- api-scoped-closure-access ----------------------------------------------
+
+#[derive(Debug, PartialEq)]
+enum Mode {
+    Normal,
+    Raw,
+}
+
+struct Terminal {
+    mode: Mode,
+}
+
+struct RawTerminal<'a> {
+    terminal: &'a mut Terminal,
+}
+
+impl Terminal {
+    fn with_raw_mode<T>(&mut self, body: impl FnOnce(&mut RawTerminal<'_>) -> T) -> T {
+        self.mode = Mode::Raw;
+        let mut handle = RawTerminal { terminal: self };
+        let outcome = body(&mut handle);
+        self.mode = Mode::Normal;
+        outcome
+    }
+}
+
+#[test]
+fn a_lent_resource_is_restored_on_every_path_out_of_the_closure() {
+    let mut terminal = Terminal { mode: Mode::Normal };
+
+    let value = terminal.with_raw_mode(|raw| {
+        assert_eq!(raw.terminal.mode, Mode::Raw);
+        7
+    });
+    assert_eq!(value, 7);
+    assert_eq!(terminal.mode, Mode::Normal);
+
+    // An early return from the body is still a return from the closure, so the
+    // restore happens — the case a begin()/end() pair gets wrong.
+    let outcome: Result<u8, &str> = terminal.with_raw_mode(|_| Err("failed early"));
+    assert_eq!(outcome, Err("failed early"));
+    assert_eq!(terminal.mode, Mode::Normal, "restored despite the error path");
+}
