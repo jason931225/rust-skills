@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 394,
-  "ledger_mapped": 248,
+  "rule_count": 398,
+  "ledger_mapped": 252,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 248,
+    "ledger-mapped": 252,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -464,6 +464,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "api-typed-response",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -1118,6 +1125,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "ffi-opaque-handle-lifecycle",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -1885,6 +1899,13 @@
       "source_class": "rust-api-guidelines",
       "justification": "This is the API Guidelines' flexibility guidance that public functions should minimize assumptions about their parameters (the `&[T]`/`&str`/`&Path` parameter idiom); Clippy's `ptr_arg` lint enforces the same shape, so the classification is arguable.",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "rule_id": "own-split-borrow-fields",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "pat-at-bindings",
@@ -2739,6 +2760,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "pdf_corpus_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "unsafe-byte-slice-cast",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
