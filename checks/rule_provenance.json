@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 401,
-  "ledger_mapped": 255,
+  "rule_count": 402,
+  "ledger_mapped": 256,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 255,
+    "ledger-mapped": 256,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -2057,6 +2057,13 @@
     },
     {
       "rule_id": "proj-append-log-recovery",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "proj-atomic-file-replace",
       "provenance": "ledger-mapped",
       "ledgers": [
         "pdf_corpus_coverage.json"

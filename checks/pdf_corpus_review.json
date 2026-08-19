@@ -980,6 +980,27 @@
       },
       "remaining_uncertainty": "the invalidation is demonstrated through Rust's borrow checker rather than across a real wasm boundary",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-in-action:0170",
+      "title": "7.5 Implementing a key-value store with a log-structured, append-only storage architecture",
+      "page_text_sha256": "b18acf8f7f74f6719dabf518bd87559dc7ac0dca55151c4f5a52fb3a1fff80a1",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-atomic-file-replace"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit claims the append-only architecture guarantees data is never lost and stored files are never corrupted, but states no syscall-level contract for reaching that guarantee; the rule supplies the whole-file half of it \u2014 same-directory temporary, sync_all before the rename, rename rather than truncate, directory sync afterwards \u2014 and states the Windows difference the unit does not mention"
+      },
+      "rationale_class": "production-scalability",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_replacement_that_fails_partway_leaves_the_previous_file_intact"
+      },
+      "remaining_uncertainty": "the assertion proves the failure-partway case with an injected write error; it cannot prove the ordering that sync_all and the directory sync buy, which only a power loss or a filesystem fault injector would show",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
     }
   ]
 }

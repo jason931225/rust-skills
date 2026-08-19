@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-401-blue)
+![rules](https://img.shields.io/badge/rules-402-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-401 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+402 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,7 +66,7 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-401 rules split into 27 categories:
+402 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
@@ -93,7 +93,7 @@ fn first_word(s: &str) -> Option<&str> {
 | **Docs** | 15 | Doc examples, intra-doc links, README/crate-doc unification |
 | **Observability** | 10 | tracing over log, spans, structured fields, redacting secrets |
 | **Performance** | 15 | Iterators, entry API, faster hashers, I/O buffering |
-| **Project Structure** | 34 | Workspaces, module layout, features, MSRV |
+| **Project Structure** | 35 | Workspaces, module layout, features, MSRV |
 | **FFI & Interop** | 8 | ABI boundaries, native handles, `-sys` crates, dynamic libraries |
 | **Linting** | 16 | Clippy config, CI setup, `unexpected_cfgs` |
 | **Anti-patterns** | 16 | Common mistakes and how to fix them |
