@@ -2000,3 +2000,120 @@ fn bytes_are_decoded_field_by_field_because_a_slice_carries_no_alignment() {
         padded[offset..offset + 4].copy_from_slice(&[0xff; 4]);
     }
 }
+
+// --- type-capability-token --------------------------------------------------
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct AdminCap {
+    _private: (),
+}
+
+#[derive(Debug, PartialEq)]
+enum CapError {
+    BadCredentials,
+}
+
+impl AdminCap {
+    fn authenticate(token: &str) -> Result<Self, CapError> {
+        if token == "operator-secret" {
+            Ok(Self { _private: () })
+        } else {
+            Err(CapError::BadCredentials)
+        }
+    }
+}
+
+struct Device {
+    erased: bool,
+}
+
+impl Device {
+    fn erase_firmware(&mut self, _proof: AdminCap) {
+        self.erased = true;
+    }
+}
+
+#[test]
+fn a_privileged_operation_requires_a_token_only_authentication_can_mint() {
+    let mut device = Device { erased: false };
+
+    // No authority, no token, and without a token the call cannot be written.
+    assert_eq!(AdminCap::authenticate("guess"), Err(CapError::BadCredentials));
+    assert!(!device.erased);
+
+    let proof = AdminCap::authenticate("operator-secret").expect("authenticated");
+    device.erase_firmware(proof);
+    assert!(device.erased);
+
+    // The capability is reusable within its scope — that is what separates it
+    // from a single-use token, which would have been consumed above.
+    let mut second = Device { erased: false };
+    second.erase_firmware(proof);
+    assert!(second.erased);
+}
+
+// --- proj-libc-floor --------------------------------------------------------
+
+fn within_floor(required: &str, floor: &str) -> bool {
+    fn parts(version: &str) -> Vec<u32> {
+        version
+            .trim_start_matches("GLIBC_")
+            .split('.')
+            .filter_map(|piece| piece.parse().ok())
+            .collect()
+    }
+    parts(required) <= parts(floor)
+}
+
+#[test]
+fn a_binary_demanding_a_newer_libc_than_the_fleet_fails_the_check() {
+    assert!(within_floor("GLIBC_2.28", "GLIBC_2.31"));
+    assert!(within_floor("GLIBC_2.31", "GLIBC_2.31"));
+
+    // The deployment failure: built on a newer machine than the oldest host.
+    assert!(!within_floor("GLIBC_2.34", "GLIBC_2.31"));
+    // Version components compare numerically, not as text: 2.9 < 2.31.
+    assert!(within_floor("GLIBC_2.9", "GLIBC_2.31"));
+}
+
+// --- unsafe-pin-projection --------------------------------------------------
+
+struct Machine {
+    buffer: [u8; 4],
+    counter: u32,
+    _pinned: std::marker::PhantomPinned,
+}
+
+impl Machine {
+    fn new() -> Self {
+        Self { buffer: [0; 4], counter: 0, _pinned: std::marker::PhantomPinned }
+    }
+
+    /// Structurally pinned: reachable only through the pin.
+    fn buffer(self: std::pin::Pin<&mut Self>) -> std::pin::Pin<&mut [u8; 4]> {
+        // SAFETY: no method moves out of `buffer`, hands out `&mut` to it, or
+        // moves it in Drop.
+        unsafe { self.map_unchecked_mut(|machine| &mut machine.buffer) }
+    }
+
+    /// Not structurally pinned: an ordinary field.
+    fn counter(self: std::pin::Pin<&mut Self>) -> &mut u32 {
+        // SAFETY: `counter` carries no address-dependent invariant.
+        unsafe { &mut self.get_unchecked_mut().counter }
+    }
+}
+
+#[test]
+fn each_field_of_a_pinned_type_is_reached_the_one_way_its_classification_allows() {
+    let mut machine = Box::pin(Machine::new());
+
+    *machine.as_mut().counter() += 1;
+    *machine.as_mut().counter() += 1;
+    assert_eq!(*machine.as_mut().counter(), 2);
+
+    // The pinned field is only ever a Pin<&mut _>, so it cannot be moved out —
+    // which is what keeps its address stable for the lifetime of the value.
+    let address = machine.as_mut().buffer().as_ptr();
+    *machine.as_mut().counter() += 1;
+    assert_eq!(machine.as_mut().buffer().as_ptr(), address, "the pinned field did not move");
+}
