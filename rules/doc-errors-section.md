@@ -115,8 +115,40 @@ Use intra-doc links to connect error variants to their definitions:
 /// contains forbidden characters.
 ```
 
+## Clippy Lint
+
+
+```toml
+# Cargo.toml - require error documentation
+[lints.clippy]
+missing_errors_doc = "warn"
+```
+
+```rust
+// This will warn without # Errors section
+pub fn might_fail() -> Result<(), Error> { Ok(()) }
+```
+
+## Panic vs Error Documentation
+
+
+```rust
+/// Divides two numbers.
+///
+/// # Errors
+///
+/// Returns [`MathError::DivisionByZero`] if `divisor` is zero.
+///
+/// # Panics
+///
+/// Panics if called from a non-main thread (debug builds only).
+pub fn divide(dividend: i64, divisor: i64) -> Result<i64, MathError> {
+    // ...
+}
+```
+
 ## See Also
 
 - [doc-panics-section](./doc-panics-section.md) - Documenting panics
-- [err-doc-errors](./err-doc-errors.md) - Error documentation patterns
+- [doc-errors-section](doc-errors-section.md) - document each failure condition in an `# Errors` section
 - [doc-intra-links](./doc-intra-links.md) - Linking to types
