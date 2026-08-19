@@ -184,6 +184,38 @@ must either name mapped rules or record `out-of-scope`, which maps none.
 No substantial text from any purchased source is stored here. The ledger holds
 digests, titles, page numbers, and dispositions; the rules are original prose.
 
+## RustTraining chapter dispositions
+
+The 2,124 RustTraining units are headings, and a heading is too small a unit to
+judge on its own. They were dispositioned at **chapter granularity**: ten agents
+read all 160 unreviewed chapters and assigned one of four classes, then three
+more challenged every decision that would remove a chapter from the backlog.
+
+| Class | Chapters | Applied to the ledger |
+|---|---:|---|
+| `language-equivalence` | 35 | `project-specific` / `out-of-scope` |
+| `tutorial-scaffolding` | 30 | `reject` / `out-of-scope` |
+| `covered-by-rules` | 65 | nothing — still `unreviewed` |
+| `needs-review` | 30 | nothing — still `unreviewed` |
+
+Only the two disposal classes were applied, and neither maps a rule: they are
+recorded as material this library does not govern, with a per-chapter reason
+naming what the chapter actually contains. Each row says so in
+`remaining_uncertainty` — the reason describes the chapter, not the heading in
+isolation.
+
+The 66 `covered-by-rules` chapters were deliberately **not** marked covered. A
+chapter-level "the library already states this" applied to a dozen headings is
+exactly the unearned coverage credit the rest of these gates exist to prevent;
+mapping those units needs heading-level review.
+
+The verification pass overturned four disposals, and the pattern is worth
+keeping in mind for the next one: two 1,000-line "walkthrough" chapters that
+state contracts of their own, a C++ case-study chapter whose *Lessons Learned*
+section carries durable Rust guidance, and a coverage claim whose cited rules
+did not say what was claimed. A chapter is not scaffolding because of its
+title, and it is not onboarding because of the book it sits in.
+
 ## Rule provenance
 
 `rule_provenance.json` answers, for every rule in `rules/`, where its contract
