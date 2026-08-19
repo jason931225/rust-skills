@@ -72,29 +72,40 @@ struct GeoPoint {
 ```rust
 use std::mem::size_of;
 
-// Poor ordering - 24 bytes due to padding
-struct Wasteful {
-    a: u8,    // 1 byte + 7 padding
-    b: u64,   // 8 bytes
-    c: u8,    // 1 byte + 7 padding
+// The default representation reorders fields, so declaration order does not
+// decide the size: both of these are 16 bytes on a 64-bit target.
+struct Declared {
+    a: u8,
+    b: u64,
+    c: u8,
 }
-assert_eq!(size_of::<Wasteful>(), 24);
+assert_eq!(size_of::<Declared>(), 16);
 
-// Better ordering - 16 bytes
-struct Efficient {
-    b: u64,   // 8 bytes (aligned)
-    a: u8,    // 1 byte
-    c: u8,    // 1 byte + 6 padding
+// Choosing narrower fields is what shrinks the type, not reordering it.
+struct Narrow {
+    b: u32,
+    a: u8,
+    c: u8,
 }
-assert_eq!(size_of::<Efficient>(), 16);
+assert_eq!(size_of::<Narrow>(), 8); // 6 bytes of fields, padded to the u32 alignment
 
-// Even better with smaller types - 10 bytes
-struct Compact {
-    b: u32,   // 4 bytes (if u32 suffices)
-    a: u8,    // 1 byte
-    c: u8,    // 1 byte
+// A fixed layout is where field order becomes the programmer's problem: the
+// compiler must lay `#[repr(C)]` out exactly as declared, padding included.
+#[repr(C)]
+struct WastefulC {
+    a: u8, // 1 byte + 7 padding
+    b: u64,
+    c: u8, // 1 byte + 7 padding
 }
-assert_eq!(size_of::<Compact>(), 8);  // With padding
+assert_eq!(size_of::<WastefulC>(), 24);
+
+#[repr(C)]
+struct EfficientC {
+    b: u64,
+    a: u8,
+    c: u8, // 2 bytes + 6 padding
+}
+assert_eq!(size_of::<EfficientC>(), 16);
 ```
 
 ## Conversion Safety

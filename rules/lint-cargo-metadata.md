@@ -50,10 +50,10 @@ tokio = { git = "..." }  # WARN for published crates
 [features]
 no-std = []  # Should be: std = [] (opt-out vs opt-in)
 
-# WARN: redundant_feature_names
+# WARN: redundant_feature_names — the lint flags `use-` and `with-` prefixes
+# and `-support` suffixes, not names that match the crate.
 [features]
-default = ["feature-a"]
-feature-a = []  # Feature name matches crate name
+use-fast = []  # Should be: fast = []
 ```
 
 ## Notable Lints

@@ -25,7 +25,7 @@ impl Transformer for Shout {
 }
 
 // This fails to compile:
-// error[E0038]: the trait `Transformer` cannot be made into an object
+// error[E0038]: the trait `Transformer` is not dyn compatible
 // fn apply(t: &dyn Transformer, x: i32) { ... }
 ```
 
@@ -100,7 +100,7 @@ fn demo() {
 | Associated types | Yes (type is erased but fixed per impl) |
 | `where Self: Sized` methods | Excluded from vtable, safe to have |
 
-See the Rust Reference — "Object Safety" — at doc.rust-lang.org/reference/items/traits.html#object-safety for the full rules.
+See the Rust Reference — "Dyn compatibility" — at doc.rust-lang.org/reference/items/traits.html#dyn-compatibility for the full rules.
 
 ## See Also
 

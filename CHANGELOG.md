@@ -77,6 +77,23 @@ semantic versioning for the rule set.
   behavior those tools and constructs can establish.
 
 ### Fixed
+- Sixteen factual defects found by a consolidation audit of all 384 rules and
+  confirmed by compiling against the pinned 1.97.1 toolchain: a struct-packing
+  example asserting 24 bytes for a type that is 16 (the default representation
+  reorders fields, so the lesson only holds under `repr(C)`); `clamp` described
+  as "unspecified" for a `NaN` bound when it panics, in release as well as
+  debug; a `#[should_panic]` test returning `Result`, which does not compile;
+  `thread::spawn(...).expect(...)`, which does not exist; `Option::map`
+  described as `#[must_use]` when it emits no warning; E0038's wording, which
+  is now "not dyn compatible"; itertools `group_by`, removed in 0.14 in favour
+  of `chunk_by`; chained mockall `.returning` closures, which overwrite rather
+  than queue; nightly-only rustfmt options presented as stable configuration;
+  a Cargo build-script override table given `rustflags`, which it rejects;
+  `#[cold]`'s effects stated as guarantees; `Chain`'s per-item cost, which
+  internal iteration no longer pays; a sealed trait described as having open
+  methods, which sealing forbids; a fabricated `oneshot::Sender` clone;
+  a `redundant_feature_names` example that does not fire; and crates.io badge
+  metadata that is no longer rendered.
 - The *Zero To Production In Rust* ledger was bound to a superseded PDF and
   stuck at `blocked-source-reread`. It is now re-anchored to the authoritative
   binary by page-text identity — all 431 rows matched exactly one page, uniform
