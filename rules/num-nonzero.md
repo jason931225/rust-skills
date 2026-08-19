@@ -88,6 +88,7 @@ mod tests {
 - **Arithmetic**: `NonZeroU32` does not implement `Add`/`Sub` directly (the result could be zero). Extract with `.get()`, do arithmetic, and reconstruct with `NonZeroU32::new(result)?`.
 - **Ranges**: Rust 1.96 added iteration for ranges of `NonZero*` integers. Keep bounds non-zero instead of extracting primitives merely to iterate.
 - **Niche optimization** applies to `Option` and `Result`: the compiler stores the `None`/`Err` discriminant in the zero bit-pattern, so no extra word is needed. This also applies to custom newtypes that wrap `NonZero*`.
+- The same niche makes `Option<&T>`, `Option<Box<T>>`, and `Option<extern "C" fn(...)>` the FFI-correct representation of a nullable reference, owned pointer, or function pointer: the guarantee is that `None` is the all-zero bit pattern, not an optimization you hope for. Prefer these over a raw `*mut T`/`*const T` when the C side genuinely uses null to mean absent — a raw pointer loses the type-level null/non-null distinction the niche gives you for free.
 
 ## See Also
 
