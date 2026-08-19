@@ -7,6 +7,13 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Ten further rules from the authenticated PDF corpus, found by a parallel gap
+  survey of the previously unmined slices and confirmed against the rule
+  library: `err-short-read`, `err-debug-assert-scope`, `err-send-sync-static`,
+  `serde-byte-order`, `serde-format-version`, `api-record-checksum`,
+  `api-error-schema`, `api-subprocess-args`, `proj-secret-file-mode`, and
+  `type-path-not-string`. Nine carry behavior assertions; the corpus ledger now
+  records 33 reviewed units.
 - Thirteen rules derived from the eight authenticated PDF sources, each bound to
   the source unit it came from: `api-path-containment`, `api-outbound-target`,
   `api-resource-limits`, `api-crypto-primitives`, `type-time-domain`,

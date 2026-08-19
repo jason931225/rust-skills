@@ -111,9 +111,9 @@
     }
   ],
   "summary": {
-    "covered": 22,
+    "covered": 32,
     "project-specific": 1,
-    "unreviewed": 1302
+    "unreviewed": 1292
   },
   "units": [
     {
@@ -2909,26 +2909,29 @@
       "page": 143,
       "page_text_sha256": "9e99cb08b757b97c453da5f7c96299786fa043d324df753973887e783cbccac7",
       "claim": "Injections (depth 1 at Black Hat Rust.pdf page 143)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-subprocess-args"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit states the general root cause of injection \u2014 mishandled program input reaching an interpreter \u2014 and enumerates input sources; it does not cover OS command injection specifically, so the rule's subprocess contract (argument vector, no shell, option-terminator, bounded child) extends it"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4",
         "page-text-sha256:9e99cb08b757b97c453da5f7c96299786fa043d324df753973887e783cbccac7"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::shell_metacharacters_stay_inside_one_argument"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the corpus contains no unit dedicated to command injection; the rule's specifics are derived from the general principle rather than from a worked example",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4"
       }
     },
@@ -9023,26 +9026,29 @@
       "page": 151,
       "page_text_sha256": "824ec85e0ed0facb5c5c70fcc78765f2f45b980d62aa11a24c32b0f4b125edee",
       "claim": "Reading Bytes from a File (depth 2 at Command-Line Rust.pdf page 151)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "err-short-read"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit reads a fixed number of bytes from a file and shows that the count returned is what bounds the valid contents; the rule states the contract for both the exact and short-read cases"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec",
         "page-text-sha256:824ec85e0ed0facb5c5c70fcc78765f2f45b980d62aa11a24c32b0f4b125edee"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_short_read_is_reported_rather_than_padding_the_buffer"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the rule also covers the write side, which the unit does not discuss",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec"
       }
     },
@@ -12479,26 +12485,29 @@
       "page": 505,
       "page_text_sha256": "6c292a9e580ec0b4c8eb800cc0a70a82bcb1fd95e0d8e29a88ff44b02f65aca4",
       "claim": "Finding the Files (depth 2 at Command-Line Rust.pdf page 505)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-path-not-string"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit walks and names files where paths are not guaranteed to be valid Unicode; the rule states the carry-as-Path contract with display-only conversion"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec",
         "page-text-sha256:6c292a9e580ec0b4c8eb800cc0a70a82bcb1fd95e0d8e29a88ff44b02f65aca4"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::paths_are_extended_without_a_utf8_round_trip"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "8fdfd3e12771d3d17583810ac752dca6b708207575203885fa7b5efc10c94eec"
       }
     },
@@ -14274,26 +14283,29 @@
       "page": 106,
       "page_text_sha256": "07320c2574b60ac22699d9c7f2f69c9485767f9099f285f4f7d32e0861e994ec",
       "claim": "Building the application (depth 1 at Fullstack Rust.pdf page 106)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-error-schema"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit returns errors as responses from a web application; the rule adds the requirement that framework-generated failures share the same media type and schema"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "source-sha256:c46e30de610e560a5dbde27d3c6a38b060c77c3d03d1aaef3fdd71ae3bbe1468",
         "page-text-sha256:07320c2574b60ac22699d9c7f2f69c9485767f9099f285f4f7d32e0861e994ec"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "documentation-only",
+        "assertion_id": null
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "no runtime assertion: the contract is about representation across framework-generated paths, which test-http-blackbox covers at the router level",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "c46e30de610e560a5dbde27d3c6a38b060c77c3d03d1aaef3fdd71ae3bbe1468"
       }
     },
@@ -15266,26 +15278,29 @@
       "page": 248,
       "page_text_sha256": "cc51e659fb09278aeef7b7ca9f375ad868a3b0ff659c5b411b3879a90569b1c9",
       "claim": "Adding sessions (depth 1 at Fullstack Rust.pdf page 248)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-secret-file-mode"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit stores session credentials in a file on disk; the rule adds the permission contract for creating that file and its directory"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:c46e30de610e560a5dbde27d3c6a38b060c77c3d03d1aaef3fdd71ae3bbe1468",
         "page-text-sha256:cc51e659fb09278aeef7b7ca9f375ad868a3b0ff659c5b411b3879a90569b1c9"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::credential_files_are_created_owner_only"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "Windows DACL handling is stated as a contract item but not asserted",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "c46e30de610e560a5dbde27d3c6a38b060c77c3d03d1aaef3fdd71ae3bbe1468"
       }
     },
@@ -16581,26 +16596,29 @@
       "page": 54,
       "page_text_sha256": "e5759854b1913dd90614b4616e1e71742e22c2e553e31c5bcd87815a60b13279",
       "claim": "Constrained (depth 1 at Rust for Rustaceans.pdf page 54)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "err-send-sync-static"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit shows that Send and Sync are hidden promises of a public interface, that losing one through a private field is a breaking change, and recommends asserting them in the test suite; the rule applies that to public error types, where the same bounds also decide whether a caller can box, wrap, or move them"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0",
         "page-text-sha256:e5759854b1913dd90614b4616e1e71742e22c2e553e31c5bcd87815a60b13279"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::public_errors_can_cross_threads_and_be_wrapped"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the unit is about auto-traits on public types generally; the error-specific consequences in the rule are derived, not stated there",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0"
       }
     },
@@ -22075,26 +22093,29 @@
       "page": 168,
       "page_text_sha256": "d25c65cb8d1a8cf6303be81761476ce775b4a28d1cd8ace178c215d9b7d261f5",
       "claim": "5.2.1 Understanding endianness (depth 3 at Rust in Action.pdf page 168)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "serde-byte-order"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit explains endianness and the difference between host and declared byte order for values that leave the process; the rule states the boundary conversion contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:d25c65cb8d1a8cf6303be81761476ce775b4a28d1cd8ace178c215d9b7d261f5"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::wire_encoding_is_fixed_by_the_format_not_by_the_host"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -23291,26 +23312,29 @@
       "page": 240,
       "page_text_sha256": "7775d931f0b88c37d7b10e0f99d5ba1bf8a255f9ee7d655e662d099cabc5f16b",
       "claim": "7.2.1 Writing data to disk with serde and the bincode format (depth 3 at Rust in Action.pdf page 240)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "serde-format-version"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit writes structured data to disk with a positional encoding; the rule adds the magic identifier, version marker, and unknown-version rejection that make such a format safe to evolve"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:7775d931f0b88c37d7b10e0f99d5ba1bf8a255f9ee7d655e662d099cabc5f16b"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_versioned_header_rejects_foreign_and_future_files"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "migration strategy between versions is stated as a contract item rather than demonstrated",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -23675,26 +23699,29 @@
       "page": 256,
       "page_text_sha256": "2d371453f4fbebdb5b6a468cd82b989568f025b24046d85d33b461a6ef75f8b6",
       "claim": "7.7.2 Processing an individual record (depth 3 at Rust in Action.pdf page 256)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "err-debug-assert-scope"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit processes an individual stored record and checks its integrity before use; the rule generalizes that into which profile a check must survive, naming debug_assert as unusable for boundary data"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:2d371453f4fbebdb5b6a468cd82b989568f025b24046d85d33b461a6ef75f8b6"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::boundary_validation_returns_an_error_in_every_profile"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the unit does not itself discuss debug versus release assertions; the rule states the contract the unit's code depends on",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
@@ -23739,26 +23766,29 @@
       "page": 260,
       "page_text_sha256": "50d8b548934ec563d9ff9c9dbbf588dabe5795c2b99a480a5b62db7008f48739",
       "claim": "7.7.4 Validating I/O errors with checksums (depth 3 at Rust in Action.pdf page 260)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-record-checksum"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit validates stored records with a checksum before trusting them; the rule states that contract including the protected span and the mismatch policy"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:50d8b548934ec563d9ff9c9dbbf588dabe5795c2b99a480a5b62db7008f48739"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_single_flipped_bit_is_detected_before_the_payload_is_used"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the rule distinguishes checksums from keyed MACs, which the unit does not",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-18",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },
