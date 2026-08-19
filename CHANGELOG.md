@@ -7,6 +7,13 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Four more rules from the same deep read: `api-typed-response` (build the
+  outbound payload by serializing a typed value, the producer-side mirror of
+  the inbound boundary rules), `own-split-borrow-fields` (group a wide struct's
+  fields so independent operations borrow disjointly, instead of reaching for
+  `RefCell`), `unsafe-byte-slice-cast` (reinterpret bytes only through a
+  length- and alignment-checked conversion), and `ffi-opaque-handle-lifecycle`
+  (one constructor, one paired free, a null check at every entry point).
 - Four rules from a deep read of the RustTraining chapters flagged as
   containing contracts the library lacked. `api-sql-parameters` closes an
   outright hole: the library governed command injection and path traversal but
