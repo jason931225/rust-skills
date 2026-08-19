@@ -91,7 +91,7 @@ fn process_large_file(path: &str) -> io::Result<()> {
 
 ## Key Points
 
-- `BufWriter::flush()?` must be called explicitly. When a `BufWriter` is dropped, it attempts to flush, but any resulting error is **silently discarded**. Always flush before the writer goes out of scope.
+- `BufWriter::flush()?` must be called explicitly. Dropping a `BufWriter` writes the buffered bytes out through the inner writer and **silently discards any error** from that write; it does not call `flush` on the inner writer at all. Flush before the writer goes out of scope, and handle the error.
 - Buffer capacity is an implementation detail and can change between Rust releases. A larger buffer can improve sequential throughput, but it also increases per-connection memory.
 - `BufReader` implements `BufRead`, which provides `lines()`, `read_line()`, and `read_until()` — use these instead of reading bytes manually.
 - Network streams may benefit from buffering many small writes, but protocol framing and latency requirements determine when to flush.

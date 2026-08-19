@@ -19,7 +19,6 @@ api-impl-into.md :: Implement From, Not Into :: E0119
 api-impl-into.md :: When NOT to Use impl Into :: E0562
 api-must-use.md :: When to Apply :: P:expected one of `->`, `<`,,P:missing parameters for function definition
 api-newtype-safety.md :: Good :: E0308
-api-sealed-trait.md :: Full Pattern :: P:missing `fn` or `struct` for,P:non-item in item list
 api-serde-optional.md :: Multiple Optional Dependencies :: P:expected `;`, found `#`,P:expected `;`, found `borsh`,P:expected `;`, found `default`,P:expected `;`, found `rkyv`,P:expected `;`, found `serde`,P:expected one of `.`, `;`,
 api-serde-optional.md :: When to Make Serde Required :: P:expected `;`, found `serde`
 async-bounded-channel.md :: Worker Pool Pattern :: E0107
@@ -75,7 +74,6 @@ perf-extend-batch.md :: Good :: E0107
 perf-extend-batch.md :: Pattern: Building Strings :: E0428
 proj-mod-rs-dir.md :: Consistency Rule :: P:expected `;`, found `mod_module_files`,P:expected one of `.`, `;`,
 proj-pub-super-parent.md :: Good :: E0308
-type-enum-states.md :: Avoid Boolean Flags :: E0428
 type-generic-bounds.md :: Bound Placement :: P:non-item in item list
 type-generic-bounds.md :: Conditional Trait Implementation :: E0404
 type-generic-bounds.md :: Good :: E0404

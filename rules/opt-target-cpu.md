@@ -23,6 +23,19 @@ By default, Rust compiles for a generic architecture baseline. Modern CPUs have 
 rustflags = ["-C", "target-cpu=x86-64-v3"]
 ```
 
+## Contract
+
+- Choose a baseline only when every host in the deployment fleet guarantees it,
+  and enforce that in provisioning or admission rather than by assumption.
+- Never ship a release built with `target-cpu=native`; it encodes the build
+  machine, which is not the fleet.
+- Libraries keep a portable build. A crate that requires a baseline imposes it
+  on every downstream binary.
+- Where the gain is concentrated in a few functions, prefer runtime feature
+  detection with a portable fallback over raising the whole-binary baseline.
+- Verify the produced binary actually uses the baseline, and keep the check in
+  CI so a toolchain change cannot silently drop it.
+
 ## Via Environment
 
 ```bash

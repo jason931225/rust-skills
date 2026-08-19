@@ -1,10 +1,10 @@
 # perf-collect-into
 
-> Use collect_into for reusing containers
+> Refill a cleared buffer with `extend` instead of allocating a new collection each iteration
 
 ## Why It Matters
 
-`collect_into()` allows collecting iterator results into an existing collection, reusing its allocation. This avoids the allocation that `collect()` would make for a new collection.
+Collecting into a fresh collection allocates every time round the loop. Clearing a buffer and refilling it with `extend` keeps the allocation and the capacity, which is the difference between one allocation and one per iteration in a hot path. `collect_into` expresses the same thing more directly but is still nightly-only, so `extend` is the form to write today.
 
 > **Note:** `collect_into` is currently **nightly-only** (requires `#![feature(iter_collect_into)]`, tracking issue [#94780](https://github.com/rust-lang/rust/issues/94780)). On stable Rust, use `extend()` instead — see the Stable Alternative section below.
 
@@ -34,7 +34,7 @@ fn filter_loop(data: &[Vec<i32>]) {
 }
 ```
 
-## Good (Stable: extend)
+## Good
 
 ```rust
 // Stable approach: reuse buffer with extend
@@ -72,22 +72,6 @@ fn filter_loop_nightly(data: &[Vec<i32>]) {
     }
 }
 
-```
-
-## Stable Alternative: extend
-
-On stable Rust, `extend()` is equivalent and idiomatic:
-
-```rust
-fn reuse_buffer(data: &[Vec<i32>]) {
-    let mut buffer = Vec::new();
-    
-    for batch in data {
-        buffer.clear();
-        buffer.extend(batch.iter().filter(|&&x| x > 0).copied());
-        process(&buffer);
-    }
-}
 ```
 
 ## Pattern: Transform and Reuse

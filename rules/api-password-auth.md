@@ -37,21 +37,45 @@ pub fn authenticate(stored: &str, password: &str) -> bool {
 ## Good
 
 ```rust
-pub enum CredentialResult {
-    Accepted,
-    Rejected,
+#[derive(Debug, PartialEq)]
+pub struct PublicResponse {
+    pub status: u16,
+    pub message: &'static str,
 }
 
-pub fn public_result(valid: bool) -> CredentialResult {
-    if valid {
-        CredentialResult::Accepted
+pub struct StoredHash {
+    encoded: String,
+}
+
+/// Stand-in for a memory-hard verifier; the real one is argon2 or scrypt.
+fn verify(encoded: &str, submitted: &str) -> bool {
+    encoded == format!("hash:{submitted}")
+}
+
+/// Used when the account does not exist, so the work and the answer match the
+/// wrong-password path instead of returning early.
+fn dummy_hash() -> StoredHash {
+    StoredHash { encoded: "hash:__no_such_account__".to_owned() }
+}
+
+pub fn login(stored: Option<&StoredHash>, submitted: &str) -> PublicResponse {
+    let dummy = dummy_hash();
+    let record = stored.unwrap_or(&dummy);
+    if verify(&record.encoded, submitted) && stored.is_some() {
+        PublicResponse { status: 200, message: "signed in" }
     } else {
-        CredentialResult::Rejected
+        PublicResponse { status: 401, message: "invalid credentials" }
     }
 }
 
 fn main() {
-    assert!(matches!(public_result(false), CredentialResult::Rejected));
+    let stored = StoredHash { encoded: "hash:correct-horse".to_owned() };
+
+    assert_eq!(login(Some(&stored), "correct-horse").status, 200);
+
+    // The property that matters: an unknown account and a wrong password are
+    // indistinguishable to the caller.
+    assert_eq!(login(None, "anything"), login(Some(&stored), "wrong"));
 }
 ```
 

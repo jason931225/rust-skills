@@ -458,7 +458,7 @@ Reference these guidelines when:
 - [`perf-drain-reuse`](rules/perf-drain-reuse.md) - Use drain to reuse allocations
 - [`perf-extend-batch`](rules/perf-extend-batch.md) - Use extend for batch insertions
 - [`perf-chain-avoid`](rules/perf-chain-avoid.md) - Avoid chain in hot loops
-- [`perf-collect-into`](rules/perf-collect-into.md) - Use collect_into for reusing containers
+- [`perf-collect-into`](rules/perf-collect-into.md) - Refill a cleared buffer with `extend` instead of allocating a new collection each iteration
 - [`perf-black-box-bench`](rules/perf-black-box-bench.md) - Use `std::hint::black_box` to reduce benchmark optimizer artifacts
 - [`perf-release-profile`](rules/perf-release-profile.md) - Treat release profiles as measured artifact policy, not a universal max-optimization preset
 - [`perf-profile-first`](rules/perf-profile-first.md) - Profile before optimizing
@@ -473,7 +473,7 @@ Reference these guidelines when:
 - [`proj-lib-main-split`](rules/proj-lib-main-split.md) - Keep `main.rs` minimal, logic in `lib.rs`
 - [`proj-mod-by-feature`](rules/proj-mod-by-feature.md) - Organize modules by feature, not type
 - [`proj-flat-small`](rules/proj-flat-small.md) - Keep small projects flat
-- [`proj-mod-rs-dir`](rules/proj-mod-rs-dir.md) - Use mod.rs for multi-file modules
+- [`proj-mod-rs-dir`](rules/proj-mod-rs-dir.md) - Pick one multi-file module layout — `mod.rs` or the adjacent file — and apply it consistently
 - [`proj-pub-crate-internal`](rules/proj-pub-crate-internal.md) - Use pub(crate) for internal APIs
 - [`proj-pub-super-parent`](rules/proj-pub-super-parent.md) - Use pub(super) to share items across the parent module and everything inside it
 - [`proj-pub-use-reexport`](rules/proj-pub-use-reexport.md) - Give each owned item one public path; let callers import foreign types from their defining crate

@@ -40,6 +40,7 @@ mod private {
 }
 
 // Public trait requires the private trait
+/// This trait is sealed and cannot be implemented outside this crate.
 pub trait DatabaseDriver: private::Sealed {
     fn connect(&self, url: &str) -> Connection;
     fn execute(&self, query: &str) -> Result<Rows, Error>;
@@ -67,44 +68,6 @@ impl DatabaseDriver for MySqlDriver {
 fn use_driver(driver: &impl DatabaseDriver) {
     let conn = driver.connect("postgres://localhost");
 }
-```
-
-## Full Pattern
-
-```rust
-pub mod db {
-    mod private {
-        pub trait Sealed {}
-    }
-    
-    /// Database driver trait.
-    /// 
-    /// This trait is sealed and cannot be implemented outside this crate.
-    pub trait Driver: private::Sealed {
-        /// Connects to the database.
-        fn connect(&self, url: &str) -> Result<Connection, Error>;
-        
-        /// Executes a query.
-        fn execute(&self, sql: &str) -> Result<Rows, Error>;
-    }
-    
-    pub struct Postgres;
-    impl private::Sealed for Postgres {}
-    impl Driver for Postgres { ... }
-    
-    pub struct Sqlite;
-    impl private::Sealed for Sqlite {}
-    impl Driver for Sqlite { ... }
-}
-
-// Usage works fine
-use db::{Driver, Postgres};
-
-fn query(driver: &impl Driver) {
-    driver.execute("SELECT 1")?;
-}
-
-query(&Postgres);
 ```
 
 ## Benefits of Sealing

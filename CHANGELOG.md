@@ -77,6 +77,22 @@ semantic versioning for the rule set.
   behavior those tools and constructs can establish.
 
 ### Fixed
+- Seven rules made falsifiable runtime claims that nothing tested; each now has
+  an assertion, and writing two of them corrected the rules. `perf-io-buffering`
+  said a dropped `BufWriter` "attempts to flush" — it writes the buffer out
+  through the inner writer and never calls `flush` on it, discarding that
+  write's error. `api-password-auth`'s only assertion restated the function
+  above it; it now asserts the property that matters, that an unknown account
+  and a wrong password are indistinguishable. The others cover drop order,
+  serde enum tagging, `catch_unwind` isolation, cancellation safety, and
+  redirect/CSRF handling — the last replacing a non-executable pseudo-listing.
+- `perf-collect-into` recommended a nightly-only API in its summary line, which
+  is what the index shows; it now names `extend`, and its two identical
+  "stable alternative" sections are one. `proj-mod-rs-dir` mandated `mod.rs`
+  while its own example used the adjacent layout; it now asks for consistency.
+  `api-password-reset` and `opt-target-cpu` had several independent obligations
+  buried in prose and now state them as contracts, and two restated sections
+  were removed from `type-enum-states` and `api-sealed-trait`.
 - Sixteen factual defects found by a consolidation audit of all 384 rules and
   confirmed by compiling against the pinned 1.97.1 toolchain: a struct-packing
   example asserting 24 bytes for a type that is 16 (the default representation

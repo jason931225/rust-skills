@@ -36,11 +36,52 @@ pub fn page(name: &str) -> String {
 
 ## Good
 
-```text
-render(template, untrusted_value) -> auto-escaped HTML
-csrf.verify_constant_time(session_token, submitted_token)
-redirect(allowlisted_same_origin_path)
+```rust
+/// Redirect targets come from a fixed table, never from the request. Anything
+/// not in the table is refused rather than repaired.
+pub fn safe_redirect(requested: &str) -> Option<&'static str> {
+    match requested {
+        "dashboard" => Some("/dashboard"),
+        "settings" => Some("/settings"),
+        _ => None,
+    }
+}
+
+/// Compares the submitted CSRF token against the session's without an early
+/// exit, so the comparison time does not reveal the matching prefix.
+pub fn csrf_ok(session_token: &[u8], submitted: &[u8]) -> bool {
+    session_token.len() == submitted.len()
+        && session_token
+            .iter()
+            .zip(submitted)
+            .fold(0u8, |acc, (a, b)| acc | (a ^ b))
+            == 0
+}
+
+fn main() {
+    assert_eq!(safe_redirect("dashboard"), Some("/dashboard"));
+
+    // Every one of these is attacker-controlled input, and none of them is a
+    // route this application serves.
+    for hostile in [
+        "https://evil.example/login",
+        "//evil.example",
+        "/\\evil.example",
+        "javascript:alert(1)",
+        "../admin",
+    ] {
+        assert_eq!(safe_redirect(hostile), None, "{hostile} must not be a redirect target");
+    }
+
+    let session = b"tok-abcdef";
+    assert!(csrf_ok(session, b"tok-abcdef"));
+    assert!(!csrf_ok(session, b"tok-abcdeg"));
+    assert!(!csrf_ok(session, b"tok-abcde"));
+}
 ```
+
+Escaping is the templating engine's job: pick one that escapes by default and
+keep raw-HTML insertion to values the application itself produced.
 
 ## Failure Tests
 
