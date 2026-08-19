@@ -20,10 +20,10 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 17,
+    "covered": 20,
     "project-specific": 532,
     "reject": 327,
-    "unreviewed": 1248
+    "unreviewed": 1245
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -2042,27 +2042,29 @@
       "end_line": 123,
       "unit_sha256": "459b4fbec6e1fafdba79e4afd980145d3095a41f02fc3e29c846ea88511259c9",
       "claim": "Zero-Sized Types as Proof Tokens (H2 at ch04-capability-tokens-zero-cost-proof-of-aut.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-capability-token"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit presents zero-sized proof tokens minted only by an authenticating constructor, so authority appears in a signature instead of being re-checked inside each privileged function; the rule states that contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:28d9f274ae193c7ddbbaafc8a0c7a6fd2c1b830846b318cad3aef15a0be39562",
         "unit-sha256:459b4fbec6e1fafdba79e4afd980145d3095a41f02fc3e29c846ea88511259c9"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_privileged_operation_requires_a_token_only_authentication_can_mint"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule notes that a capability proves the caller held authority, not that policy still permits the action; the runtime half stays with api-authz-fail-closed",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "28d9f274ae193c7ddbbaafc8a0c7a6fd2c1b830846b318cad3aef15a0be39562"
       }
     },
@@ -17051,27 +17053,29 @@
       "end_line": 305,
       "unit_sha256": "ebe0d09bf8e7aea5add81419b220b7a861d10c4aa3bb2cde235ffe378fa3393f",
       "claim": "Pin Projections \u2014 Structural Pinning (H3 at ch09-smart-pointers-and-interior-mutability.md#9)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-pin-projection"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers pin projections and structural pinning; the rule states the per-field classification and the four operations a structurally pinned field forbids"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:469b284910bcf19c51e2081f5ac5185219538697fef81ebae5f46cbbac89a69a",
         "unit-sha256:ebe0d09bf8e7aea5add81419b220b7a861d10c4aa3bb2cde235ffe378fa3393f"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::each_field_of_a_pinned_type_is_reached_the_one_way_its_classification_allows"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule recommends a projection macro for non-trivial cases, which this repository does not depend on",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "469b284910bcf19c51e2081f5ac5185219538697fef81ebae5f46cbbac89a69a"
       }
     },
@@ -28980,27 +28984,29 @@
       "end_line": 146,
       "unit_sha256": "8f2083888441ed952d07db2fc74bf0054f2e238e61270879d7552a719fd7ddf3",
       "claim": "Static Binaries with musl (H3 at ch02-cross-compilation-one-source-many-target.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-libc-floor"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers static musl binaries as the alternative to a dynamically linked glibc build; the rule states the fleet-floor decision and the artifact check that keeps it honest"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169",
         "unit-sha256:8f2083888441ed952d07db2fc74bf0054f2e238e61270879d7552a719fd7ddf3"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_binary_demanding_a_newer_libc_than_the_fleet_fails_the_check"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the assertion covers the version comparison; extracting the symbol from a real binary is shown as a shell step and not executed here",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169"
       }
     },

@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 398 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 401 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 398 rules across 27 categories, prioritized by impact for use by
+Contains 401 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -57,13 +57,13 @@ Reference these guidelines when:
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 13 |
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
-| 4 | Unsafe Code | CRITICAL | `unsafe-` | 13 |
+| 4 | Unsafe Code | CRITICAL | `unsafe-` | 14 |
 | 5 | API Design | HIGH | `api-` | 50 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 8 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 23 |
+| 10 | Type Safety | MEDIUM | `type-` | 24 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -77,7 +77,7 @@ Reference these guidelines when:
 | 21 | Documentation | MEDIUM | `doc-` | 15 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
-| 24 | Project Structure | LOW | `proj-` | 33 |
+| 24 | Project Structure | LOW | `proj-` | 34 |
 | 25 | FFI & Interop | LOW | `ffi-` | 8 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -159,6 +159,7 @@ Reference these guidelines when:
 - [`unsafe-volatile-mmio`](rules/unsafe-volatile-mmio.md) - Reach memory-mapped hardware through `read_volatile`/`write_volatile`, never through an ordinary reference
 - [`unsafe-pin-address-stable`](rules/unsafe-pin-address-stable.md) - Opt address-dependent types out of `Unpin` with `PhantomPinned` and expose their mutation only through `Pin<&mut Self>`
 - [`unsafe-byte-slice-cast`](rules/unsafe-byte-slice-cast.md) - Reinterpret bytes as a typed value only through a length- and alignment-checked conversion
+- [`unsafe-pin-projection`](rules/unsafe-pin-projection.md) - Decide once whether each field of a `!Unpin` type is structurally pinned, and keep every accessor consistent with that choice
 
 ### 5. API Design (HIGH)
 
@@ -306,6 +307,7 @@ Reference these guidelines when:
 - [`type-time-sample-once`](rules/type-time-sample-once.md) - Read the clock once per operation and pass the value down
 - [`type-generational-handle`](rules/type-generational-handle.md) - Pair a reused slot index with a generation counter, and reject a handle whose generation has moved on
 - [`type-single-use-token`](rules/type-single-use-token.md) - Give an at-most-once permission a type that is neither `Clone` nor `Copy`, so a second use will not compile
+- [`type-capability-token`](rules/type-capability-token.md) - Make a privileged operation take an unforgeable token, so authority appears in the signature
 
 ### 11. Trait & Generics Design (MEDIUM)
 
@@ -515,6 +517,7 @@ Reference these guidelines when:
 - [`proj-secret-file-mode`](rules/proj-secret-file-mode.md) - Create credential files owner-only, in an owner-only directory, before writing anything into them
 - [`proj-append-log-recovery`](rules/proj-append-log-recovery.md) - Make a truncated trailing record a clean end of log, and a malformed interior record a loud failure
 - [`proj-build-target-cfg`](rules/proj-build-target-cfg.md) - Write `build.rs` against the target, not the host: read `TARGET`, `HOST`, and `CARGO_CFG_TARGET_*` instead of `cfg!`
+- [`proj-libc-floor`](rules/proj-libc-floor.md) - Choose the C library and dynamic-link floor the fleet must satisfy, and verify the shipped binary against it
 
 ### 25. FFI & Interop (LOW)
 
