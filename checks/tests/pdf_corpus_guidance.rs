@@ -732,3 +732,124 @@ fn paths_are_extended_without_a_utf8_round_trip() {
         assert_eq!(non_utf8.to_string_lossy(), "\u{fffd}\u{fffd}");
     }
 }
+
+// --- conc-signal-handler-safety ---------------------------------------------
+
+use std::sync::atomic::{AtomicBool, Ordering};
+
+static SHUTDOWN: AtomicBool = AtomicBool::new(false);
+
+/// The entire handler: one atomic store, nothing that can allocate or lock.
+extern "C" fn on_terminate(_signal: i32) {
+    SHUTDOWN.store(true, Ordering::SeqCst);
+}
+
+fn serve_until_shutdown(mut step: impl FnMut() -> bool) -> &'static str {
+    while !SHUTDOWN.load(Ordering::SeqCst) {
+        if !step() {
+            return "finished";
+        }
+    }
+    "shutdown requested"
+}
+
+#[test]
+fn a_signal_handler_only_flips_a_flag_that_ordinary_code_observes() {
+    let mut ticks = 0;
+    assert_eq!(
+        serve_until_shutdown(|| {
+            ticks += 1;
+            ticks < 3
+        }),
+        "finished"
+    );
+    assert_eq!(ticks, 3);
+
+    on_terminate(15);
+    assert!(SHUTDOWN.load(Ordering::SeqCst));
+    // The loop stops before running any further work.
+    assert_eq!(serve_until_shutdown(|| panic!("must not run")), "shutdown requested");
+}
+
+// --- api-dir-enumeration ----------------------------------------------------
+
+#[test]
+fn a_directory_listing_is_sorted_and_survives_a_bad_entry() {
+    use std::fs;
+
+    let root = std::env::temp_dir().join(format!("rust-skills-walk-{}", std::process::id()));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(root.join("sub")).expect("mkdir");
+    for name in ["c.txt", "a.txt", "b.txt"] {
+        fs::write(root.join(name), b"x").expect("write");
+    }
+
+    let mut entries: Vec<PathBuf> = Vec::new();
+    let mut skipped = 0usize;
+    for item in fs::read_dir(&root).expect("read_dir") {
+        match item {
+            Ok(entry) => entries.push(entry.path()),
+            Err(_) => skipped += 1,
+        }
+    }
+    entries.sort();
+
+    let names: Vec<String> = entries
+        .iter()
+        .filter_map(|p| p.file_name().map(|n| n.to_string_lossy().into_owned()))
+        .collect();
+    assert_eq!(names, ["a.txt", "b.txt", "c.txt", "sub"], "order is imposed, not assumed");
+    assert_eq!(skipped, 0);
+
+    // Opening a directory that does not exist is a whole-operation failure,
+    // which is a different case from one unreadable entry.
+    assert!(fs::read_dir(root.join("missing")).is_err());
+    fs::remove_dir_all(&root).expect("cleanup");
+}
+
+// --- type-text-decode-policy ------------------------------------------------
+
+#[test]
+fn strict_and_lossy_decoding_are_distinguishable_choices() {
+    use std::borrow::Cow;
+
+    let valid = "ok".as_bytes();
+    // Built at runtime: a literal here would be diagnosed statically, which is
+    // not the situation the rule is about — these bytes arrive from a file.
+    let mut invalid = b"fo".to_vec();
+    invalid.insert(1, 0xff);
+    let invalid = invalid.as_slice();
+
+    // Strict: the caller learns exactly where the input went wrong.
+    assert_eq!(std::str::from_utf8(valid), Ok("ok"));
+    let error = std::str::from_utf8(invalid).expect_err("invalid utf-8");
+    assert_eq!(error.valid_up_to(), 1);
+
+    // Lossy: the text is repaired, and the caller can tell that it was.
+    let repaired = String::from_utf8_lossy(invalid);
+    assert!(matches!(repaired, Cow::Owned(_)), "substitution happened");
+    assert!(repaired.contains('\u{fffd}'));
+    assert!(matches!(String::from_utf8_lossy(valid), Cow::Borrowed("ok")));
+}
+
+// --- ffi-status-to-result ---------------------------------------------------
+
+fn foreign_call(succeed: bool) -> i32 {
+    if succeed { 3 } else { -1 }
+}
+
+fn checked_call(succeed: bool) -> io::Result<i32> {
+    let status = foreign_call(succeed);
+    if status < 0 {
+        return Err(io::Error::last_os_error());
+    }
+    Ok(status)
+}
+
+#[test]
+fn a_foreign_status_becomes_a_result_at_the_boundary() {
+    assert_eq!(checked_call(true).expect("succeeds"), 3);
+    let error = checked_call(false).expect_err("fails");
+    // A sentinel integer does not travel further into the program.
+    assert!(error.raw_os_error().is_some() || error.kind() != io::ErrorKind::Other);
+}
