@@ -7,6 +7,15 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Four rules from a deep read of the RustTraining chapters flagged as
+  containing contracts the library lacked. `api-sql-parameters` closes an
+  outright hole: the library governed command injection and path traversal but
+  said nothing about SQL, the most common injection class. The others are
+  `async-explicit-close` (no async `Drop`, so releases that await need an
+  explicit `close`), `test-drop-release-paths` (observe the release on an early
+  `?` and while unwinding, not on the happy path), and
+  `async-runtime-agnostic-lib` (a library takes futures; the binary picks the
+  runtime).
 - Five more rules from the RustTraining survey, completing its confirmed-gap
   queue: `async-poll-contract` (never block, re-check readiness, re-register the
   waker before `Pending`, never poll after `Ready`),

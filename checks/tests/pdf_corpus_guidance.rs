@@ -1725,3 +1725,152 @@ fn a_build_script_reads_the_target_from_the_environment_not_the_host() {
     assert!(BuildTarget::from_env(&bare).unwrap_err().contains("must run under cargo"));
 }
 
+
+// --- api-sql-parameters -----------------------------------------------------
+
+#[derive(Debug, PartialEq)]
+enum QueryError {
+    UnknownSortColumn,
+}
+
+fn sort_column(token: &str) -> Result<&'static str, QueryError> {
+    match token {
+        "email" => Ok("email"),
+        "created" => Ok("created_at"),
+        _ => Err(QueryError::UnknownSortColumn),
+    }
+}
+
+fn find_by_email(sort: &str) -> Result<&'static str, QueryError> {
+    Ok(match sort_column(sort)? {
+        "email" => "SELECT id, email FROM users WHERE email = $1 ORDER BY email LIMIT $2",
+        _ => "SELECT id, email FROM users WHERE email = $1 ORDER BY created_at LIMIT $2",
+    })
+}
+
+fn escape_like(input: &str) -> String {
+    let mut out = String::with_capacity(input.len());
+    for character in input.chars() {
+        if matches!(character, '%' | '_' | '\\') {
+            out.push('\\');
+        }
+        out.push(character);
+    }
+    out
+}
+
+#[test]
+fn statement_text_is_fixed_and_identifiers_come_from_an_allowlist() {
+    let sql = find_by_email("email").expect("known column");
+    assert!(sql.contains("$1") && sql.contains("$2"), "values are bound");
+    assert!(!sql.contains('\''), "no value is ever quoted into the statement");
+
+    // Every hostile identifier is refused rather than escaped and interpolated.
+    for hostile in [
+        "email; DROP TABLE users",
+        "email) UNION SELECT password FROM admins --",
+        "1=1",
+        "",
+    ] {
+        assert_eq!(
+            find_by_email(hostile),
+            Err(QueryError::UnknownSortColumn),
+            "{hostile:?} must not reach the statement"
+        );
+    }
+
+    // LIKE wildcards in caller text are data, not syntax.
+    assert_eq!(escape_like("100%_off"), r"100\%\_off");
+    assert_eq!(escape_like(r"a\b"), r"a\\b");
+}
+
+// --- test-drop-release-paths ------------------------------------------------
+
+struct Lease {
+    released: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+}
+
+impl Drop for Lease {
+    fn drop(&mut self) {
+        self.released
+            .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+    }
+}
+
+fn early_return(
+    released: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+) -> Result<(), &'static str> {
+    let _lease = Lease { released };
+    Err("failed before the end of the scope")?;
+    unreachable!()
+}
+
+#[test]
+fn a_drop_release_happens_on_the_error_path_and_while_unwinding() {
+    use std::sync::Arc;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    // Early `?` return.
+    let released = Arc::new(AtomicUsize::new(0));
+    assert!(early_return(Arc::clone(&released)).is_err());
+    assert_eq!(released.load(Ordering::SeqCst), 1, "released on the ? path");
+
+    // Unwinding panic.
+    let released = Arc::new(AtomicUsize::new(0));
+    let counter = Arc::clone(&released);
+    let previous = std::panic::take_hook();
+    std::panic::set_hook(Box::new(|_| {}));
+    let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(move || {
+        let _lease = Lease { released: counter };
+        panic!("boom");
+    }));
+    std::panic::set_hook(previous);
+
+    assert!(outcome.is_err());
+    assert_eq!(
+        released.load(Ordering::SeqCst),
+        1,
+        "released exactly once while unwinding — not zero, and not twice"
+    );
+}
+
+// --- async-explicit-close ---------------------------------------------------
+
+struct Session {
+    sent_goodbye: bool,
+    leaked: std::sync::Arc<std::sync::atomic::AtomicBool>,
+}
+
+impl Session {
+    async fn close(mut self) -> Result<(), &'static str> {
+        self.sent_goodbye = true;
+        Ok(())
+    }
+}
+
+impl Drop for Session {
+    fn drop(&mut self) {
+        if !self.sent_goodbye {
+            self.leaked
+                .store(true, std::sync::atomic::Ordering::SeqCst);
+        }
+    }
+}
+
+#[tokio::test]
+async fn an_unclosed_async_resource_is_observable_rather_than_silently_leaked() {
+    use std::sync::Arc;
+    use std::sync::atomic::{AtomicBool, Ordering};
+
+    // Dropped without closing: the fallback records it, and does no blocking
+    // work inside the destructor.
+    let leaked = Arc::new(AtomicBool::new(false));
+    drop(Session { sent_goodbye: false, leaked: Arc::clone(&leaked) });
+    assert!(leaked.load(Ordering::SeqCst));
+
+    // The supported path awaits the release and reports it.
+    let leaked = Arc::new(AtomicBool::new(false));
+    let session = Session { sent_goodbye: false, leaked: Arc::clone(&leaked) };
+    assert_eq!(session.close().await, Ok(()));
+    assert!(!leaked.load(Ordering::SeqCst), "closing is not a leak");
+}

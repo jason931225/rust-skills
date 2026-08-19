@@ -20,10 +20,10 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 9,
+    "covered": 13,
     "project-specific": 532,
     "reject": 327,
-    "unreviewed": 1256
+    "unreviewed": 1252
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -9654,27 +9654,29 @@
       "end_line": 210,
       "unit_sha256": "592dd8e5ce6b593e3f684270c764eff5dd28d085974be81814bb56f0b8f8ec44",
       "claim": "RAII Verification (H3 at ch14-testing-type-level-guarantees.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "test-drop-release-paths"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit requires RAII verification \u2014 tests that observe the release rather than the happy path; the rule names the two paths ordinary tests miss and the double-release case a boolean cannot detect"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:3be8b1da58f8108177cb85441fef9d1ba659c224ade77dfdaf4504d93e051046",
         "unit-sha256:592dd8e5ce6b593e3f684270c764eff5dd28d085974be81814bb56f0b8f8ec44"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_drop_release_happens_on_the_error_path_and_while_unwinding"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "panic = \"abort\" skips destructors entirely, which the rule notes but no test in this repository can demonstrate",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "3be8b1da58f8108177cb85441fef9d1ba659c224ade77dfdaf4504d93e051046"
       }
     },
@@ -24569,14 +24571,16 @@
       "end_line": 248,
       "unit_sha256": "ddf25da2a77f6f210a5e464e403f520174ec0ba2d9d9d9b8c47334be8fb1e358",
       "claim": "Lightweight Runtimes for Libraries (H3 at ch09-when-tokio-isnt-the-right-fit.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-runtime-agnostic-lib"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers lightweight runtimes for libraries and when tokio is not the right fit; the rule states the contract that a library depends on std::future::Future and leaves the runtime choice to the binary"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:fc56922bf251a96c7d7ba4d50f9499aaeb7a157220a60ea4d4d9dae8fb295a99",
@@ -24584,12 +24588,12 @@
       ],
       "executable_check": {
         "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule's manifest-level checks (default features runtime-free) are stated but not asserted by a unit test",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "fc56922bf251a96c7d7ba4d50f9499aaeb7a157220a60ea4d4d9dae8fb295a99"
       }
     },
@@ -25339,27 +25343,29 @@
       "end_line": 200,
       "unit_sha256": "0a65ff7b716405449773bc8bbed3fde9a2b448d7670924425d148edaad05fc35",
       "claim": "No Async Drop (H3 at ch12-common-pitfalls.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-explicit-close"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit states that Rust has no async Drop, so a resource whose release must await cannot release it in a destructor; the rule states the explicit close contract and the best-effort fallback"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:fcf067fceb8e3428fdac592012b5de635307730e203700ca40e6347925a555a9",
         "unit-sha256:0a65ff7b716405449773bc8bbed3fde9a2b448d7670924425d148edaad05fc35"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::an_unclosed_async_resource_is_observable_rather_than_silently_leaked"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "fcf067fceb8e3428fdac592012b5de635307730e203700ca40e6347925a555a9"
       }
     },
@@ -69320,27 +69326,29 @@
       "end_line": 390,
       "unit_sha256": "14c0caa740dfa91f159dfa9219d5dd49c7c7492b92029af40c4b17dcf0eb067a",
       "claim": "Entity Framework \u2192 SQLx + Migrations (H3 at ch15-migration-patterns-and-case-studies.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-sql-parameters"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit migrates an Entity Framework data layer to sqlx, where queries carry bound parameters rather than interpolated values; the rule states the parameterization contract and the identifier allowlist that escaping cannot replace"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "security",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:feb54cd32631f0e7cfc94e8abc0c8884ceb3bd8d4ae030536c2a231a61ade745",
         "unit-sha256:14c0caa740dfa91f159dfa9219d5dd49c7c7492b92029af40c4b17dcf0eb067a"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::statement_text_is_fixed_and_identifiers_come_from_an_allowlist"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit is a migration case study rather than a security chapter; the threat model in the rule is supplied by the rule",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "feb54cd32631f0e7cfc94e8abc0c8884ceb3bd8d4ae030536c2a231a61ade745"
       }
     },
