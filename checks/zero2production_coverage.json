@@ -9,7 +9,7 @@
     "toc_digest": "66caa6e24248c2491dc94ecc2381c8c98d2b47e2891925f2f0bbc41bc30dddba"
   },
   "extraction": {
-    "engine": "pypdf layout mode",
+    "engine": "pypdf 6.6.0 layout mode",
     "generator": "checks/rebind_zero2production.py",
     "unlisted_continuation_pages": [
       273,
@@ -6170,19 +6170,24 @@
     }
   ],
   "audit_status": {
-    "semantic_status": "source-rebound",
-    "reason": "The ledger is now bound to the authoritative binary. Every placed row was matched to exactly one page whose extracted text is byte-identical to the page the disposition was written against, with a uniform page offset.",
-    "required_evidence": "Re-run checks/rebind_zero2production.py against the authoritative binary; it verifies every placed row and fails if any page's text has changed."
+    "semantic_status": "source-rebound-partial-proof",
+    "reason": "The ledger is bound to the authoritative binary. Every one of its 431 rows matched exactly one page whose extracted text is byte-identical to the page the disposition was written against, with a uniform page offset. That covers 256 of 433 physical pages; the remainder carry no stored digest and are unproven.",
+    "required_evidence": "Re-run checks/rebind_zero2production.py against the authoritative binary with pypdf 6.6.0; it re-verifies every row and the binding digest. Closing the unproven-page gap requires a full reread, not a digest comparison."
   },
   "rebinding": {
     "method": "page-text-digest identity against the authoritative binary",
+    "engine": "pypdf 6.6.0 layout mode",
     "superseded_sha256": "5de8b3ef43e1175f18579130c9bef9ef492f63c527deb5ac65a9a1bb6320f75e",
     "authoritative_sha256": "f122f6e8f68ecdbf8bd5f5b9f06506e73822a993bc71194530894a3c168cf47b",
     "page_offset": 1,
-    "rows_with_page": 429,
-    "rows_matched": 429,
+    "rows_total": 431,
+    "rows_matched": 431,
     "rows_ambiguous": 0,
     "rows_unmatched": 0,
-    "claim": "every reviewed page's extracted text is byte-identical between the two binaries, so dispositions carry across by content identity; no row was transferred by title, page, or ordinal"
+    "pages_proven_identical": 256,
+    "physical_pages": 433,
+    "binding_digest": "06ae2943dd24b07dc8abf0d03167ed932eea2af5b91112996f23635123f264a2",
+    "claim": "every row's stored page text is byte-identical to exactly one page of the authoritative binary, so dispositions carry across by content identity; no row was transferred by title, page, or ordinal",
+    "proof_scope": "256 of 433 physical pages are covered by a stored digest. The rest are not: the superseded binary is gone, so no evidence about them survives. A disposition summarizes a section, so an edit to a page inside a reviewed section that left its heading page untouched would not be detected."
   }
 }
