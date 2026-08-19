@@ -362,3 +362,183 @@ async fn graceful_shutdown_fails_readiness_before_cancelling_and_bounds_the_drai
     tasks.shutdown().await;
     assert_eq!(tasks.len(), 0, "aborting the JoinSet must leave nothing running");
 }
+
+// --- perf-io-buffering ------------------------------------------------------
+
+/// A sink whose writes fail, like a closed pipe or a full disk.
+struct FailingSink {
+    attempted: std::rc::Rc<std::cell::Cell<bool>>,
+}
+
+impl Write for FailingSink {
+    fn write(&mut self, _buffer: &[u8]) -> std::io::Result<usize> {
+        self.attempted.set(true);
+        Err(std::io::Error::from(std::io::ErrorKind::BrokenPipe))
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+#[test]
+fn dropping_a_bufwriter_discards_the_error_that_an_explicit_flush_surfaces() {
+    use std::io::BufWriter;
+
+    // Dropped without flushing: Drop writes the buffer out through the inner
+    // writer and discards the failure. Nothing reports it.
+    let attempted = std::rc::Rc::new(std::cell::Cell::new(false));
+    {
+        let mut writer = BufWriter::new(FailingSink { attempted: std::rc::Rc::clone(&attempted) });
+        writer.write_all(b"record").expect("the write is buffered, not yet attempted");
+    } // <- the failing write happens here, and its error is dropped
+    assert!(attempted.get(), "drop did write the buffer out");
+
+    // Explicit flush: the same failure is a value the caller must handle.
+    let attempted = std::rc::Rc::new(std::cell::Cell::new(false));
+    let mut writer = BufWriter::new(FailingSink { attempted: std::rc::Rc::clone(&attempted) });
+    writer.write_all(b"record").expect("buffered");
+    let outcome = writer.flush();
+    assert!(attempted.get());
+    assert_eq!(
+        outcome.expect_err("flush must report the failure").kind(),
+        std::io::ErrorKind::BrokenPipe
+    );
+}
+
+// --- err-catch-unwind-boundary ----------------------------------------------
+
+#[derive(Debug, PartialEq)]
+enum RequestOutcome {
+    Handled(u32),
+    Failed,
+}
+
+fn handle_one_request(input: u32) -> RequestOutcome {
+    // The boundary converts a panic into a value; it does not let it unwind
+    // into the runtime that owns the worker.
+    let result = std::panic::catch_unwind(|| {
+        if input == 0 {
+            panic!("invariant violated for request {input}");
+        }
+        input * 2
+    });
+    match result {
+        Ok(value) => RequestOutcome::Handled(value),
+        Err(_) => RequestOutcome::Failed,
+    }
+}
+
+#[test]
+fn a_panicking_request_is_isolated_and_the_worker_keeps_serving() {
+    let previous = std::panic::take_hook();
+    std::panic::set_hook(Box::new(|_| {})); // keep the test output readable
+
+    assert_eq!(handle_one_request(21), RequestOutcome::Handled(42));
+    assert_eq!(handle_one_request(0), RequestOutcome::Failed);
+    // The worker survives the panic and serves the next request.
+    assert_eq!(handle_one_request(2), RequestOutcome::Handled(4));
+
+    std::panic::set_hook(previous);
+}
+
+// --- async-cancel-safety ----------------------------------------------------
+
+#[tokio::test]
+async fn a_cancelled_read_exact_loses_its_partial_data_while_read_keeps_progress() {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+    // read_exact: cancelled mid-way, the bytes it consumed are gone.
+    let (mut client, mut server) = tokio::io::duplex(64);
+    server.write_all(b"abc").await.expect("partial write");
+    let mut buffer = [0u8; 8];
+    tokio::select! {
+        _ = client.read_exact(&mut buffer) => panic!("cannot complete: only 3 bytes are available"),
+        _ = tokio::time::sleep(Duration::from_millis(20)) => {}
+    }
+    server.write_all(b"defghijk").await.expect("rest");
+    let mut after = [0u8; 3];
+    client.read_exact(&mut after).await.expect("read after cancellation");
+    assert_ne!(
+        &after, b"abc",
+        "the first three bytes were consumed by the cancelled read_exact and are unrecoverable"
+    );
+
+    // read into a caller-owned buffer: progress survives cancellation because
+    // the buffer, not the future, holds it.
+    let (mut client, mut server) = tokio::io::duplex(64);
+    server.write_all(b"abc").await.expect("partial write");
+    let mut owned = Vec::new();
+    let mut chunk = [0u8; 8];
+    let read = client.read(&mut chunk).await.expect("first read");
+    owned.extend_from_slice(&chunk[..read]);
+    assert_eq!(owned, b"abc");
+}
+
+// --- api-password-auth ------------------------------------------------------
+
+fn verify_encoded(encoded: &str, submitted: &str) -> bool {
+    encoded == format!("hash:{submitted}")
+}
+
+fn login(stored: Option<&str>, submitted: &str) -> (u16, &'static str) {
+    // An unknown account is verified against a dummy hash so it takes the same
+    // path, and returns the same answer, as a wrong password.
+    let dummy = "hash:__no_such_account__";
+    let encoded = stored.unwrap_or(dummy);
+    if verify_encoded(encoded, submitted) && stored.is_some() {
+        (200, "signed in")
+    } else {
+        (401, "invalid credentials")
+    }
+}
+
+#[test]
+fn an_unknown_account_and_a_wrong_password_are_indistinguishable() {
+    let stored = "hash:correct-horse";
+    assert_eq!(login(Some(stored), "correct-horse"), (200, "signed in"));
+
+    // The whole point of the rule: these two must not differ.
+    assert_eq!(login(None, "anything"), login(Some(stored), "wrong"));
+    assert_eq!(login(None, "anything"), (401, "invalid credentials"));
+}
+
+// --- api-browser-security ---------------------------------------------------
+
+fn safe_redirect(requested: &str) -> Option<&'static str> {
+    match requested {
+        "dashboard" => Some("/dashboard"),
+        "settings" => Some("/settings"),
+        _ => None,
+    }
+}
+
+fn csrf_ok(session_token: &[u8], submitted: &[u8]) -> bool {
+    session_token.len() == submitted.len()
+        && session_token
+            .iter()
+            .zip(submitted)
+            .fold(0u8, |acc, (a, b)| acc | (a ^ b))
+            == 0
+}
+
+#[test]
+fn redirect_targets_come_from_a_table_and_csrf_tokens_compare_in_full() {
+    assert_eq!(safe_redirect("dashboard"), Some("/dashboard"));
+
+    for hostile in [
+        "https://evil.example/login",
+        "//evil.example",
+        "/\\evil.example",
+        "javascript:alert(1)",
+        "../admin",
+        "/dashboard\r\nSet-Cookie: a=b",
+    ] {
+        assert_eq!(safe_redirect(hostile), None, "{hostile} must not redirect");
+    }
+
+    let session = b"tok-abcdef";
+    assert!(csrf_ok(session, b"tok-abcdef"));
+    assert!(!csrf_ok(session, b"tok-abcdeg"));
+    assert!(!csrf_ok(session, b"tok-abcde"), "a length mismatch is not a match");
+}
