@@ -7,6 +7,15 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Five more rules from the RustTraining survey, completing its confirmed-gap
+  queue: `async-poll-contract` (never block, re-check readiness, re-register the
+  waker before `Pending`, never poll after `Ready`),
+  `unsafe-pin-address-stable` (`PhantomPinned` and `Pin<&mut Self>` for a type
+  whose invariant is its address), `async-sync-core` (business rules in sync
+  functions, `async` at the shell), `proj-build-target-cfg` (build scripts read
+  `CARGO_CFG_TARGET_*`, never the host's `cfg!`), and
+  `test-compile-fail-guarantees` (pin type-level guarantees with compile-fail
+  tests). Nine RustTraining units are now reviewed.
 - Four rules from the Microsoft RustTraining survey, each bound to the unit it
   came from in `microsoft_training_coverage.json`: `type-single-use-token`
   (a permission that is neither `Clone` nor `Copy`, so a second use will not

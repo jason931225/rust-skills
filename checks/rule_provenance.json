@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 385,
-  "ledger_mapped": 239,
+  "rule_count": 390,
+  "ledger_mapped": 244,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 239,
+    "ledger-mapped": 244,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -601,6 +601,13 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "rule_id": "async-poll-contract",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "async-select-racing",
       "provenance": "typed-justification",
       "source_class": "crate-docs",
@@ -613,6 +620,13 @@
       "ledgers": [
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "async-sync-core",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -2029,6 +2043,13 @@
       ]
     },
     {
+      "rule_id": "proj-build-target-cfg",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "proj-cfg-select",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -2322,6 +2343,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "pdf_corpus_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "test-compile-fail-guarantees",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -2734,6 +2762,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "rust_release_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "unsafe-pin-address-stable",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {

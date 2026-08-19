@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-385-blue)
+![rules](https://img.shields.io/badge/rules-390-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-385 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+390 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,16 +66,16 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-385 rules split into 27 categories:
+390 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
 | **Ownership & Borrowing** | 12 | When to borrow vs clone, Arc/Rc, lifetimes |
 | **Error Handling** | 18 | thiserror for libs, anyhow for apps, the `?` operator |
 | **Memory** | 18 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
-| **Unsafe Code** | 11 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
+| **Unsafe Code** | 12 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
 | **API Design** | 48 | Builder pattern, newtypes, sealed traits, `FromIterator` |
-| **Async** | 25 | Tokio patterns, channels, async fn in traits, cancel safety |
+| **Async** | 27 | Tokio patterns, channels, async fn in traits, cancel safety |
 | **Concurrency** | 8 | rayon, scoped threads, atomic ordering, thread-locals |
 | **Optimization** | 13 | LTO, inlining, PGO, SIMD |
 | **Numeric & Arithmetic** | 6 | Overflow handling, `as` vs `TryFrom`, float compare, `NonZero` |
@@ -89,11 +89,11 @@ fn first_word(s: &str) -> Option<&str> {
 | **Closures** | 5 | Fn/FnMut/FnOnce bounds, returning `impl Fn`, move & disjoint capture |
 | **Collections** | 4 | HashMap/BTreeMap/IndexMap, Vec/VecDeque, sets, `BinaryHeap` |
 | **Naming** | 17 | Following Rust API Guidelines |
-| **Testing** | 23 | Proptest, mockall, criterion, loom, snapshot tests |
+| **Testing** | 24 | Proptest, mockall, criterion, loom, snapshot tests |
 | **Docs** | 15 | Doc examples, intra-doc links, README/crate-doc unification |
 | **Observability** | 10 | tracing over log, spans, structured fields, redacting secrets |
 | **Performance** | 15 | Iterators, entry API, faster hashers, I/O buffering |
-| **Project Structure** | 32 | Workspaces, module layout, features, MSRV |
+| **Project Structure** | 33 | Workspaces, module layout, features, MSRV |
 | **FFI & Interop** | 7 | ABI boundaries, native handles, `-sys` crates, dynamic libraries |
 | **Linting** | 16 | Clippy config, CI setup, `unexpected_cfgs` |
 | **Anti-patterns** | 16 | Common mistakes and how to fix them |

@@ -20,8 +20,8 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 4,
-    "unreviewed": 2120
+    "covered": 9,
+    "unreviewed": 2115
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -8593,27 +8593,29 @@
       "end_line": 916,
       "unit_sha256": "5a2427c929922d09e31020c15bd16a40767323b95a4a79446d4dfaa7dbd6eaa7",
       "claim": "Trick 11 \u2014 `Pin` for Self-Referential State Machines (H3 at ch11-fourteen-tricks-from-the-trenches.md#27)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-pin-address-stable"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit shows Pin for self-referential state machines, including the PhantomPinned opt-out without which safe code can move the value out of the Pin; the rule states that contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:e8648f8895f7a8438124fbe1797eef1be5083808a74240343ec856bae7fab752",
         "unit-sha256:5a2427c929922d09e31020c15bd16a40767323b95a4a79446d4dfaa7dbd6eaa7"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_phantom_pinned_value_keeps_its_address_while_an_unpin_value_escapes_the_pin"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "e8648f8895f7a8438124fbe1797eef1be5083808a74240343ec856bae7fab752"
       }
     },
@@ -9566,14 +9568,16 @@
       "end_line": 86,
       "unit_sha256": "efb26ae4a0589ea32ca9b7e2cabe08020dec1f89f686b2c34884c52d5b265759",
       "claim": "Compile-Fail Tests with `trybuild` (H3 at ch14-testing-type-level-guarantees.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "test-compile-fail-guarantees"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers testing type-level guarantees with compile-fail tests; the rule states the obligation for guarantees that exist only in the type system"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:3be8b1da58f8108177cb85441fef9d1ba659c224ade77dfdaf4504d93e051046",
@@ -9581,12 +9585,12 @@
       ],
       "executable_check": {
         "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "trybuild is not a dependency of this repository, so the rule shows the harness shape without an executable assertion",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "3be8b1da58f8108177cb85441fef9d1ba659c224ade77dfdaf4504d93e051046"
       }
     },
@@ -23022,27 +23026,29 @@
       "end_line": 211,
       "unit_sha256": "292484b0614c79d2ce7e8db05f4400b9fc129215490d24e29b0c3bb070890914",
       "claim": "Spurious Wakes (H3 at ch03-how-poll-works.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-poll-contract"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit explains that wakes are spurious and states the rules for implementing poll; the rule states them as a contract, including the register-then-recheck sequence that closes the gap between the two"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:19e89d79c56b906b0f267333e05eadf82fda7c177be0b0987afc09efa7cba81b",
         "unit-sha256:292484b0614c79d2ce7e8db05f4400b9fc129215490d24e29b0c3bb070890914"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_hand_written_poll_rechecks_readiness_and_reregisters_its_waker"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the never-poll-after-Ready obligation is asserted by a debug assertion in the example rather than by the test",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "19e89d79c56b906b0f267333e05eadf82fda7c177be0b0987afc09efa7cba81b"
       }
     },
@@ -26227,27 +26233,29 @@
       "end_line": 136,
       "unit_sha256": "e8d33dc1efbc86ca5f0867aa9d886c6787780ff0da81ce4bf25b6a487a33652e",
       "claim": "Version B: Sync Core, Async Shell (H3 at ch14-async-is-an-optimization-not-an-architecture.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-sync-core"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit argues that async is an optimization rather than an architecture and shows the sync-core, async-shell split; the rule states it as a structural contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "production-scalability",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:79646b1dbe6755f79aef2e5e6899b8f8397fbc5d6e51d3f1baf1f917327e7b6f",
         "unit-sha256:e8d33dc1efbc86ca5f0867aa9d886c6787780ff0da81ce4bf25b6a487a33652e"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::the_pricing_rule_decides_out_of_stock_without_a_runtime"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "none",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "79646b1dbe6755f79aef2e5e6899b8f8397fbc5d6e51d3f1baf1f917327e7b6f"
       }
     },
@@ -29200,27 +29208,29 @@
       "end_line": 413,
       "unit_sha256": "675ad94b19e358be69a66c1afab401f101a19a85291e5a56aec9c6c96a2b9a35",
       "claim": "Troubleshooting Cross-Compilation (H3 at ch02-cross-compilation-one-source-many-target.md#11)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-build-target-cfg"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers cross-compilation troubleshooting, including build scripts that read host cfg instead of the target environment; the rule states the CARGO_CFG_TARGET_* contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169",
         "unit-sha256:675ad94b19e358be69a66c1afab401f101a19a85291e5a56aec9c6c96a2b9a35"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_build_script_reads_the_target_from_the_environment_not_the_host"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the assertion covers the target-versus-host decision logic; handing native compilation to cc so it honours the cross toolchain is stated but not executed here",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169"
       }
     },
