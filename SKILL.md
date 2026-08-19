@@ -140,7 +140,7 @@ Reference these guidelines when:
 
 - [`unsafe-safety-comment`](rules/unsafe-safety-comment.md) - Write a `// SAFETY:` comment above every `unsafe` block and a `# Safety` section in every `unsafe fn`.
 - [`unsafe-minimize-scope`](rules/unsafe-minimize-scope.md) - Keep each unsafe block limited to operations covered by one local proof
-- [`unsafe-miri-ci`](rules/unsafe-miri-ci.md) - Run `cargo miri test` in CI for every crate that contains `unsafe` code.
+- [`unsafe-miri-ci`](rules/unsafe-miri-ci.md) - Run pinned Miri jobs over the unsafe paths Miri can execute, and read a clean run as evidence about those executions, not as a soundness proof
 - [`unsafe-maybeuninit`](rules/unsafe-maybeuninit.md) - Use `MaybeUninit<T>` for uninitialized memory; never use `mem::uninitialized()` or `mem::zeroed()` for types with validity invariants.
 - [`unsafe-extern-block`](rules/unsafe-extern-block.md) - In Rust 2024, wrap `extern` blocks in `unsafe extern { }` and annotate each item as `safe` or `unsafe`.
 - [`unsafe-send-sync-manual`](rules/unsafe-send-sync-manual.md) - Manually implement `Send` or `Sync` only with a complete ownership and concurrency proof
@@ -415,7 +415,7 @@ Reference these guidelines when:
 
 ### 23. Performance Patterns (MEDIUM)
 
-- [`perf-iter-over-index`](rules/perf-iter-over-index.md) - Prefer iterators over manual indexing
+- [`perf-iter-over-index`](rules/perf-iter-over-index.md) - Traverse with iterators by default; keep indices when the index itself is part of the contract
 - [`perf-iter-lazy`](rules/perf-iter-lazy.md) - Keep iterators lazy, collect only when needed
 - [`perf-collect-once`](rules/perf-collect-once.md) - Don't collect intermediate iterators
 - [`perf-entry-api`](rules/perf-entry-api.md) - Use entry API for map insert-or-update
@@ -438,7 +438,7 @@ Reference these guidelines when:
 - [`proj-flat-small`](rules/proj-flat-small.md) - Keep small projects flat
 - [`proj-mod-rs-dir`](rules/proj-mod-rs-dir.md) - Use mod.rs for multi-file modules
 - [`proj-pub-crate-internal`](rules/proj-pub-crate-internal.md) - Use pub(crate) for internal APIs
-- [`proj-pub-super-parent`](rules/proj-pub-super-parent.md) - Use pub(super) for parent-only visibility
+- [`proj-pub-super-parent`](rules/proj-pub-super-parent.md) - Use pub(super) to share items across the parent module and everything inside it
 - [`proj-pub-use-reexport`](rules/proj-pub-use-reexport.md) - Give each owned item one public path; let callers import foreign types from their defining crate
 - [`proj-prelude-module`](rules/proj-prelude-module.md) - Prefer named imports; provide a curated prelude only when a cohesive trait-heavy API needs one
 - [`proj-bin-dir`](rules/proj-bin-dir.md) - Put multiple binaries in src/bin/
@@ -511,26 +511,24 @@ Reference these guidelines when:
 
 ## Recommended Cargo.toml Settings
 
+There is no profile preset that is correct for every crate. Start from Cargo's
+built-in `dev` and `release` defaults and change them only as a named, measured
+artifact policy.
+
 ```toml
-[profile.release]
-opt-level = 3
-lto = "fat"
-codegen-units = 1
-panic = "abort"
-strip = true
-
-[profile.bench]
+# Candidate artifact profile: inherits release, keeps symbols, and carries only
+# settings justified by benchmarks of this product on its target.
+[profile.release-service]
 inherits = "release"
-debug = true
-strip = false
-
-[profile.dev]
-opt-level = 0
-debug = true
-
-[profile.dev.package."*"]
-opt-level = 3  # Optimize dependencies in dev
+debug = "line-tables-only"
+strip = "none"
 ```
+
+- Benchmark, test, and ship the same named profile; a rebuilt binary is not the promoted artifact.
+- Treat `lto`, `codegen-units`, `opt-level`, and `target-cpu` as candidates that stay only with representative measurements — see [`perf-release-profile`](rules/perf-release-profile.md), [`opt-lto-release`](rules/opt-lto-release.md), [`opt-codegen-units`](rules/opt-codegen-units.md), and [`opt-target-cpu`](rules/opt-target-cpu.md).
+- Keep symbols for the exact shipped bytes somewhere; `strip = true` is acceptable only when a matching symbol artifact is retained.
+- `panic` is a reliability contract, not a size switch: `"abort"` ends the process and disables `catch_unwind`, so choose it from the product's isolation and restart model ([`err-catch-unwind-boundary`](rules/err-catch-unwind-boundary.md)).
+- Keep `overflow-checks` identical between the profile you test and the profile you ship.
 
 ---
 

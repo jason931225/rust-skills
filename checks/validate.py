@@ -667,6 +667,601 @@ else:
         if broken_refs != manifest_broken_refs:
             err("Microsoft source-link defect ledger differs from pinned checkout")
 
+# Microsoft RustTraining source-unit inventory and disposition ledger.
+MICROSOFT_TRAINING_COVERAGE = HERE / "microsoft_training_coverage.json"
+EXPECTED_TRAINING_COMMIT = "9d19c482d66ef3995dca794bda74c7852134e0b7"
+EXPECTED_TRAINING_AGGREGATE = (
+    "df9e3cd5b41145ebae2c4440adc1024eda17f915522f19c2f292c9d77e6514ec"
+)
+# (group_id, book directory, unit count, unit inventory digest) at the pinned commit.
+EXPECTED_TRAINING_GROUPS = [
+    (
+        "type-driven-correctness",
+        "type-driven-correctness-book",
+        240,
+        "1a1ad624dd164b0cd0372bcb9b821c14af809c65de09e8aabcd86b15cba1f46f",
+    ),
+    (
+        "rust-patterns",
+        "rust-patterns-book",
+        295,
+        "377924b633a38952a63f00e262f70775e60632edcda82c718e1badfd33158cda",
+    ),
+    (
+        "async",
+        "async-book",
+        142,
+        "647749123a9a765401ab8790714654e51e90b7807e4767c53e16a452b2eff6bd",
+    ),
+    (
+        "engineering",
+        "engineering-book",
+        181,
+        "45460cda7ffe9d87961c2598d0a9cb154992fb63a996d9da7249918e68bafc5e",
+    ),
+    (
+        "c-cpp",
+        "c-cpp-book",
+        468,
+        "de38833cec43e3ae08b474122b7bee7bf14d4980f9580093ff475656cdda69e4",
+    ),
+    (
+        "csharp",
+        "csharp-book",
+        477,
+        "136c4a92d984a3938ccc91a7614288816ebfa9ef33c1df9ac4dfff63e441c166",
+    ),
+    (
+        "python",
+        "python-book",
+        321,
+        "852ba08c367ba4bbc0e98ada78b9768276c627a397672bccf68d996dada8d66f",
+    ),
+]
+EXPECTED_TRAINING_UNITS = sum(group[2] for group in EXPECTED_TRAINING_GROUPS)
+allowed_training_dispositions = {
+    "unreviewed",
+    "covered",
+    "documented-deviation",
+    "project-specific",
+    "reject",
+}
+allowed_training_difference_kinds = {
+    "unassessed",
+    "no-difference",
+    "extends-rule",
+    "contradicts-rule",
+    "out-of-scope",
+}
+allowed_training_rationale_classes = {
+    "pending-semantic-review"
+} | allowed_book_rationale_classes
+allowed_training_applicability = {"inventory-parity-only", "behavior-assertion"}
+training_heading_re = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
+training_fence_re = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+training_link_re = re.compile(r"\[[^]]+\]\(([^)#]+\.md)(?:#[^)]+)?\)")
+
+
+def training_inventory_line(relative, ordinal, level, heading):
+    """One RustTraining inventory line: path, per-file ordinal, level, heading."""
+    return f"{relative}:{ordinal}:{level}:{heading}"
+
+
+def microsoft_training_inventory_parity(rows_by_book):
+    """Recompute each book's unit inventory digest from ledger rows, in order."""
+    digests = {}
+    for book, rows in rows_by_book.items():
+        lines = []
+        for row in rows:
+            source_path = str(row.get("source_path", ""))
+            _, _, relative = source_path.partition("/src/")
+            heading_path = row.get("heading_path")
+            heading = heading_path[-1] if isinstance(heading_path, list) and heading_path else ""
+            lines.append(
+                training_inventory_line(
+                    relative,
+                    row.get("ordinal"),
+                    row.get("heading_level"),
+                    heading,
+                )
+            )
+        digests[book] = hashlib.sha256("\n".join(lines).encode()).hexdigest()
+    return digests
+
+
+def training_source_units(source_root, book):
+    """Extract the SUMMARY digest, chapter digests, and source heading units."""
+    src = source_root / book / "src"
+    summary_bytes = (src / "SUMMARY.md").read_bytes()
+    chapters = []
+    for relative in training_link_re.findall(summary_bytes.decode(encoding="utf-8")):
+        candidate = (src / relative).resolve()
+        try:
+            candidate.relative_to(src)
+        except ValueError as exc:
+            raise ValueError(
+                f"{book} SUMMARY.md link escapes its src directory: {relative}"
+            ) from exc
+        if candidate not in chapters:
+            chapters.append(candidate)
+    units = []
+    files = []
+    for path in chapters:
+        relative = path.relative_to(src).as_posix()
+        data = path.read_bytes()
+        files.append((relative, hashlib.sha256(data).hexdigest()))
+        text = data.decode(errors="replace")
+        file_lines = text.splitlines(keepends=True)
+        headings = []
+        heading_stack = []
+        fence = None
+        for number, line in enumerate(text.splitlines(), 1):
+            fence_match = training_fence_re.match(line)
+            if fence is None and fence_match:
+                marker = fence_match.group(1)
+                fence = (marker[0], len(marker))
+                continue
+            if fence is not None:
+                if fence_match:
+                    marker = fence_match.group(1)
+                    remainder = fence_match.group(2)
+                    if (
+                        marker[0] == fence[0]
+                        and len(marker) >= fence[1]
+                        and not remainder.strip()
+                    ):
+                        fence = None
+                continue
+            heading_match = training_heading_re.match(line)
+            if heading_match:
+                level = len(heading_match.group(1))
+                heading = heading_match.group(2)
+                while heading_stack and heading_stack[-1][0] >= level:
+                    heading_stack.pop()
+                heading_stack.append((level, heading))
+                headings.append(
+                    (number, level, [item[1] for item in heading_stack])
+                )
+        for ordinal, (number, level, heading_path) in enumerate(headings, 1):
+            following = (
+                headings[ordinal][0] if ordinal < len(headings) else len(file_lines) + 1
+            )
+            end_line = following - 1
+            body_end = end_line
+            while body_end > number and not file_lines[body_end - 1].strip():
+                body_end -= 1
+            body = "".join(file_lines[number - 1 : body_end])
+            units.append(
+                (
+                    relative,
+                    ordinal,
+                    level,
+                    heading_path,
+                    number,
+                    end_line,
+                    hashlib.sha256(body.encode()).hexdigest(),
+                )
+            )
+    return hashlib.sha256(summary_bytes).hexdigest(), files, units
+
+
+try:
+    training = json.loads(MICROSOFT_TRAINING_COVERAGE.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError) as exc:
+    err(f"{MICROSOFT_TRAINING_COVERAGE.name}: cannot read coverage ledger: {exc}")
+    training = None
+
+if training is not None:
+    training_source = training.get("source", {})
+    training_groups = training.get("groups", [])
+    training_units = training.get("units", [])
+    training_books = [group[1] for group in EXPECTED_TRAINING_GROUPS]
+
+    if training.get("schema_version") != 1:
+        err(f"{MICROSOFT_TRAINING_COVERAGE.name}: expected schema version 1")
+    if training_source.get("commit") != EXPECTED_TRAINING_COMMIT:
+        err(
+            f"{MICROSOFT_TRAINING_COVERAGE.name}: source commit is not the audited "
+            f"{EXPECTED_TRAINING_COMMIT}"
+        )
+    if training_source.get("repository") != "https://github.com/microsoft/RustTraining":
+        err(f"{MICROSOFT_TRAINING_COVERAGE.name}: source repository identity differs")
+    if training_source.get("unit_count") != EXPECTED_TRAINING_UNITS or len(
+        training_units
+    ) != EXPECTED_TRAINING_UNITS:
+        err(
+            f"{MICROSOFT_TRAINING_COVERAGE.name}: expected exactly "
+            f"{EXPECTED_TRAINING_UNITS} source units"
+        )
+    if training_source.get("book_count") != len(EXPECTED_TRAINING_GROUPS) or len(
+        training_groups
+    ) != len(EXPECTED_TRAINING_GROUPS):
+        err(
+            f"{MICROSOFT_TRAINING_COVERAGE.name}: expected "
+            f"{len(EXPECTED_TRAINING_GROUPS)} book groups"
+        )
+
+    declared_groups = {}
+    for group, (group_id, book, count, digest) in zip(
+        training_groups, EXPECTED_TRAINING_GROUPS
+    ):
+        if group.get("group_id") != group_id or group.get("book") != book:
+            err(
+                f"{MICROSOFT_TRAINING_COVERAGE.name}: group order differs from the "
+                f"audited inventory at {group.get('book')!r}"
+            )
+            continue
+        declared_groups[book] = group
+        if group.get("unit_count") != count:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {book} unit count differs")
+        if group.get("unit_inventory_sha256") != digest:
+            err(
+                f"{MICROSOFT_TRAINING_COVERAGE.name}: {book} unit inventory digest "
+                "differs from the audited source"
+            )
+        for field in ("summary_sha256", "chapter_inventory_sha256"):
+            if not re.fullmatch(r"[0-9a-f]{64}", str(group.get(field, ""))):
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {book} has no {field}")
+
+    aggregate_digest = hashlib.sha256(
+        "\n".join(
+            f"{group.get('book')}:{group.get('unit_inventory_sha256')}"
+            for group in training_groups
+        ).encode()
+    ).hexdigest()
+    if (
+        aggregate_digest != EXPECTED_TRAINING_AGGREGATE
+        or training_source.get("aggregate_inventory_sha256") != EXPECTED_TRAINING_AGGREGATE
+    ):
+        err(
+            f"{MICROSOFT_TRAINING_COVERAGE.name}: aggregate inventory digest differs "
+            "from the audited source"
+        )
+
+    expected_book_order = [
+        book
+        for _, book, count, _ in EXPECTED_TRAINING_GROUPS
+        for _ in range(count)
+    ]
+    if [unit.get("book") for unit in training_units] != expected_book_order:
+        err(
+            f"{MICROSOFT_TRAINING_COVERAGE.name}: unit rows do not preserve "
+            "contiguous declared book order"
+        )
+
+    rows_by_book = {book: [] for book in training_books}
+    seen_unit_ids = set()
+    seen_positions = set()
+    for unit in training_units:
+        unit_id = unit.get("unit_id", "<missing>")
+        book = unit.get("book")
+        if book not in rows_by_book:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has unknown book {book!r}")
+            continue
+        rows_by_book[book].append(unit)
+        if unit_id in seen_unit_ids:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: duplicate unit id {unit_id}")
+        seen_unit_ids.add(unit_id)
+        position = (unit.get("source_path"), unit.get("ordinal"))
+        if position in seen_positions:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: duplicate source position {position}")
+        seen_positions.add(position)
+
+        source_path = str(unit.get("source_path", ""))
+        if not source_path.startswith(f"{book}/src/") or not source_path.endswith(".md"):
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid source path")
+        for field in ("source_file_sha256", "unit_sha256"):
+            if not re.fullmatch(r"[0-9a-f]{64}", str(unit.get(field, ""))):
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no {field}")
+        heading_path = unit.get("heading_path")
+        if (
+            not isinstance(heading_path, list)
+            or not heading_path
+            or not all(isinstance(item, str) and item.strip() for item in heading_path)
+        ):
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no heading path")
+        for field in ("ordinal", "heading_level", "chapter_index", "start_line", "end_line"):
+            if type(unit.get(field)) is not int or unit[field] < 1:
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid {field}")
+        source_prefix = f"{book}/src/"
+        if (
+            source_path.startswith(source_prefix)
+            and source_path.endswith(".md")
+            and type(unit.get("start_line")) is int
+            and unit["start_line"] >= 1
+        ):
+            chapter = source_path[len(source_prefix) : -len(".md")]
+            expected_unit_id = f"{book}:{chapter}:L{unit['start_line']}"
+            if unit_id != expected_unit_id:
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} does not match "
+                    f"source coordinate {expected_unit_id}"
+                )
+        claim = unit.get("claim")
+        if not isinstance(claim, str) or not claim.strip():
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no claim")
+        elif (
+            isinstance(heading_path, list)
+            and heading_path
+            and source_path.startswith(source_prefix)
+            and source_path.endswith(".md")
+            and type(unit.get("heading_level")) is int
+            and type(unit.get("ordinal")) is int
+        ):
+            relative = source_path[len(source_prefix) :]
+            expected_claim = (
+                f"{heading_path[-1]} (H{unit['heading_level']} "
+                f"at {relative}#{unit['ordinal']})"
+            )
+            if claim != expected_claim:
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} claim does "
+                    "not match its pinned heading"
+                )
+        if (
+            not isinstance(unit.get("remaining_uncertainty"), str)
+            or not unit["remaining_uncertainty"].strip()
+        ):
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no uncertainty record")
+
+        disposition = unit.get("disposition")
+        audit_disposition = unit.get("audit_disposition")
+        if audit_disposition not in allowed_training_dispositions:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid audit disposition")
+        if disposition not in allowed_training_dispositions:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid disposition")
+        if unit.get("rationale_class") not in allowed_training_rationale_classes:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid rationale class")
+
+        # Every row carries a typed difference: an allowed kind and a nonempty
+        # detail. An empty detail states nothing, so it is not a disposition.
+        difference = unit.get("exact_difference")
+        if (
+            not isinstance(difference, dict)
+            or difference.get("kind") not in allowed_training_difference_kinds
+            or not isinstance(difference.get("detail"), str)
+            or not difference["detail"].strip()
+        ):
+            err(
+                f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no typed exact "
+                "difference with a kind and a nonempty detail"
+            )
+            difference = {}
+
+        evidence = unit.get("supporting_evidence")
+        required_evidence = [
+            f"rusttraining-commit:{EXPECTED_TRAINING_COMMIT}",
+            f"source-file-sha256:{unit.get('source_file_sha256')}",
+            f"unit-sha256:{unit.get('unit_sha256')}",
+        ]
+        if not isinstance(evidence, list) or any(
+            item not in evidence for item in required_evidence
+        ):
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} lacks source-bound evidence")
+
+        check = unit.get("executable_check")
+        if (
+            not isinstance(check, dict)
+            or check.get("applicability") not in allowed_training_applicability
+        ):
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no check applicability")
+            check = {}
+        assertion_id = check.get("assertion_id")
+        if not isinstance(assertion_id, str) or "::" not in assertion_id:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no assertion id")
+        else:
+            check_path, _, check_symbol = assertion_id.partition("::")
+            resolved_check = ROOT / check_path
+            keyword = "def" if resolved_check.suffix == ".py" else "fn"
+            if not resolved_check.is_file():
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} check path is missing")
+            elif not re.search(
+                rf"\b{keyword}\s+{re.escape(check_symbol)}\s*\(",
+                resolved_check.read_text(encoding="utf-8"),
+            ):
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} check symbol is missing")
+
+        review = unit.get("semantic_review")
+        if not isinstance(review, dict) or review.get("status") not in {
+            "unreviewed",
+            "reviewed",
+        }:
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no semantic review status")
+            review = {}
+        if review.get("source_sha256") != unit.get("source_file_sha256"):
+            err(
+                f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} review is not bound to the "
+                "source file digest"
+            )
+
+        mapped = unit.get("mapped_rule_ids")
+        if not isinstance(mapped, list):
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has invalid mapped rule ids")
+            mapped = []
+        for rule_id in mapped:
+            if not isinstance(rule_id, str) or f"{rule_id}.md" not in rule_names:
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} maps unknown rule {rule_id!r}")
+
+        if disposition == "unreviewed":
+            # An unreviewed unit may not carry any coverage claim.
+            if audit_disposition != "unreviewed":
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but "
+                    "claims an assessed audit disposition"
+                )
+            if mapped:
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but maps rules")
+            if difference.get("kind") != "unassessed":
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but claims "
+                    "an assessed difference"
+                )
+            if unit.get("rationale_class") != "pending-semantic-review":
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but claims "
+                    "a resolved rationale class"
+                )
+            if check.get("applicability") != "inventory-parity-only":
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but claims "
+                    "a behavior assertion"
+                )
+            if review.get("status") != "unreviewed" or review.get("reviewer") is not None:
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is unreviewed but records "
+                    "a reviewer"
+                )
+        else:
+            if audit_disposition == "unreviewed":
+                err(
+                    f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is reviewed but "
+                    "retains an unreviewed audit disposition"
+                )
+            if not mapped and disposition in {"covered", "documented-deviation"}:
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is {disposition} without a rule")
+            if difference.get("kind") == "unassessed":
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no exact difference")
+            if unit.get("rationale_class") == "pending-semantic-review":
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} is dispositioned but unreviewed")
+            if (
+                review.get("status") != "reviewed"
+                or not isinstance(review.get("reviewer"), str)
+                or not review["reviewer"].strip()
+            ):
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {unit_id} has no named reviewer")
+
+    actual_training_summary = {
+        disposition: sum(unit.get("disposition") == disposition for unit in training_units)
+        for disposition in sorted(allowed_training_dispositions)
+        if any(unit.get("disposition") == disposition for unit in training_units)
+    }
+    if training.get("summary") != actual_training_summary:
+        err(f"{MICROSOFT_TRAINING_COVERAGE.name}: disposition summary differs from unit ledger")
+    training_status = training.get("audit_status", {})
+    if training_status.get("semantic_status") != "unreviewed-backlog":
+        err(f"{MICROSOFT_TRAINING_COVERAGE.name}: semantic review status is not explicit")
+    if not training_status.get("reason") or not training_status.get("required_evidence"):
+        err(f"{MICROSOFT_TRAINING_COVERAGE.name}: semantic review evidence is incomplete")
+
+    # Row order carries the inventory digest, so ordering defects must fail.
+    for book, rows in rows_by_book.items():
+        if len(rows) != declared_groups.get(book, {}).get("unit_count"):
+            err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {book} row count differs from its group")
+        chapter_index = 0
+        current_path = None
+        previous_ordinal = 0
+        previous_line = 0
+        for row in rows:
+            if row.get("source_path") != current_path:
+                chapter_index += 1
+                current_path = row.get("source_path")
+                previous_ordinal = 0
+                previous_line = 0
+            if row.get("chapter_index") != chapter_index:
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {row.get('unit_id')} has out-of-order chapter")
+            if row.get("ordinal") != previous_ordinal + 1:
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {row.get('unit_id')} breaks ordinal order")
+            if type(row.get("start_line")) is not int or row["start_line"] <= previous_line:
+                err(f"{MICROSOFT_TRAINING_COVERAGE.name}: {row.get('unit_id')} breaks line order")
+            else:
+                previous_line = row["start_line"]
+            previous_ordinal = (
+                row.get("ordinal")
+                if type(row.get("ordinal")) is int
+                else previous_ordinal + 1
+            )
+
+    recomputed = microsoft_training_inventory_parity(rows_by_book)
+    for group_id, book, count, digest in EXPECTED_TRAINING_GROUPS:
+        if recomputed.get(book) != digest:
+            err(
+                f"{MICROSOFT_TRAINING_COVERAGE.name}: {book} rows do not reproduce the "
+                "audited unit inventory digest"
+            )
+
+    # Optional source-backed run: recompute the whole inventory from a checkout.
+    training_root_value = os.environ.get("MICROSOFT_RUSTTRAINING_ROOT")
+    if not training_root_value:
+        err(
+            "MICROSOFT_RUSTTRAINING_ROOT is required to bind RustTraining row "
+            "hashes to the pinned source checkout"
+        )
+    else:
+        training_root = pathlib.Path(training_root_value).resolve()
+        try:
+            actual_training_commit = subprocess.run(
+                ["git", "-C", str(training_root), "rev-parse", "HEAD"],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+        except (OSError, subprocess.CalledProcessError) as exc:
+            err(f"RustTraining source checkout is not a readable git checkout: {exc}")
+        else:
+            if actual_training_commit != EXPECTED_TRAINING_COMMIT:
+                err(
+                    f"RustTraining source checkout is {actual_training_commit}, expected "
+                    f"{EXPECTED_TRAINING_COMMIT}"
+                )
+        for group_id, book, count, digest in EXPECTED_TRAINING_GROUPS:
+            try:
+                summary_digest, files, source_units = training_source_units(
+                    training_root, book
+                )
+            except (OSError, ValueError) as exc:
+                err(f"RustTraining source checkout cannot be read for {book}: {exc}")
+                continue
+            source_digest = hashlib.sha256(
+                "\n".join(
+                    training_inventory_line(
+                        relative, ordinal, level, heading_path[-1]
+                    )
+                    for relative, ordinal, level, heading_path, _, _, _ in source_units
+                ).encode()
+            ).hexdigest()
+            if len(source_units) != count or source_digest != digest:
+                err(f"RustTraining checkout inventory for {book} differs from the audited commit")
+            chapter_digest = hashlib.sha256(
+                "\n".join(f"{relative}:{file_digest}" for relative, file_digest in files).encode()
+            ).hexdigest()
+            group = declared_groups.get(book, {})
+            if group.get("summary_sha256") != summary_digest:
+                err(f"RustTraining checkout SUMMARY.md for {book} differs from the ledger")
+            if (
+                group.get("chapter_count") != len(files)
+                or group.get("chapter_inventory_sha256") != chapter_digest
+            ):
+                err(f"RustTraining checkout chapters for {book} differ from the ledger")
+            file_digests = dict(files)
+            rows = rows_by_book.get(book, [])
+            if len(rows) != len(source_units):
+                err(f"RustTraining checkout unit count for {book} differs from the ledger")
+                continue
+            for row, source_unit in zip(rows, source_units):
+                (
+                    relative,
+                    ordinal,
+                    level,
+                    heading_path,
+                    start,
+                    end,
+                    unit_digest,
+                ) = source_unit
+                if (
+                    row.get("source_path") != f"{book}/src/{relative}"
+                    or row.get("ordinal") != ordinal
+                    or row.get("heading_level") != level
+                    or row.get("heading_path") != heading_path
+                    or row.get("start_line") != start
+                    or row.get("end_line") != end
+                    or row.get("unit_sha256") != unit_digest
+                    or row.get("source_file_sha256") != file_digests.get(relative)
+                ):
+                    err(
+                        f"{MICROSOFT_TRAINING_COVERAGE.name}: {row.get('unit_id')} differs from "
+                        "the source checkout"
+                    )
+
 if errors:
     print(f"VALIDATION FAILED ({len(errors)} problem(s)):\n")
     for e in errors:
