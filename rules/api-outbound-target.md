@@ -19,8 +19,8 @@ checked.
 - Require an expected scheme and port; reject anything else, including
   `file:`, `gopher:`, and other non-HTTP schemes.
 - Resolve the host and authorize the resolved IP addresses — loopback, private,
-  link-local (including the `169.254.0.0/16` metadata range), unique-local, and
-  unspecified addresses are denied.
+  link-local (including the `169.254.0.0/16` metadata range), unique-local,
+  carrier-grade NAT, multicast, reserved, and unspecified addresses are denied.
 - Re-authorize on every redirect hop, or disable redirect following entirely.
 - Bound the request: connect and total deadlines, a response size cap, and a
   redirect-hop limit.
@@ -57,14 +57,18 @@ fn is_public(address: IpAddr) -> bool {
                 || v4.is_link_local()
                 || v4.is_broadcast()
                 || v4.is_documentation()
+                || v4.is_multicast()
                 || v4.is_unspecified()
                 || v4.octets()[0] == 0
                 // 100.64.0.0/10 carrier-grade NAT
-                || (v4.octets()[0] == 100 && (64..128).contains(&v4.octets()[1])))
+                || (v4.octets()[0] == 100 && (64..128).contains(&v4.octets()[1]))
+                // 240.0.0.0/4 reserved
+                || v4.octets()[0] >= 240)
         }
         IpAddr::V6(v6) => {
             !(v6.is_loopback()
                 || v6.is_unspecified()
+                || v6.is_multicast()
                 // fc00::/7 unique local and fe80::/10 link local
                 || (v6.segments()[0] & 0xfe00) == 0xfc00
                 || (v6.segments()[0] & 0xffc0) == 0xfe80)

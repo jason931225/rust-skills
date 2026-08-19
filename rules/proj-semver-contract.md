@@ -36,8 +36,11 @@ hugs = "1.2"
 ```
 
 ```bash
-# Prove the lower bounds are real rather than aspirational.
-cargo +nightly generate-lockfile -Z minimal-versions
+# Prove the lower bounds are real rather than aspirational. `-Z minimal-versions`
+# applies to the whole graph, so unmaintained lower bounds in transitive crates
+# can fail the build; `-Z direct-minimal-versions` constrains only this crate's
+# own requirements, which is usually what a lower-bound check should assert.
+cargo +nightly generate-lockfile -Z direct-minimal-versions
 cargo check --workspace --all-features
 ```
 
