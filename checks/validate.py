@@ -785,7 +785,13 @@ reviewed_training_difference_kinds = {
     "reject": {"contradicts-rule", "out-of-scope"},
 }
 allowed_training_rationale_classes = {
-    "pending-semantic-review"
+    "pending-semantic-review",
+    # Two classes the training corpus needs and the book ledgers do not: it
+    # teaches Rust to developers arriving from another language, and it is a
+    # course, so a large share of it is onboarding and pedagogy rather than
+    # engineering contract.
+    "cross-language-onboarding",
+    "tutorial-scaffolding",
 } | allowed_book_rationale_classes
 allowed_training_applicability = {"inventory-parity-only", "behavior-assertion"}
 training_heading_re = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
