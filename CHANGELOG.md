@@ -7,6 +7,11 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `proj-atomic-file-replace`, extracted from a paragraph inside `async-tokio-fs`
+  whose subject is blocking isolation. Replacing a whole file safely — a
+  same-directory temporary, `sync_all`, a rename rather than a truncate, then a
+  directory sync — is a data-loss contract in its own right, and nobody looking
+  for it would have found it where it was. `async-tokio-fs` now points at it.
 - The last three production-relevant gaps from the RustTraining survey:
   `type-capability-token` (authority appears in the signature as an unforgeable
   token, rather than as a flag each privileged function must remember to
