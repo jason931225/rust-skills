@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 390,
-  "ledger_mapped": 244,
+  "rule_count": 394,
+  "ledger_mapped": 248,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 244,
+    "ledger-mapped": 248,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -438,6 +438,13 @@
       ]
     },
     {
+      "rule_id": "api-sql-parameters",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "api-std-types-boundary",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -538,6 +545,13 @@
       ]
     },
     {
+      "rule_id": "async-explicit-close",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "async-fn-in-trait",
       "provenance": "typed-justification",
       "source_class": "rust-reference",
@@ -602,6 +616,13 @@
     },
     {
       "rule_id": "async-poll-contract",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "async-runtime-agnostic-lib",
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_training_coverage.json"
@@ -2372,6 +2393,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "test-drop-release-paths",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
