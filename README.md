@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-381-blue)
+![rules](https://img.shields.io/badge/rules-385-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-381 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+385 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,7 +66,7 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-381 rules split into 27 categories:
+385 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
@@ -74,12 +74,12 @@ fn first_word(s: &str) -> Option<&str> {
 | **Error Handling** | 18 | thiserror for libs, anyhow for apps, the `?` operator |
 | **Memory** | 18 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
 | **Unsafe Code** | 11 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
-| **API Design** | 47 | Builder pattern, newtypes, sealed traits, `FromIterator` |
+| **API Design** | 48 | Builder pattern, newtypes, sealed traits, `FromIterator` |
 | **Async** | 25 | Tokio patterns, channels, async fn in traits, cancel safety |
-| **Concurrency** | 7 | rayon, scoped threads, atomic ordering, thread-locals |
+| **Concurrency** | 8 | rayon, scoped threads, atomic ordering, thread-locals |
 | **Optimization** | 13 | LTO, inlining, PGO, SIMD |
 | **Numeric & Arithmetic** | 6 | Overflow handling, `as` vs `TryFrom`, float compare, `NonZero` |
-| **Type Safety** | 21 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
+| **Type Safety** | 23 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
 | **Trait & Generics Design** | 7 | dyn vs generic, associated types, blanket impls, object safety, orphan rule |
 | **Conversions** | 3 | `TryFrom`, `FromStr`, `AsMut` |
 | **Const & Compile-Time** | 5 | `const fn`, const vs static, const generics, `const {}` blocks |

@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 381 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 385 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 381 rules across 27 categories, prioritized by impact for use by
+Contains 385 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,12 +58,12 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 18 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 11 |
-| 5 | API Design | HIGH | `api-` | 47 |
+| 5 | API Design | HIGH | `api-` | 48 |
 | 6 | Async/Await | HIGH | `async-` | 25 |
-| 7 | Concurrency | HIGH | `conc-` | 7 |
+| 7 | Concurrency | HIGH | `conc-` | 8 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 21 |
+| 10 | Type Safety | MEDIUM | `type-` | 23 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -206,6 +206,7 @@ Reference these guidelines when:
 - [`api-upload-serving`](rules/api-upload-serving.md) - Serve user-uploaded files inertly: fixed content type, forced download, separate origin
 - [`api-datagram-trust`](rules/api-datagram-trust.md) - On connectionless transports, verify the sender and match replies with an unpredictable identifier
 - [`api-fallible-self-return`](rules/api-fallible-self-return.md) - When a fallible method consumes `self`, hand the receiver back in the error
+- [`api-scoped-closure-access`](rules/api-scoped-closure-access.md) - Lend a resource that needs setup and teardown through a closure, not through paired open and close methods
 
 ### 6. Async/Await (HIGH)
 
@@ -244,6 +245,7 @@ Reference these guidelines when:
 - [`conc-db-transaction-boundary`](rules/conc-db-transaction-boundary.md) - Keep one atomic business change inside one short database transaction
 - [`conc-atomic-update`](rules/conc-atomic-update.md) - Use atomic `update` / `try_update` instead of hand-written compare-exchange loops
 - [`conc-signal-handler-safety`](rules/conc-signal-handler-safety.md) - Let a signal handler set an atomic flag and return; do everything else in ordinary code
+- [`conc-condvar-predicate-loop`](rules/conc-condvar-predicate-loop.md) - Re-check a condition variable's predicate in a loop under its mutex; a wakeup is a hint, not proof
 
 ### 8. Compiler Optimization (HIGH)
 
@@ -293,6 +295,8 @@ Reference these guidelines when:
 - [`type-text-decode-policy`](rules/type-text-decode-policy.md) - Decide at the byte-to-text boundary whether invalid encoding is an error or a replacement, and make the choice visible
 - [`type-case-insensitive-match`](rules/type-case-insensitive-match.md) - Configure the matcher for case-insensitivity instead of case-folding the data
 - [`type-time-sample-once`](rules/type-time-sample-once.md) - Read the clock once per operation and pass the value down
+- [`type-generational-handle`](rules/type-generational-handle.md) - Pair a reused slot index with a generation counter, and reject a handle whose generation has moved on
+- [`type-single-use-token`](rules/type-single-use-token.md) - Give an at-most-once permission a type that is neither `Clone` nor `Copy`, so a second use will not compile
 
 ### 11. Trait & Generics Design (MEDIUM)
 

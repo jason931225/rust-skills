@@ -7,6 +7,14 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Four rules from the Microsoft RustTraining survey, each bound to the unit it
+  came from in `microsoft_training_coverage.json`: `type-single-use-token`
+  (a permission that is neither `Clone` nor `Copy`, so a second use will not
+  compile), `conc-condvar-predicate-loop` (a wakeup is a hint, not proof),
+  `api-scoped-closure-access` (lend a resource through a closure rather than
+  paired setup and teardown), and `type-generational-handle` (a reused slot
+  index needs a generation counter). The first four RustTraining units move off
+  `unreviewed`.
 - `checks/rule_provenance.json` records where every rule comes from: 235 are
   named by a source-coverage ledger, and the other 145 now carry a typed source
   class and a one-sentence justification. `validate.py` fails if a rule has
