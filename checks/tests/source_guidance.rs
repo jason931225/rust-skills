@@ -1098,3 +1098,39 @@ fn a_stream_yields_every_item_then_treats_none_as_terminal() {
     let none: Vec<u32> = futures::executor::block_on(empty.collect());
     assert!(none.is_empty());
 }
+
+// --- type-generic-bounds / mem-assert-type-size (implicit Sized, wide pointers) ---
+
+struct DstHolder<T> {
+    #[allow(dead_code)]
+    inner: Box<T>,
+}
+
+struct DstRelaxed<T: ?Sized> {
+    inner: Box<T>,
+}
+
+#[test]
+fn relaxing_the_implicit_sized_bound_admits_unsized_types() {
+    let sized = DstHolder { inner: Box::new(5u8) };
+    assert_eq!(*sized.inner, 5);
+
+    // `DstHolder<dyn Debug>` does not compile: E0277, "required by an
+    // implicit `Sized` bound". Only the relaxed form accepts a trait object.
+    let unsized_: DstRelaxed<dyn std::fmt::Debug> = DstRelaxed { inner: Box::new(5u8) };
+    assert_eq!(format!("{:?}", unsized_.inner), "5");
+}
+
+#[test]
+fn a_wide_pointer_is_two_words_and_option_still_uses_the_niche() {
+    assert_eq!(size_of::<&u8>(), 8);
+    assert_eq!(size_of::<&[u8]>(), 16, "slice reference carries a length");
+    assert_eq!(
+        size_of::<&dyn std::fmt::Debug>(),
+        16,
+        "trait reference carries a vtable pointer"
+    );
+    assert_eq!(size_of::<Box<dyn std::fmt::Debug>>(), 16);
+    // The null niche in the data pointer absorbs the discriminant.
+    assert_eq!(size_of::<Option<Box<dyn std::fmt::Debug>>>(), 16);
+}

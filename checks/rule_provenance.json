@@ -2,17 +2,17 @@
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
   "rule_count": 428,
-  "ledger_mapped": 319,
-  "typed_justification": 109,
+  "ledger_mapped": 320,
+  "typed_justification": 108,
   "summary": {
     "cargo-book": 3,
     "clippy-docs": 6,
     "crate-docs": 21,
     "edition-guide": 2,
-    "ledger-mapped": 319,
+    "ledger-mapped": 320,
     "rust-api-guidelines": 18,
     "rust-performance-book": 6,
-    "rust-reference": 16,
+    "rust-reference": 15,
     "rustonomicon": 2,
     "std-docs": 23,
     "synthesized-practice": 12
@@ -1526,10 +1526,10 @@
     },
     {
       "rule_id": "mem-assert-type-size",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The rule rests on Rust's type-layout rules: the default representation gives no stable size or field order across compilers, targets, and features, while `repr(C)` and `repr(transparent)` define representation contracts and niche optimization can change size.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "mem-avoid-format",
