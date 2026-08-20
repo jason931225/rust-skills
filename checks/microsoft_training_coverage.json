@@ -20,15 +20,15 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 817,
+    "covered": 820,
     "documented-deviation": 25,
     "project-specific": 708,
     "reject": 532,
-    "unreviewed": 42
+    "unreviewed": 39
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2082 of 2124 units carry a reviewed disposition with a named reviewer; 42 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "reason": "Source-bound inventory under semantic review. 2085 of 2124 units carry a reviewed disposition with a named reviewer; 39 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -14367,14 +14367,16 @@
       "end_line": 908,
       "unit_sha256": "3b876b521e5f9d1702a2910d9dea1437f76abab01f2e02149fa582a7bfc8bf42",
       "claim": "The Solution: `Jtag<V, S>` with Marker Traits (H3 at ch03-the-newtype-and-type-state-patterns.md#24)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-typestate"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "introduces zero-sized state tokens plus capability marker traits, so one impl block bound on the marker serves every state that has the capability; api-typestate states that contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14384,10 +14386,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit's example is dual-axis (vendor and state); the mapped rule states the marker-over-states half, with the collaborator axis handled by trait-config-family",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -14490,14 +14492,16 @@
       "end_line": 973,
       "unit_sha256": "408fddcb55f348e4135a7c6be8591770207c91535ddbba38c99b9620e320cde0",
       "claim": "Writing Generic Functions (H3 at ch03-the-newtype-and-type-state-patterns.md#27)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-typestate"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "binds generic functions to the capability marker rather than to concrete states, so a function accepts every qualifying state; the rule shows the same free-function form alongside the impl-block form"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14507,10 +14511,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit also binds a second vendor axis in the same signature; the rule states only the capability-marker bound",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -14531,14 +14535,16 @@
       "end_line": 1024,
       "unit_sha256": "b78588ea874026a5ffd806b0e80b18035cd633f3a5b8c4224b416b2a7ed7d121",
       "claim": "Same Pattern, Different Domain: Storage Backends (H3 at ch03-the-newtype-and-type-state-patterns.md#28)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-typestate"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "applies the same capability-marker typestate to a storage layer where only some backends support transactions, which is the mapped rule's contract in a second domain"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14548,10 +14554,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit is a worked restatement rather than new contract; nothing in it is claimed by the rule beyond the marker-grouping it already states",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
