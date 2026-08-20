@@ -7,6 +7,25 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `conc-thread-channel`: bound a thread-to-thread channel and treat sender
+  disconnection as the shutdown signal. Found by a disposition agent that
+  refused to map the channels chapter to any existing rule — every channel
+  rule in the library was tokio/async, and `async-mpsc-queue`'s Bad example is
+  literally `std::sync::mpsc`, so a plain threaded program had no channel
+  guidance at all.
+### Changed
+- Dispositioned 789 of the 1,235 unreviewed RustTraining units (68 chapters),
+  taking the ledger to 654 covered / 674 project-specific / 340 reject /
+  10 documented-deviation / 446 unreviewed. 31 rules moved from written
+  justification to ledger-mapped provenance (314 mapped, 113 justified).
+- The engineering-book release-profiles chapter is recorded as a
+  `documented-deviation`, not as coverage: it presents
+  `lto = true` + `codegen-units = 1` + `strip = true` + `panic = "abort"` as
+  the production profile, which `perf-release-profile`, `opt-lto-release`, and
+  `opt-codegen-units` each print as their Bad example. The library
+  deliberately disagrees, and the ledger now says so.
+- Surveyed the three cross-language migration books (c-cpp, csharp, python —
+  545 units) for rule material. Result: nothing. Recorded rather than assumed.
 - `type-lifetime-branding` from the RustTraining rust-patterns-book: mint a
   unique invariant lifetime with a `for<'brand> FnOnce` bound so a handle from
   one collection cannot type-check against another. The invariant marker

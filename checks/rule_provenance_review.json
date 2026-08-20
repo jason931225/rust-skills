@@ -5,11 +5,6 @@
   "reviewed_on": "2026-08-19",
   "entries": [
     {
-      "rule_id": "anti-clone-excessive",
-      "source_class": "rust-performance-book",
-      "justification": "The contract is the allocation-and-copy cost of `Clone` on owned data like `String` and `Vec` versus passing `&str`/`&[T]`, the borrow-instead-of-clone advice that the Rust Performance Book collects; the Clippy `redundant_clone` and `clone_on_copy` lints appear only as a detection aid."
-    },
-    {
       "rule_id": "anti-collect-intermediate",
       "source_class": "rust-performance-book",
       "justification": "Avoiding intermediate `collect()` calls to cut heap allocations and extra passes is the allocation-and-iteration advice The Rust Performance Book collects, with the laziness of `Iterator` adapters as the underlying std behaviour."
@@ -60,16 +55,6 @@
       "justification": "The contract is the standard library's own convention for consuming fallible methods \u2014 String::from_utf8 returns the bytes inside FromUtf8Error, BufWriter::into_inner returns the writer inside IntoInnerError, and Rc::try_unwrap returns the original Rc \u2014 so a recoverable failure does not destroy an irreplaceable receiver."
     },
     {
-      "rule_id": "api-from-not-into",
-      "source_class": "std-docs",
-      "justification": "The rule's whole argument is the standard library's documented blanket impl `impl<T, U> Into<U> for T where U: From<T>` in `core::convert`, which is why implementing `From` is sufficient and implementing `Into` directly is not; Clippy's `from_over_into` lint only enforces that std contract."
-    },
-    {
-      "rule_id": "api-impl-into",
-      "source_class": "rust-api-guidelines",
-      "justification": "Same API Guidelines source as the AsRef rule \u2014 take `impl Into<T>` to loosen parameter assumptions (C-GENERIC) and implement `From` rather than `Into` as the conversion-trait convention (C-CONV-TRAITS)."
-    },
-    {
       "rule_id": "api-newtype-safety",
       "source_class": "rust-api-guidelines",
       "justification": "This is the API Guidelines' newtype guidance \u2014 wrapping primitives in distinct types so semantically different values such as `UserId` and `GroupId` cannot be interchanged \u2014 extended with the guidelines' advice on eagerly deriving common traits on those wrappers."
@@ -85,16 +70,6 @@
       "justification": "The sealed-trait pattern, a public trait with a private supertrait in a hidden module so downstream crates can call but not implement it and methods can be added without a breaking change, is the API Guidelines' sealed-trait guidance verbatim in structure."
     },
     {
-      "rule_id": "async-async-fn-bounds",
-      "source_class": "std-docs",
-      "justification": "The rule rests on the documented contract of the standard library's `AsyncFn`, `AsyncFnMut`, and `AsyncFnOnce` traits in `std::ops` \u2014 that they mirror `Fn`/`FnMut`/`FnOnce` receiver semantics and tie the returned future's borrow to the call, unlike a hand-written `F: Fn() -> Fut, Fut: Future` pair."
-    },
-    {
-      "rule_id": "async-bounded-channel",
-      "source_class": "crate-docs",
-      "justification": "The contract is Tokio's `tokio::sync::mpsc` API: `channel(capacity)` makes `send` await when the buffer is full while `unbounded_channel` never applies backpressure, plus the documented `try_send` `TrySendError::Full`/`Closed` cases and `reserve` permits."
-    },
-    {
       "rule_id": "async-broadcast-pubsub",
       "source_class": "crate-docs",
       "justification": "The whole contract is tokio::sync::broadcast's documented behaviour \u2014 every subscriber created by Sender::subscribe receives every message, messages must be Clone, and a slow receiver observes RecvError::Lagged rather than backpressure."
@@ -105,34 +80,14 @@
       "justification": "This is Tokio's documented cancellation-safety contract \u2014 `select!` drops the futures of branches that did not complete, and Tokio marks which primitives such as `mpsc::Receiver::recv` and `AsyncReadExt::read` are cancel-safe versus `read_exact`/`read_to_end`, which lose partially accumulated state."
     },
     {
-      "rule_id": "async-cancellation-token",
-      "source_class": "crate-docs",
-      "justification": "The rule is built entirely on `tokio_util::sync::CancellationToken` and its documented API \u2014 `cancelled()`, `cancel()`, `is_cancelled()`, `child_token()`, `drop_guard()` \u2014 together with Tokio's contract that dropping a `JoinHandle` detaches rather than cancels the task."
-    },
-    {
       "rule_id": "async-clone-before-await",
       "source_class": "crate-docs",
       "justification": "The rule hangs on tokio::spawn's documented bound that a spawned future must be Send + 'static (with spawn_local/LocalSet as the non-Send alternative), which is what forces an Arc::clone rather than a borrow; the Send/Sync properties of Arc and Rc it leans on are std contracts."
     },
     {
-      "rule_id": "async-fn-in-trait",
-      "source_class": "rust-reference",
-      "justification": "This is language semantics: an async fn in a trait desugars to an opaque associated future that carries no Send promise, and the dyn-compatibility rules exclude such methods from trait objects; the trait-variant and async-trait crates appear only as workarounds."
-    },
-    {
       "rule_id": "async-join-parallel",
       "source_class": "crate-docs",
       "justification": "Built on the documented semantics of tokio's join! and try_join! macros \u2014 branches polled in one task rather than spawned, try_join! returning the first error and dropping the remaining branch futures, plus the biased poll option and futures' buffered/buffer_unordered for dynamic fan-out."
-    },
-    {
-      "rule_id": "async-joinset-structured",
-      "source_class": "crate-docs",
-      "justification": "Every claim is a tokio::task::JoinSet contract: spawn/join_next yielding results as they complete, JoinError distinguishing panic from cancellation, abort_all, and aborting remaining tasks when the set is dropped."
-    },
-    {
-      "rule_id": "async-mpsc-queue",
-      "source_class": "crate-docs",
-      "justification": "Derives from tokio::sync::mpsc's API contract \u2014 async send/recv with bounded capacity for backpressure, cheap Sender clones, the channel closing when all senders drop, Sender::downgrade/WeakSender, and reserve() permits \u2014 contrasted against std::sync::mpsc's blocking recv."
     },
     {
       "rule_id": "async-oneshot-response",
@@ -210,24 +165,9 @@
       "justification": "The Relaxed/Acquire/Release/AcqRel/SeqCst taxonomy and the release-store to acquire-load happens-before argument are the documented contract of std::sync::atomic::Ordering; the loom section is supporting tooling, and the same material is also covered by the Nomicon's atomics discussion."
     },
     {
-      "rule_id": "conc-rayon-par-iter",
-      "source_class": "crate-docs",
-      "justification": "Entirely rayon's contract \u2014 rayon::prelude, par_iter/par_iter_mut and the parallel reduce, par_sort_unstable_by, with_min_len/with_max_len granularity control, and the work-stealing scheduler's Send/Sync requirements plus its unsuitability for blocking I/O."
-    },
-    {
       "rule_id": "conc-scoped-threads",
       "source_class": "std-docs",
       "justification": "States the documented guarantees of std::thread::scope: the Scope handle lets spawned threads borrow non-'static data from 'env, every scoped thread is joined before scope returns, and a child panic is re-raised by the scope."
-    },
-    {
-      "rule_id": "const-block",
-      "source_class": "rust-reference",
-      "justification": "The rule describes the language semantics of inline `const { }` block expressions \u2014 forced compile-time evaluation, use as an expression in array initializers and function bodies, and how they differ from a named const item."
-    },
-    {
-      "rule_id": "const-fn",
-      "source_class": "rust-reference",
-      "justification": "The contract is what `const fn` means to the compiler \u2014 callable in const contexts such as array lengths, const and static initializers, and const-generic arguments, with the set of const-evaluable operations growing per release \u2014 plus a secondary API-compatibility note about removing `const`."
     },
     {
       "rule_id": "const-generics",
@@ -238,11 +178,6 @@
       "rule_id": "conv-asmut-mutable",
       "source_class": "std-docs",
       "justification": "The rule rests on std::convert::AsMut's documented contract as the mutable counterpart of AsRef and on which std types lend `&mut [u8]` (Vec, arrays, slices), making one generic parameter accept all of them; the API-shape framing parallels the API Guidelines' generic-parameter advice."
-    },
-    {
-      "rule_id": "conv-fromstr-parsing",
-      "source_class": "std-docs",
-      "justification": "The contract is std::str::FromStr's documented relationship with str::parse \u2014 implementing the trait with its Err associated type is what makes `.parse::<T>()` and `T: FromStr` bounds work \u2014 with clap's value_parser noted only as a downstream consumer."
     },
     {
       "rule_id": "doc-cargo-metadata",
@@ -315,19 +250,9 @@
       "justification": "The contract is the language's macro-export semantics \u2014 `#[macro_export]` placing a macro at the crate root and path-based macro import replacing `#[macro_use] extern crate` \u2014 documented in the Rust Reference's macros-by-example and macro-scoping material; the 2018-edition framing means edition-guide is a plausible alternative."
     },
     {
-      "rule_id": "macro-fragment-specifiers",
-      "source_class": "rust-reference",
-      "justification": "The fragment-specifier table and the follow-set restriction on what tokens may appear after `:expr`, `:ty`, and `:pat` are defined by the Rust Reference's Macros By Example chapter."
-    },
-    {
       "rule_id": "macro-proc-error-spans",
       "source_class": "crate-docs",
       "justification": "The contract belongs to the `syn` crate's error API \u2014 `syn::Error::new`, `Error::new_spanned`, `Error::combine`, and `to_compile_error` \u2014 together with `quote` and `proc-macro2` for emitting the resulting token stream."
-    },
-    {
-      "rule_id": "macro-rules-hygiene",
-      "source_class": "rust-reference",
-      "justification": "Both halves \u2014 `macro_rules!` hygiene for locally introduced identifiers and `$crate` expanding to the defining crate rather than the caller's \u2014 are language semantics specified in the Rust Reference's Macros By Example chapter."
     },
     {
       "rule_id": "mem-arrayvec",
@@ -445,11 +370,6 @@
       "justification": "Enum variants fall under the same API Guidelines casing convention as types (`UpperCamelCase`), again backed by the `non_camel_case_types` warning quoted in the rule."
     },
     {
-      "rule_id": "num-cast-try-from",
-      "source_class": "rust-reference",
-      "justification": "The rule's core justification is the language semantics of the `as` cast operator \u2014 silent truncation on narrowing integer casts and saturating float-to-integer conversion with `NaN` mapping to zero \u2014 with std's `From`/`TryFrom` offered as the safe alternative; it is arguably std-docs instead, since the losslessness convention is a standard-library contract."
-    },
-    {
       "rule_id": "num-float-compare",
       "source_class": "std-docs",
       "justification": "The contract comes from documented `f32`/`f64` behaviour \u2014 `PartialOrd::partial_cmp` returning `None` for NaN, `total_cmp`'s IEEE totalOrder-compatible ordering, `is_nan`/`is_finite`, and `to_bits` \u2014 rather than from Clippy's `float_cmp` lint, which the rule never mentions."
@@ -468,11 +388,6 @@
       "rule_id": "opt-bounds-check",
       "source_class": "rust-performance-book",
       "justification": "This is bounds-check-elimination advice of the kind that book collects \u2014 prefer iterator, `windows`, `chunks_exact`, and `split_at` traversal over indexing in hot loops, and verify generated code before reaching for unchecked access; the guaranteed-panic-on-out-of-bounds premise itself is language semantics, so the source is mixed."
-    },
-    {
-      "rule_id": "opt-codegen-units",
-      "source_class": "cargo-book",
-      "justification": "The rule is about the Cargo profile key `codegen-units`, named profiles with `inherits`, differing defaults per profile, and the documented fact that a library's own profile settings are ignored when it is built as a dependency."
     },
     {
       "rule_id": "opt-cold-unlikely",
@@ -505,11 +420,6 @@
       "justification": "The rule is organized around standard-library SIMD surfaces \u2014 nightly `std::simd` with `slice::as_simd`, `std::arch` intrinsics, `is_x86_feature_detected!`, and the `#[target_feature]` safety obligation \u2014 with the `wide` crate shown only as a stable alternative."
     },
     {
-      "rule_id": "own-borrow-over-clone",
-      "source_class": "rust-performance-book",
-      "justification": "The rule derives from the allocation- and copy-avoidance guidance that book collects (do not clone a `String` or owned graph merely to read it), with the caveat that `Arc` clones are refcount bumps and cloning is right when independent ownership is needed."
-    },
-    {
       "rule_id": "own-clone-explicit",
       "source_class": "std-docs",
       "justification": "It derives from the documented split between `std::clone::Clone` (explicit `.clone()`, may be expensive, has a `clone_from` hook that can reuse storage) and `Copy`'s implicit duplication."
@@ -520,34 +430,9 @@
       "justification": "The rule restates the documented requirements and semantics of `std::marker::Copy` \u2014 every field `Copy`, no `Drop`, implicit duplication on move \u2014 plus the list of standard `Copy` types including `&T` but not `&mut T`."
     },
     {
-      "rule_id": "own-cow-conditional",
-      "source_class": "std-docs",
-      "justification": "The whole rule is the documented contract of `std::borrow::Cow`: hold `Borrowed` or `Owned`, clone only via `to_mut`/`into_owned` when mutation or ownership is required."
-    },
-    {
-      "rule_id": "own-lifetime-elision",
-      "source_class": "rust-reference",
-      "justification": "The three elision rules, the `'_` anonymous lifetime, and where elision fails are language semantics specified in the Rust Reference's lifetime-elision rules."
-    },
-    {
       "rule_id": "own-move-large",
       "source_class": "synthesized-practice",
       "justification": "General engineering advice \u2014 borrow by default, box only for recursion, address stability, stack limits, or a measured copy \u2014 with no single upstream document behind it, though the recursive-type case is a language requirement."
-    },
-    {
-      "rule_id": "own-mutex-interior",
-      "source_class": "std-docs",
-      "justification": "It derives from `std::sync::Mutex`'s documented contract: guard-based exclusive access, `Send`/`Sync` conditioned on `T: Send`, lock poisoning surfaced as a `Result` with `into_inner`, and no promised fairness or implementation."
-    },
-    {
-      "rule_id": "own-rc-single-thread",
-      "source_class": "std-docs",
-      "justification": "The contract is `std::rc::Rc`'s documented non-atomic reference counting, its `!Send`/`!Sync` status, and the documented leak-on-cycle behaviour that `Weak`/`downgrade`/`upgrade` exist to break."
-    },
-    {
-      "rule_id": "own-refcell-interior",
-      "source_class": "std-docs",
-      "justification": "It derives from `std::cell::RefCell`'s documented runtime borrow tracking \u2014 `borrow`/`borrow_mut` panic on conflict while `try_borrow`/`try_borrow_mut` return `BorrowError`/`BorrowMutError` \u2014 and from `Cell`'s get/set alternative."
     },
     {
       "rule_id": "own-rwlock-readers",
@@ -573,11 +458,6 @@
       "rule_id": "pat-let-else",
       "source_class": "rust-reference",
       "justification": "`let ... else` and its requirement that the else block diverge are language semantics specified in the Rust Reference's statement and pattern material, not an edition-gated or lint-driven contract."
-    },
-    {
-      "rule_id": "perf-black-box-bench",
-      "source_class": "std-docs",
-      "justification": "Every claim restates the documented contract of `std::hint::black_box` \u2014 a best-effort optimization barrier with no guarantee about inlining or timing \u2014 stabilized in the standard library and used here from Criterion benchmarks."
     },
     {
       "rule_id": "perf-chain-avoid",
@@ -625,11 +505,6 @@
       "justification": "The rule derives from the language's visibility and privacy semantics as specified in the Rust Reference: pub(super) makes an item visible in the parent module and everything nested within it, sitting between private, pub(in path), pub(crate), and pub."
     },
     {
-      "rule_id": "serde-default-compat",
-      "source_class": "crate-docs",
-      "justification": "The contract is serde's `#[serde(default)]` and `#[serde(default = \"path\")]` field and container attributes, including that they affect deserialization only and require `Default` at container level."
-    },
-    {
       "rule_id": "serde-enum-representation",
       "source_class": "crate-docs",
       "justification": "The four representations and their limits are serde's own container-attribute contract \u2014 the default externally tagged form, #[serde(tag = \"...\")], #[serde(tag, content)], and #[serde(untagged)] \u2014 including serde's documented restriction that internally tagged enums cannot carry tuple or primitive-newtype variants."
@@ -655,34 +530,14 @@
       "justification": "Everything the rule prescribes is mockall's API contract: #[automock]/MockX::new, expect_* builders with with/withf and mockall::predicate matchers, times counts, Sequence ordering, returning closures, and expectation verification on drop."
     },
     {
-      "rule_id": "test-should-panic",
-      "source_class": "rust-reference",
-      "justification": "The contract is the built-in `#[should_panic]` testing attribute, its `expected =` substring matching, and the compiler rule that such a test must return `()`, all of which are language/test-harness behaviour described in the Reference's testing attributes."
-    },
-    {
       "rule_id": "test-snapshot-testing",
       "source_class": "crate-docs",
       "justification": "The workflow and assertions belong to the insta crate \u2014 assert_debug_snapshot!/assert_json_snapshot!/assert_snapshot!, .snap and .snap.new files, cargo insta review, and the INSTA_UPDATE environment control used to fail CI on unapproved snapshots."
     },
     {
-      "rule_id": "trait-associated-type-vs-generic",
-      "source_class": "rust-reference",
-      "justification": "The contract is language semantics of trait declarations: an associated type is bound once per implementation while a generic trait parameter admits several implementations of the same trait for one type (as with `Add<Vec2>` and `Add<f64>` for the same struct), and that difference is what drives the guidance regardless of the rule file's own nod to the API Guidelines."
-    },
-    {
       "rule_id": "trait-blanket-impl",
       "source_class": "rust-reference",
       "justification": "The load-bearing content is language-level coherence: a blanket impl is permitted because the trait is local, and it cannot overlap a specific impl because specialization is unstable (error E0119); the semver caveat is a secondary Cargo-book concern and the ToString-for-Display example is std."
-    },
-    {
-      "rule_id": "trait-default-methods",
-      "source_class": "synthesized-practice",
-      "justification": "The design advice \u2014 keep a minimal orthogonal required set and build defaults on top, overriding only for performance \u2014 is generalized from how std::iter::Iterator, std::io::Read, and std::io::Write are written rather than from a stated guideline, and the file's attribution to the API Guidelines' 'implement common traits from std' item does not actually cover default methods."
-    },
-    {
-      "rule_id": "trait-object-safety",
-      "source_class": "rust-reference",
-      "justification": "The rule restates the Rust Reference's dyn-compatibility (object-safety) rules \u2014 which methods are vtable-dispatchable, the exclusion of generic methods, by-value Self returns and associated constants, and the where Self: Sized escape hatch \u2014 with E0038 as the compiler's enforcement."
     },
     {
       "rule_id": "type-generic-bounds",
@@ -698,16 +553,6 @@
       "rule_id": "type-numeric-fmt",
       "source_class": "rust-api-guidelines",
       "justification": "The rule is the API Guidelines checklist item C-NUM-FMT, that numeric types should support the LowerHex, UpperHex, Octal, and Binary formatting traits wherever the underlying primitive does; the file names that item."
-    },
-    {
-      "rule_id": "type-option-nullable",
-      "source_class": "std-docs",
-      "justification": "The contract comes from std::option::Option's documented role as the type for an optional value plus its combinator API (map, and_then, ok_or, as_ref/as_deref, `?` on Option) that the examples exercise."
-    },
-    {
-      "rule_id": "type-phantom-marker",
-      "source_class": "std-docs",
-      "justification": "The contract is std::marker::PhantomData's documented behaviour \u2014 a zero-sized marker that makes an otherwise unused type parameter legal and tells the compiler the type acts as if it owned or borrowed a T \u2014 with the variance and drop-ownership discussion overlapping the Nomicon's PhantomData material, so the split between the two is not clean."
     },
     {
       "rule_id": "type-unicode-length",
