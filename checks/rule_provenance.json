@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 428,
-  "ledger_mapped": 321,
+  "rule_count": 429,
+  "ledger_mapped": 322,
   "typed_justification": 107,
   "summary": {
     "cargo-book": 3,
     "clippy-docs": 6,
     "crate-docs": 20,
     "edition-guide": 2,
-    "ledger-mapped": 321,
+    "ledger-mapped": 322,
     "rust-api-guidelines": 18,
     "rust-performance-book": 6,
     "rust-reference": 15,
@@ -861,6 +861,13 @@
       "ledgers": [
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "conc-lock-reentry",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
