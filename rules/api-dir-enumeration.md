@@ -12,7 +12,7 @@ not a contract either — the filesystem returns entries in whatever order suits
 it, so output that looks sorted on one machine will not be on another, and a
 test that asserts it passes locally and fails in CI.
 
-## Contract
+## Directory Walk Requirements
 
 - Handle each entry's `Result` individually: report it, count it, and continue.
 - Decide and document what a failed entry means — skipped with a warning, or
@@ -79,7 +79,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Traversal Cases To Pin
 
 - an unreadable subdirectory is reported and the remaining entries still appear;
 - the exit status or return value reflects that something was skipped;

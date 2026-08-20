@@ -140,7 +140,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Target Detection In Build Scripts
 
 - `cfg!` and `#[cfg]` in a build script describe the host; `CARGO_CFG_*` describes
   the target. They agree only in a native build, so local testing never catches

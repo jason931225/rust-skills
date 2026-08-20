@@ -59,7 +59,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Where To Sample The Clock
 
 - Sample at the edge — request entry, job start, command start — and pass the
   value through the call chain or the request context.

@@ -48,7 +48,7 @@ fn toggle(flag: &std::sync::atomic::AtomicBool) -> bool {
 
 `try_update` returns `Ok(previous)` after storing the closure result. Returning `None` stops without writing and returns `Err(current)`. `update` always produces a replacement and returns the previous value.
 
-## Key Points
+## Closure And Ordering Caveats
 
 - The closure may run more than once under contention. It must not perform I/O, mutate unrelated state, generate IDs, or rely on being called exactly once.
 - `update` and `try_update` are compare-and-swap loops, not locks. They do not prevent ABA problems for pointer or version-like state.

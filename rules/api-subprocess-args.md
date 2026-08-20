@@ -12,7 +12,7 @@ privileges. Rust's `Command` avoids this by default because it execs the
 program directly with an argument list, so the fix is usually to stop
 reaching for a shell at all.
 
-## Contract
+## Child Process Launch Requirements
 
 - Pass each argument as its own `arg()`/`args()` entry. There is no quoting to
   get right because no shell parses them.
@@ -83,7 +83,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Argument Cases To Test
 
 - an argument containing `;`, `|`, `$(...)`, backticks, or a newline reaches
   the program as one literal operand;

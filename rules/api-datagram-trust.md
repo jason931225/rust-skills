@@ -12,7 +12,7 @@ datagrams from anyone but the expected peer, and give each request an
 identifier an attacker cannot guess, so a blind forgery has to hit both the
 address and the identifier.
 
-## Contract
+## Datagram Acceptance Requirements
 
 - Read the source address with the datagram and compare it against the peer the
   request was sent to; discard anything else without processing it.
@@ -96,7 +96,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Forgery Cases To Test
 
 - a datagram from an unexpected address is discarded without parsing;
 - a reply whose identifier does not match any outstanding request is discarded;

@@ -80,7 +80,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Token Design Constraints
 
 - The unforgeability comes from a private field, not from the type being
   zero-sized; a token with all-public fields is a suggestion.

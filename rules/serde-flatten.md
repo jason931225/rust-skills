@@ -68,7 +68,7 @@ struct FlexibleConfig {
 
 `UserListResponse` serializes to `{"users":[...],"page":1,"per_page":20,"total":100}` — the `Pagination` fields appear at the top level, not nested under a `"pagination"` key.
 
-## Key Points
+## Supported Cases And Catch-All Maps
 
 - Works with both structs and maps. The flattened type must implement `Serialize`/`Deserialize`.
 - Multiple `#[serde(flatten)]` fields are allowed on the same struct, as long as the key sets don't overlap at runtime.

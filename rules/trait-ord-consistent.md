@@ -90,7 +90,7 @@ impl PartialOrd for JobKey {
 }
 ```
 
-## Key Points
+## Ordering Consistency Requirements
 
 - For every `a` and `b`, `a.cmp(&b) == Ordering::Equal` must be equivalent to `a == b`.
 - The order must be reflexive, antisymmetric, and transitive. Test these properties for manual implementations.

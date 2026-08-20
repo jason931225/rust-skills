@@ -65,7 +65,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Strict Versus Lossy Decoding
 
 - Strict decoding for anything compared, stored, hashed, or sent onward;
   lossy only for output a person reads.

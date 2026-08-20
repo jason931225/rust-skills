@@ -78,7 +78,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Keeping The Bounds Intact
 
 - Own the data in the error: copy the offending fragment into a `String` or a
   bounded buffer instead of borrowing the input.

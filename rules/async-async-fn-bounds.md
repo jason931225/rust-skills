@@ -88,7 +88,7 @@ async fn example() {
 
 These mirror `Fn` / `FnMut` / `FnOnce` semantics, so the same rules apply: prefer `AsyncFn` first; fall back to `AsyncFnMut` or `AsyncFnOnce` when needed.
 
-## Key Points
+## Desugaring And Send Bounds
 
 - `AsyncFn()` desugars the bound `F: AsyncFn<(), Output = T>` — the call syntax mirrors `Fn()`.
 - Plain `async fn` items (not closures) automatically implement `AsyncFn` when their signature matches.

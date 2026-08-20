@@ -51,7 +51,7 @@ fn sort_large(data: &mut [f64]) {
 }
 ```
 
-## Key Points
+## Parallel Iterator Concerns
 
 | Concern | Guidance |
 |---------|----------|

@@ -17,7 +17,7 @@ with a final newline. The fix is symmetric with how the bytes arrived:
 its absence) attached, and `print!` (not `println!`) writes exactly what was
 read.
 
-## Contract
+## Byte-Faithful Line Handling
 
 - When the contract is byte-for-byte reproduction (a filter, a line-numbering
   tool, anything meant to match a reference implementation's output), read
@@ -91,7 +91,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Terminator Cases To Test
 
 - a CRLF-terminated input round-trips with `\r\n` intact, not rewritten to
   `\n`;

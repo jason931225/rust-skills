@@ -84,7 +84,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Crate Path Hygiene Limits
 
 - Always use `$crate::` for any path to items in the defining crate.
 - `$crate` works even when the macro is re-exported through another crate.

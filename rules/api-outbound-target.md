@@ -12,7 +12,7 @@ enough: DNS can answer with a private address, a redirect can retarget the
 request, and the address that gets connected to may not be the one that was
 checked.
 
-## Contract
+## Target Authorization Requirements
 
 - Prefer an allowlist of exact hosts or a fixed set of upstreams. Free-form
   URLs are the fallback, not the default.
@@ -119,7 +119,7 @@ Authorizing the addresses and then connecting to a fresh resolution leaves a
 DNS-rebinding window. Close it by connecting to an address that was authorized
 in this decision rather than re-resolving the name.
 
-## Failure Tests
+## Targets The Tests Must Refuse
 
 - a loopback, private, link-local, and metadata address target is refused;
 - a target that resolves to one public and one private address is refused;

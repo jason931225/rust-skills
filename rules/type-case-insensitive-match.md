@@ -69,7 +69,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Matcher Configuration Over Folding
 
 - `RegexBuilder::case_insensitive(true)` and equivalent settings apply the
   engine's own folding; prefer them to rewriting the input.

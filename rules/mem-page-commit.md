@@ -16,7 +16,7 @@ nothing to do with the original `alloc` call succeeding cleanly. A benchmark
 or capacity check that only measures the allocation call is measuring the
 wrong operation.
 
-## Contract
+## Overcommit And First-Touch Behavior
 
 - Do not treat a successful allocation as proof that its memory is backed;
   the first write to each page is where the real commit — and the real

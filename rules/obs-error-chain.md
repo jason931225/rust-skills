@@ -77,7 +77,7 @@ async fn inner_db_call(_id: u64) -> Result<Vec<u8>> {
 fn process(_data: Vec<u8>) {}
 ```
 
-## Key Points
+## Recording And Formatting Chains
 
 - **`error = ?err`**: uses `Debug` — prints the error and its `source()` chain for types that implement it.
 - **`format!("{err:#}")`** or `%format!(...)`: `anyhow::Error`'s alternate Display walks the full chain with `: ` separators.

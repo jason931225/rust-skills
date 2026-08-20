@@ -89,7 +89,7 @@ Sampling a fresh delay from zero through the capped exponential ceiling is
 full jitter. A constant added by every worker is not jitter and does not
 decorrelate retries.
 
-## Failure Tests
+## Crash And Retry Cases
 
 - crash before claim, after claim, after side effect, and before acknowledge;
 - lease expiry makes abandoned work visible again;

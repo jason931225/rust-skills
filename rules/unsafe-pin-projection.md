@@ -76,7 +76,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Structural Pinning Obligations
 
 - Write the classification down per field; a comment stating "structurally
   pinned" or "not pinned" is what a later reader and reviewer check against.

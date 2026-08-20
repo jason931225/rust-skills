@@ -13,7 +13,7 @@ cross-image ownership: portable values also need a defined layout and no
 dependency on image-local state. Allow only portable state across that edge,
 both when loading and publishing plugins.
 
-## Contract
+## What Counts As Portable
 
 A portable value has a defined layout (`#[repr(C)]` or equivalent) and
 satisfies every constraint below:
@@ -152,7 +152,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Cross-DLL Hazards
 
 - **Allocator ownership.** `String`, `Vec<T>`, `Box<T>`, and anything else that frees on drop must be dropped by the DLL that allocated them. Crossing the boundary is a cross-heap free.
 - **Transitive portability.** Every nested field must be portable. Wrapping a `String` in `#[repr(C)]` does not make the heap value portable.

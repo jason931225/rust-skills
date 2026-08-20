@@ -9,7 +9,7 @@ operation. Processing the same state-changing request twice can double-charge,
 double-send, or create duplicate records. A caller-generated idempotency key
 states intent: the same caller and key identify one logical operation.
 
-## Contract
+## Idempotency Key Requirements
 
 - Require a non-empty, bounded, header-safe key for operations that need
   retry-safety.
@@ -65,7 +65,7 @@ fn main() {
 The persistence adapter atomically chooses the claim from
 `(principal, operation, key, request_fingerprint)`.
 
-## Failure Tests
+## Duplicate Request Test Cases
 
 - a sequential duplicate causes one side effect and replays the response;
 - two simultaneous duplicates cause one side effect;

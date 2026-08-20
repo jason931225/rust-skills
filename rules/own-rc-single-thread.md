@@ -88,7 +88,7 @@ parent.children.borrow_mut().push(Rc::clone(&child));
 let _maybe_parent: Option<Rc<Node>> = child.parent.borrow().upgrade();
 ```
 
-## Key Points
+## Rc Idioms And Limits
 
 - Prefer `Rc::clone(&x)` to `x.clone()`: it makes the cheap refcount bump explicit and visually distinct from a deep clone.
 - `Rc<T>` gives shared *immutable* access; pair it with `RefCell<T>` (`Rc<RefCell<T>>`) for shared mutability in single-threaded code.

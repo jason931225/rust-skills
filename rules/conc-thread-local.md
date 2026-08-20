@@ -62,7 +62,7 @@ fn get_call_count() -> u32 {
 }
 ```
 
-## Key Points
+## Thread-Local Access And Lifetime
 
 - `with_borrow` / `with_borrow_mut` are stable convenience methods (since 1.73) on `LocalKey<RefCell<T>>` — prefer them over the longer `with(|v| v.borrow_mut())` form.
 - Thread-local destructors run when the thread exits, so cleanup happens automatically.

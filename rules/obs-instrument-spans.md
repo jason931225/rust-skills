@@ -70,7 +70,7 @@ impl DbPool {
 }
 ```
 
-## Key Points
+## Span Instrumentation Practices
 
 - **`#[instrument]`** is the preferred way to instrument async functions — it wraps the whole future in `.instrument(span)` under the hood.
 - Use `skip(arg)` or `skip_all` to exclude large types (e.g., database pools, byte buffers) and sensitive values from auto-captured fields.

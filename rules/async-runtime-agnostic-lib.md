@@ -72,7 +72,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Keeping Runtime Dependencies Out
 
 - Depend on `std::future::Future` and, where a stream is needed, on the
   `futures` traits — not on a runtime crate.

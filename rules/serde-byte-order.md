@@ -49,7 +49,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Endianness Choice And Conversion
 
 - Pick one order per format and document it. Network protocols conventionally
   use big-endian; many on-disk formats choose little-endian because most

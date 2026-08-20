@@ -49,7 +49,7 @@ fn demo() {
 }
 ```
 
-## Key Points
+## When Boxing Is Required
 
 **When `Box<dyn Fn>` is required:**
 

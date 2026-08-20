@@ -23,7 +23,7 @@ By default, Rust compiles for a generic architecture baseline. Modern CPUs have 
 rustflags = ["-C", "target-cpu=x86-64-v3"]
 ```
 
-## Contract
+## Baseline Selection Rules
 
 - Choose a baseline only when every host in the deployment fleet guarantees it,
   and enforce that in provisioning or admission rather than by assumption.

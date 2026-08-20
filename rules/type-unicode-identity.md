@@ -20,7 +20,7 @@ smarter comparison — it is never trusting or displaying the decoded form on
 any surface where a security decision depends on what a person or a policy
 check reads.
 
-## Contract
+## Hostname Canonicalization Requirements
 
 - Canonicalize a hostname or domain to ASCII/Punycode with a maintained IDNA
   implementation as the first step after receiving it, before storage,
@@ -99,7 +99,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Lookalike Cases To Test
 
 - a label containing a non-ASCII lookalike character fails canonicalization
   rather than being accepted or silently transliterated;

@@ -16,7 +16,7 @@ threads in it actually do. `thread::sleep` compounds the problem for
 short or jitter-sensitive pauses: it is a request to the OS scheduler, not a
 deadline, and tick coalescing can make "sleep 20 ms" run measurably longer.
 
-## Contract
+## Thread Sizing And Waiting Rules
 
 - Size a CPU-bound worker pool to the number of physical cores available to
   the process, not to a fixed constant or the number of pending jobs; measure

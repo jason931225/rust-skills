@@ -43,7 +43,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Event Naming Requirements
 
 - Keep the hierarchical event name stable across releases; renaming it breaks dashboards and saved queries.
 - Use `<component>.<operation>.<state>` names when that vocabulary fits (`cache.evict.success`, `db.query.failure`).

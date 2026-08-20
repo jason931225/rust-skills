@@ -114,7 +114,7 @@ struct Parent;
 
 `ManuallyDrop<T>` inhibits the compiler from inserting automatic drop calls, giving you precise control.
 
-## Key Points
+## Making Drop Order Explicit
 
 - Reorder struct fields to encode the correct drop sequence — the declaration is the contract.
 - Add a comment explaining the ordering when it is non-obvious: `// NOTE: drop order matters — transaction before connection`.

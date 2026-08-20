@@ -79,7 +79,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Close And Drop Responsibilities
 
 - `close(self)` consuming the receiver stops use-after-close at compile time
   and gives the caller a `Result` to handle.

@@ -10,7 +10,7 @@ toolchain, source tree, and package manager expands both attack surface and
 size. Build from a pinned toolchain and dependency graph, then copy only the
 release binary and its explicit runtime requirements into a minimal image.
 
-## Contract
+## Image Build Requirements
 
 - Pin the Rust toolchain and base image by an immutable version or digest.
 - Build with the release profile in a builder stage; the final stage contains

@@ -59,7 +59,7 @@ synchronous calls. Use a fixed compute pool for sustained or parallel CPU
 work. Cooperative yielding keeps a short mixed workload responsive; it does
 not add capacity or make unbounded CPU work safe.
 
-## Key Points
+## Yield Placement And Admission
 
 - Measure worst-case uninterrupted execution, not only item count.
 - Yield at a bounded chunk or runtime budget boundary, never after every cheap

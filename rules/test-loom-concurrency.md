@@ -94,7 +94,7 @@ Declare the custom cfg to rustc and run the model explicitly:
 RUSTFLAGS="--cfg loom --check-cfg=cfg(loom)" cargo test --test loom_flag
 ```
 
-## Key Points
+## Loom Model Constraints
 
 - Keep loom model closures **small**: combinatorial explosion grows with the number of atomic operations and threads. Test one primitive or algorithm at a time.
 - loom replaces `std::sync::atomic`, `std::sync::Mutex`, `std::thread`, and `std::cell` with instrumented equivalents — import from `loom::` under `#[cfg(loom)]`.

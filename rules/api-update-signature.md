@@ -15,7 +15,7 @@ The update path has to authenticate the payload independently of how it
 arrived, with a key that was never transmitted alongside anything the update
 process downloaded.
 
-## Contract
+## Update Verification Requirements
 
 - Sign release artifacts offline, with a private key that never touches the
   build or distribution infrastructure the update process talks to.
@@ -115,7 +115,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Rejection Cases To Test
 
 - an update signed with the wrong key is rejected;
 - an update whose payload was modified after signing fails verification even

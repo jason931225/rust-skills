@@ -60,7 +60,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Volatile Access Limits
 
 - Volatile controls elision and reordering *by the compiler*. It is not atomic,
   not a memory barrier, and not thread synchronisation — use atomics or fences

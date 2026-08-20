@@ -90,7 +90,7 @@ fn main() {
 
 `Default::default`, `From::from`, and `Clone::clone` stay on the trait. The rule targets inherent `impl Type { fn helper() }` blocks used as a namespace.
 
-## Key Points
+## Where Each Function Belongs
 
 - Associated functions primarily **create** `Self`.
 - General computation with no receiver is a **free function** at module scope.

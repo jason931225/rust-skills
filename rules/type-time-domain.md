@@ -59,7 +59,7 @@ Deadlines follow the same split: compute them as `Instant::now() + budget`
 inside the process, and convert to a wall-clock time only when one has to be
 communicated to another system.
 
-## Key Points
+## Clock Choice And Timestamp Hazards
 
 - Durations, timeouts, backoff, rate limits, caches, and latency metrics use
   `Instant`, which is monotonic.

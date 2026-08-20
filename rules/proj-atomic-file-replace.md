@@ -15,7 +15,7 @@ destination only ever holds one complete version. Every configuration file,
 state snapshot, and index rewrite that a process may be killed during needs
 this shape.
 
-## Contract
+## Atomic Replace Requirements
 
 - Write to a temporary file in the *same directory* as the destination; a
   rename across filesystems is a copy, and copies are not atomic.
@@ -114,7 +114,7 @@ fn main() -> io::Result<()> {
 }
 ```
 
-## Failure Tests
+## Crash And Concurrency Cases
 
 - a write that fails partway leaves the destination byte-for-byte unchanged,
   and leaves no temporary behind;

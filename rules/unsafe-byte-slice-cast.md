@@ -66,7 +66,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Alignment And Validity Constraints
 
 - Decoding field by field is almost always fast enough; the compiler folds it
   into the same loads when the bytes are contiguous.

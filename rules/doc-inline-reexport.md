@@ -47,7 +47,7 @@ In a real multi-crate facade, apply the same policy to an owned constituent
 crate. Do not inline arbitrary third-party types merely because they appear in
 your signatures.
 
-## Key Points
+## When To Inline Re-Exports
 
 - Private-module re-exports are inlined automatically.
 - Use `#[doc(inline)]` when rustdoc would otherwise retain a forwarding entry

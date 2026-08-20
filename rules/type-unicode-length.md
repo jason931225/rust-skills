@@ -39,7 +39,7 @@ If the interface promises user-perceived characters, use a maintained Unicode
 segmentation implementation and call the limit `MAX_NAME_GRAPHEMES`. Do not
 hand-roll grapheme boundaries.
 
-## Contract
+## Text Limit Requirements
 
 - State the unit in configuration, error messages, documentation, and tests.
 - Apply a byte limit before expensive parsing or normalization to cap resource

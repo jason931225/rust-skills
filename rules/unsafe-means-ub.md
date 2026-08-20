@@ -53,7 +53,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Distinguishing UB From Danger
 
 - The test is undefined behavior, not consequences: data races, invalid derefs, and aliasing violations are `unsafe`; deleting data or spending money is not.
 - Dangerous-but-defined operations stay safe, use a loud name, and document the blast radius.

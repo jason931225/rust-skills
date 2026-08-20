@@ -18,7 +18,7 @@ the struct's declared fields says otherwise. The fix is not the `unsafe`
 block that reclaims the pointer — it is a `PhantomData<T>` field that restores
 the honest declaration drop-check needs.
 
-## Contract
+## PhantomData Marker Requirements
 
 - If a type's `Drop` implementation dereferences, drops, or otherwise touches
   a `T` reached only through a raw pointer, add a `PhantomData<T>` field (or
@@ -112,7 +112,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Drop Behavior To Verify
 
 - the recorder's destructor runs exactly once when `Storage` goes out of
   scope, proving the raw pointer is reclaimed rather than leaked or double-freed;
