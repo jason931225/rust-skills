@@ -2,7 +2,7 @@
   "schema_version": 1,
   "description": "Typed provenance for rules that no source-coverage ledger references. Each entry names the kind of source the rule's contract comes from and what in that source it derives from. Justifications name documents, APIs, lints, and crates; validate.py rejects any that carries a URL, page, section, or version locator, because those cannot be checked from the text and are the shape a fabricated citation takes.",
   "reviewer": "Jason Lee <jason931225@gmail.com>",
-  "reviewed_on": "2026-08-19",
+  "reviewed_on": "2026-08-20",
   "entries": [
     {
       "rule_id": "anti-collect-intermediate",
@@ -33,11 +33,6 @@
       "rule_id": "anti-string-for-str",
       "source_class": "clippy-docs",
       "justification": "The rule states and configures Clippy's `ptr_arg` lint, which is precisely the policy that a `&String` parameter should be `&str`; the deref-coercion explanation is supporting mechanism rather than the source of the contract."
-    },
-    {
-      "rule_id": "anti-unwrap-abuse",
-      "source_class": "synthesized-practice",
-      "justification": "Beyond the documented fact that `Option::unwrap` and `Result::unwrap` panic, the rule's actual contract \u2014 that input, dependency, configuration, and shutdown failures must become typed errors rather than panics, with `expect` reserved for proved invariants \u2014 is general service-engineering practice rather than a single upstream document."
     },
     {
       "rule_id": "anti-vec-for-slice",
@@ -130,11 +125,6 @@
       "justification": "The contract rests on language semantics \u2014 each closure has a distinct unnameable type that `impl Trait` in return position preserves but cannot unify across branches, while `Box<dyn Fn>` erases it behind a vtable; the allocation/dispatch cost framing also touches performance-book territory."
     },
     {
-      "rule_id": "closure-move-capture",
-      "source_class": "rust-reference",
-      "justification": "The rule states language semantics the compiler enforces: the `move` keyword makes a closure capture its environment by value rather than by reference, which is what lets the closure satisfy the `'static` bound required to escape its defining scope, and `move` is orthogonal to which of `Fn`/`FnMut`/`FnOnce` the closure implements."
-    },
-    {
       "rule_id": "closure-static-vs-dyn",
       "source_class": "synthesized-practice",
       "justification": "Choosing monomorphized `impl Fn` against `&dyn Fn`/`Box<dyn Fn>` on grounds of code size, storage of heterogeneous closures, and measured hot paths is an engineering trade-off with no single upstream document stating it."
@@ -145,11 +135,6 @@
       "justification": "The contract is the documented behaviour of `std::collections::BinaryHeap`: it is a max-heap whose `pop` removes the greatest element and `peek` returns it without removing, with `std::cmp::Reverse` inverting the ordering to obtain a min-heap, and no arbitrary removal or priority-update operation offered \u2014 stated without attributing the rule's O(log n) figures to std."
     },
     {
-      "rule_id": "coll-map-choice",
-      "source_class": "std-docs",
-      "justification": "The selection criteria mirror the `std::collections` module documentation's guidance on when to use `HashMap` versus `BTreeMap`, including `BTreeMap::range` and the note that the default hasher is randomized and its algorithm unspecified; `IndexMap` is the one non-std option named."
-    },
-    {
       "rule_id": "coll-seq-choice",
       "source_class": "std-docs",
       "justification": "`Vec` as the default sequence, `VecDeque`'s amortized O(1) push/pop at both ends, the O(n) cost of `Vec::remove(0)`, and the standard library's own discouragement of `LinkedList` all come from the `std::collections` documentation."
@@ -158,11 +143,6 @@
       "rule_id": "coll-set-membership",
       "source_class": "std-docs",
       "justification": "The O(n) cost of `Vec::contains` against expected O(1) `HashSet` membership, `BTreeSet`'s sorted iteration, and `Vec::dedup` requiring adjacent equal elements are documented standard-library complexity contracts."
-    },
-    {
-      "rule_id": "conc-atomic-ordering",
-      "source_class": "std-docs",
-      "justification": "The Relaxed/Acquire/Release/AcqRel/SeqCst taxonomy and the release-store to acquire-load happens-before argument are the documented contract of std::sync::atomic::Ordering; the loom section is supporting tooling, and the same material is also covered by the Nomicon's atomics discussion."
     },
     {
       "rule_id": "conc-scoped-threads",
