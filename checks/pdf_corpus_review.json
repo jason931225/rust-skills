@@ -2538,6 +2538,27 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "unit_id": "black-hat-rust:0131",
+      "title": "An actual shellcode",
+      "page_text_sha256": "0bbd9316cf062b2bd6ae9c01e4d1b69860874cfc5576ec8fcabec8d89cccd7d6",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-inline-asm"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit writes Linux syscalls directly with inline asm! inside a freestanding binary, declaring operands and relying on the assembly upholding the surrounding Rust invariants; the rule states the operand-direction, clobber, and options(...) contract that makes such a block sound"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::the_assembly_path_and_the_portable_path_agree_including_at_overflow"
+      },
+      "remaining_uncertainty": "the rule covers the inline-asm contract only; the unit's freestanding/no_std half (panic=abort, linker scripts, position-independent code, .text embedding) has no rule and this chapter's remaining units stay unreviewed pending a scope decision on bare-metal Rust",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
       "unit_id": "black-hat-rust:0134",
       "title": "Phishing with WebAssembly",
       "page_text_sha256": "cceb751d58f7b9f9e14f7e6324020039d0b965d612e273391c5faa61a0c53432",
@@ -10560,8 +10581,8 @@
       "disposition": "covered",
       "audit_disposition": "covered",
       "mapped_rule_ids": [
-        "async-poll-contract",
         "async-future-size",
+        "async-poll-contract",
         "async-yield-cpu"
       ],
       "exact_difference": {
@@ -10570,10 +10591,10 @@
       },
       "rationale_class": "source-aligned",
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_stream_yields_every_item_then_treats_none_as_terminal"
       },
-      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. The bulk of the chapter is mechanism exposition \u2014 Pin/Unpin semantics, waker vtables, executor/reactor coupling and why leaf futures are tied to one executor \u2014 which the three mapped rules do not restate; I did not map unsafe-pin-address-stable because the chapter explains Pin rather than prescribing how to design a !Unpin type, and the trailing unsafe-keyword pages belong to the next chapter.",
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. The bulk of the chapter is mechanism exposition \u2014 Pin/Unpin semantics, waker vtables, executor/reactor coupling and why leaf futures are tied to one executor \u2014 which the three mapped rules do not restate; I did not map unsafe-pin-address-stable because the chapter explains Pin rather than prescribing how to design a !Unpin type, and the trailing unsafe-keyword pages belong to the next chapter. The poll_next half of the poll contract is now stated in async-poll-contract and pinned by this assertion; bounded stream consumption remains async-join-parallel's concern.",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {

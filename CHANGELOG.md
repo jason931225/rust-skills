@@ -7,6 +7,18 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `unsafe-inline-asm`: the operand-direction, clobber, and `options(...)`
+  contract for `asm!`. The compiler cannot read the assembly, so it acts on
+  whatever the block promises — a wrong `nomem` or `preserves_flags` is a
+  miscompilation that appears only at some optimization levels, with no
+  address to inspect and nothing for a sanitizer to trap on.
+### Changed
+- `async-poll-contract` now covers `poll_next`. A hand-written `Stream` owes
+  every obligation a `Future` does, plus a state machine: `Ready(Some(_))`
+  says nothing about the next item, and `Ready(None)` is terminal the way
+  `Future`'s `Ready` is. The named failure is a stream that decides it is
+  finished without having registered a waker for that decision, parking a
+  consumer one item short.
 - `conc-thread-channel`: bound a thread-to-thread channel and treat sender
   disconnection as the shutdown signal. Found by a disposition agent that
   refused to map the channels chapter to any existing rule — every channel
