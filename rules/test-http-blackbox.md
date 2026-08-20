@@ -42,7 +42,7 @@ future or task handle. A focused executable socket round-trip in
 `checks/tests/source_guidance.rs` guards against regressing this into a
 bind-only tautology.
 
-## Contract
+## Server Test Requirements
 
 - Build routes, middleware, state, and telemetry through the production
   composition function.

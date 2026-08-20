@@ -14,7 +14,7 @@ exceed a thin derive, add a regular library crate for that logic and keep the
 `proc-macro` crate as a shim. This keeps the user-facing dependency stable while
 making transformation logic testable without invoking the compiler.
 
-## Contract
+## What The Facade Guarantees
 
 The facade approach ensures:
 - Users add only `mycrate` as a dependency.

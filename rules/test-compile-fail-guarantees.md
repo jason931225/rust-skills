@@ -107,7 +107,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Writing Compile-Fail Cases
 
 - Give each guarantee its own case, named after the mistake it catches:
   spending a token twice, calling a method in the wrong state, implementing a

@@ -11,7 +11,7 @@ eventually send a production token to a staging host, or follow a redirect and
 hand a bearer token to whoever controls the new location. The leak is silent:
 the request succeeds, and the credential is now in someone else's log.
 
-## Contract
+## Credential Binding Requirements
 
 - Store credentials keyed by the full origin, not by a nickname or a bare
   hostname. `https://api.example.com` and `http://api.example.com:8080` are
@@ -87,7 +87,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Cases To Pin In Tests
 
 - a token is withheld from a different scheme, port, host, and from a hostname
   that merely has the right suffix;

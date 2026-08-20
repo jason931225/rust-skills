@@ -79,7 +79,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Path Choice And Hygiene
 
 - Prefer `::core` and `::alloc` to `::std` so the macro works in `no_std`
   crates; use `::std` only for items that exist nowhere else.

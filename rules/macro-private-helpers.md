@@ -90,7 +90,7 @@ impl ::mycrate::__private::Describe for MyStruct {
 }
 ```
 
-## Key Points
+## Private Module Conventions
 
 - Name the module `__private` (double-underscore) — it signals "not part of the public API" by convention across the ecosystem.
 - Always pair with `#[doc(hidden)]` so the module is invisible in rendered documentation.

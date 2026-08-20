@@ -79,7 +79,7 @@ Record what this job does not cover — here, the `native-codec` FFI path and th
 integration suite — next to the job, and cover those with the checks that can
 actually run them.
 
-## Key Points
+## Configuring The Miri Job
 
 - **Pinned nightly**: Miri ships with nightly. Pin the toolchain (workflow env or `rust-toolchain.toml`) so a Miri failure reproduces locally, and bump it as a reviewed change.
 - **Scope, don't drop**: Miri interprets rather than compiles, so suites commonly run orders of magnitude slower. When cost or unsupported operations block the full suite, select the packages, features, and test filters that exercise the unsafe paths instead of removing the job.

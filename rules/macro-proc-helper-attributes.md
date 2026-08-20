@@ -17,7 +17,7 @@ item — every attribute on an item is visible to every macro that runs on it,
 so the derive that owns an attribute has to skip ones it does not recognize
 rather than erroring on them.
 
-## Contract
+## Helper Attribute Requirements
 
 - Do not attempt to answer a trait-resolution question ("does this type
   implement X?") inside macro expansion; a proc macro has tokens, not a
@@ -98,7 +98,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Derive Cases To Pin
 
 - an item carrying the derive's own helper attribute with `required` present
   is recognized as required;

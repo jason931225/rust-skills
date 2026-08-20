@@ -49,7 +49,7 @@ With two parameters the compiler shortens only the outer borrow `'a` and
 leaves `'b` alone. With one, it would have to shorten a lifetime sitting
 behind `&mut`, which invariance forbids.
 
-## Key Points
+## Keeping Types Covariant
 
 - Prefer shared references and owned values in public types; each `&mut T`
   field pins `T` invariantly.

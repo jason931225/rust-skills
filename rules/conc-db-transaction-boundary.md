@@ -42,7 +42,7 @@ fn main() {}
 Dropping or rolling back the uncommitted transaction restores the prior
 database state.
 
-## Contract
+## Transaction Scope Requirements
 
 - Pass the transaction through every repository call participating in the
   invariant; a pool lookup inside one of those calls silently escapes it.

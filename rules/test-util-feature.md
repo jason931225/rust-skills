@@ -71,7 +71,7 @@ fn main() {
 Enabling `ManualClock` in a release artifact adds a deterministic adapter but
 does not disable authentication, validation, or transport security.
 
-## Key Points
+## Feature Design Constraints
 
 - Assume every published feature can be enabled in production.
 - Keep features additive: they may add safe fakes or controllers, but must not

@@ -13,7 +13,7 @@ are never exercised by the handler tests. Making the error representation part
 of the API contract keeps a failed request as machine-readable as a successful
 one.
 
-## Contract
+## Error Response Requirements
 
 - Define one error body schema and document it alongside the success schemas.
 - Emit it with the API's content type for every status the service can return,
@@ -112,7 +112,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Error Paths To Verify
 
 - an unmatched route, a wrong method, an oversized body, and a wrong content
   type all return the documented schema and content type;

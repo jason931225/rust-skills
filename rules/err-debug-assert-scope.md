@@ -50,7 +50,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Choosing Debug Versus Release Checks
 
 - The test is provenance, not cost: if the value crossed a trust or storage
   boundary, the check ships.

@@ -84,7 +84,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Throughput Working Rules
 
 - Track how many records finish per CPU cycle; do not spend that budget on idle waits, a lock per record, or a task switch per record.
 - Slice work up front. Give each thread or task its own chunk and let it run without coordinating on every item.

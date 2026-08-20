@@ -63,7 +63,7 @@ struct Report {
 }
 ```
 
-## Key Points
+## Module Signatures And Alternatives
 
 - `#[serde(with = "module")]` requires the module to expose both `pub fn serialize<S>(&T, S) -> Result<S::Ok, S::Error>` and `pub fn deserialize<'de, D>(D) -> Result<T, D::Error>`.
 - Use `serialize_with = "path"` or `deserialize_with = "path"` to customize only one direction, leaving the other at its derived default.

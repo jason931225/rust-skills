@@ -12,7 +12,7 @@ different payload. A checksum written beside the record turns silent
 corruption into a detected error at the point of reading, which is the only
 place it can still be handled.
 
-## Contract
+## Integrity Check Requirements
 
 - Compute the check over exactly the bytes it protects, and define that span
   precisely (payload only, or header plus payload).
@@ -83,7 +83,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Corruption Cases To Test
 
 - a single flipped bit anywhere in the protected span is rejected;
 - a truncated record is rejected rather than decoded short;

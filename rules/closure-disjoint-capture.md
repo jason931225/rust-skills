@@ -72,7 +72,7 @@ fn demo_bind_first() {
 }
 ```
 
-## Key Points
+## Capture Granularity Rules
 
 - **Edition 2021 rule:** closures capture the *minimal* path used — `foo.bar` rather than `foo`. This reduces spurious borrow conflicts.
 - **`move` captures the whole named place.** Writing `move || self.field` inside a method moves `*self`, not just `self.field`. Bind to a local to narrow the capture.

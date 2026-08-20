@@ -58,7 +58,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## What A Panic Message Includes
 
 - Include the violated invariant, not a generic `"failed"` or `"impossible"`.
 - Include identifiers, lengths, states, or bounds needed to diagnose the bug, but never secrets or PII.

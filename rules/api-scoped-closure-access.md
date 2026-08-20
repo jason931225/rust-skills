@@ -75,7 +75,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Designing The Scoped Callback
 
 - Return the closure's value so the shape composes; returning `()` forces
   callers back into out-parameters.

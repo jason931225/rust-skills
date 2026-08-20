@@ -72,7 +72,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Predicate And Notification Rules
 
 - `wait_while` and `wait_timeout_while` are the loop written for you; a manual
   `while !predicate { guard = cv.wait(guard)? }` is equivalent.

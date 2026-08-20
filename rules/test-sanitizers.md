@@ -37,7 +37,7 @@ cargo +nightly-2026-02-28 miri test -p wire-codec
 Sanitizer support is target-specific; check the platform support table before
 promising a job on a given runner.
 
-## Key Points
+## Running Sanitizers In CI
 
 - Run the unsafe, FFI, and concurrency test suites under AddressSanitizer and
   ThreadSanitizer on a pinned nightly toolchain (`-Zsanitizer=address`,

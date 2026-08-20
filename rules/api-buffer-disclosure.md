@@ -14,7 +14,7 @@ alike. The bytes at fault were legitimately written by someone else's
 request, earlier, into memory this request is now allowed to read from
 honestly — the mistake is entirely in how much of it gets disclosed.
 
-## Contract
+## Bounding Disclosed Bytes
 
 - Track how many bytes the current operation actually wrote — the count a
   parser consumed, the length a peer's request specified and you validated,
@@ -93,7 +93,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Buffer Reuse Test Cases
 
 - a shorter request following a longer one discloses only its own bytes, not
   the previous request's leftover tail;

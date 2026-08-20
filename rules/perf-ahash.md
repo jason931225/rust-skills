@@ -69,7 +69,7 @@ fn fast_map_example() -> FastMap<u32, u64> {
 | `ahash` | Randomized but not a cryptographic primitive | Reviewed deployment and measured workload justify it |
 | `FxHash` | Predictable | Trusted keys in a closed process only |
 
-## Key Points
+## Hasher Switch Considerations
 
 - **Profile first**: switch hashers only after confirming map operations appear in profiler output.
 - `ahash::AHashMap` has a similar map API, but changing the public concrete type

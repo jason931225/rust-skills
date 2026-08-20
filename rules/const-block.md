@@ -67,7 +67,7 @@ fn make_table() -> [u64; 4] {
 }
 ```
 
-## Notes
+## Const Block Versus Const Item
 
 `const { expr }` is an expression, so it can appear anywhere an expression is valid: in function bodies, match arms, array initializers, and as default values. It is distinct from a named `const ITEM: T = expr;` declaration — a `const` block is anonymous and scoped to its enclosing expression. For long-lived or widely shared values, prefer a named `const`; reach for `const { }` when you want a one-off compile-time guarantee or value inline.
 

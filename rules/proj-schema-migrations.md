@@ -54,7 +54,7 @@ Use an expand/backfill/contract sequence:
 - Database tooling is an explicit integration prerequisite, never a hidden
   requirement of the default `cargo build`.
 
-## Failure Tests
+## Migration Cases To Exercise
 
 Exercise at least these cases:
 

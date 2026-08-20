@@ -68,7 +68,7 @@ fn main() {
 the substance is the same — spawn the real binary, assert on all three
 observable channels.
 
-## Contract
+## Harness Setup And Baseline Cases
 
 - Put these tests in `tests/`, where each file is its own integration crate,
   and run the binary produced by the build rather than a rebuilt copy.

@@ -51,7 +51,7 @@ fn main() {
 }
 ```
 
-## Contract
+## Liveness And Readiness Requirements
 
 - Liveness is local, bounded, allocation-light, and independent of remote
   dependencies. Failure requests a restart.

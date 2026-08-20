@@ -59,7 +59,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## What To Hoist And Where
 
 - A `LazyLock` static fits values that are process-wide and immutable; a field
   on a reused struct fits values that belong to one component.

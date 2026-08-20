@@ -84,7 +84,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Boundary Obligations For Handles
 
 - One constructor, one destructor, and say in the header which is which; a
   handle freed by `free()` instead of your function is a heap mismatch.

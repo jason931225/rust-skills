@@ -10,7 +10,7 @@ authentication still permits interception. Production clients and servers
 must use TLS with hostname and certificate validation, and internal networks
 are not an exemption.
 
-## Contract
+## Transport Security Requirements
 
 - Terminate TLS at a documented trusted boundary and protect every hop beyond
   it with TLS or authenticated workload transport.
@@ -55,7 +55,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Certificate Cases To Test
 
 - an untrusted issuer is rejected;
 - a valid certificate for the wrong hostname is rejected;

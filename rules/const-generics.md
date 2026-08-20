@@ -85,7 +85,7 @@ fn xor_block<const N: usize>(a: [u8; N], b: [u8; N]) -> [u8; N] {
 let result = xor_block([0u8; BLOCK], [0xFF; BLOCK]);
 ```
 
-## Notes
+## Stability And Inference Limits
 
 Rust 1.65+ stabilized const generic defaults
 (`struct Buf<const N: usize = 64>`). Const generic parameter types currently

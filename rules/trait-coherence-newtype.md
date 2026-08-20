@@ -75,7 +75,7 @@ fn demo() {
 }
 ```
 
-## Key Points
+## Orphan Rule And Wrapper Ergonomics
 
 - A blanket `impl<T> ForeignTrait for ForeignType<T>` has no local type and is
   rejected. A local type in a trait argument can affect the full orphan check;

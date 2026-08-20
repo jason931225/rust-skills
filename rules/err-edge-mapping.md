@@ -75,7 +75,7 @@ field and a source-complete diagnostic field, then returns the generic response.
 Choose matchable versus opaque errors from caller intent, not merely whether
 the crate is called a library or application.
 
-## Contract
+## Error Boundary Requirements
 
 - Inner domain and infrastructure errors do not implement HTTP, CLI, or gRPC
   response traits.

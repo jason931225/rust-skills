@@ -49,7 +49,7 @@ suffix — publish 2.4.0, then set `2.4.1-alpha.1`; when a breaking change lands
 before the next release, the manifest becomes `3.0.0-alpha.1` immediately, so
 git dependents get a resolver error instead of a mysterious compile failure.
 
-## Key Points
+## Version Bumps And Dependency Bounds
 
 - Follow Cargo's semantic versioning: breaking changes take a major bump,
   additions a minor bump, fixes a patch bump. Treat "breaking" as what breaks a

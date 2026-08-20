@@ -15,7 +15,7 @@ kinds as `void*`, nothing stops a caller from passing a `Device*` where a
 thin `*mut c_void` wrapper in Rust throws it away a second time. Both
 failures are invisible until the wrong code path runs.
 
-## Contract
+## Handle And Allocator Rules
 
 - Track which allocator produced every foreign pointer that crosses into
   Rust, and free it only through that allocator's matching function — never
@@ -129,7 +129,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Handle Misuse Test Cases
 
 - a `Device` handle passed to a function parameter typed `&Context` fails to
   compile, proving the two opaque wrappers cannot be swapped;

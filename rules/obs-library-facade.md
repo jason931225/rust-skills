@@ -50,7 +50,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Dependency Placement
 
 - **Library `Cargo.toml`**: depend on `tracing = "0.1"` only. Do **not** add `tracing-subscriber` or `env_logger` as non-`dev` dependencies.
 - **Binary `Cargo.toml`**: add `tracing-subscriber = { version = "0.3", features = ["env-filter"] }` for the subscriber.
