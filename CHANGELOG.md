@@ -14,6 +14,19 @@ semantic versioning for the rule set.
   literally `std::sync::mpsc`, so a plain threaded program had no channel
   guidance at all.
 ### Changed
+- Dispositioned 1,053 of the 1,265 unreviewed PDF-corpus units (99 of 100
+  chapters across 8 books), taking that ledger to 552 covered / 310
+  project-specific / 242 reject / 9 documented-deviation / 212 unreviewed.
+  Provenance strengthened again: 318 rules ledger-mapped, 109 justified.
+- Black Hat Rust's concluding chapter is recorded as a `documented-deviation`:
+  it advises avoiding lifetime annotations and reaching for `Rc`/`Arc` for
+  long-lived references instead, which contradicts `own-lifetime-elision`,
+  `own-arc-shared`, and `own-borrow-over-clone`.
+- `checks/validate.py` now allows `tutorial-scaffolding` and
+  `project-specific-detail` as PDF-corpus rationale classes. That set was
+  written when the corpus was only mined for rule material; dispositioning it
+  completely means classifying prefaces, indexes, and the books' own demo
+  projects, which are neither obsolescent nor provider-specific.
 - Dispositioned 789 of the 1,235 unreviewed RustTraining units (68 chapters),
   taking the ledger to 654 covered / 674 project-specific / 340 reject /
   10 documented-deviation / 446 unreviewed. 31 rules moved from written
