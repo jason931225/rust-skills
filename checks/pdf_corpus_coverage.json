@@ -111,11 +111,11 @@
     }
   ],
   "summary": {
-    "covered": 553,
+    "covered": 554,
     "documented-deviation": 9,
     "project-specific": 310,
     "reject": 251,
-    "unreviewed": 202
+    "unreviewed": 201
   },
   "units": [
     {
@@ -17066,26 +17066,29 @@
       "page": 23,
       "page_text_sha256": "e810edebdd42b546c51caef5e3ab137ccefca69f48a29e2597ed7a7175116e68",
       "claim": "Types in Memory (depth 1 at Rust for Rustaceans.pdf page 23)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-generic-bounds",
+        "mem-assert-type-size"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit covers types in memory including dynamically sized types and the wide pointers that reference them; type-generic-bounds now states the implicit Sized bound and when to relax it, and mem-assert-type-size states the two-word cost of a wide pointer and that Option<Box<dyn Trait>> still fits the niche"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0",
         "page-text-sha256:e810edebdd42b546c51caef5e3ab137ccefca69f48a29e2597ed7a7175116e68"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_wide_pointer_is_two_words_and_option_still_uses_the_niche"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the unit's alignment and field-ordering material is covered only indirectly by mem-assert-type-size's layout sections; the rest of this chapter remains unreviewed",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0"
       }
     },
