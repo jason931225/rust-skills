@@ -111,11 +111,11 @@
     }
   ],
   "summary": {
-    "covered": 586,
+    "covered": 587,
     "documented-deviation": 15,
     "project-specific": 336,
     "reject": 386,
-    "unreviewed": 2
+    "unreviewed": 1
   },
   "units": [
     {
@@ -28639,14 +28639,16 @@
       "page": 408,
       "page_text_sha256": "616f41d28f0d4da885c36643de16ac566b61deca7f6f30fce967644eb48bd4c1",
       "claim": "11.5.3 Why use enums? (depth 3 at Rust in Action.pdf page 408)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-enum-states"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "argues an enum over a group of bare u8 constants because it is much harder to reach an illegal value, and uses #[repr(u8)] to fix discriminants an external system requires; the rule states both, and additionally corrects the section's claim that a prescribed representation prevents space optimisation"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:616f41d28f0d4da885c36643de16ac566b61deca7f6f30fce967644eb48bd4c1"
@@ -28655,10 +28657,11 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::validate_pdf_corpus"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the unit states that a prescribed representation prevents Rust from making space optimisations; measurement on 1.97.1 shows Option<T> of a repr(u8) fieldless enum is still one byte, so the rule states the width cost instead and does not carry the source's claim",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-20",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },

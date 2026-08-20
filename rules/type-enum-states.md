@@ -130,6 +130,79 @@ fn find_user(id: u64) -> Option<User> { ... }
 fn parse_config(s: &str) -> Result<Config, ParseError> { ... }
 ```
 
+## An Enum Instead Of A Group Of Integer Constants
+
+A set of related `const` values is the same information with none of the
+checking. Nothing stops an unlisted value from reaching a function that expects
+one of them, and nothing tells a reader that the set is meant to be closed:
+
+```rust
+// A value outside the intended set is an ordinary u8; nothing rejects it.
+pub const BLACK: u8 = 0x0;
+pub const BLUE: u8 = 0x1;
+pub const CYAN: u8 = 0x3;
+
+pub fn set_colour_loose(_code: u8) {}
+```
+
+An enum makes the set closed and the conversion one-directional: every value
+that reaches the function is one somebody declared, and adding a variant makes
+exhaustive matches fail until they account for it.
+
+```rust
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum Colour {
+    Black,
+    Blue,
+    Cyan,
+}
+
+pub fn set_colour(colour: Colour) -> u8 {
+    colour as u8
+}
+
+fn main() {
+    assert_eq!(set_colour(Colour::Cyan), 2);
+    // `set_colour(7)` does not compile: there is no `Colour` with that value.
+}
+```
+
+## Pinning Discriminants Only When Something Outside Demands Them
+
+When the numbers themselves are part of a contract — a hardware register, a
+wire format, an FFI enum — the compiler's freedom to choose discriminants is
+the problem, and `#[repr(uN)]` removes it:
+
+```rust
+#[repr(u8)]
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum VgaColour {
+    Black = 0x0,
+    Blue = 0x1,
+    Red = 0x4,
+    Yellow = 0xE,
+}
+
+fn main() {
+    // The values are now the contract, not an implementation detail.
+    assert_eq!(VgaColour::Red as u8, 0x4);
+    assert_eq!(VgaColour::Yellow as u8, 0xE);
+}
+```
+
+What this costs is narrower than it is usually described. `#[repr(u8)]` does
+**not** switch off niche optimisation: for a fieldless enum using a handful of
+the 256 available values, `size_of::<Option<VgaColour>>()` is still 1, and even
+`Option<Option<_>>` stays at 1, because unused values remain available as
+niches. The niche disappears when the *values* run out, not because `repr` was
+written.
+
+The real cost is width. `#[repr(uN)]` fixes the tag at `N`, so `#[repr(u32)]`
+on a two-variant enum is four bytes where the compiler would have used one.
+Choose the width the external contract actually specifies, and leave the
+attribute off entirely when no such contract exists — an unannotated enum is
+free to be smaller, and nothing outside the program can tell.
+
 ## See Also
 
 - [api-typestate](./api-typestate.md) - Type-level state machines

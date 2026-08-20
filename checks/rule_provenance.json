@@ -1324,6 +1324,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -2496,6 +2497,7 @@
       "rule_id": "proj-semver-contract",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -2510,6 +2512,7 @@
       "rule_id": "proj-stable-toolchain",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "rust_release_coverage.json",
         "zero2production_coverage.json"

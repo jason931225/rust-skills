@@ -68,6 +68,25 @@ git dependents get a resolver error instead of a mysterious compile failure.
 - Use `#[non_exhaustive]`, sealed traits, and private fields so that additions
   stay additive; run an API-diff tool in CI rather than deciding by eye.
 
+## Zero-Point Releases Break On The Minor
+
+Below 1.0 the compatibility axis moves left: for `0.y.z` the *minor* is what
+Cargo treats as the breaking position, so `"0.59"` already means
+`>=0.59.0, <0.60.0` and `0.60` is a different, incompatible line. A caret is
+implicit and does not widen it.
+
+This is not a technicality for platform-binding crates, which frequently live
+at `0.x` for years and remove or rename items every minor. Each bump is a
+migration to schedule, not a routine update, and pinning to one minor line is
+the deliberate choice rather than laziness.
+
+It also has a linking consequence. Two incompatible `0.x` minor lines of the
+same crate can both appear in one graph, and Cargo will link both — separate
+statics, separate thread-locals, separate `TypeId`s, and a type from one that
+does not satisfy a bound from the other. `cargo tree --duplicates` is what
+surfaces it, and the fix is to move the dependents onto one line rather than
+to accept the duplicate.
+
 ## See Also
 
 - [proj-msrv-declare](proj-msrv-declare.md) - declaring and testing the compiler floor

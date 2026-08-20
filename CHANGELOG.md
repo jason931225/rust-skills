@@ -7,6 +7,28 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `proj-stable-toolchain` gains the per-target half of a pinned build:
+  `rust-toolchain.toml` pins which compiler and targets, `.cargo/config.toml`
+  pins how each target links and runs. Carries the two merge rules that fail
+  silently — a matching `[target.*].rustflags` replaces `[build].rustflags`
+  outright rather than concatenating, and `RUSTFLAGS` in the environment
+  replaces every rustflags list from config, so an ad-hoc `RUSTFLAGS=` discards
+  the committed cross-linker settings.
+- `proj-cfg-select` gains predicate selection. The two Windows ABIs differ in
+  exactly one cfg key, `target_env`, so `#[cfg(windows)]` matches both and
+  cannot separate MinGW from MSVC; `target_pointer_width` is 64 for both x86_64
+  and aarch64, so it is not an architecture check.
+- `proj-works-out-of-box` gains the one-cfg-gated-layer boundary, so logic
+  above it compiles and tests unchanged on every target.
+- `proj-semver-contract` gains `0.y.z`: the minor is the breaking position, so
+  `"0.59"` already means `>=0.59.0, <0.60.0`, and two incompatible minor lines
+  in one graph link twice with separate statics and `TypeId`s.
+- `ffi-sys-vs-ffi-name` gains the dependency choice between raw `-sys` bindings
+  and a safe wrapper, and why taking both for one library is a mistake.
+- `type-enum-states` gains the case for an enum over a group of integer
+  constants, and `#[repr(uN)]` for discriminants an external contract fixes.
+
+### Added
 - `api-typestate` gains capability markers: an empty marker trait implemented by
   every state that has a capability, with one `impl` block (and free functions)
   bound on the marker instead of one block per concrete state. Adding a state
