@@ -73,6 +73,19 @@ fn main() {
   hold the floor steady; whichever is chosen, it belongs in the manifest of the
   build, not in a person's memory.
 
+## The Same Split On Windows
+
+Windows has the same class of decision under different names.
+`x86_64-pc-windows-msvc` links the UCRT, emits PDB debug info, and follows the
+MSVC C++ ABI; `x86_64-pc-windows-gnu` links MinGW's `msvcrt`, emits DWARF, and
+follows the GNU ABI. They are different C runtimes: objects built for one do
+not link against the other, and C++ interop does not cross between them.
+
+Pick the triple from what the deployment and any native dependencies require,
+state it the way this rule states a glibc floor, and verify the shipped binary
+against it — a locally-working `windows-gnu` build is not evidence for a fleet
+that expects `windows-msvc`.
+
 ## See Also
 
 - [proj-reproducible-runtime](proj-reproducible-runtime.md) - building the artifact that gets promoted

@@ -20,10 +20,10 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 24,
+    "covered": 27,
     "project-specific": 532,
     "reject": 327,
-    "unreviewed": 1241
+    "unreviewed": 1238
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -23938,27 +23938,29 @@
       "end_line": 147,
       "unit_sha256": "03fa610e623098ea3a4c8afb0e4e6a85ce8f9769df714505202e196be2c3ab1d",
       "claim": "io_uring: The Completion-Based Future (H3 at ch07-executors-and-runtimes.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-completion-owned-buffer"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit states that a completion-based engine cannot honestly implement the readiness AsyncRead/AsyncWrite traits because the kernel must own the buffer until the CQE while poll_read only lends it for that call, so the API must take the buffer by value and return it with the result; the rule states that same contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:b254eff71893e54b5ce6b78d823803f7e8f88116e3805922edf1b270d2eac285",
         "unit-sha256:03fa610e623098ea3a4c8afb0e4e6a85ce8f9769df714505202e196be2c3ab1d"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_completion_read_returns_the_buffer_it_took_by_value"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the source discusses io_uring specifically; the rule generalizes to overlapped IOCP and RDMA and adds the internal-buffer adapter guidance, neither of which the unit covers, and the assertion models the ownership transfer rather than exercising a real completion engine",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "b254eff71893e54b5ce6b78d823803f7e8f88116e3805922edf1b270d2eac285"
       }
     },
@@ -28431,27 +28433,29 @@
       "end_line": 394,
       "unit_sha256": "b9837331538686609978e924bc50f3b2592a29d01ac87b431d0dca1dbd0aa7c9",
       "claim": "Pattern 5: Feature Detection and Conditional Compilation (H3 at ch01-build-scripts-buildrs-in-depth.md#8)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-build-script-scope"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit warns against emitting rustc-cfg from host probes of optional libraries or hardware because that bakes the build machine into the artifact, and directs feature detection to Cargo features and target triple/OS/ABI instead; the rule states that same constraint"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:f15dcaa176f05e484fe3c6dd71a2738e87afd58db716ad3955916bf86a5182ba",
         "unit-sha256:b9837331538686609978e924bc50f3b2592a29d01ac87b431d0dca1dbd0aa7c9"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::build_script_output_depends_on_the_target_not_the_build_machine"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule also covers the links/cargo::metadata requirement for reaching dependents and the rerun-if-changed fingerprinting nuance, which live in a different unit of the same chapter; the assertion models the emitted-cfg decision as a pure function rather than running a real build script",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "f15dcaa176f05e484fe3c6dd71a2738e87afd58db716ad3955916bf86a5182ba"
       }
     },
@@ -33043,27 +33047,29 @@
       "end_line": 350,
       "unit_sha256": "563e08c6116fd87e1e3b2e8f84367b1d8cd7f44b1ff6d6eb021a624f8e4ff548",
       "claim": "Testing `no_std` Code (H3 at ch09-no-std-and-feature-verification.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "test-cross-target-execution"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit states that a #![no_std] library still runs cargo test --lib on the host because the test harness links std, so a green host run is not a target test; the rule states that same gap"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:2672a14a62dc3390d2f1249555e6befe2308ca0479a1e0e2006980170ba0396c",
         "unit-sha256:563e08c6116fd87e1e3b2e8f84367b1d8cd7f44b1ff6d6eb021a624f8e4ff548"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::host_verifiable_logic_stays_separate_from_target_only_behavior"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule also covers the cross-compilation half (a cross-built binary needs a configured runner or real hardware, and container fixtures must be mounted), which comes from a different chapter; the assertion covers only the host-verifiable-logic separation, not the CI wiring",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "2672a14a62dc3390d2f1249555e6befe2308ca0479a1e0e2006980170ba0396c"
       }
     },

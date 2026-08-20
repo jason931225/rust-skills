@@ -7,6 +7,33 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Three gaps from surveying the RustTraining async-book and engineering-book
+  via a ten-chunk Grok 4.6 xhigh pass: `async-completion-owned-buffer`
+  (completion I/O — io_uring, IOCP, RDMA — cannot honestly implement the
+  readiness `AsyncRead`/`AsyncWrite` traits, because the kernel owns the
+  buffer past the borrow `poll_read` ends; take it by value and hand it back
+  with the result), `proj-build-script-scope` (a `build.rs` configures only
+  its own package unless it declares `links`, and must decide from the target
+  rather than from what it finds installed on the build machine), and
+  `test-cross-target-execution` (a green `cargo test` proves the host build
+  works; a cross-compiled target needs a configured runner, and a `no_std`
+  library still tests on the host because the harness links `std`).
+### Changed
+- `async-no-lock-await` now states that releasing the lock around `.await`
+  can itself be the bug: the rule's own "clone out, process, update" pattern
+  is a check-then-act race whenever the second half depends on state the
+  first half observed, with three ranked resolutions. Also extended:
+  `err-context-chain` (`.context()??` on a `JoinHandle` or `timeout` labels
+  the outer `JoinError`/`Elapsed`, never the inner error),
+  `async-join-parallel` (concurrency does not require `'static` — only
+  `spawn` does; `LocalSet` drops `Send`, not `'static`), `test-sanitizers`
+  (ASan does not catch uninitialized reads, sanitizers need `-Zbuild-std`,
+  Miri cannot interpret C, coverage instrumentation must not be combined with
+  a sanitizer), `unsafe-pin-projection` (the three-way combinator tradeoff,
+  and that `F: Unpin` says nothing about `F::Output`),
+  `api-auto-trait-contract` (auto traits do not propagate through associated
+  types), `proj-dependency-policy` (an advisory scan is not a code review),
+  and `proj-libc-floor` (the Windows MSVC/GNU CRT split).
 - Four gaps from surveying "Type-Driven Correctness in Rust" (the first
   RustTraining book) via a six-chunk Grok 4.6 xhigh pass:
   `type-affine-quantity` (an absolute quantity and its delta are different

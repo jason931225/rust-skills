@@ -83,6 +83,37 @@ fn process_order(order_id: u64) -> Result<()> {
 // Caused by: "connection refused"
 ```
 
+## Nested Results From Tasks And Timeouts
+
+`JoinHandle::await` and `tokio::time::timeout` both yield
+`Result<Result<T, E>, Outer>` — the outer error is a `JoinError` or an
+`Elapsed`, and the inner one is whatever the work actually returned. Context
+attached at that boundary lands on the *outer* result only, so a completed
+inner failure rides through inside `Ok` and never receives it:
+
+```rust
+// Reads as if it labels the worker's failure. It does not: `.context()`
+// applies to the JoinError, and the inner `E` passes through untouched.
+// let value = handle.await.context("spawned worker failed")??;
+
+// And this maps a real inner error to a timeout that did not happen:
+// let value = timeout(dur, work).await.map_err(|_| MyError::Timeout)??;
+```
+
+Handle the two separately: attach context to the work *inside* the spawned
+future or immediately after unwrapping the inner `Result`, and map the outer
+error on its own. Otherwise a task that panicked and a task that returned an
+error become indistinguishable, and a timed-out call reports `Timeout` for a
+request that actually failed for some other reason.
+
+- Attach the inner context where the inner error is produced — inside the
+  spawned future — so it survives regardless of how the join is written.
+- Map `JoinError` and `Elapsed` explicitly, and say which one occurred; a
+  panicked task and a cancelled one are different operational events.
+- Assert the shape in a test: a failing inner operation's source chain should
+  contain the inner context, and a timed-out `Ok(Err(e))` should still surface
+  `e` rather than a fabricated timeout.
+
 ## Displaying Error Chains
 
 ```rust
