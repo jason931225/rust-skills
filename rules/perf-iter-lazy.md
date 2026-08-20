@@ -153,6 +153,43 @@ result.extend(
 );
 ```
 
+## `take_while` Consumes The Item That Stopped It
+
+`take_while` pulls the failing element from the underlying iterator to test it,
+then discards it. When the stop condition is observed *on* an item that still
+has to be kept — a terminator that belongs in the output, a record that must be
+re-examined by the next stage — that element is silently gone, and it is gone
+from the source iterator too, so a later `.next()` does not see it.
+
+```rust
+fn main() {
+    let data = [1, 2, 3, 99, 4];
+
+    // The sentinel 99 is tested, fails, and is dropped — it is not in the
+    // output and it is not left in the iterator either.
+    let mut it = data.iter().copied();
+    let taken: Vec<_> = it.by_ref().take_while(|&n| n != 99).collect();
+    assert_eq!(taken, vec![1, 2, 3]);
+    assert_eq!(it.next(), Some(4), "99 was consumed, not left behind");
+
+    // Keeping the boundary item: stop after including it.
+    let mut kept = Vec::new();
+    for n in data.iter().copied() {
+        let last = n == 99;
+        kept.push(n);
+        if last {
+            break;
+        }
+    }
+    assert_eq!(kept, vec![1, 2, 3, 99]);
+}
+```
+
+Reach for `by_ref()` plus an explicit loop, `peekable()` with `next_if`, or
+`scan` when the boundary element matters. Assert on both the output's contents
+and what remains in the source iterator — a test that checks only the taken
+prefix passes either way.
+
 ## See Also
 
 - [perf-iter-lazy](perf-iter-lazy.md) - keep iterators lazy and collect once

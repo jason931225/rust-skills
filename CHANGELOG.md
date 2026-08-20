@@ -7,6 +7,26 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `type-lifetime-branding` from the RustTraining rust-patterns-book: mint a
+  unique invariant lifetime with a `for<'brand> FnOnce` bound so a handle from
+  one collection cannot type-check against another. The invariant marker
+  (`PhantomData<*mut &'brand ()>`) is load-bearing — the covariant
+  `PhantomData<&'brand ()>` compiles the cross-instance mix and enforces
+  nothing, verified against rustc both ways.
+### Changed
+- `type-deref-coercion` carried an error: its "Legitimate Uses" list endorsed
+  `Deref` for newtypes whose purpose is adding invariants, which is the case
+  where it is most dangerous. `DerefMut` there is an outright hole (assignment
+  bypasses the constructor) and plain `Deref` surfaces the inner type's whole
+  API, growing with each std release. Corrected, with the accurate alternative
+  (inherent accessor, `AsRef`, explicit delegation).
+- `mem-zero-copy` now covers the borrow-versus-transform split: a JSON string
+  containing an escape has no contiguous run to borrow, so `&'de str` fails
+  outright — and `Cow<'de, str>` only borrows with `#[serde(borrow)]`, without
+  which it allocates unconditionally while looking zero-copy.
+- `perf-iter-lazy` now covers `take_while` consuming the element that stopped
+  it — the boundary item is dropped from the output *and* from the source
+  iterator.
 - Three gaps from surveying the RustTraining async-book and engineering-book
   via a ten-chunk Grok 4.6 xhigh pass: `async-completion-owned-buffer`
   (completion I/O — io_uring, IOCP, RDMA — cannot honestly implement the
