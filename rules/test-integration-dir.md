@@ -90,7 +90,8 @@ fn test_with_shared_config() {
 ## Organizing Many Tests
 
 ```rust
-// tests/api/mod.rs
+// tests/api/main.rs  (a `mod.rs` here compiles ZERO test targets:
+// cargo discovers only tests/*.rs and tests/<dir>/main.rs)
 mod auth;
 mod users;
 mod orders;

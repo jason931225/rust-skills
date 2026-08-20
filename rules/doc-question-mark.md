@@ -6,7 +6,36 @@
 
 Doc examples should model best practices. Using `.unwrap()` teaches users to ignore errors, while `?` demonstrates proper error propagation. Examples with `?` also fail the doctest if an error occurs, catching bugs in documentation.
 
-Rust doctests wrap examples in a function that returns `Result<(), E>` by default when you use `?`, making this pattern easy to adopt.
+## Making `?` Compile In A Doctest
+
+rustdoc wraps a mainless example in a `fn main()` returning `()`, so `?` does
+**not** work on its own — it is not given a `Result`-returning wrapper. Verified:
+without one the doctest fails with `E0277`, "the `?` operator can only be used
+in a function that returns `Result`".
+
+Give it a return type one of two ways:
+
+```rust
+/// ```
+/// let n: i32 = "42".parse()?;
+/// assert_eq!(n, 42);
+/// # Ok::<(), std::num::ParseIntError>(())
+/// ```
+/// Or write the wrapper yourself:
+/// ```
+/// fn main() -> Result<(), std::num::ParseIntError> {
+///     let n: i32 = "42".parse()?;
+///     assert_eq!(n, 42);
+///     Ok(())
+/// }
+/// ```
+pub fn parse_example() {}
+
+fn main() {}
+```
+
+The `# ` prefix hides the trailing `Ok` line from rendered docs while keeping
+it in the compiled test, so the example a reader sees stays uncluttered.
 
 ## Bad
 

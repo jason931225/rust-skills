@@ -20,7 +20,9 @@ struct ServerConfig {
 }
 
 fn main() {
-    // "timout_secs" is a typo — serde silently ignores it, timeout stays 0
+    // "timout_secs" is a typo. NOTE: with a *required* field this is NOT
+    // silent — serde fails with `missing field \`timeout_secs\``. The silent
+    // case needs #[serde(default)] or Option, which is when deny_unknown_fields earns its keep.
     let json = r#"{"host":"localhost","port":8080,"timout_secs":30}"#;
     let cfg: ServerConfig = serde_json::from_str(json).unwrap();
     println!("{:?}", cfg); // timeout_secs is 0, not 30

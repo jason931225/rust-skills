@@ -28,7 +28,9 @@ impl Engine {
     fn tick_physics(&mut self) { /* touches two others */ }
 }
 
-// Both borrow all of Engine, so this does not compile:
+// NOTE: these two sequential calls DO compile — NLL ends each &mut self
+// borrow at the call's return. The conflict appears only when a borrow
+// from the first call is still held across the second:
 // let a = engine.tick_audio(); let p = engine.tick_physics();
 ```
 
