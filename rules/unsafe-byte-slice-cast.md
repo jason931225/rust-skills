@@ -60,9 +60,18 @@ fn main() {
     assert_eq!(decode_header(&[0x00, 0x09, 0, 0]), Err(DecodeError::UnsupportedVersion(9)));
 
     // Alignment is why the pointer cast is unsound: a byte slice carries no
-    // guarantee that its start is aligned for the target type.
-    let unaligned = &frame[1..];
-    assert_ne!(unaligned.as_ptr().align_offset(align_of::<u32>()), 0);
+    // guarantee that its start is aligned for the target type. Force a known
+    // base so the demonstration is deterministic rather than depending on
+    // where the allocator happened to put a plain array.
+    #[repr(align(4))]
+    struct Aligned([u8; 8]);
+    let backing = Aligned([0x00, 0x01, 0x00, 0x20, 0xff, 0, 0, 0]);
+    let unaligned = &backing.0[1..];
+    assert_ne!(
+        unaligned.as_ptr().align_offset(align_of::<u32>()),
+        0,
+        "one byte past a 4-aligned base is never 4-aligned"
+    );
 }
 ```
 

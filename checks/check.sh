@@ -108,4 +108,10 @@ cargo check --examples --target "$TARGET" --keep-going --message-format=json \
 echo "==> gating against the baseline"
 python3 analyze.py check.json --check-baseline baseline.txt
 
+# The step above type-checks the examples but never runs them, so an example
+# that compiles while asserting something false would ship unnoticed. Run the
+# ones that carry assertions, on the host, and fail on a false claim.
+echo "==> running examples that carry assertions"
+python3 run_examples.py
+
 echo "All checks passed."
