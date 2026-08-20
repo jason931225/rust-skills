@@ -109,8 +109,8 @@ async fn select_example() {
     }
 }
 
-// Futures are cancelled at their next .await point
-// For immediate cancellation, futures must be cancel-safe
+// Losing futures are dropped where they are currently suspended, never polled
+// again; state held across that point is lost unless the future is cancel-safe
 ```
 
 ## Biased Selection

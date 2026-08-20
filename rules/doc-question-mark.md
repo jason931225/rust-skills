@@ -119,7 +119,7 @@ Rust wraps doc examples in a function. You can make this explicit:
 /// ```
 ```
 
-Or use the implicit wrapper (Rust 2021+):
+Or use rustdoc's implicit wrapper, which applies when the example ends with `Ok::<(), E>(())`:
 
 ```rust
 /// # Examples

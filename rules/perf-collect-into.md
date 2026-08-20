@@ -83,9 +83,7 @@ fn transform_batches(batches: &[Vec<RawData>]) -> Vec<ProcessedData> {
     
     for batch in batches {
         temp.clear();
-        batch.iter()
-            .map(ProcessedData::from)
-            .collect_into(&mut temp);
+        temp.extend(batch.iter().map(ProcessedData::from));
         
         // Process temp, append to results
         all_results.extend(temp.drain(..).filter(|p| p.is_valid()));
@@ -97,7 +95,9 @@ fn transform_batches(batches: &[Vec<RawData>]) -> Vec<ProcessedData> {
 
 ## Supported Collections
 
-`collect_into()` works with any type implementing `Extend`:
+`collect_into()` works with any type implementing `Extend`. This block is
+nightly-only for the same reason as the section above — on stable, call
+`extend` on any of these collections instead:
 
 ```rust
 use std::collections::{HashSet, HashMap, VecDeque};

@@ -25,9 +25,9 @@ if they carry different provenance.
 - Do not walk past an allocation's end "temporarily" to compute an address and
   step back; form the out-of-bounds pointer at all and the arithmetic is UB,
   independent of whether anything is ever read through it.
-- Use `wrapping_add`/`wrapping_sub` only when you accept losing the resulting
-  pointer's provenance for a later dereference; they define the arithmetic but
-  do not exempt the pointer from bounds rules if you dereference it.
+- Use `wrapping_add`/`wrapping_sub` when the arithmetic itself must stay defined
+  outside the allocation; the result keeps the base pointer's provenance, so it
+  may still only be dereferenced inside the allocation it was derived from.
 - Do not reconstruct a pointer from an integer you saved earlier and expect it
   to carry the provenance of the object it once pointed into; use
   `with_addr`/`expose_provenance`/`with_exposed_provenance` (note the last is
@@ -102,5 +102,5 @@ fn main() {
 - [unsafe-byte-slice-cast](unsafe-byte-slice-cast.md) - the bounds and alignment obligations for the value the pointer eventually reads
 - [unsafe-maybeuninit](unsafe-maybeuninit.md) - a pointer into uninitialized memory has the same provenance rules plus a validity gap
 - [unsafe-safety-comment](unsafe-safety-comment.md) - the local proof that every arithmetic step stays in bounds belongs in the comment, not in a passing test
-- [unsafe-miri-ci](unsafe-miri-ci.md) - the only tool that reliably catches a provenance violation that a debug build would not
+- [unsafe-miri-ci](unsafe-miri-ci.md) - run the pointer paths under Miri; a clean run is evidence about the executions it covered, not a proof
 - [opt-bounds-check](opt-bounds-check.md) - the safe-iterator alternative that never risks forming an out-of-bounds pointer
