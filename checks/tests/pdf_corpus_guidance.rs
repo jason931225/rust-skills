@@ -2559,3 +2559,52 @@ fn every_page_in_an_allocation_is_actually_touched_not_just_reserved() {
         assert_eq!(buffer[page * RIA_PAGE], 1);
     }
 }
+
+// --- api-clap-parser-contract ---------------------------------------------------
+
+use clap::Parser as _;
+
+#[derive(clap::Parser, Debug, PartialEq)]
+struct ClrConfig {
+    #[arg(value_name = "FILE")]
+    path: String,
+}
+
+#[test]
+fn a_bad_argv_returns_a_result_instead_of_exiting_the_process() {
+    let ok = ClrConfig::try_parse_from(["prog", "data.txt"]).expect("a valid argv parses");
+    assert_eq!(ok, ClrConfig { path: "data.txt".to_owned() });
+
+    assert!(ClrConfig::try_parse_from(["prog"]).is_err());
+}
+
+// --- type-line-terminator-fidelity -----------------------------------------------
+
+fn clr_copy_lines_faithfully(
+    mut input: impl std::io::BufRead,
+    output: &mut impl std::io::Write,
+) -> std::io::Result<()> {
+    let mut buffer = Vec::new();
+    loop {
+        buffer.clear();
+        let read = input.read_until(b'\n', &mut buffer)?;
+        if read == 0 {
+            break;
+        }
+        output.write_all(&buffer)?;
+    }
+    Ok(())
+}
+
+#[test]
+fn crlf_and_a_missing_final_newline_both_round_trip_unchanged() {
+    let crlf_input = b"one\r\ntwo\r\n".as_slice();
+    let mut out = Vec::new();
+    clr_copy_lines_faithfully(crlf_input, &mut out).expect("copies cleanly");
+    assert_eq!(out, b"one\r\ntwo\r\n");
+
+    let no_final_newline = b"one\ntwo".as_slice();
+    let mut out2 = Vec::new();
+    clr_copy_lines_faithfully(no_final_newline, &mut out2).expect("copies cleanly");
+    assert_eq!(out2, b"one\ntwo");
+}
