@@ -33,6 +33,11 @@ resending that name after the transport layer's job is done.
 - Prefer a maintained HTTP client library over hand-rolled `TcpStream`
   framing; write the socket-level version only to understand or diagnose the
   layer a library is hiding.
+- After transparent content decoding (gzip, brotli), `Content-Length` — where
+  the client still exposes it — reflects the *encoded* wire size, not the
+  size of the decoded bytes the caller reads back. Reporting one as the
+  other produces a value that does not match either the bytes sent or the
+  bytes received.
 
 ## Bad
 

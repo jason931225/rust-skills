@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 415 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 418 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 415 rules across 27 categories, prioritized by impact for use by
+Contains 418 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,7 +58,7 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
-| 5 | API Design | HIGH | `api-` | 55 |
+| 5 | API Design | HIGH | `api-` | 56 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 9 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
@@ -69,7 +69,7 @@ Reference these guidelines when:
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
 | 14 | Serde | MEDIUM | `serde-` | 10 |
 | 15 | Pattern Matching | MEDIUM | `pat-` | 6 |
-| 16 | Macros | MEDIUM | `macro-` | 12 |
+| 16 | Macros | MEDIUM | `macro-` | 13 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 17 |
@@ -78,7 +78,7 @@ Reference these guidelines when:
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
 | 24 | Project Structure | LOW | `proj-` | 35 |
-| 25 | FFI & Interop | LOW | `ffi-` | 10 |
+| 25 | FFI & Interop | LOW | `ffi-` | 11 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
 
@@ -221,6 +221,7 @@ Reference these guidelines when:
 - [`api-buffer-disclosure`](rules/api-buffer-disclosure.md) - Disclose only the bytes a request actually filled, never the reused buffer's full length
 - [`api-http-connection-lifecycle`](rules/api-http-connection-lifecycle.md) - Force connection close on a one-shot HTTP client, and resend the hostname in every request even though the connection already resolved it
 - [`api-clap-parser-contract`](rules/api-clap-parser-contract.md) - Know which clap behaviors are silent by default — process-exiting parse errors, id/value_name confusion, and declaration-order positionals — and pin each one deliberately
+- [`api-request-scoped-state`](rules/api-request-scoped-state.md) - Build shared application state outside the per-worker factory and clone a handle into each worker; read request-scoped values from the framework's typed extension map, not from handler parameters alone
 
 ### 6. Async/Await (HIGH)
 
@@ -380,6 +381,7 @@ Reference these guidelines when:
 - [`macro-declarative-before-proc`](rules/macro-declarative-before-proc.md) - Prefer `macro_rules!` over a procedural macro whenever the transform can be written by example
 - [`macro-no-implied-items`](rules/macro-no-implied-items.md) - Do not let a macro invent extra items the caller never wrote, especially public types
 - [`macro-absolute-std-paths`](rules/macro-absolute-std-paths.md) - In exported macros, name standard items by absolute `::core` paths and your own by `$crate`
+- [`macro-proc-helper-attributes`](rules/macro-proc-helper-attributes.md) - Give trait-dependent derive logic an explicit helper attribute instead of trying to query type information a proc macro cannot see
 
 ### 17. Closures (MEDIUM)
 
@@ -543,6 +545,7 @@ Reference these guidelines when:
 - [`ffi-opaque-handle-lifecycle`](rules/ffi-opaque-handle-lifecycle.md) - Hand C an opaque pointer from `Box::into_raw` and exactly one paired free, and validate it on every call
 - [`ffi-c-bitflag-enum`](rules/ffi-c-bitflag-enum.md) - Model a C bitmask constant group as a newtype integer with associated constants, not as a `#[repr(C)]` fieldless enum
 - [`ffi-foreign-resource-binding`](rules/ffi-foreign-resource-binding.md) - Return a foreign pointer to the allocator that produced it, and wrap distinct foreign handle kinds in their own opaque types so they cannot be swapped
+- [`ffi-wasm-wire-abi`](rules/ffi-wasm-wire-abi.md) - Export a compound value across a numeric-only WebAssembly ABI as an explicit `(ptr, len)` pair, never as a pointer to a Rust type's private in-memory layout
 
 ### 26. Clippy & Linting (LOW)
 

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 415,
-  "ledger_mapped": 269,
+  "rule_count": 418,
+  "ledger_mapped": 272,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 269,
+    "ledger-mapped": 272,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -417,6 +417,13 @@
     },
     {
       "rule_id": "api-record-checksum",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "api-request-scoped-state",
       "provenance": "ledger-mapped",
       "ledgers": [
         "pdf_corpus_coverage.json"
@@ -1219,6 +1226,13 @@
       ]
     },
     {
+      "rule_id": "ffi-wasm-wire-abi",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
+    },
+    {
       "rule_id": "lint-cargo-metadata",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -1397,6 +1411,13 @@
       "source_class": "crate-docs",
       "justification": "The contract belongs to the `syn` crate's error API \u2014 `syn::Error::new`, `Error::new_spanned`, `Error::combine`, and `to_compile_error` \u2014 together with `quote` and `proc-macro2` for emitting the resulting token stream.",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "rule_id": "macro-proc-helper-attributes",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "macro-proc-syn-quote",

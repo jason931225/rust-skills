@@ -2608,3 +2608,96 @@ fn crlf_and_a_missing_final_newline_both_round_trip_unchanged() {
     clr_copy_lines_faithfully(no_final_newline, &mut out2).expect("copies cleanly");
     assert_eq!(out2, b"one\ntwo");
 }
+
+// --- api-request-scoped-state ------------------------------------------------
+
+struct FsrSharedState {
+    request_count: std::sync::atomic::AtomicU64,
+}
+
+fn fsr_app_factory(
+    shared: std::sync::Arc<FsrSharedState>,
+) -> impl Fn() -> std::sync::Arc<FsrSharedState> {
+    move || std::sync::Arc::clone(&shared)
+}
+
+fn fsr_handle_request(state: &FsrSharedState) -> u64 {
+    state.request_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1
+}
+
+#[test]
+fn shared_state_cloned_into_each_worker_is_visible_across_workers() {
+    let shared = std::sync::Arc::new(FsrSharedState {
+        request_count: std::sync::atomic::AtomicU64::new(0),
+    });
+    let worker_a = fsr_app_factory(std::sync::Arc::clone(&shared))();
+    let worker_b = fsr_app_factory(std::sync::Arc::clone(&shared))();
+
+    assert_eq!(fsr_handle_request(&worker_a), 1);
+    assert_eq!(fsr_handle_request(&worker_b), 2);
+    assert_eq!(fsr_handle_request(&worker_a), 3);
+}
+
+// --- ffi-wasm-wire-abi ---------------------------------------------------------
+
+fn fsr_greeting_ptr_len() -> (u64, u64) {
+    let message = "hello";
+    let bytes = message.as_bytes();
+    let layout = std::alloc::Layout::array::<u8>(bytes.len()).expect("layout for greeting bytes");
+    let ptr = unsafe { std::alloc::alloc(layout) };
+    assert!(!ptr.is_null(), "allocation failed");
+    unsafe { std::ptr::copy_nonoverlapping(bytes.as_ptr(), ptr, bytes.len()) };
+    (ptr as u64, bytes.len() as u64)
+}
+
+fn fsr_free_bytes(ptr: *mut u8, len: usize) {
+    if len == 0 {
+        return;
+    }
+    let layout = std::alloc::Layout::array::<u8>(len).expect("layout for freed bytes");
+    unsafe { std::alloc::dealloc(ptr, layout) };
+}
+
+#[test]
+fn a_ptr_len_pair_round_trips_the_bytes_and_frees_through_the_matching_layout() {
+    let (ptr, len) = fsr_greeting_ptr_len();
+    let ptr = ptr as *mut u8;
+    let len = len as usize;
+
+    let copied = unsafe { std::slice::from_raw_parts(ptr, len) }.to_vec();
+    assert_eq!(copied, b"hello");
+
+    fsr_free_bytes(ptr, len);
+}
+
+// --- macro-proc-helper-attributes ----------------------------------------------
+
+struct FsrBuilderArgs {
+    flags: syn::punctuated::Punctuated<syn::Ident, syn::Token![,]>,
+}
+
+impl syn::parse::Parse for FsrBuilderArgs {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(FsrBuilderArgs { flags: syn::punctuated::Punctuated::parse_terminated(input)? })
+    }
+}
+
+fn fsr_is_required(attrs: &[syn::Attribute]) -> syn::Result<bool> {
+    for attr in attrs {
+        if !attr.path().is_ident("builder") {
+            continue;
+        }
+        let args: FsrBuilderArgs = attr.parse_args()?;
+        return Ok(args.flags.iter().any(|flag| flag == "required"));
+    }
+    Ok(false)
+}
+
+#[test]
+fn an_unrecognized_attribute_is_skipped_not_treated_as_an_error() {
+    let attrs: Vec<syn::Attribute> = vec![syn::parse_quote!(#[builder(required)])];
+    assert!(fsr_is_required(&attrs).expect("parses"));
+
+    let unrelated: Vec<syn::Attribute> = vec![syn::parse_quote!(#[serde(skip)])];
+    assert!(!fsr_is_required(&unrelated).expect("unrecognized attributes are skipped"));
+}
