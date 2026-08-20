@@ -7,6 +7,21 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `async-sync-core` gains the adoption decision the boundary rule presumed:
+  what a runtime costs before it buys anything — lock types change, `Send +
+  'static` propagates outward through every generic that feeds a task, and
+  every test grows an executor — against what it actually buys, which is many
+  mostly-waiting operations without an OS thread each. The crossover is a
+  measurement, so the rule states the comparison and not a number.
+- `perf-iter-lazy` gains laziness as a correctness hazard: an adapter body runs
+  once per item pulled, so a side effect in a chain nobody consumes runs zero
+  times. `#[must_use]` catches the simplest case and stops helping as soon as
+  the value is bound or partially consumed.
+- `api-builder-pattern` gains where failure belongs in a fluent chain — setters
+  are pure assignments, fallibility concentrates in the terminal call — because
+  a chain that can fail at every step gives every `?` the same anonymity.
+
+### Added
 - `async-assert-send` gains the generic case. The compile-time assertion cannot
   be written for a generic future, so a generic API that hands its parameter to
   another worker declares `Send + 'static` itself. Without it the caller's error

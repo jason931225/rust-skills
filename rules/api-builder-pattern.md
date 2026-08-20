@@ -194,6 +194,72 @@ impl MyBuilder {
 - Two optional values do not automatically justify a builder; inherent `new` / `with_*` constructors may be clearer.
 - When required arguments themselves form semantic groups, use cascaded helper types rather than hiding them in builder state.
 
+## Where Failure Belongs In A Fluent Chain
+
+A chain reads as one expression, which is exactly why the steps inside it
+should not be places things happen. Keep every setter a pure assignment — no
+file reads, no DNS lookups, no connections, no validation that can fail — and
+concentrate fallibility in the terminal call:
+
+```rust
+pub struct Config {
+    endpoint: String,
+    retries: u32,
+}
+
+#[derive(Default)]
+pub struct ConfigBuilder {
+    endpoint: Option<String>,
+    retries: Option<u32>,
+}
+
+impl ConfigBuilder {
+    /// Setters record intent and cannot fail.
+    #[must_use]
+    pub fn endpoint(mut self, endpoint: impl Into<String>) -> Self {
+        self.endpoint = Some(endpoint.into());
+        self
+    }
+
+    #[must_use]
+    pub fn retries(mut self, retries: u32) -> Self {
+        self.retries = Some(retries);
+        self
+    }
+
+    /// One place where interacting options are checked and one error type.
+    pub fn build(self) -> Result<Config, &'static str> {
+        let endpoint = self.endpoint.ok_or("endpoint is required")?;
+        if endpoint.is_empty() {
+            return Err("endpoint must not be empty");
+        }
+        Ok(Config { endpoint, retries: self.retries.unwrap_or(3) })
+    }
+}
+
+fn main() {
+    let config = ConfigBuilder::default()
+        .endpoint("https://example.invalid")
+        .retries(5)
+        .build()
+        .expect("valid configuration");
+    assert_eq!(config.retries, 5);
+
+    assert!(ConfigBuilder::default().build().is_err(), "missing endpoint is caught at build");
+}
+```
+
+The reason is diagnostic rather than aesthetic. When a setter can fail, the
+chain either returns `Result` at every step — so each `?` hides which link
+broke — or it defers the failure and reports it later against a call that looks
+unrelated. One fallible terminal call gives one place to attach context, and
+the option interactions are validated together, where the relationship between
+them is visible.
+
+The same applies to any fluent API, not only builders: if a step performs I/O,
+it is not a step in an expression, it is a statement that should be written as
+one.
+
 ## See Also
 
 - [api-builder-must-use](api-builder-must-use.md) - Add #[must_use] to builders

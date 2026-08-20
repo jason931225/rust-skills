@@ -190,6 +190,53 @@ Reach for `by_ref()` plus an explicit loop, `peekable()` with `next_if`, or
 and what remains in the source iterator — a test that checks only the taken
 prefix passes either way.
 
+## A Side Effect In An Unconsumed Chain Never Happens
+
+Laziness is a performance property everywhere else in this rule, and a
+correctness hazard the moment an adapter does something other than compute a
+value. An adapter body runs once per item pulled, so a chain nobody consumes
+runs it zero times:
+
+```rust
+use std::cell::Cell;
+
+fn main() {
+    let writes = Cell::new(0);
+    let data = [1, 2, 3];
+
+    // `map` is lazy and nothing consumes this, so the body never runs.
+    let _unconsumed = data
+        .iter()
+        .map(|n| {
+            writes.set(writes.get() + 1);
+            n * 2
+        });
+    assert_eq!(writes.get(), 0, "the side effect did not happen at all");
+
+    // The same chain, consumed.
+    let doubled: Vec<i32> = data
+        .iter()
+        .map(|n| {
+            writes.set(writes.get() + 1);
+            n * 2
+        })
+        .collect();
+    assert_eq!(writes.get(), 3);
+    assert_eq!(doubled, vec![2, 4, 6]);
+}
+```
+
+The compiler helps a little — an unused adapter is `#[must_use]`, so the first
+case warns — but the warning disappears as soon as the value is bound, passed
+on, or partially consumed by `take`. A chain that is short-circuited by `any`,
+`find`, or a `?` inside `collect` stops pulling at the deciding element, and
+every side effect after it silently does not occur.
+
+So keep adapter bodies free of effects: no writes, no logging, no counters, no
+I/O. Where a per-item effect is the point, use `for_each` or a `for` loop,
+which run because they consume; where you want to observe a chain without
+changing it, `inspect` exists and is honest about being diagnostic.
+
 ## See Also
 
 - [perf-iter-over-index](./perf-iter-over-index.md) - Prefer iterators
