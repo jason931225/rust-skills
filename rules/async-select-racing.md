@@ -129,6 +129,36 @@ select! {
 // when both have messages ready
 ```
 
+The random default is not an arbitrary choice — it is the fairness mechanism,
+and `biased` trades it away. When an earlier branch is ready on nearly every
+poll, the later branches get whatever is left. Draining two permanently-full
+channels through the same loop 2000 times:
+
+```text
+biased   : first=1920  second=80
+unbiased : first=991   second=1009
+```
+
+The second branch under `biased` is not deadlocked — it still progresses when
+the first briefly has nothing — but it received four percent of the turns. If
+that branch is a shutdown signal or a health check, four percent may be fine;
+if it is the other half of the work, the loop has a throughput bug that no test
+of either branch alone will show.
+
+Note which direction that cuts. `biased` is the standard advice for fixing
+starvation, and it does fix it — but only when the branch at risk is listed
+*first*. Written the other way round, with the hot branch first, `biased` is
+what produces the 1920/80 split above. It is a priority declaration in whatever
+order you wrote, so decide which branch is being deprioritised and say so,
+rather than reaching for `biased` because starvation was the symptom. Where every branch must make
+progress, keep the default ordering, or drain the hot branch in bounded batches
+so the loop returns to `select!` at a rate you chose:
+
+```rust
+// Take at most N from the hot source before yielding back to the other arms.
+const BATCH: usize = 32;
+```
+
 ## Loop with select!
 
 ```rust

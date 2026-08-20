@@ -20,15 +20,15 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 826,
+    "covered": 828,
     "documented-deviation": 25,
     "project-specific": 708,
     "reject": 532,
-    "unreviewed": 33
+    "unreviewed": 31
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2091 of 2124 units carry a reviewed disposition with a named reviewer; 33 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "reason": "Source-bound inventory under semantic review. 2093 of 2124 units carry a reviewed disposition with a named reviewer; 31 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -26520,14 +26520,16 @@
       "end_line": 230,
       "unit_sha256": "1227a2fbc9ca7fa1444a94e3ad6e6f0bd0f5e0d34a037acd3f2cec70b09a284a",
       "claim": "select! Fairness and Starvation (H3 at ch12-common-pitfalls.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-select-racing"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states that a select! loop whose branch is ready on nearly every poll starves its siblings, and that the fix is biased ordering or draining the hot branch in bounded batches; the rule states that contract with the measured split"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:fcf067fceb8e3428fdac592012b5de635307730e203700ca40e6347925a555a9",
@@ -26537,10 +26539,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit presents biased as the fix without noting it produces the starvation when the hot branch is listed first; the rule states that direction explicitly and the unit does not",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "fcf067fceb8e3428fdac592012b5de635307730e203700ca40e6347925a555a9"
       }
     },
@@ -31439,14 +31441,16 @@
       "end_line": 76,
       "unit_sha256": "7f966477615799975e136a7a31e397ef322205d91cf7654fc913f4192d49c806",
       "claim": "Source-Based Coverage with `llvm-cov` (H3 at ch04-code-coverage-seeing-what-tests-miss.md#2)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "test-observable-coverage"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "prescribes LLVM source-based instrumentation as the measurement, which is the contract the rule states along with reading regions rather than lines"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058",
@@ -31456,10 +31460,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit is largely a walkthrough of one tool's CLI; the rule states the measurement contract without endorsing a particular tool, and no rule covers that tool's flags",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058"
       }
     },
