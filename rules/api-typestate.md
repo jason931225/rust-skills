@@ -218,6 +218,95 @@ exist for the branch that took a shortcut. Do not let one branch skip a
 field "because it usually has a good default" — make the default explicit
 in that branch's own `Set(default)`, not by omitting the transition.
 
+## Grouping States By Capability Instead Of Naming Each One
+
+Writing one `impl` block per concrete state duplicates every method the states
+share, and adding a state means revisiting each of those blocks. Name the
+capability instead, as an empty marker trait implemented by every state that
+has it, and bound one `impl` block on it:
+
+```rust
+use std::marker::PhantomData;
+
+pub struct Running;
+pub struct Halted;
+pub struct Debugging;
+
+/// The capability, not the state. Every state that can do this implements it.
+pub trait CanReadRegs {}
+impl CanReadRegs for Halted {}
+impl CanReadRegs for Debugging {}
+
+pub struct Target<S> {
+    regs: [u32; 4],
+    _state: PhantomData<S>,
+}
+
+impl<S> Target<S> {
+    fn retag<T>(self) -> Target<T> {
+        Target { regs: self.regs, _state: PhantomData }
+    }
+}
+
+impl Target<Running> {
+    pub fn new() -> Self {
+        Target { regs: [1, 2, 3, 4], _state: PhantomData }
+    }
+
+    pub fn halt(self) -> Target<Halted> {
+        self.retag()
+    }
+}
+
+/// One block serves every capable state, including ones added later.
+impl<S: CanReadRegs> Target<S> {
+    pub fn read_reg(&self, index: usize) -> u32 {
+        self.regs[index]
+    }
+
+    pub fn reg_count(&self) -> usize {
+        self.regs.len()
+    }
+}
+
+/// Free functions bind the same marker, so they accept every capable state
+/// without naming any of them.
+pub fn first_reg<S: CanReadRegs>(target: &Target<S>) -> u32 {
+    target.read_reg(0)
+}
+
+fn main() {
+    let halted = Target::<Running>::new().halt();
+    assert_eq!(halted.read_reg(0), 1);
+    assert_eq!(halted.reg_count(), 4);
+    assert_eq!(first_reg(&halted), 1);
+
+    // `Debugging` got both methods from its one `impl CanReadRegs` line.
+    let debugging: Target<Debugging> =
+        Target { regs: [9, 9, 9, 9], _state: PhantomData };
+    assert_eq!(debugging.read_reg(3), 9);
+    assert_eq!(first_reg(&debugging), 9);
+}
+```
+
+Adding a state that can read registers is then one line — `impl CanReadRegs for
+NewState {}` — and it gains every method in the block at once. States without
+the marker are still rejected, and the error names the missing capability
+rather than a missing method:
+
+```text
+error[E0599]: the method `read_reg` exists for struct `Target<Running>`,
+              but its trait bounds were not satisfied
+   |
+   | pub struct Running;
+   | ------------------ doesn't satisfy `Running: CanReadRegs`
+```
+
+Keep the markers about capabilities rather than about which states exist. A
+marker per method is just the per-state duplication with more names; a marker
+that groups states by what callers may do with them is the thing that stays
+stable as states are added.
+
 ## `Drop` Cannot Be Specialized Per State
 
 A single generic type cannot implement `Drop` only for one of its typestate
