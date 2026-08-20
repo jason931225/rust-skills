@@ -1401,7 +1401,17 @@ reviewed_pdf_difference_kinds = {
     "project-specific": {"out-of-scope"},
     "reject": {"contradicts-rule", "out-of-scope"},
 }
-allowed_pdf_rationale_classes = {"pending-semantic-review"} | allowed_book_rationale_classes
+# The PDF corpus needs two classes the other book ledgers do not. That set was
+# written when this corpus was only mined for rule material, where every row
+# either produced a rule or stayed unreviewed. Dispositioning it completely
+# means classifying prefaces, indexes, exercises, and the books' own running
+# demo projects, which are neither obsolescent nor provider-specific — they
+# carry no engineering contract at all. Same reasoning as the training corpus.
+allowed_pdf_rationale_classes = {
+    "pending-semantic-review",
+    "tutorial-scaffolding",
+    "project-specific-detail",
+} | allowed_book_rationale_classes
 allowed_pdf_applicability = {"inventory-parity-only", "behavior-assertion", "documentation-only"}
 
 
