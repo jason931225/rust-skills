@@ -105,8 +105,11 @@ fn main() {
 - Size the counter for the reuse rate. A `u32` wrapping after four billion
   removals of one slot is usually fine; a `u16` in a hot pool is not.
 - Keep the fields private so a handle cannot be forged from a bare index.
-- The `slotmap` and `slab` crates implement this; the rule is about not
-  hand-rolling the bare-index version.
+- `slotmap` implements this: its keys carry a version alongside the index, so
+  a stale key is rejected. `slab` does **not** — its keys are bare `usize`
+  indices and it documents that removed slots are reused, which is exactly the
+  pattern this rule forbids. Reach for `slab` only where a stale handle cannot
+  occur; the rule is about not hand-rolling the bare-index version.
 
 ## See Also
 

@@ -32,16 +32,21 @@ unsafe_code = "deny"
 missing_docs = "warn"
 
 [workspace.lints.clippy]
-# Correctness
+# Individually selected — these are NOT in the groups enabled below.
+# unwrap_used / expect_used / panic are `restriction` lints: opinionated
+# choices a project opts into, never enabled as a group.
 unwrap_used = "deny"
 expect_used = "warn"
 panic = "deny"
 
-# Style
+# needless_pass_by_value is `pedantic`; redundant_clone is not a `style` lint
+# either. Naming them individually is the point — enabling their parent groups
+# wholesale would pull in far more than these two.
 needless_pass_by_value = "warn"
 redundant_clone = "warn"
 
-# Complexity
+# cognitive_complexity is `nursery`: unstable and prone to false positives, so
+# it is opted into by name rather than by group.
 cognitive_complexity = "warn"
 
 [workspace.lints.rustdoc]

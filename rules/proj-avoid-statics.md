@@ -13,7 +13,7 @@ path.
 
 The same identity warning applies to thread-local state: every linked crate
 version and thread gets another copy, especially across incompatible `0.x`
-minor lines; Edition 2024 rejects `static mut`, and workspace lint policy can
+minor lines; Edition 2024 denies *references* to `static mut` (`static_mut_refs`); direct access still compiles but every use needs `unsafe`, and workspace lint policy can
 keep ad-hoc globals out of libraries.
 
 ## Bad

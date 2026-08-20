@@ -23,6 +23,10 @@ through the pointer before anything on the Rust side can move or free them.
   — `(ptr: u32, len: u32)` for a string or byte buffer — never as a raw
   pointer to a `String`, `Vec<T>`, or other type whose field layout is not
   part of a documented ABI.
+- Return the pair in a `#[repr(C)]` struct or through out-parameters, never
+  as a Rust tuple. Tuples have unspecified layout — rustc's
+  `improper_ctypes_definitions` lint rejects one in an `extern "C"` signature
+  for exactly the reason this rule exists.
 - Have the host copy bytes out of linear memory using the returned `(ptr,
   len)` before making any further call into the module; a call that can
   allocate invalidates any cached view into memory, independent of this
@@ -59,14 +63,24 @@ pub extern "C" fn greet() -> *mut String {
 ```rust
 use std::alloc::{alloc, dealloc, Layout};
 
-/// Returns an explicit (ptr, len) pair as two plain integers — the numeric
-/// wire format every WASM host ABI actually supports — rather than a
-/// pointer into a Rust type's private layout. On a real wasm32 target both
-/// fields fit natively in `u32`; this example uses `u64` because it runs on
-/// a 64-bit host, where a real heap pointer does not fit in 32 bits at all —
-/// packing it into one would truncate the address, not model the ABI.
+/// The pair the host reads back. A Rust tuple would NOT do here: tuples have
+/// unspecified layout and rustc rejects them as not-FFI-safe, which is this
+/// rule's own thesis applied to the return value. `#[repr(C)]` is what makes
+/// the field order and offsets part of the contract.
+#[repr(C)]
+pub struct PtrLen {
+    pub ptr: u64,
+    pub len: u64,
+}
+
+/// Returns an explicit (ptr, len) pair as plain integers in a `#[repr(C)]`
+/// struct — the numeric wire format every WASM host ABI actually supports —
+/// rather than a pointer into a Rust type's private layout. On a real wasm32
+/// target both fields fit natively in `u32`; this example uses `u64` because
+/// it runs on a 64-bit host, where a real heap pointer does not fit in 32
+/// bits at all.
 #[unsafe(no_mangle)]
-pub extern "C" fn greeting_ptr_len() -> (u64, u64) {
+pub extern "C" fn greeting_ptr_len() -> PtrLen {
     let message = "hello";
     let bytes = message.as_bytes();
     let layout = Layout::array::<u8>(bytes.len()).expect("layout for greeting bytes");
@@ -77,7 +91,7 @@ pub extern "C" fn greeting_ptr_len() -> (u64, u64) {
     assert!(!ptr.is_null(), "allocation failed");
     // SAFETY: `ptr` was just allocated with room for `bytes.len()` bytes.
     unsafe { std::ptr::copy_nonoverlapping(bytes.as_ptr(), ptr, bytes.len()) };
-    (ptr as u64, bytes.len() as u64)
+    PtrLen { ptr: ptr as u64, len: bytes.len() as u64 }
 }
 
 /// The matching free: same allocator, same size and alignment as the
@@ -94,9 +108,9 @@ pub extern "C" fn free_bytes(ptr: *mut u8, len: usize) {
 }
 
 fn main() {
-    let (ptr, len) = greeting_ptr_len();
-    let ptr = ptr as *mut u8;
-    let len = len as usize;
+    let pair = greeting_ptr_len();
+    let ptr = pair.ptr as *mut u8;
+    let len = pair.len as usize;
 
     // Stands in for the host copying bytes out of linear memory using the
     // numeric (ptr, len) pair, before calling back into the module again.

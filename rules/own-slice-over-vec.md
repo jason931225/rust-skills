@@ -82,7 +82,8 @@ process(&arc);    // Works
 // Bad
 fn read_config(path: &PathBuf) -> Config { /* ... */ }
 
-// Good - accepts &Path, &PathBuf, &str, &String
+// Good - accepts &Path and &PathBuf (deref coercion). Note that &str and
+// &String do NOT coerce to &Path; for those, take `impl AsRef<Path>` below.
 fn read_config(path: &Path) -> Config { /* ... */ }
 
 // Even better - accept anything path-like

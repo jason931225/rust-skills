@@ -19,7 +19,7 @@ The `clippy::pedantic` group contains opinionated lints that aren't universally 
 # Cargo.toml - cherry-pick useful pedantic lints
 [lints.clippy]
 # Enable pedantic as baseline
-pedantic = "warn"
+pedantic = { level = "warn", priority = -1 }
 
 # Disable noisy ones
 missing_errors_doc = "allow"      # Document errors separately
@@ -59,7 +59,7 @@ must_use_candidate = "allow"      # Too many suggestions
 # Cargo.toml
 [lints.clippy]
 # Start with pedantic
-pedantic = "warn"
+pedantic = { level = "warn", priority = -1 }
 
 # Keep these
 doc_markdown = "warn"
@@ -110,6 +110,28 @@ Pedantic lints are style choices. Agree as a team:
 3. Discuss each warning category
 4. Disable ones that don't fit your style
 5. Document decisions in `clippy.toml`
+
+## Group Entries Need A Lower Priority
+
+A group and an individual lint in the same `[lints.*]` table both default to
+priority 0, and Cargo refuses to guess which wins:
+
+```
+error: lint group `pedantic` has the same priority (0) as a lint
+```
+
+That is `clippy::lint_groups_priority`, deny-by-default, so the config does not
+merely warn — the build fails. Give every *group* entry an explicit lower
+priority so the individual `allow`/`warn` lines that follow override it:
+
+```toml
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }   # group: lower priority
+missing_errors_doc = "allow"                   # individual: wins over the group
+```
+
+The same applies to any group entry — `nursery`, `restriction`, `cargo` — not
+just `pedantic`.
 
 ## See Also
 
