@@ -58,7 +58,7 @@ enum AppError { ... }
 ## Standard Library Examples
 
 ```rust
-// Result and Option are #[must_use]
+// Result is #[must_use]
 let v: Vec<i32> = vec![1, 2, 3];
 v.first();  // Warning: unused Option
 

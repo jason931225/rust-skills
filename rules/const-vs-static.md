@@ -18,7 +18,8 @@ state, atomics, `OnceLock`, or `LazyLock` according to the ownership contract.
 // large table as `const` — potentially duplicated at every use site
 const LOOKUP: [u8; 256] = [0u8; 256];
 
-// `static mut` — unsafe to read and a hard error in edition 2024
+// `static mut` — every access needs `unsafe`, and edition 2024 denies
+// *references* to it (`static_mut_refs`); direct reads/writes still compile
 static mut COUNTER: u64 = 0;
 
 // `static` for a tiny value — needlessly takes an address

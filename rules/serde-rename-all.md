@@ -61,10 +61,10 @@ enum Status {
 | `"kebab-case"` | `foo-bar` |
 | `"SCREAMING_SNAKE_CASE"` | `FOO_BAR` |
 | `"snake_case"` | `foo_bar` (identity) |
-| `"UPPERCASE"` | `FOOBAR` |
-| `"lowercase"` | `foobar` |
+| `"UPPERCASE"` | `FOO_BAR` (uppercases; the underscore stays) |
+| `"lowercase"` | `foo_bar` (already lowercase; identity here) |
 
-A field-level `#[serde(rename = "...")]` always wins over the container-level `rename_all`, so use it for exceptions like reserved words or one-off mismatches. For enums, `rename_all` applies to variant names.
+A field-level `#[serde(rename = "...")]` always wins over the container-level `rename_all`, so use it for exceptions like reserved words or one-off mismatches. For enums, `rename_all` applies to variant names — and note the results differ: `UPPERCASE`/`lowercase` merely change the case of a field name and leave its underscores alone, while a `FooBar` *variant* has no underscore to keep, so the same value yields `FOOBAR`/`foobar` there.
 
 ## See Also
 

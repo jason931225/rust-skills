@@ -67,7 +67,16 @@ fn test_cli_output() {
 1. Run tests for the first time: `cargo test` — insta creates `.snap.new` files.
 2. Review and accept: `cargo insta review` — interactive diff; press `a` to accept.
 3. Commit the `.snap` files alongside your code changes.
-4. In CI, run `cargo test` and `cargo insta test --check` (or set `INSTA_UPDATE=unseen`) to fail if any snapshot is new or changed without being committed.
+4. In CI, run `cargo insta test --check`, or `cargo test` with
+   `INSTA_UPDATE=no`, so a snapshot that is new or changed without being
+   committed fails the build.
+
+   Use one of those two. Do **not** reach for `INSTA_UPDATE=unseen` here: it
+   is a development convenience for writing snapshots that do not exist yet,
+   not a check, and it does not make an *existing* snapshot's change fail.
+   A CI setting that can write over a committed `.snap` turns a real output
+   regression into a green run with a rewritten golden file — the one outcome
+   snapshot testing exists to prevent.
 
 ```bash
 # CI: fail on any unapproved snapshots

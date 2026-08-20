@@ -39,15 +39,30 @@ pub struct Matcher {
 
 impl Matcher {
     pub fn new(needle: &str, case_insensitive: bool) -> Self {
-        Self { needle: needle.to_owned(), case_insensitive }
+        // Fold ONCE, here, when the matcher is built — never per input line.
+        let needle = if case_insensitive {
+            needle.to_ascii_lowercase()
+        } else {
+            needle.to_owned()
+        };
+        Self { needle, case_insensitive }
     }
 
     pub fn matches(&self, line: &str) -> bool {
         if self.case_insensitive {
-            // ASCII folding is well-defined and allocation-free; a real
-            // matcher (regex, ICU collation) applies full Unicode folding.
-            line.to_ascii_lowercase()
-                .contains(&self.needle.to_ascii_lowercase())
+            // The needle was folded at construction; the line is scanned in
+            // place, so this allocates nothing per input. A real matcher
+            // (regex, ICU collation) applies full Unicode folding instead.
+            let needle = self.needle.as_bytes();
+            if needle.is_empty() {
+                return true;
+            }
+            if line.len() < needle.len() {
+                return false;
+            }
+            line.as_bytes()
+                .windows(needle.len())
+                .any(|window| window.eq_ignore_ascii_case(needle))
         } else {
             line.contains(&self.needle)
         }
