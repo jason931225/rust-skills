@@ -20,10 +20,10 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 20,
+    "covered": 24,
     "project-specific": 532,
     "reject": 327,
-    "unreviewed": 1245
+    "unreviewed": 1241
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -957,27 +957,29 @@
       "end_line": 97,
       "unit_sha256": "dcb103e52b362f28e5914dc8722884e69a8a0d24b0fabd788cc0b2e2a1e18659",
       "claim": "Step 2 \u2014 The command trait (type-indexed dispatch) (H3 at ch02-typed-command-interfaces-request-determi.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-typed-command-dispatch"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit's command trait carries an associated Response type and its own decoder, so the executor's return type is determined by the request type; the rule states that same contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e8f495c6c767b4b327aca008459fe878d1e2a96c550ddf74718b6645f9a1bd9",
         "unit-sha256:dcb103e52b362f28e5914dc8722884e69a8a0d24b0fabd788cc0b2e2a1e18659"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_requests_response_type_is_pinned_by_the_request_not_the_call_site"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the source's worked example is an NVMe admin-command interface and the rule's assertion uses a reduced two-command stand-in; the rule additionally advises keeping a raw-opcode transport layer unreachable from the typed API, which the unit does not discuss",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e8f495c6c767b4b327aca008459fe878d1e2a96c550ddf74718b6645f9a1bd9"
       }
     },
@@ -2885,27 +2887,29 @@
       "end_line": 172,
       "unit_sha256": "f3d83f96c94659d6f388363b40acfaf71bf99c8c71023fc3f34763b0f3a534eb",
       "claim": "Newtype Macro for Hardware Quantities (H2 at ch06-dimensional-analysis-making-the-compiler.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-affine-quantity"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit's physics caveat states that an absolute quantity must not implement Add<Self> and that a point type and a delta type are distinct; the rule states that same point/delta split"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:c30cec330d61b933a00404ab42652a673afcdd61d796fa7d3f5bd3a847c07c5f",
         "unit-sha256:f3d83f96c94659d6f388363b40acfaf71bf99c8c71023fc3f34763b0f3a534eb"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::two_absolute_temperatures_subtract_to_a_delta_and_cannot_be_added"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the source raises the caveat in prose beside a macro that does generate Add<Self>; the rule's worked point/delta pair, its assertion, and its generalization past temperature to timestamps and positions are this rule's own construction",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "c30cec330d61b933a00404ab42652a673afcdd61d796fa7d3f5bd3a847c07c5f"
       }
     },
@@ -4346,27 +4350,29 @@
       "end_line": 175,
       "unit_sha256": "0952593668e325be054080a78555df2d13566a08549a3998bf8a1f538b4a66d6",
       "claim": "Mixin Traits (Diagnostic Behaviors) (H2 at ch08-capability-mixins-compile-time-hardware-.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "trait-capability-mixin"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit builds mixin traits with supertrait bounds over ingredient traits plus an empty blanket impl, so a mixin method exists only on a receiver owning every ingredient; the rule states that same construction"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:ec119258d4cd0fa1d68e15c4a59f43c68e0fc83cf889ae8652cbda0ab7bb7977",
         "unit-sha256:0952593668e325be054080a78555df2d13566a08549a3998bf8a1f538b4a66d6"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_mixin_method_exists_only_on_a_receiver_owning_every_ingredient"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the source demonstrates this on embedded SPI/I2C controllers while the rule's assertion uses unit-typed stand-in buses, proving the trait-resolution property rather than hardware behavior; the rule's argument for why this beats a free function taking each resource separately is stated more explicitly than in the unit",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "ec119258d4cd0fa1d68e15c4a59f43c68e0fc83cf889ae8652cbda0ab7bb7977"
       }
     },
@@ -6239,27 +6245,29 @@
       "end_line": 433,
       "unit_sha256": "2e4616c91dc65954e1fdf9086d257858bc048fb258c9b940d153d82e6f44d533",
       "claim": "Exercise: DMA Transfer Guard (H2 at ch16-send-sync-compile-time-concurrency-proofs.md#10)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-exclusive-occupancy-guard"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit's DMA transfer guard exercise specifies a !Send guard owning the buffer whose only way back is a consuming wait; the rule states that same shape"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:ac1fe088b57b0f94f5a85fb3382f9230dbbb79b39d1ebf6baa4fa6fbb4ff56c9",
         "unit-sha256:2e4616c91dc65954e1fdf9086d257858bc048fb258c9b940d153d82e6f44d533"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_buffer_in_flight_is_recoverable_only_by_consuming_its_guard"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the source frames this as an exercise without a full solution; the assertion proves the consuming-wait round trip while the !Send half is stated as a compile-fail case rather than executed, and the rule's no-Deref requirement and its generalization to GPU/io_uring/RDMA go beyond the exercise text",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "ac1fe088b57b0f94f5a85fb3382f9230dbbb79b39d1ebf6baa4fa6fbb4ff56c9"
       }
     },

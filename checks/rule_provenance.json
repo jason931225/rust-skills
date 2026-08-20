@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 418,
-  "ledger_mapped": 272,
+  "rule_count": 422,
+  "ledger_mapped": 276,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 272,
+    "ledger-mapped": 276,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -499,6 +499,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "api-typed-command-dispatch",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -2661,6 +2668,13 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "rule_id": "trait-capability-mixin",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "trait-coherence-newtype",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -2697,6 +2711,13 @@
       ]
     },
     {
+      "rule_id": "type-affine-quantity",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "type-capability-token",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -2730,6 +2751,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "type-exclusive-occupancy-guard",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
