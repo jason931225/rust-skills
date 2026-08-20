@@ -64,6 +64,52 @@ fn main() {
 }
 ```
 
+## Generic Parameters Carry The Bound The Assertion Cannot
+
+The compile-time assertion above pins a concrete future. It cannot be written
+for a generic one — there is no single type to name — so a generic API that
+hands its parameter to another worker has to declare the bound on its own
+signature instead.
+
+An `async fn` generic over `T` compiles without `Send` on `T`, because the
+obligation only appears once a caller spawns it. That is where the diagnostic
+appears too:
+
+```text
+error[E0277]: `Rc<u8>` cannot be sent between threads safely
+   --> src/main.rs:7:32
+note: required because it's used within this `async` fn body
+   --> src/main.rs:2:40
+note: required by a bound in `tokio::spawn`
+   --> .../tokio-1.53.1/src/task/spawn.rs:176:21
+```
+
+The caller is told their value is wrong by way of a line inside somebody else's
+function body and a line inside tokio. Declaring the bound moves it to the
+signature the caller actually wrote against:
+
+```text
+error[E0277]: `Rc<u8>` cannot be sent between threads safely
+   = help: the trait `Send` is not implemented for `Rc<u8>`
+note: required by a bound in `store`
+```
+
+```rust
+use std::fmt::Debug;
+
+// The bound is part of the contract, not an accident of the body.
+pub async fn store<T: Debug + Send + 'static>(value: T) {
+    let _ = value;
+}
+```
+
+This is one of the places where adding a bound that is not strictly required to
+compile is correct: the bound documents that the value will cross a worker,
+and it fails at the boundary where it can be fixed. Add it when the parameter
+is spawned, sent to a task, or stored somewhere a task will reach; leave it off
+when the value never leaves the caller's thread, since `Send + 'static` on a
+parameter that stays local narrows the API for nothing.
+
 ## See Also
 
 - [async-clone-before-await](async-clone-before-await.md) - drop `!Send` borrows before the future is spawned
