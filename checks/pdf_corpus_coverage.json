@@ -111,11 +111,11 @@
     }
   ],
   "summary": {
-    "covered": 554,
+    "covered": 553,
     "documented-deviation": 9,
     "project-specific": 310,
     "reject": 251,
-    "unreviewed": 201
+    "unreviewed": 202
   },
   "units": [
     {
@@ -18422,28 +18422,26 @@
       "page": 157,
       "page_text_sha256": "64f228753e080fb7e9be41eefde9c3d828720c225a2482e1e2456d0dbe8e4141",
       "claim": "Great Responsibility (depth 1 at Rust for Rustaceans.pdf page 157)",
-      "audit_disposition": "covered",
-      "disposition": "covered",
-      "mapped_rule_ids": [
-        "unsafe-dropck-phantom"
-      ],
+      "audit_disposition": "unreviewed",
+      "disposition": "unreviewed",
+      "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "rule-extends-source",
-        "detail": "the unit (\"Great Responsibility\", pp.157-166) covers drop-check and the #[may_dangle]+PhantomData interaction, including the nightly-only escape hatch; the rule states the stable-Rust half only \u2014 a raw-pointer-holding wrapper needs PhantomData<T> for drop-check to see it as owning a T at all \u2014 since #[may_dangle] cannot appear in a stable-toolchain compiled example"
+        "kind": "unassessed",
+        "detail": "not compared with any rule; no semantic coverage credit"
       },
-      "rationale_class": "source-aligned",
+      "rationale_class": "pending-semantic-review",
       "supporting_evidence": [
         "source-sha256:455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0",
         "page-text-sha256:64f228753e080fb7e9be41eefde9c3d828720c225a2482e1e2456d0dbe8e4141"
       ],
       "executable_check": {
-        "applicability": "behavior-assertion",
-        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_value_held_behind_a_raw_pointer_is_dropped_exactly_once"
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
       },
-      "remaining_uncertainty": "#[may_dangle] itself (feature dropck_eyepatch) is nightly-only and is mentioned in this rule's prose only, not compiled; the assertion proves the ordinary PhantomData<T> case runs a value's destructor exactly once, not the lifetime-rejection half of dropck, which would need a compile-fail harness",
+      "remaining_uncertainty": "previously mapped to unsafe-dropck-phantom, which was removed: its premise was false on stable Rust. Non-parametric dropck (RFC 1238) already requires every generic parameter of a type with a Drop impl to strictly outlive it, so the PhantomData<T> the rule prescribed changed nothing. The chapter's dropck and #[may_dangle] material is real and remains unreviewed.",
       "semantic_review": {
-        "status": "reviewed",
-        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "status": "unreviewed",
+        "reviewer": null,
         "source_sha256": "455e66c0b52773b6ae4a7118bcf9303d3a355d00f128b066aec9c29dee0532a0"
       }
     },
