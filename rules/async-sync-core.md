@@ -151,6 +151,45 @@ fn main() {
   I/O sequences rather than to the number of business rules; a growing pile of
   `#[tokio::test]` unit tests means logic has drifted back into the shell.
 
+## What Adopting A Runtime Costs Before It Buys Anything
+
+The boundary above assumes async is already in the program. Whether it should
+be is a separate decision, and it is usually made by habit rather than by
+comparison — an executor is what the ecosystem's examples use, so it arrives
+with the first HTTP client.
+
+Adopting one is not a library choice; it is a change to the type of almost
+everything:
+
+- **Lock types change.** A `std::sync::Mutex` guard held across `.await` is a
+  defect rather than a style preference, so shared state either moves to an
+  async lock, gets restructured so the critical section never awaits, or moves
+  behind an owner task.
+- **`Send + 'static` propagates.** Spawning pushes those bounds outward through
+  every generic that feeds a task, and a type that is legitimately `!Send`
+  becomes a design problem rather than an implementation detail.
+- **Every test grows a runtime.** A pure function can be called; an `async fn`
+  needs an executor and, in practice, a stub for each dependency it reaches.
+  That is the same cost this rule's Why It Matters describes, paid once per
+  test rather than once per program.
+
+Against that, what an executor buys is the ability to keep a very large number
+of *mostly-waiting* operations in flight without one OS thread each. If the
+program does not have that shape, the costs are still charged.
+
+The comparison to make is with a thread pool sized by what the work actually
+does. Sleeping threads are cheap — a few hundred blocked on I/O are an ordinary
+configuration, not a smell — so for a workload with tens or low hundreds of
+concurrent operations, threads plus blocking calls is the simpler program and
+frequently the faster one. The crossover is workload-specific and belongs in a
+measurement rather than in a rule of thumb; what does not vary is that the
+decision should be made and written down, because reversing it later means
+recolouring every signature that grew an `async`.
+
+Apply the same deletion test at the program level that this rule applies to
+each function: if the runtime were removed and the calls were blocking, what
+would actually break?
+
 ## See Also
 
 - [async-tokio-runtime](async-tokio-runtime.md) - the shell owns the runtime; the core never sees one
