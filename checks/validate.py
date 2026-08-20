@@ -1232,8 +1232,21 @@ if training is not None:
     if training.get("summary") != actual_training_summary:
         err(f"{MICROSOFT_TRAINING_COVERAGE.name}: disposition summary differs from unit ledger")
     training_status = training.get("audit_status", {})
-    if training_status.get("semantic_status") != "unreviewed-backlog":
-        err(f"{MICROSOFT_TRAINING_COVERAGE.name}: semantic review status is not explicit")
+    # Derived from the rows, not pinned to a constant. The literal
+    # "unreviewed-backlog" outlived its own truth once review started: it kept
+    # asserting nothing had been reviewed while most of the ledger had been,
+    # and the check held the stale claim in place instead of catching it.
+    expected_semantic_status = (
+        "unreviewed-backlog"
+        if any(unit.get("disposition") == "unreviewed" for unit in training_units)
+        else "reviewed"
+    )
+    if training_status.get("semantic_status") != expected_semantic_status:
+        err(
+            f"{MICROSOFT_TRAINING_COVERAGE.name}: semantic status "
+            f"{training_status.get('semantic_status')!r} does not match the rows, "
+            f"which are {expected_semantic_status!r}"
+        )
     if not training_status.get("reason") or not training_status.get("required_evidence"):
         err(f"{MICROSOFT_TRAINING_COVERAGE.name}: semantic review evidence is incomplete")
 

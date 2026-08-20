@@ -2,20 +2,20 @@
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
   "rule_count": 430,
-  "ledger_mapped": 327,
-  "typed_justification": 103,
+  "ledger_mapped": 352,
+  "typed_justification": 78,
   "summary": {
-    "cargo-book": 3,
+    "cargo-book": 2,
     "clippy-docs": 6,
-    "crate-docs": 20,
+    "crate-docs": 11,
     "edition-guide": 2,
-    "ledger-mapped": 327,
-    "rust-api-guidelines": 18,
-    "rust-performance-book": 6,
-    "rust-reference": 14,
-    "rustonomicon": 2,
-    "std-docs": 21,
-    "synthesized-practice": 11
+    "ledger-mapped": 352,
+    "rust-api-guidelines": 15,
+    "rust-performance-book": 5,
+    "rust-reference": 11,
+    "rustonomicon": 1,
+    "std-docs": 17,
+    "synthesized-practice": 8
   },
   "entries": [
     {
@@ -27,15 +27,16 @@
     },
     {
       "rule_id": "anti-collect-intermediate",
-      "provenance": "typed-justification",
-      "source_class": "rust-performance-book",
-      "justification": "Avoiding intermediate `collect()` calls to cut heap allocations and extra passes is the allocation-and-iteration advice The Rust Performance Book collects, with the laziness of `Iterator` adapters as the underlying std behaviour.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "anti-empty-catch",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -55,23 +56,24 @@
     },
     {
       "rule_id": "anti-index-over-iter",
-      "provenance": "typed-justification",
-      "source_class": "synthesized-practice",
-      "justification": "The rule's own text concedes that neither indexed nor iterator syntax guarantees bounds-check elimination or vectorization, leaving the contract as an idiomatic-expressiveness argument (traversal and pairing stated directly, less hand-written index/length coordination) rather than a documented language, std, or lint guarantee.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "anti-lock-across-await",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The rule derives from Tokio's documented distinction between `std::sync::Mutex` and `tokio::sync::Mutex` \u2014 that a synchronous guard held across `.await` can block or deadlock a runtime worker while an async guard serializes waiting tasks \u2014 with Clippy's `await_holding_lock` cited only as enforcement.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "anti-over-abstraction",
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -248,16 +250,17 @@
       "rule_id": "api-extract-or-reject",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
     {
       "rule_id": "api-fallible-self-return",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The contract is the standard library's own convention for consuming fallible methods \u2014 String::from_utf8 returns the bytes inside FromUtf8Error, BufWriter::into_inner returns the writer inside IntoInnerError, and Rc::try_unwrap returns the original Rc \u2014 so a recoverable failure does not destroy an irreplaceable receiver.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "api-free-functions",
@@ -324,7 +327,8 @@
       "rule_id": "api-impl-io",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -352,15 +356,16 @@
       "rule_id": "api-must-use",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
     {
       "rule_id": "api-newtype-safety",
-      "provenance": "typed-justification",
-      "source_class": "rust-api-guidelines",
-      "justification": "This is the API Guidelines' newtype guidance \u2014 wrapping primitives in distinct types so semantically different values such as `UserId` and `GroupId` cannot be interchanged \u2014 extended with the guidelines' advice on eagerly deriving common traits on those wrappers.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "api-no-wrapper-params",
@@ -373,6 +378,7 @@
       "rule_id": "api-non-exhaustive",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -459,10 +465,10 @@
     },
     {
       "rule_id": "api-sealed-trait",
-      "provenance": "typed-justification",
-      "source_class": "rust-api-guidelines",
-      "justification": "The sealed-trait pattern, a public trait with a private supertrait in a hidden module so downstream crates can call but not implement it and methods can be added without a breaking change, is the API Guidelines' sealed-trait guidance verbatim in structure.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "api-serde-optional",
@@ -593,10 +599,10 @@
     },
     {
       "rule_id": "async-cancel-safety",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "This is Tokio's documented cancellation-safety contract \u2014 `select!` drops the futures of branches that did not complete, and Tokio marks which primitives such as `mpsc::Receiver::recv` and `AsyncReadExt::read` are cancel-safe versus `read_exact`/`read_to_end`, which lose partially accumulated state.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-cancellation-token",
@@ -607,10 +613,10 @@
     },
     {
       "rule_id": "async-clone-before-await",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The rule hangs on tokio::spawn's documented bound that a spawned future must be Send + 'static (with spawn_local/LocalSet as the non-Send alternative), which is what forces an Arc::clone rather than a borrow; the Send/Sync properties of Arc and Rc it leans on are std contracts.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-completion-owned-buffer",
@@ -666,10 +672,10 @@
     },
     {
       "rule_id": "async-join-parallel",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "Built on the documented semantics of tokio's join! and try_join! macros \u2014 branches polled in one task rather than spawned, try_join! returning the first error and dropping the remaining branch futures, plus the biased poll option and futures' buffered/buffer_unordered for dynamic fan-out.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-joinset-structured",
@@ -741,10 +747,10 @@
     },
     {
       "rule_id": "async-tokio-fs",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The contract is `tokio::fs`'s documented behaviour of delegating blocking regular-file syscalls to Tokio's blocking pool, so awaiting it frees a worker without making the syscall asynchronous or cancellable, which is what forces the explicit byte, file-count, and concurrency bounds the rule prescribes.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-tokio-runtime",
@@ -772,6 +778,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -784,31 +791,32 @@
     },
     {
       "rule_id": "closure-fn-trait-bounds",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The `FnOnce`/`FnMut`/`Fn` hierarchy, which closures implement which trait, and the cited bounds on `Iterator::map` and `thread::spawn` are documented contracts of standard-library traits and APIs.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "closure-impl-fn-return",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The contract rests on language semantics \u2014 each closure has a distinct unnameable type that `impl Trait` in return position preserves but cannot unify across branches, while `Box<dyn Fn>` erases it behind a vtable; the allocation/dispatch cost framing also touches performance-book territory.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "closure-move-capture",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
     {
       "rule_id": "closure-static-vs-dyn",
-      "provenance": "typed-justification",
-      "source_class": "synthesized-practice",
-      "justification": "Choosing monomorphized `impl Fn` against `&dyn Fn`/`Box<dyn Fn>` on grounds of code size, storage of heterogeneous closures, and measured hot paths is an engineering trade-off with no single upstream document stating it.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "coll-binaryheap",
@@ -842,6 +850,7 @@
       "rule_id": "conc-atomic-ordering",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -864,6 +873,7 @@
       "rule_id": "conc-db-transaction-boundary",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -879,6 +889,7 @@
       "rule_id": "conc-pattern-choice",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -892,10 +903,10 @@
     },
     {
       "rule_id": "conc-scoped-threads",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "States the documented guarantees of std::thread::scope: the Scope handle lets spawned threads borrow non-'static data from 'env, every scoped thread is joined before scope returns, and a child panic is re-raised by the scope.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "conc-signal-handler-safety",
@@ -943,10 +954,10 @@
     },
     {
       "rule_id": "const-generics",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "Const generic parameters are language semantics \u2014 a `const N: usize` parameter is part of the type, each value monomorphizes separately so types with different values are non-interchangeable, and permitted parameter types are limited to integers, `bool`, and `char` \u2014 with no stabilization release asserted here.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "const-named-magic",
@@ -959,6 +970,7 @@
       "rule_id": "const-vs-static",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -1053,10 +1065,10 @@
     },
     {
       "rule_id": "doc-intra-links",
-      "provenance": "typed-justification",
-      "source_class": "rust-api-guidelines",
-      "justification": "The requirement that prose link to the types and methods it names is the Rust API Guidelines documentation item on hyperlinking, with rustdoc's intra-doc link syntax and the broken_intra_doc_links lint as the mechanism.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "doc-module-inner",
@@ -1303,7 +1315,8 @@
       "rule_id": "ffi-sys-crate-builds",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -1337,10 +1350,10 @@
     },
     {
       "rule_id": "lint-cfg-check",
-      "provenance": "typed-justification",
-      "source_class": "cargo-book",
-      "justification": "The contract is Cargo's `[lints.rust]` table carrying `unexpected_cfgs` with `check-cfg` entries, Cargo automatically registering declared `feature` names, and workspace lint inheritance via `[workspace.lints]` / `[lints] workspace = true`; the rustc lint itself is only the mechanism the manifest configures.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "lint-clippy-nursery-selected",
@@ -1435,6 +1448,7 @@
       "rule_id": "lint-warnings-deny-config",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "rust_release_coverage.json"
       ]
     },
@@ -1443,6 +1457,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1548,7 +1563,8 @@
       "rule_id": "mem-arena-allocator",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -1602,10 +1618,10 @@
     },
     {
       "rule_id": "mem-drop-order",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The rule states the language's destructor semantics \u2014 struct fields and tuple/array elements drop in declaration order, locals in reverse declaration order, temporaries at end of statement \u2014 which is defined by the language rather than by any library contract.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "mem-page-commit",
@@ -2234,17 +2250,17 @@
     },
     {
       "rule_id": "perf-iter-lazy",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "It restates the standard library's documented iterator contract that adaptors are lazy and do nothing until consumed, and enumerates which `Iterator` methods are adaptors versus consumers such as `collect`, `any`, and `find`.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "perf-iter-over-index",
-      "provenance": "typed-justification",
-      "source_class": "synthesized-practice",
-      "justification": "The rule explicitly disclaims any performance guarantee and argues instead from source-level contract clarity (off-by-one ranges, silent length truncation, index/value drift), an engineering argument the author assembles himself; it overlaps Clippy's `needless_range_loop` policy but the rule does not derive from that lint.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "perf-profile-first",
@@ -2298,6 +2314,7 @@
       "rule_id": "proj-build-rs-minimal",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2319,6 +2336,7 @@
       "rule_id": "proj-cfg-select",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "rust_release_coverage.json"
       ]
     },
@@ -2350,6 +2368,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -2404,6 +2423,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2516,6 +2536,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2533,6 +2554,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "rust_release_coverage.json"
       ]
@@ -2562,22 +2584,23 @@
       "rule_id": "serde-deny-unknown-fields",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
     {
       "rule_id": "serde-enum-representation",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The four representations and their limits are serde's own container-attribute contract \u2014 the default externally tagged form, #[serde(tag = \"...\")], #[serde(tag, content)], and #[serde(untagged)] \u2014 including serde's documented restriction that internally tagged enums cannot carry tuple or primitive-newtype variants.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "serde-flatten",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "It derives from serde's `#[serde(flatten)]` attribute, including its documented incompatibility with `deny_unknown_fields`, its content-buffering deserialization path, and its unsuitability for non-self-describing formats such as bincode.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "serde-format-version",
@@ -2588,10 +2611,10 @@
     },
     {
       "rule_id": "serde-rename-all",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The rule states serde's `rename_all` container attribute, the exact set of case values it accepts, and the precedence of a field-level `rename` over it.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "serde-skip-empty",
@@ -2782,15 +2805,16 @@
     },
     {
       "rule_id": "test-snapshot-testing",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The workflow and assertions belong to the insta crate \u2014 assert_debug_snapshot!/assert_json_snapshot!/assert_snapshot!, .snap and .snap.new files, cargo insta review, and the INSTA_UPDATE environment control used to fail CI on unapproved snapshots.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "test-tokio-async",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2909,6 +2933,7 @@
       "rule_id": "type-enum-states",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -2959,6 +2984,7 @@
       "rule_id": "type-newtype-ids",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -3077,6 +3103,7 @@
       "rule_id": "type-variance",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -3091,6 +3118,7 @@
       "rule_id": "unsafe-extern-block",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "rust_release_coverage.json"
       ]
     },
@@ -3127,10 +3155,10 @@
     },
     {
       "rule_id": "unsafe-minimize-scope",
-      "provenance": "typed-justification",
-      "source_class": "rustonomicon",
-      "justification": "The contract is the Rustonomicon's soundness reasoning about unsafe: an unsafe fn states a caller obligation rather than blessing its whole body, each unsafe operation needs a local proof of its preconditions, and safe code must not be folded into the trusted surface; the unsafe_op_in_unsafe_fn and Clippy undocumented_unsafe_blocks lints are cited only as enforcement.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "unsafe-miri-ci",
@@ -3146,6 +3174,7 @@
       "rule_id": "unsafe-no-mangle-unsafe",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "rust_release_coverage.json"
       ]
     },
@@ -3183,6 +3212,7 @@
       "rule_id": "unsafe-send-sync-manual",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -3199,6 +3229,7 @@
       "rule_id": "unsafe-volatile-mmio",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     }
