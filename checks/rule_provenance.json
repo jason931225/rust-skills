@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 428,
-  "ledger_mapped": 320,
+  "rule_count": 429,
+  "ledger_mapped": 321,
   "typed_justification": 108,
   "summary": {
     "cargo-book": 3,
     "clippy-docs": 6,
     "crate-docs": 21,
     "edition-guide": 2,
-    "ledger-mapped": 320,
+    "ledger-mapped": 321,
     "rust-api-guidelines": 18,
     "rust-performance-book": 6,
     "rust-reference": 15,
@@ -1158,6 +1158,13 @@
       "ledgers": [
         "microsoft_training_coverage.json",
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "err-panic-handler-policy",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {
