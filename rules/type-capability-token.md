@@ -94,6 +94,54 @@ fn main() {
   proves the caller held authority, not that the policy still permits the
   action.
 
+## Minting Proof From A Successful Initialization
+
+The same private-field mint works for resource acquisition, not just authority.
+When a service starts several independently-failing sources and can run
+degraded without some of them, the usual shape is an `Option` per source and a
+`.unwrap()`, `expect()`, or silently-skipped branch at every read.
+
+Hand back a proof instead. The token is minted only where the source came up,
+and every function that reads that source takes the token, so the degraded path
+cannot name it:
+
+```rust
+pub struct Cache {
+    entries: Vec<String>,
+}
+
+/// Minted only by a successful `Cache::connect`. The private field is what
+/// makes it unforgeable — no other module can construct one.
+pub struct CacheReady(());
+
+impl Cache {
+    pub fn connect(ok: bool) -> Option<(Self, CacheReady)> {
+        ok.then(|| (Cache { entries: vec!["hit".to_string()] }, CacheReady(())))
+    }
+
+    /// Taking the proof by reference means this cannot be called on a path
+    /// where the cache failed to start — there is no token to pass.
+    pub fn lookup(&self, _proof: &CacheReady, index: usize) -> Option<&str> {
+        self.entries.get(index).map(String::as_str)
+    }
+}
+
+fn main() {
+    let (cache, proof) = Cache::connect(true).expect("connected");
+    assert_eq!(cache.lookup(&proof, 0), Some("hit"));
+
+    // The degraded path holds no proof, so the read does not compile there
+    // rather than panicking or silently returning nothing.
+    assert!(Cache::connect(false).is_none());
+}
+```
+
+One proof per source, not one for the whole startup: a single `Initialized`
+token would be back to claiming everything came up. And keep the token separate
+from the resource rather than folding it into a state parameter — the source is
+either usable or absent, so there is no transition to model, and a typestate
+here buys a type parameter for a distinction `Option` already makes.
+
 ## See Also
 
 - [api-authz-fail-closed](api-authz-fail-closed.md) - the runtime decision this makes visible

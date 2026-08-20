@@ -20,15 +20,15 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 828,
+    "covered": 832,
     "documented-deviation": 25,
     "project-specific": 708,
     "reject": 532,
-    "unreviewed": 31
+    "unreviewed": 27
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2093 of 2124 units carry a reviewed disposition with a named reviewer; 31 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "reason": "Source-bound inventory under semantic review. 2097 of 2124 units carry a reviewed disposition with a named reviewer; 27 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -6439,14 +6439,16 @@
       "end_line": 295,
       "unit_sha256": "3e764640f33b7ce13d393a780966abc275d13b59944b7a700b9dccb64cd8ed31",
       "claim": "Function Bounds as Theorems (H2 at ch16-send-sync-compile-time-concurrency-proofs.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-assert-send"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states that a generic API handing work to another thread should declare Send and 'static on its own type parameters so the violation is reported at the caller's bound; the rule states that and shows the two diagnostics that differ"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:ac1fe088b57b0f94f5a85fb3382f9230dbbb79b39d1ebf6baa4fa6fbb4ff56c9",
@@ -6456,10 +6458,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit frames the bounds as theorems about the signature generally; the rule states the case where the bound is not required to compile and is added for the diagnostic and the contract",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "ac1fe088b57b0f94f5a85fb3382f9230dbbb79b39d1ebf6baa4fa6fbb4ff56c9"
       }
     },
@@ -7443,14 +7445,16 @@
       "end_line": 494,
       "unit_sha256": "fe99d9731370e51bfa5b3409c7360fc42a4b5f4d3ce0f23c191737108face264",
       "claim": "Section 2 \u2014 Source-Availability Tokens (Capability Tokens, ch04 \u2014 New Twist) (H2 at ch18-redfish-server-walkthrough.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-capability-token"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "encodes a successful initialization of an independently-failing source as an unforgeable token, so reading that source on the failure path does not compile; the rule states that mint applied to acquisition rather than authority"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:d52f7e1ac808307ec002c1aacb3cc96c99586c9cb91bf3f1bdd4d607bcf45f1a",
@@ -7460,10 +7464,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit builds several such tokens inside one worked server; the rule states one proof per source and takes no position on how a partially-degraded startup is assembled",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "d52f7e1ac808307ec002c1aacb3cc96c99586c9cb91bf3f1bdd4d607bcf45f1a"
       }
     },
@@ -7568,14 +7572,16 @@
       "end_line": 802,
       "unit_sha256": "3d5c258633662fddf6af5a60ff347d44fed138988b6b04a5ca74359daa508b48",
       "claim": "Section 4 \u2014 Health Rollup as a Typed Fold (H2 at ch18-redfish-server-walkthrough.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-health-probes"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "folds per-source verdicts into one status with an Ord-ordered enum and max over an explicitly enumerated set of sources, so adding a source is a visible edit; the rule states that fold and the empty-set decision"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:d52f7e1ac808307ec002c1aacb3cc96c99586c9cb91bf3f1bdd4d607bcf45f1a",
@@ -7585,10 +7591,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit's severity ladder is specific to its server; the rule states the ordering discipline and the declaration-order fact that makes the derive do the work",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "d52f7e1ac808307ec002c1aacb3cc96c99586c9cb91bf3f1bdd4d607bcf45f1a"
       }
     },
@@ -16097,14 +16103,16 @@
       "end_line": 186,
       "unit_sha256": "222bfef0fce88306dc82d5b1bc07f169a455fbd6e646005518128ea773e0f5fe",
       "claim": "Implementing Your Own Higher-Order APIs (H3 at ch07-closures-and-higher-order-functions.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-durable-worker"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "exposes a retry policy as a caller-supplied closure rather than baking the classification into the helper; the rule states that division, with backoff and budget staying with the worker"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:7d58a3a84087d06981f863b34da2add0beb6370c4092e253db44ddd810d8f668",
@@ -16114,10 +16122,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit is a synchronous higher-order-API example; the mapped rule states the contract in the durable-worker setting, and no rule states the general higher-order-policy principle beyond retry",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "7d58a3a84087d06981f863b34da2add0beb6370c4092e253db44ddd810d8f668"
       }
     },

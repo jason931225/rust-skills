@@ -97,6 +97,18 @@ impl PartialOrd for JobKey {
 - Do not implement `Ord` for domains with a genuine partial order. Floating-point values require an explicit policy such as `total_cmp` or a validated non-NaN wrapper.
 - Keep mutable payload outside the ordered key. Mutating a key while it is inside an ordered collection violates the collection's invariants.
 
+## Derived Ordering Follows Declaration Order
+
+For a fieldless enum, `#[derive(PartialOrd, Ord)]` ranks variants by the order
+they are declared, and for a struct it compares fields top to bottom. That
+makes the ordering a property of the source layout: reordering variants for
+tidiness silently changes every comparison, every `max`, and every `sort`.
+
+Where the order is meaningful — severity levels, log levels, protocol
+versions — say so at the type, so the next person to alphabetise the variants
+has been warned. Where it is not meaningful, derive `PartialEq`/`Eq` alone and
+leave the type unordered rather than shipping an order nobody chose.
+
 ## See Also
 
 - [type-newtype-ids](type-newtype-ids.md) - give identifiers a dedicated key type
