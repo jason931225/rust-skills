@@ -1014,3 +1014,87 @@ fn dropping_every_sender_ends_the_consumer_without_losing_queued_work() {
     assert_eq!(rx.recv().expect("queued value survives disconnection"), 7);
     assert!(rx.recv().is_err(), "an empty, disconnected channel ends the loop");
 }
+
+// --- unsafe-inline-asm ----------------------------------------------------------
+
+/// Doubles `value` with every effect declared. `add` modifies the condition
+/// flags, so `preserves_flags` is deliberately absent.
+#[cfg(target_arch = "x86_64")]
+fn asm_double(mut value: u64) -> u64 {
+    // SAFETY: reads and writes only the single `inout` operand; touches no
+    // memory (`nomem`) and no stack (`nostack`).
+    unsafe {
+        std::arch::asm!("add {0}, {0}", inout(reg) value, options(nomem, nostack));
+    }
+    value
+}
+
+#[cfg(target_arch = "aarch64")]
+fn asm_double(mut value: u64) -> u64 {
+    // SAFETY: same contract; aarch64 `add` with three operands leaves the
+    // flags alone, but the promise is still omitted rather than assumed.
+    unsafe {
+        std::arch::asm!("add {0}, {0}, {0}", inout(reg) value, options(nomem, nostack));
+    }
+    value
+}
+
+#[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
+fn asm_double(value: u64) -> u64 {
+    value.wrapping_mul(2)
+}
+
+fn portable_double(value: u64) -> u64 {
+    value.wrapping_mul(2)
+}
+
+#[test]
+fn the_assembly_path_and_the_portable_path_agree_including_at_overflow() {
+    for value in [0u64, 1, 3, 1 << 31, u64::MAX / 2, u64::MAX] {
+        assert_eq!(
+            asm_double(value),
+            portable_double(value),
+            "assembly and portable paths diverged at {value}"
+        );
+    }
+}
+
+// --- async-poll-contract (poll_next) --------------------------------------------
+
+struct Drain {
+    items: std::collections::VecDeque<u32>,
+    finished: bool,
+}
+
+impl futures::Stream for Drain {
+    type Item = u32;
+
+    fn poll_next(
+        self: std::pin::Pin<&mut Self>,
+        _cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Option<u32>> {
+        let this = self.get_mut();
+        assert!(!this.finished, "Drain polled after returning Ready(None)");
+        match this.items.pop_front() {
+            Some(item) => std::task::Poll::Ready(Some(item)),
+            None => {
+                this.finished = true;
+                std::task::Poll::Ready(None)
+            }
+        }
+    }
+}
+
+#[test]
+fn a_stream_yields_every_item_then_treats_none_as_terminal() {
+    use futures::StreamExt;
+    let drain = Drain { items: [1, 2, 3].into_iter().collect(), finished: false };
+    let collected: Vec<u32> = futures::executor::block_on(drain.collect());
+    assert_eq!(collected, vec![1, 2, 3]);
+
+    // An empty stream ends immediately, and `finished` records that the
+    // terminal state was reached exactly once.
+    let empty = Drain { items: Default::default(), finished: false };
+    let none: Vec<u32> = futures::executor::block_on(empty.collect());
+    assert!(none.is_empty());
+}

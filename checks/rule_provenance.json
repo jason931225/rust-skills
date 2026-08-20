@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 427,
-  "ledger_mapped": 318,
+  "rule_count": 428,
+  "ledger_mapped": 319,
   "typed_justification": 109,
   "summary": {
     "cargo-book": 3,
     "clippy-docs": 6,
     "crate-docs": 21,
     "edition-guide": 2,
-    "ledger-mapped": 318,
+    "ledger-mapped": 319,
     "rust-api-guidelines": 18,
     "rust-performance-book": 6,
     "rust-reference": 16,
@@ -3061,6 +3061,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "rust_release_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "unsafe-inline-asm",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
       ]
     },
     {
