@@ -1238,3 +1238,51 @@ fn a_freestanding_heap_refuses_use_before_init_and_refuses_a_second_init() {
     assert_eq!(heap.allocate(16), Ok(16));
     assert_eq!(heap.allocate(1024), Err(HeapError::Exhausted));
 }
+
+// --- conc-lock-reentry ----------------------------------------------------------
+
+struct Bank {
+    accounts: std::sync::Mutex<Vec<u64>>,
+}
+
+impl Bank {
+    fn new(accounts: Vec<u64>) -> Self {
+        Self { accounts: std::sync::Mutex::new(accounts) }
+    }
+
+    /// Private and takes the data, not `&self` — it cannot re-acquire.
+    fn total_locked(accounts: &[u64]) -> u64 {
+        accounts.iter().sum()
+    }
+
+    fn balance(&self) -> u64 {
+        let accounts = self.accounts.lock().expect("accounts mutex");
+        Self::total_locked(&accounts)
+    }
+
+    fn audit(&self) -> u64 {
+        let accounts = self.accounts.lock().expect("accounts mutex");
+        Self::total_locked(&accounts) + accounts.len() as u64
+    }
+}
+
+#[test]
+fn one_acquisition_per_entry_point_does_not_deadlock() {
+    let bank = Bank::new(vec![1, 2, 3]);
+
+    // A deadlock is a hang, not a failure, so bound it: this whole test must
+    // finish. `audit` calling `balance` while holding the guard would hang
+    // here forever instead of failing.
+    let (tx, rx) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        let bank = Bank::new(vec![1, 2, 3]);
+        let _ = tx.send((bank.balance(), bank.audit()));
+    });
+    let (balance, audit) = rx
+        .recv_timeout(std::time::Duration::from_secs(5))
+        .expect("neither entry point re-acquires, so this completes");
+
+    assert_eq!(balance, 6);
+    assert_eq!(audit, 9);
+    assert_eq!(bank.balance(), 6);
+}

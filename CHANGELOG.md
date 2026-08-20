@@ -7,6 +7,14 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `conc-lock-reentry`, chosen from evidence rather than intuition. A study of
+  59 blocking bugs in production Rust found every one occurred in safe code
+  calling synchronization APIs, and 30 of them were double-acquisitions from
+  misunderstanding guard lifetime — the single most concentrated concurrency
+  defect measured, and one this library had no rule for. Covers one
+  acquisition per public entry point, helpers that take the locked data so
+  they cannot re-acquire, the guard produced in a `match` scrutinee that is
+  held for every arm, and a single global order where several locks are held.
 - `err-panic-handler-policy`: a freestanding `#[panic_handler]` is a policy
   decision, not boilerplate. `loop {}` — the shape everyone reaches for —
   holds the core at 100% forever and reports nothing, which on a battery

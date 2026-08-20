@@ -20,11 +20,11 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 656,
+    "covered": 657,
     "documented-deviation": 10,
     "project-specific": 674,
     "reject": 340,
-    "unreviewed": 444
+    "unreviewed": 443
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -15479,27 +15479,30 @@
       "end_line": 235,
       "unit_sha256": "9b0441375683361247e436a479fdc19de006cca27969a9795517c8bf469961c4",
       "claim": "Shared State: Arc, Mutex, RwLock, Atomics (H3 at ch06-concurrency-vs-parallelism-vs-threads.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "conc-lock-reentry",
+        "own-mutex-interior"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers shared state through Arc/Mutex/RwLock and the guard lifetime that governs when a lock is released; conc-lock-reentry states the non-reentrancy contract that follows from it \u2014 one acquisition per public entry point, helpers that take the locked data so they cannot re-acquire, and a single global order where several locks are held"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:f736983c69f68f8b2606a2e74db9c13deff94cc01dae2f98f60a323f7c8f13cf",
         "unit-sha256:9b0441375683361247e436a479fdc19de006cca27969a9795517c8bf469961c4"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::one_acquisition_per_entry_point_does_not_deadlock"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the assertion proves the corrected shape completes under a timeout; the deadlocking shape is demonstrated in the rule's Bad blocks but cannot be asserted, since a deadlock hangs rather than fails. The multi-lock ordering half has no assertion at all",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "f736983c69f68f8b2606a2e74db9c13deff94cc01dae2f98f60a323f7c8f13cf"
       }
     },
