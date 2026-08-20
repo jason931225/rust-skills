@@ -1134,3 +1134,46 @@ fn a_wide_pointer_is_two_words_and_option_still_uses_the_niche() {
     // The null niche in the data pointer absorbs the discriminant.
     assert_eq!(size_of::<Option<Box<dyn std::fmt::Debug>>>(), 16);
 }
+
+// --- err-panic-handler-policy ---------------------------------------------------
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum HaltPolicy {
+    WaitForInterrupt,
+    ResetViaWatchdog,
+    BusyLoop,
+}
+
+/// The shape a real `#[panic_handler]` uses: reads only Copy scalars out of
+/// `core::panic::PanicInfo`, so it allocates nothing and pulls in no
+/// formatting machinery.
+#[allow(dead_code)]
+fn failure_site(info: &core::panic::PanicInfo<'_>) -> Option<(u32, u32)> {
+    info.location().map(|site| (site.line(), site.column()))
+}
+
+/// Since Rust 1.81 the *hook* receives `PanicHookInfo`, a different type from
+/// the `PanicInfo` a `#[panic_handler]` receives. Same `location()` shape.
+fn hook_failure_site(info: &std::panic::PanicHookInfo<'_>) -> Option<(u32, u32)> {
+    info.location().map(|site| (site.line(), site.column()))
+}
+
+#[test]
+fn the_halt_policy_is_a_real_choice_and_the_site_needs_no_allocation() {
+    // Three distinct policies, not a comment on a `loop {}`.
+    assert_ne!(HaltPolicy::BusyLoop, HaltPolicy::WaitForInterrupt);
+    assert_ne!(HaltPolicy::ResetViaWatchdog, HaltPolicy::BusyLoop);
+
+    let seen = std::sync::Arc::new(std::sync::Mutex::new(None));
+    let sink = std::sync::Arc::clone(&seen);
+    let previous = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        *sink.lock().expect("hook mutex") = hook_failure_site(info);
+    }));
+    let caught = std::panic::catch_unwind(|| panic!("boom"));
+    std::panic::set_hook(previous);
+
+    assert!(caught.is_err(), "the panic was observed");
+    let site = seen.lock().expect("hook mutex").expect("a location was recorded");
+    assert!(site.0 > 0, "the failure site carries a real line number");
+}
