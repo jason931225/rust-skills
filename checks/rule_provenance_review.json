@@ -255,11 +255,6 @@
       "justification": "The contract belongs to the `syn` crate's error API \u2014 `syn::Error::new`, `Error::new_spanned`, `Error::combine`, and `to_compile_error` \u2014 together with `quote` and `proc-macro2` for emitting the resulting token stream."
     },
     {
-      "rule_id": "mem-arrayvec",
-      "source_class": "crate-docs",
-      "justification": "The rule is the `arrayvec` crate's contract: `ArrayVec<T, N>` and `ArrayString<N>` store elements inline with fixed compile-time capacity, `push` panics when full while `try_push` returns a `CapacityError`."
-    },
-    {
       "rule_id": "mem-avoid-format",
       "source_class": "rust-performance-book",
       "justification": "This is the allocation-avoidance advice the Performance Book collects under heap allocations and string handling \u2014 do not build an owned `String` for constant text, and prefer borrowed or `Cow` returns on hot paths."

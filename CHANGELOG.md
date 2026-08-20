@@ -21,6 +21,13 @@ semantic versioning for the rule set.
   miscompilation that appears only at some optimization levels, with no
   address to inspect and nothing for a sanitizer to trap on.
 ### Changed
+- `perf-global-allocator` now covers the freestanding case. Everything it said
+  before was about *choosing* an allocator when a default exists; on a bare
+  target there is none, and the allocator you supply owns a heap you hand it
+  explicitly. That adds an ordering hazard a hosted program never has — the
+  allocator is a `static` from program start, but its heap is unusable until
+  `init` runs, and an allocation in between is undefined behaviour rather than
+  a clean failure. This closes the last named gap from the no_std surveys.
 - `type-generic-bounds` now covers the implicit `Sized` bound every type
   parameter carries, and when relaxing it with `?Sized` is right: a wrapper
   that only holds its `T` behind a pointer is otherwise unusable with exactly
