@@ -3861,6 +3861,101 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "unit_id": "black-hat-rust:0200",
+      "title": "Turning our RAT into a worm to increase reach",
+      "page_text_sha256": "331c9b3b52eb29358b39fa92c9d736db9312d7fd7c843322b070546964ab8580",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0201",
+      "title": "What is a worm",
+      "page_text_sha256": "331c9b3b52eb29358b39fa92c9d736db9312d7fd7c843322b070546964ab8580",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0202",
+      "title": "Spreading techniques",
+      "page_text_sha256": "a1a063f37b5d43efadd75fbfe8c9e652cc49db2d72e1198095d28ed43212d89f",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0203",
+      "title": "Cross-platform worm",
+      "page_text_sha256": "084d02e937bf531b16beb4e24689439f5b42a3f484819d8e8a45d2dd39adbfdf",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0204",
+      "title": "Spreading through SSH",
+      "page_text_sha256": "8df40f012bf737916bd5eeacf9419f0368b239fba8e7d0e04153e41094b29a42",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
       "unit_id": "black-hat-rust:0205",
       "title": "Vendoring dependencies",
       "page_text_sha256": "f877fd279b4044b435a42e8131da775bca23e6ea37da933149285fcbec5e4f59",
@@ -3882,6 +3977,63 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "unit_id": "black-hat-rust:0206",
+      "title": "Implementing a cross-platform worm in Rust",
+      "page_text_sha256": "0e5b00e6af324fb60bce18e088fa4342685c9320dc2a2538e5170fa2b8acb0f7",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0207",
+      "title": "Install",
+      "page_text_sha256": "0e5b00e6af324fb60bce18e088fa4342685c9320dc2a2538e5170fa2b8acb0f7",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0208",
+      "title": "Spreading",
+      "page_text_sha256": "984515da60460e2eed98c8e5dd8dfb511362768b8a485d1d8e6121f4c82dc393",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
       "unit_id": "black-hat-rust:0209",
       "title": "More advanced techniques for your RAT",
       "page_text_sha256": "ad628d0b89a22acd4a5e6e60407959bfdb1a268597273988398a12d1bb669b88",
@@ -3900,6 +4052,25 @@
         "assertion_id": "checks/tests/pdf_corpus_guidance.rs::an_update_that_fails_verification_or_rollback_is_never_installed"
       },
       "remaining_uncertainty": "the source states the goal (sign updates) in a few sentences without a worked Rust example; the rollback-replay requirement and the build-time key-embedding discipline are this rule's own additions, not restatements of source text",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "black-hat-rust:0210",
+      "title": "Summary",
+      "page_text_sha256": "ed44818dd824df46e95be6fb258731f48c0dbb8fed3bef6a4fd5e5cd80c4318a",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "Chapter 13 is a worm/RAT tradecraft walkthrough: spreading techniques (SSH bruteforce, stolen keys, RCE, USB/cloud copy, supply-chain lore), a cross-compiled UPX-packed bundle.zip, zip extraction and install into the book's agent directory, libssh2 bruteforce plus uname/scp dropper, then AV-evasion, stagers, process migration, and credential theft. That is offensive-tooling narrative and demo-agent plot, not a general engineering contract."
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. Two headings already have unit-level reviews (Vendoring dependencies \u2192 proj-dependency-policy; More advanced techniques \u2192 api-update-signature for the one-paragraph 'sign your updates' sketch). ZipArchive::enclosed_name() in extract_bundle is one un-explained Zip-Slip-shaped line, not a path-containment lesson. This chapter-level reject is for the remaining worm/spread/stealth material, not a claim those two reviewed units were wrong.",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
