@@ -28,7 +28,10 @@ The attribute adds no behavior and suggests the default is not understood.
 ## Good
 
 ```rust
-#[doc(hidden)]
+// A plain `pub mod`: rustdoc renders a forwarding "Re-exports" entry for it,
+// which is what `#[doc(inline)]` below actually removes. (On a
+// `#[doc(hidden)]` module rustdoc already inlines the re-export, so the
+// attribute would be the redundancy the Bad section warns about.)
 pub mod core {
     /// Sends requests through the configured transport.
     pub struct Client;

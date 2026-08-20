@@ -62,7 +62,7 @@ impl ClientBuilder {
         self
     }
     
-    /// Sets the maximum number of retries. Default is 3.
+    /// Sets the maximum number of retries. Default is 0 (`#[derive(Default)]`); set it explicitly if you want 3.
     pub fn max_retries(mut self, n: u32) -> Self {
         self.max_retries = n;
         self

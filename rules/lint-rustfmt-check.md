@@ -109,6 +109,9 @@ cargo fmt -p my-package
 In `rustfmt.toml`:
 
 ```toml
+# NOTE: `ignore` is a NIGHTLY-only rustfmt option. On the stable channel it is
+# silently discarded and the listed files are formatted anyway — so a stable CI
+# `cargo fmt --check` will still fail on them. Exclude them another way there.
 # Skip generated files
 ignore = [
     "src/generated/*",

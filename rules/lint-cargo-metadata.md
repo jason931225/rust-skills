@@ -63,7 +63,7 @@ use-fast = []  # Should be: fast = []
 | `cargo_common_metadata` | Missing description/license/repository |
 | `multiple_crate_versions` | Same crate at different versions |
 | `negative_feature_names` | Features like `no-std` instead of `std` |
-| `redundant_feature_names` | Feature same as crate name |
+| `redundant_feature_names` | Feature name with a `use-`/`with-` prefix or `-support` suffix |
 | `wildcard_dependencies` | Using `*` for version |
 
 ## Good

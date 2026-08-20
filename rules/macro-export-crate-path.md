@@ -43,7 +43,6 @@ macro_rules! greet {
 // Re-export so `use mylib::greet;` resolves through the crate's public path.
 // (The re-export is implicit when using #[macro_export]; this is just for clarity
 // or when you want to place it under a module path.)
-pub use greet;
 ```
 
 ```rust
