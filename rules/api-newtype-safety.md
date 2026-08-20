@@ -165,6 +165,45 @@ struct Seconds(u64);
 struct X(i32);  // Just use i32
 ```
 
+## When The Wrapper Is Not Free
+
+This rule asks for wrappers in a lot of places, so it owes an answer on cost.
+
+A newtype that adds nothing but a name is erased. Compiling three functions
+that differ only in whether the argument is wrapped, the optimiser does not
+merely produce similar code — identical-code-folding emits one body and points
+the other symbols at it:
+
+```text
+_take_bare:
+	ret
+	.globl	_take_raw
+_take_raw = _take_bare
+```
+
+What is not free is anything the wrapper *does*. A `Drop` impl is the common
+case: its body is inserted at every scope exit, so the wrapper costs whatever
+the body costs, not a fixed overhead. An empty `Drop` still folds away at
+`-O`; a `Drop` that writes something does not:
+
+```text
+_take_bare:                    _take_noisy:
+	ret                            adrp	x8, ...SINK@PAGE
+                                       str	w0, [x8, ...]
+                                       ret
+```
+
+The same goes for a wrapper that adds a field, or that stops being `Copy` —
+those change size and move semantics, which is a different question from
+whether the name costs anything.
+
+Two cautions if you go looking at the assembly to check a specific case. Only
+do it when a measurement has already put the code in a hot path, since this
+tells you nothing about whether the wrapper matters. And expect the folded
+form: the naive comparison of two disassembly listings can show an alias line
+rather than two matching bodies, which reads as "the function is missing"
+rather than as the strongest possible confirmation.
+
 ## See Also
 
 - [type-newtype-ids](./type-newtype-ids.md) - Newtype pattern for IDs

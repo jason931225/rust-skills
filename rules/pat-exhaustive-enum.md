@@ -82,6 +82,53 @@ fn handle_event(event: &some_crate::TheirEvent) {
 
 `clippy::wildcard_enum_match_arm` (part of `clippy::restriction`) warns when a wildcard arm in a match on a non-`#[non_exhaustive]` enum could be replaced with explicit variants. Enabling it catches drift over time.
 
+## An Equality Chain Gets No Exhaustiveness Check At All
+
+This rule argues against the wildcard arm, which presupposes a `match` exists.
+Code that dispatches with `if code == Status::Ok { .. } else if ..` never
+enrolled in the check in the first place, and nothing tells you so.
+
+Add a variant, and the wildcard-free `match` stops the build:
+
+```text
+error[E0004]: non-exhaustive patterns: `StatusCode::TooManyRequests` not covered
+   |
+14 |     match code {
+   |           ^^^^ pattern `StatusCode::TooManyRequests` not covered
+```
+
+The equality chain compiles clean under `-D warnings` and silently returns its
+trailing `else`. Clippy does not rescue it either: with `all`, `pedantic`,
+`nursery`, and `restriction` enabled, none of the warnings emitted concern the
+dispatch shape. Choosing `match` is the whole mechanism — there is no lint
+standing behind it.
+
+```rust
+#[derive(Clone, Copy, PartialEq)]
+pub enum StatusCode {
+    Ok,
+    NotFound,
+    ServerError,
+}
+
+/// Adding a variant makes this fail to compile until it is handled.
+pub fn describe(code: StatusCode) -> &'static str {
+    match code {
+        StatusCode::Ok => "ok",
+        StatusCode::NotFound => "not found",
+        StatusCode::ServerError => "server error",
+    }
+}
+
+fn main() {
+    assert_eq!(describe(StatusCode::NotFound), "not found");
+}
+```
+
+This is why the enum needs `PartialEq` only if something genuinely compares
+values. Deriving it reflexively makes the equality chain available, and the
+chain is the form that looks fine forever.
+
 ## See Also
 
 - [api-non-exhaustive](api-non-exhaustive.md) - use `#[non_exhaustive]` for future-proof enums in public APIs
