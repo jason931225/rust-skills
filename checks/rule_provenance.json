@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 413,
-  "ledger_mapped": 267,
+  "rule_count": 415,
+  "ledger_mapped": 269,
   "typed_justification": 146,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 267,
+    "ledger-mapped": 269,
     "rust-api-guidelines": 21,
     "rust-performance-book": 9,
     "rust-reference": 26,
@@ -173,6 +173,13 @@
       "ledgers": [
         "microsoft_guidelines_coverage.json",
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "api-clap-parser-contract",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -2717,6 +2724,13 @@
       "source_class": "synthesized-practice",
       "justification": "Bound minimization, moving bounds from structs to impls, and preferring where clauses for readability is general Rust engineering style rather than a contract stated in any single upstream document, though it overlaps the API Guidelines' advice to minimize assumptions about generic parameters.",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "rule_id": "type-line-terminator-fidelity",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "type-never-diverge",

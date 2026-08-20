@@ -7,6 +7,22 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Two gaps from surveying "Command-Line Rust" (Ken Youens-Clark), which
+  reimplements classic Unix utilities in Rust and surfaces clap and
+  text-I/O pitfalls repeatedly across all thirteen tools it builds:
+  `api-clap-parser-contract` (`Parser::parse`/`get_matches` exit the process
+  on a bad argv regardless of the caller's error handling; an argument's id
+  and its `value_name` are different strings that silently return `None`
+  when confused; `conflicts_with` forbids combinations but does not require
+  one-of) and `type-line-terminator-fidelity` (`BufRead::lines()` strips
+  every terminator and fabricates a trailing newline a source file never
+  had — a byte-faithful tool needs `read_line`/`read_until` and `print!`,
+  not `lines()` and `println!`). `proj-cli-contract` and `test-cli-blackbox`
+  each gained several bullets from the same survey: pin a specific dialect
+  (BSD/GNU routinely disagree) and test against its real binary, generate
+  golden output from the reference implementation rather than by hand, and
+  compare raw bytes rather than lossy-decoded strings when a tool's output
+  is not guaranteed UTF-8.
 - Four gaps from surveying "Rust in Action" (Tim McNamara) via a five-chunk
   Grok 4.6 xhigh-effort pass across the whole book (language foundations
   through kernels and signals), independently verified before landing:

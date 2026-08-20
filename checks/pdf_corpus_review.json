@@ -1214,6 +1214,48 @@
       },
       "remaining_uncertainty": "the source explains virtual memory as OS background for scanning a process's own address space, not specifically as a benchmarking pitfall; the first-touch-before-timing framing and its assertion are this rule's own addition",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "command-line-rust:0027",
+      "title": "Parsing Command-Line Arguments Using clap",
+      "page_text_sha256": "ccf931c5ccc4591d921b6d57f929f9a6be03c8cd19c9565e98c0af2a3c1749dc",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-clap-parser-contract"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Parsing Command-Line Arguments Using clap\", p.58) walks through get_matches, which prints usage and exits the process on a bad argv, and later pages in the same chapter show a value_name/id mismatch returning None at runtime; the rule states both as a deliberate contract choice (try_parse_from for a Result, keeping id and value_name conceptually separate) plus the ArgGroup::required, allow_hyphen_values, and declaration-order-positional gotchas the book's later chapters hit tool by tool"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_bad_argv_returns_a_result_instead_of_exiting_the_process"
+      },
+      "remaining_uncertainty": "the source demonstrates get_matches-based parsing across many chapters without naming try_get_matches/try_parse as the alternative in this section specifically; the assertion proves the Result-returning path compiles and behaves as documented, not that every gotcha listed in the rule's Contract is individually demonstrated",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "command-line-rust:0058",
+      "title": "Preserving Line Endings While Reading a File",
+      "page_text_sha256": "947c878e66bc3639169d328b0d2b90cbe0eafb2c21215847f3b9cfc190f81ba1",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-line-terminator-fidelity"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Preserving Line Endings While Reading a File\", p.149) states exactly this rule's contract: BufRead::lines() strips terminators and fabricates a rewritten ending, so a byte-faithful tool must read_line into a reused buffer and print without adding a newline; the rule restates it as a general contract with CRLF and missing-final-newline fixtures"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::crlf_and_a_missing_final_newline_both_round_trip_unchanged"
+      },
+      "remaining_uncertainty": "the source demonstrates this with read_line specifically; the rule's assertion additionally covers read_until and a CRLF fixture, which the cited page does not itself include a worked example for",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
     }
   ]
 }

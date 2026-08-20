@@ -29,6 +29,26 @@ expensive to retrofit once scripts depend on the wrong behaviour.
   that failed.
 - Write output through a locked, buffered handle in loops instead of calling
   `println!` per line.
+- Where a reference implementation exists (a classic Unix utility, a
+  predecessor tool), pick one dialect deliberately — BSD and GNU builds of
+  the "same" tool routinely disagree on flag combinations, default behavior,
+  and edge cases — and test against that dialect's real binary output, not a
+  mental model of what it does.
+- Selection-by-position arguments (a field list, a byte range) are typically
+  1-based and inclusive on the command line; convert to a 0-based half-open
+  range once, at the parse boundary, and preserve the caller's requested
+  order and duplicates rather than silently sorting or deduplicating.
+- In multi-file mode, print a header only for files that were opened
+  successfully, and get the blank-line-before-subsequent-header rule from a
+  real invocation rather than guessing; a file that failed to open gets only
+  its stderr diagnostic, no header.
+- When file names must survive arbitrary bytes (including embedded
+  newlines), delimit a list of paths with NUL, not newline — newline is a
+  legal filename byte on Unix and NUL is the only byte that is not.
+- When a tool has default output selectors, decide whether an explicit
+  selector flag *replaces* the default bundle or is *added* to it; these are
+  different, easily-swapped behaviors and only one of them matches any given
+  reference tool.
 
 ## Bad
 
