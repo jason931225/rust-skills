@@ -26,6 +26,7 @@ redundant_clone = "warn"
 # Replace TypeName with Self inside impl blocks
 use_self = "warn"
 # Avoid redundant else after a diverging if
+# redundant_else is a `pedantic` lint, listed here as a companion pick
 redundant_else = "warn"
 # Prefer or_default() over or(Default::default())
 or_fun_call = "warn"

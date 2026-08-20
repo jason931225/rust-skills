@@ -142,7 +142,7 @@ for item in items {
 
 - [own-rc-single-thread](own-rc-single-thread.md) - Use Rc for single-threaded sharing
 - [own-mutex-interior](own-mutex-interior.md) - Use Mutex for interior mutability
-- [async-clone-before-await](async-clone-before-await.md) - Clone Arc before await points
+- [async-clone-before-await](async-clone-before-await.md) - clone shared ownership for spawned work, not merely because code awaits; clone Arc before await points
 - [conc-scoped-threads](conc-scoped-threads.md) - Borrow stack data instead of Arc
 - [unsafe-send-sync-manual](unsafe-send-sync-manual.md) - Document manual Send/Sync impls
 - [api-no-wrapper-params](api-no-wrapper-params.md) - Keep Arc out of public signatures unless sharing is the API
