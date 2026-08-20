@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-425-blue)
+![rules](https://img.shields.io/badge/rules-426-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-425 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+426 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,7 +66,7 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-425 rules split into 27 categories:
+426 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
@@ -79,7 +79,7 @@ fn first_word(s: &str) -> Option<&str> {
 | **Concurrency** | 9 | rayon, scoped threads, atomic ordering, thread-locals |
 | **Optimization** | 13 | LTO, inlining, PGO, SIMD |
 | **Numeric & Arithmetic** | 6 | Overflow handling, `as` vs `TryFrom`, float compare, `NonZero` |
-| **Type Safety** | 28 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
+| **Type Safety** | 29 | Newtypes, parse don't validate, `Deref`, `Display`/`Debug` |
 | **Trait & Generics Design** | 8 | dyn vs generic, associated types, blanket impls, object safety, orphan rule |
 | **Conversions** | 3 | `TryFrom`, `FromStr`, `AsMut` |
 | **Const & Compile-Time** | 5 | `const fn`, const vs static, const generics, `const {}` blocks |
