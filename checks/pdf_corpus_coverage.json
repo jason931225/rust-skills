@@ -111,11 +111,11 @@
     }
   ],
   "summary": {
-    "covered": 552,
+    "covered": 553,
     "documented-deviation": 9,
     "project-specific": 310,
     "reject": 251,
-    "unreviewed": 203
+    "unreviewed": 202
   },
   "units": [
     {
@@ -4547,26 +4547,28 @@
       "page": 195,
       "page_text_sha256": "0bbd9316cf062b2bd6ae9c01e4d1b69860874cfc5576ec8fcabec8d89cccd7d6",
       "claim": "An actual shellcode (depth 1 at Black Hat Rust.pdf page 195)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-inline-asm"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "rule-extends-source",
+        "detail": "the unit writes Linux syscalls directly with inline asm! inside a freestanding binary, declaring operands and relying on the assembly upholding the surrounding Rust invariants; the rule states the operand-direction, clobber, and options(...) contract that makes such a block sound"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "source-sha256:63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4",
         "page-text-sha256:0bbd9316cf062b2bd6ae9c01e4d1b69860874cfc5576ec8fcabec8d89cccd7d6"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::the_assembly_path_and_the_portable_path_agree_including_at_overflow"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the rule covers the inline-asm contract only; the unit's freestanding/no_std half (panic=abort, linker scripts, position-independent code, .text embedding) has no rule and this chapter's remaining units stay unreviewed pending a scope decision on bare-metal Rust",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "63a99a1f2c36cf8ca5f430494f2c517af25c112f79202364abb815578ddb3fe4"
       }
     },
@@ -18170,8 +18172,8 @@
       "audit_disposition": "covered",
       "disposition": "covered",
       "mapped_rule_ids": [
-        "async-poll-contract",
         "async-future-size",
+        "async-poll-contract",
         "async-yield-cpu"
       ],
       "exact_difference": {
@@ -18184,10 +18186,10 @@
         "page-text-sha256:be31fee7db01b73858495bfbcd7e3e08eefb331e99fec9694413abece4c134bd"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_stream_yields_every_item_then_treats_none_as_terminal"
       },
-      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. The bulk of the chapter is mechanism exposition \u2014 Pin/Unpin semantics, waker vtables, executor/reactor coupling and why leaf futures are tied to one executor \u2014 which the three mapped rules do not restate; I did not map unsafe-pin-address-stable because the chapter explains Pin rather than prescribing how to design a !Unpin type, and the trailing unsafe-keyword pages belong to the next chapter.",
+      "remaining_uncertainty": "dispositioned at chapter granularity: the reason describes the chapter this heading belongs to, not the heading in isolation. The bulk of the chapter is mechanism exposition \u2014 Pin/Unpin semantics, waker vtables, executor/reactor coupling and why leaf futures are tied to one executor \u2014 which the three mapped rules do not restate; I did not map unsafe-pin-address-stable because the chapter explains Pin rather than prescribing how to design a !Unpin type, and the trailing unsafe-keyword pages belong to the next chapter. The poll_next half of the poll contract is now stated in async-poll-contract and pinned by this assertion; bounded stream consumption remains async-join-parallel's concern.",
       "semantic_review": {
         "status": "reviewed",
         "reviewer": "Jason Lee <jason931225@gmail.com>",
