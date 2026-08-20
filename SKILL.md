@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 425 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 426 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 425 rules across 27 categories, prioritized by impact for use by
+Contains 426 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -63,7 +63,7 @@ Reference these guidelines when:
 | 7 | Concurrency | HIGH | `conc-` | 9 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 28 |
+| 10 | Type Safety | MEDIUM | `type-` | 29 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 8 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -324,6 +324,7 @@ Reference these guidelines when:
 - [`type-line-terminator-fidelity`](rules/type-line-terminator-fidelity.md) - Re-emit a line's original terminator and byte content when the tool's contract is byte-for-byte fidelity, not `BufRead::lines()` plus `println!`
 - [`type-affine-quantity`](rules/type-affine-quantity.md) - Split an absolute quantity from its delta: implement `Sub<Self> -> Delta` but never `Add<Self> -> Self`, so adding two points does not compile
 - [`type-exclusive-occupancy-guard`](rules/type-exclusive-occupancy-guard.md) - While a foreign agent (DMA, GPU, an in-flight I/O ring) owns a buffer, hold it behind a `!Send` guard whose only way back is a consuming `wait(self) -> T`
+- [`type-lifetime-branding`](rules/type-lifetime-branding.md) - Mint a unique invariant lifetime with a higher-ranked closure so a handle from one instance cannot type-check against another
 
 ### 11. Trait & Generics Design (MEDIUM)
 

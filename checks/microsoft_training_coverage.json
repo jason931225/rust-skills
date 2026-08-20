@@ -20,10 +20,10 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 27,
+    "covered": 30,
     "project-specific": 532,
     "reject": 327,
-    "unreviewed": 1238
+    "unreviewed": 1235
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -12977,27 +12977,29 @@
       "end_line": 109,
       "unit_sha256": "6a20c3692bbf67fcd4c6592f329cf9f6a9029846d825974058dc84bf05157ed2",
       "claim": "`DerefMut` \u2014 doubles the risk (H4 at ch03-the-newtype-and-type-state-patterns.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-deref-coercion"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit states that DerefMut on an invariant-bearing newtype doubles the risk because assignment through it bypasses the constructor, and that Deref surfaces inner-type methods that do not preserve the invariant; the rule now states that same position"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
         "unit-sha256:6a20c3692bbf67fcd4c6592f329cf9f6a9029846d825974058dc84bf05157ed2"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::an_invariant_bearing_newtype_exposes_no_mutable_deref"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "this binding corrects an error the rule previously carried: its 'Legitimate Uses' list endorsed Deref for newtypes whose purpose is adding invariants, which is the opposite of the unit's conclusion and of the API guidelines; the assertion pins the absence of DerefMut rather than proving the general claim",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -14081,27 +14083,29 @@
       "end_line": 103,
       "unit_sha256": "eae2b5b3f5d59fc2aaa6cd877c4f2d15128dd2b272bc8a108e9793f243c83a83",
       "claim": "Lifetime Branding (H3 at ch04-phantomdata-types-that-carry-no-data.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-lifetime-branding"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit presents lifetime branding: mint a unique invariant lifetime with a for<'brand> FnOnce bound and mark the container and its handles with an invariant PhantomData so a handle from one instance cannot type-check against another; the rule states that same construction"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:668714504130e236731960a63c3481dfefca577c46950e921c4c06e24df8873d",
         "unit-sha256:eae2b5b3f5d59fc2aaa6cd877c4f2d15128dd2b272bc8a108e9793f243c83a83"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_handle_resolves_against_the_arena_that_minted_it"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule's warning that a covariant PhantomData<&'brand ()> silently defeats the brand was verified against rustc directly (the cross-arena mix compiles with the covariant marker and is rejected with E0521 under the invariant one) rather than taken from the unit; the assertion covers only the positive case, since the rejection needs a compile-fail harness",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "668714504130e236731960a63c3481dfefca577c46950e921c4c06e24df8873d"
       }
     },
@@ -17967,27 +17971,29 @@
       "end_line": 257,
       "unit_sha256": "95d620d3371036c67a5c5fe547a2d71d474a71f032828ab22bdf66a21fed739a",
       "claim": "Zero-Copy Deserialization (H3 at ch11-serialization-zero-copy-and-binary-data.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "mem-zero-copy"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit states that Deserialize into &str cannot represent a JSON string whose unescaped text is not a contiguous run of the input, so Cow<'de, str> is the correct field type \u2014 borrowing when possible and allocating only when unescaping is required; the rule now states that same contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763",
         "unit-sha256:95d620d3371036c67a5c5fe547a2d71d474a71f032828ab22bdf66a21fed739a"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_json_string_with_an_escape_cannot_be_borrowed_but_cow_handles_it"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the assertion covers serde_json specifically; the same borrow-versus-transform constraint applies to any format with escapes or continuations, which is stated in the rule but not executed here",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763"
       }
     },

@@ -835,3 +835,133 @@ fn build_script_output_depends_on_the_target_not_the_build_machine() {
     // Cross-compiling emits the target's cfgs, not the host's.
     assert_eq!(emitted_cfgs("windows", false, true), Vec::<&str>::new());
 }
+
+// --- type-lifetime-branding -----------------------------------------------------
+
+/// The `*mut` marker makes `'brand` invariant. With a covariant
+/// `PhantomData<&'brand ()>` the cross-arena mix compiles — verified
+/// separately with rustc; that variant is pinned as a compile-fail case.
+struct BrandArena<'brand> {
+    items: Vec<String>,
+    _brand: std::marker::PhantomData<*mut &'brand ()>,
+}
+
+struct BrandHandle<'brand> {
+    index: usize,
+    _brand: std::marker::PhantomData<*mut &'brand ()>,
+}
+
+impl<'brand> BrandArena<'brand> {
+    fn push(&mut self, value: String) -> BrandHandle<'brand> {
+        self.items.push(value);
+        BrandHandle { index: self.items.len() - 1, _brand: std::marker::PhantomData }
+    }
+
+    fn get(&self, handle: BrandHandle<'brand>) -> &str {
+        &self.items[handle.index]
+    }
+}
+
+fn with_brand_arena<R>(f: impl for<'brand> FnOnce(BrandArena<'brand>) -> R) -> R {
+    f(BrandArena { items: Vec::new(), _brand: std::marker::PhantomData })
+}
+
+#[test]
+fn a_handle_resolves_against_the_arena_that_minted_it() {
+    let len = with_brand_arena(|mut arena| {
+        let handle = arena.push("hello".to_owned());
+        arena.get(handle).len()
+    });
+    assert_eq!(len, 5);
+
+    // Using a handle from one arena against a second, nested arena fails to
+    // compile with E0521 citing invariance over 'brand.
+}
+
+// --- perf-iter-lazy (take_while boundary) ---------------------------------------
+
+#[test]
+fn take_while_consumes_the_element_that_stopped_it() {
+    let data = [1, 2, 3, 99, 4];
+
+    let mut it = data.iter().copied();
+    let taken: Vec<_> = it.by_ref().take_while(|&n| n != 99).collect();
+    assert_eq!(taken, vec![1, 2, 3]);
+    assert_eq!(it.next(), Some(4), "99 was consumed, not left behind");
+
+    let mut kept = Vec::new();
+    for n in data.iter().copied() {
+        let last = n == 99;
+        kept.push(n);
+        if last {
+            break;
+        }
+    }
+    assert_eq!(kept, vec![1, 2, 3, 99]);
+}
+
+// --- type-deref-coercion (invariant-bearing newtype) ----------------------------
+
+struct DerefPort(std::num::NonZeroU16);
+
+impl DerefPort {
+    fn new(value: u16) -> Option<Self> {
+        std::num::NonZeroU16::new(value).map(DerefPort)
+    }
+    fn get(&self) -> u16 {
+        self.0.get()
+    }
+}
+
+#[test]
+fn an_invariant_bearing_newtype_exposes_no_mutable_deref() {
+    let port = DerefPort::new(8080).expect("8080 is non-zero");
+    assert_eq!(port.get(), 8080);
+    assert!(DerefPort::new(0).is_none(), "the constructor is the only way in");
+    // No DerefMut impl exists, so `*port = 0` does not compile — the
+    // invariant cannot be assigned away.
+}
+
+// --- mem-zero-copy (borrowing fails when text must be transformed) ---------------
+
+#[derive(serde::Deserialize)]
+struct BorrowedRecord<'a> {
+    #[serde(borrow)]
+    text: std::borrow::Cow<'a, str>,
+}
+
+#[derive(serde::Deserialize)]
+struct PlainRecord<'a> {
+    text: std::borrow::Cow<'a, str>,
+}
+
+#[test]
+fn a_json_string_with_an_escape_cannot_be_borrowed_but_cow_handles_it() {
+    use std::borrow::Cow;
+
+    // No escapes: the decoded text is a contiguous run of the input, so a
+    // borrowed &str works.
+    let plain: &str = serde_json::from_str(r#""hello""#).expect("plain text borrows");
+    assert_eq!(plain, "hello");
+
+    // With an escape, the unescaped text appears nowhere in the input, so
+    // there is nothing to borrow and deserialization into &str fails outright.
+    let borrowed: Result<&str, _> = serde_json::from_str(r#""a\nb""#);
+    assert!(borrowed.is_err(), "an escaped string has no slice to borrow");
+
+    // Cow + #[serde(borrow)]: plain text borrows, escaped text allocates.
+    let cheap: BorrowedRecord = serde_json::from_str(r#"{"text":"hello"}"#).expect("borrows");
+    assert!(matches!(cheap.text, Cow::Borrowed(_)), "the common case borrows");
+
+    let costly: BorrowedRecord = serde_json::from_str(r#"{"text":"a\nb"}"#).expect("allocates");
+    assert_eq!(costly.text, "a\nb");
+    assert!(matches!(costly.text, Cow::Owned(_)), "only the escaped value allocates");
+
+    // Without #[serde(borrow)], Cow allocates unconditionally — the field
+    // looks zero-copy and is not.
+    let never: PlainRecord = serde_json::from_str(r#"{"text":"hello"}"#).expect("parses");
+    assert!(
+        matches!(never.text, Cow::Owned(_)),
+        "Cow without #[serde(borrow)] allocates even for plain text"
+    );
+}

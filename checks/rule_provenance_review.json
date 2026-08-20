@@ -390,11 +390,6 @@
       "justification": "The contract is that `format!` constructs an owned `String` while `write!`/`writeln!` render into an existing target through `std::fmt::Write` or `std::io::Write`, returning a `Result` those traits define."
     },
     {
-      "rule_id": "mem-zero-copy",
-      "source_class": "rust-performance-book",
-      "justification": "The contract is the allocation-avoidance advice that book collects \u2014 sharing payload bytes through borrowed slices, `Cow`, and refcounted buffers such as `bytes::Bytes` instead of copying into owned `String`/`Vec` \u2014 with the crate references (bytes, memchr) serving as illustrations rather than the source of the rule."
-    },
-    {
       "rule_id": "name-acronym-word",
       "source_class": "rust-api-guidelines",
       "justification": "The casing convention that acronyms are treated as one word (HttpServer, not HTTPServer) is the Rust API Guidelines' naming/casing item, itself codifying RFC 430, and the rule's evidence is std names like TcpStream and UdpSocket."
@@ -688,11 +683,6 @@
       "rule_id": "trait-object-safety",
       "source_class": "rust-reference",
       "justification": "The rule restates the Rust Reference's dyn-compatibility (object-safety) rules \u2014 which methods are vtable-dispatchable, the exclusion of generic methods, by-value Self returns and associated constants, and the where Self: Sized escape hatch \u2014 with E0038 as the compiler's enforcement."
-    },
-    {
-      "rule_id": "type-deref-coercion",
-      "source_class": "rust-api-guidelines",
-      "justification": "The rule restates the API Guidelines checklist item C-DEREF \u2014 implement Deref/DerefMut only for smart-pointer and transparent wrapper types, not as inheritance \u2014 and the file names that item directly."
     },
     {
       "rule_id": "type-generic-bounds",

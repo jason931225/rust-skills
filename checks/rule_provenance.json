@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 425,
-  "ledger_mapped": 279,
-  "typed_justification": 146,
+  "rule_count": 426,
+  "ledger_mapped": 282,
+  "typed_justification": 144,
   "summary": {
     "cargo-book": 4,
     "clippy-docs": 6,
     "crate-docs": 27,
     "edition-guide": 2,
-    "ledger-mapped": 279,
-    "rust-api-guidelines": 21,
-    "rust-performance-book": 9,
+    "ledger-mapped": 282,
+    "rust-api-guidelines": 20,
+    "rust-performance-book": 8,
     "rust-reference": 26,
     "rustonomicon": 3,
     "std-docs": 34,
@@ -1582,10 +1582,10 @@
     },
     {
       "rule_id": "mem-zero-copy",
-      "provenance": "typed-justification",
-      "source_class": "rust-performance-book",
-      "justification": "The contract is the allocation-avoidance advice that book collects \u2014 sharing payload bytes through borrowed slices, `Cow`, and refcounted buffers such as `bytes::Bytes` instead of copying into owned `String`/`Vec` \u2014 with the crate references (bytes, memchr) serving as illustrations rather than the source of the rule.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "name-acronym-word",
@@ -2754,10 +2754,10 @@
     },
     {
       "rule_id": "type-deref-coercion",
-      "provenance": "typed-justification",
-      "source_class": "rust-api-guidelines",
-      "justification": "The rule restates the API Guidelines checklist item C-DEREF \u2014 implement Deref/DerefMut only for smart-pointer and transparent wrapper types, not as inheritance \u2014 and the file names that item directly.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "type-display-vs-debug",
@@ -2794,6 +2794,13 @@
       "source_class": "synthesized-practice",
       "justification": "Bound minimization, moving bounds from structs to impls, and preferring where clauses for readability is general Rust engineering style rather than a contract stated in any single upstream document, though it overlaps the API Guidelines' advice to minimize assumptions about generic parameters.",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "rule_id": "type-lifetime-branding",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "type-line-terminator-fidelity",
