@@ -13,6 +13,15 @@ semantic versioning for the rule set.
   miscompilation that appears only at some optimization levels, with no
   address to inspect and nothing for a sanitizer to trap on.
 ### Changed
+- `type-generic-bounds` now covers the implicit `Sized` bound every type
+  parameter carries, and when relaxing it with `?Sized` is right: a wrapper
+  that only holds its `T` behind a pointer is otherwise unusable with exactly
+  the types such a wrapper exists for. Keep the bound whenever the code stores
+  or returns a `T` by value.
+- `mem-assert-type-size` now covers wide pointers costing two words. Swapping
+  a concrete type for a trait object is a layout change, not only a dispatch
+  change — though `Option<Box<dyn Trait>>` still fits in two words, because
+  the null niche absorbs the discriminant.
 - `async-poll-contract` now covers `poll_next`. A hand-written `Stream` owes
   every obligation a `Future` does, plus a state machine: `Ready(Some(_))`
   says nothing about the next item, and `Ready(None)` is terminal the way

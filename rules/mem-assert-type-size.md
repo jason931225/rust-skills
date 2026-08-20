@@ -95,6 +95,33 @@ const _: () = {
 - `size_of` excludes heap allocations owned through `String`, `Vec`, `Box`, `Arc`, and similar handles.
 - Cache-line claims require target-aware measurement; “at most 64 bytes” does not guarantee placement in one cache line or prevent false sharing.
 
+## Wide Pointers Cost Two Words
+
+A budget written against pointer-sized fields silently doubles when the
+pointee is unsized. `&u8` is one word; `&[u8]` and `&dyn Trait` are two,
+because a wide pointer carries a length or vtable pointer alongside the data
+pointer. A struct holding several `Box<dyn Trait>` fields is therefore twice
+the size the same struct with concrete boxed types would be, and swapping a
+concrete type for a trait object is a layout change, not just a dispatch
+change.
+
+```rust
+use std::fmt::Debug;
+
+fn main() {
+    assert_eq!(size_of::<&u8>(), 8);
+    assert_eq!(size_of::<&[u8]>(), 16, "slice reference carries a length");
+    assert_eq!(size_of::<&dyn Debug>(), 16, "trait reference carries a vtable pointer");
+    assert_eq!(size_of::<Box<dyn Debug>>(), 16);
+    // The null niche in the data pointer absorbs the discriminant, so this
+    // does *not* grow to 24.
+    assert_eq!(size_of::<Option<Box<dyn Debug>>>(), 16);
+}
+```
+
+These are 64-bit figures; assert them per target rather than hard-coding them,
+for the same reason this rule scopes every other size budget to a target.
+
 ## Admission And Failure Behavior
 
 1. Record the benchmark/profile that justified the budget and the supported targets it covers.

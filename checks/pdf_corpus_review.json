@@ -9937,6 +9937,28 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "unit_id": "rust-for-rustaceans:0007",
+      "title": "Types in Memory",
+      "page_text_sha256": "e810edebdd42b546c51caef5e3ab137ccefca69f48a29e2597ed7a7175116e68",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-generic-bounds",
+        "mem-assert-type-size"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit covers types in memory including dynamically sized types and the wide pointers that reference them; type-generic-bounds now states the implicit Sized bound and when to relax it, and mem-assert-type-size states the two-word cost of a wide pointer and that Option<Box<dyn Trait>> still fits the niche"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_wide_pointer_is_two_words_and_option_still_uses_the_niche"
+      },
+      "remaining_uncertainty": "the unit's alignment and field-ordering material is covered only indirectly by mem-assert-type-size's layout sections; the rest of this chapter remains unreviewed",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
       "unit_id": "rust-for-rustaceans:0008",
       "title": "Traits and Trait Bounds",
       "page_text_sha256": "03aa66fa86a2b6a443f3b66b74ae7eba05fe77ba5720e72cbabb6a5e9412a651",
