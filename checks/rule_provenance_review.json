@@ -375,11 +375,6 @@
       "justification": "The contract comes from documented `f32`/`f64` behaviour \u2014 `PartialOrd::partial_cmp` returning `None` for NaN, `total_cmp`'s IEEE totalOrder-compatible ordering, `is_nan`/`is_finite`, and `to_bits` \u2014 rather than from Clippy's `float_cmp` lint, which the rule never mentions."
     },
     {
-      "rule_id": "num-overflow-explicit",
-      "source_class": "std-docs",
-      "justification": "The rule is organized around the standard library's `checked_*`/`saturating_*`/`wrapping_*`/`overflowing_*` method families and their documented return types, with the debug-panic vs release-wrap default as supporting context."
-    },
-    {
       "rule_id": "num-saturating-clamp",
       "source_class": "std-docs",
       "justification": "Every claim is a documented standard-library contract: `Ord::clamp` panicking when `min > max`, `f32`/`f64::clamp` propagating `NaN` from the value and panicking on a `NaN` bound, and the `saturating_*` integer methods stopping at the type's limits."
@@ -438,11 +433,6 @@
       "rule_id": "own-rwlock-readers",
       "source_class": "std-docs",
       "justification": "The rule rests on `std::sync::RwLock`'s documented semantics: many readers or one writer, poisoning, and an explicitly unspecified/platform-dependent fairness policy that makes writer starvation possible."
-    },
-    {
-      "rule_id": "own-slice-over-vec",
-      "source_class": "rust-api-guidelines",
-      "justification": "This is the API Guidelines' flexibility guidance that public functions should minimize assumptions about their parameters (the `&[T]`/`&str`/`&Path` parameter idiom); Clippy's `ptr_arg` lint enforces the same shape, so the classification is arguable."
     },
     {
       "rule_id": "pat-at-bindings",
@@ -540,11 +530,6 @@
       "justification": "The load-bearing content is language-level coherence: a blanket impl is permitted because the trait is local, and it cannot overlap a specific impl because specialization is unstable (error E0119); the semver caveat is a secondary Cargo-book concern and the ToString-for-Display example is std."
     },
     {
-      "rule_id": "type-generic-bounds",
-      "source_class": "synthesized-practice",
-      "justification": "Bound minimization, moving bounds from structs to impls, and preferring where clauses for readability is general Rust engineering style rather than a contract stated in any single upstream document, though it overlaps the API Guidelines' advice to minimize assumptions about generic parameters."
-    },
-    {
       "rule_id": "type-never-diverge",
       "source_class": "rust-reference",
       "justification": "The contract is language semantics for the never type `!` \u2014 divergent function return types, coercion of `!` to any type, and which uses are stable versus still feature-gated \u2014 with std::process::exit and std::convert::Infallible as illustrations."
@@ -563,11 +548,6 @@
       "rule_id": "unsafe-minimize-scope",
       "source_class": "rustonomicon",
       "justification": "The contract is the Rustonomicon's soundness reasoning about unsafe: an unsafe fn states a caller obligation rather than blessing its whole body, each unsafe operation needs a local proof of its preconditions, and safe code must not be folded into the trusted surface; the unsafe_op_in_unsafe_fn and Clippy undocumented_unsafe_blocks lints are cited only as enforcement."
-    },
-    {
-      "rule_id": "unsafe-send-sync-manual",
-      "source_class": "rustonomicon",
-      "justification": "This is the Rustonomicon's treatment of Send and Sync as unsafe auto traits \u2014 that Send permits cross-thread ownership transfer and Sync (equivalently &T: Send) permits shared cross-thread access, so a wrong manual unsafe impl lets safe code cause data races \u2014 together with the ownership, aliasing, destructor, and interior-mutability obligations a manual impl must discharge."
     }
   ]
 }
