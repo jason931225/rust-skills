@@ -192,6 +192,5 @@ prefix passes either way.
 
 ## See Also
 
-- [perf-iter-lazy](perf-iter-lazy.md) - keep iterators lazy and collect once
 - [perf-iter-over-index](./perf-iter-over-index.md) - Prefer iterators
 - [anti-collect-intermediate](./anti-collect-intermediate.md) - Anti-pattern

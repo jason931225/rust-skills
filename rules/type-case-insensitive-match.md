@@ -7,7 +7,7 @@
 Lowercasing both sides before comparing looks equivalent and is not. It
 allocates a copy of every input, discards the original casing that later output
 may need, and gets Unicode wrong: `to_lowercase` is locale-independent, so
-Turkish dotless İ and German ß do not round-trip, and folding twice is not the
+Turkish dotted İ and German ß do not round-trip, and folding twice is not the
 same as folding once. Matchers — regex engines, collators, database
 collations — have a case-insensitivity setting that applies the correct
 folding at comparison time without touching the data.

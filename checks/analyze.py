@@ -3,7 +3,10 @@
 
 Buckets per example:
   FRAGMENT  - every error is name resolution (undefined symbol/crate/import).
-              Expected for illustrative snippets; ignored.
+              Expected for illustrative snippets; ignored. E0658 is deliberately
+              NOT in this set: "use of unstable library feature" means the
+              example does not build on the stable toolchain this library pins,
+              which is a reviewable fact, not a missing name.
   ARTIFACT  - errors from extracting a fragment (a `&self` method body wrapped
               as a free fn, pseudocode `...`/`???` tokens, dangling doc comments).
   LOW       - only "type annotations needed" (E0282/E0283).
@@ -24,7 +27,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 manifest = json.loads((HERE / "manifest.json").read_text())
 
 RES_CODES = {"E0432","E0433","E0412","E0425","E0405","E0531","E0422",
-             "E0423","E0573","E0463","E0583","E0561","E0658"}
+             "E0423","E0573","E0463","E0583","E0561"}
 RES_PREFIXES = ("cannot find","unresolved import","failed to resolve",
                 "use of undeclared","cannot determine","can't find crate",
                 "maybe a missing crate","unresolved module")
@@ -46,6 +49,9 @@ def is_artifact(d):
     if code_of(d) in {"E0586","E0585"}:
         return True
     if "`...`" in m or "missing documentation" in m:
+        return True
+    # `fn new(...)` elision in a snippet parses as a C-variadic declaration.
+    if "C-variadic" in m:
         return True
     if "await is only allowed inside" in m:
         return True

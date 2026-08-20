@@ -55,15 +55,11 @@ impl<const HDR: usize, const BODY: usize> Packet<HDR, BODY> {
     }
 }
 
-// array of non-Copy type using a const block per element
-// (each element is its own const expression — legal since 1.79)
-fn make_table() -> [u64; 4] {
-    [
-        const { u64::MAX / 1 },
-        const { u64::MAX / 2 },
-        const { u64::MAX / 3 },
-        const { u64::MAX / 4 },
-    ]
+// array of a non-Copy type — the case that genuinely needs an inline const
+// (`[None; 4]` is rejected because `Option<String>` is not `Copy`; a const
+// block is evaluated once per slot instead of being copied)
+fn slots() -> [Option<String>; 4] {
+    [const { None }; 4]
 }
 ```
 

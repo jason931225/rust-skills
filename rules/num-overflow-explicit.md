@@ -79,7 +79,7 @@ mod tests {
 | `wrapping_*` | `T` | modular arithmetic is intentional (e.g., checksums, ring buffers) |
 | `overflowing_*` | `(T, bool)` | you need the result *and* know whether it overflowed |
 
-These methods are available on all primitive integer types in the standard library (`u8` through `u128`, `i8` through `i128`, `usize`, `isize`). Equivalent sub/mul/div/shl/shr variants exist for every arithmetic operation.
+These methods are available on all primitive integer types in the standard library (`u8` through `u128`, `i8` through `i128`, `usize`, `isize`). The `checked_`, `wrapping_`, and `overflowing_` families cover sub, mul, div, rem, neg, and the shifts; `saturating_` covers add, sub, mul, div, and pow, but has no shift or remainder form, and `saturating_neg` exists only on the signed types.
 
 ## See Also
 

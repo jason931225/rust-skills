@@ -73,7 +73,7 @@ fn main() {
 |---|---|
 | General-purpose growable list | `Vec<T>` |
 | FIFO queue, deque, or sliding window | `VecDeque<T>` |
-| Need O(1) split/splice at arbitrary positions | consider `VecDeque<T>` or rethink the design |
+| Need O(1) split/splice at arbitrary positions | rethink the design — no stable std sequence provides it |
 | Linked list (almost never) | `LinkedList<T>` — only if profiling proves it faster |
 
 **Conversion:** `Vec` and `VecDeque` convert cheaply into each other via `From`/`Into` when you need to switch representation.

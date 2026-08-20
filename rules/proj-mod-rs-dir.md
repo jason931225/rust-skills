@@ -70,7 +70,7 @@ pub use model::User;
 
 - Module declaration outside directory
 - Can see module's interface without entering folder
-- Matches Rust 2018+ default lint preference
+- The layout Rust 2018 introduced as an alternative to `mod.rs`
 - Good for small modules with few submodules
 
 ## Example: Complex Module

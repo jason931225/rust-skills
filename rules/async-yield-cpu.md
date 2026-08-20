@@ -38,7 +38,7 @@ async fn transform(items: &[Vec<u8>]) -> Vec<Vec<u8>> {
         output.extend(chunk.iter().map(|item| expensive_transform(item)));
 
         // Tokio consumes cooperative budget and yields only when exhausted.
-        tokio::task::consume_budget().await;
+        tokio::task::coop::consume_budget().await;
     }
     output
 }

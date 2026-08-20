@@ -64,7 +64,7 @@ fn reuse_buffer() {
 | `Vec<T>` | `.drain(range)` | Remove range, shift remaining |
 | `Vec<T>` | `.drain(..)` | Remove all (like clear) |
 | `VecDeque<T>` | `.drain(range)` | Remove range |
-| `String` | `.drain(range)` | Remove char range |
+| `String` | `.drain(range)` | Remove byte range (must fall on char boundaries) |
 | `HashMap<K,V>` | `.drain()` | Remove all entries |
 | `HashSet<T>` | `.drain()` | Remove all elements |
 

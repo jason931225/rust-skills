@@ -34,8 +34,8 @@ match option {
     None => None,
 }  // Use: option.map(|x| x + 1)
 
-// WARN: Unnecessary filter before count
-iter.filter(|x| predicate(x)).count()  // Could simplify if only counting
+// WARN: filter_next
+iter.filter(|x| predicate(x)).next()  // Use: iter.find(|x| predicate(x))
 ```
 
 ### Redundant Operations
@@ -50,10 +50,6 @@ match result {
     Err(err) => Err(err),
 }  // Just use: result
 
-// WARN: Box::new in return position
-fn make_error() -> Box<dyn Error> {
-    Box::new(MyError)  // Could use: MyError.into()
-}
 ```
 
 ### Overly Verbose Code

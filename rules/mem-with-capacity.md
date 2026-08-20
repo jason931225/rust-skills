@@ -154,8 +154,8 @@ let mut rarely_used = Vec::new();  // OK if rarely grown
 `Vec::with_capacity(n)` allocates room for `n` elements but the `Vec` still
 has length `0` — a socket `recv`/`recv_from` call, which writes into the
 slice a `Vec` currently exposes as initialized (`&mut [u8]` of length
-`buf.len()`), sees zero bytes of room and either writes nothing or panics
-against a capacity check, not the `n` bytes the allocation reserved. A buffer
+`buf.len()`), sees zero bytes of room and writes nothing — returning `Ok(0)`
+or an error, not the `n` bytes the allocation reserved. A buffer
 that must actually be writable needs its length set up front:
 
 ```rust

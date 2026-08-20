@@ -37,8 +37,8 @@ my-project/
 ├── src/
 │   ├── lib.rs        # Shared library code
 │   └── bin/
-│       ├── server.rs # Binary: my-project-server (or just server)
-│       └── cli.rs    # Binary: my-project-cli (or just cli)
+│       ├── server.rs # Binary: server
+│       └── cli.rs    # Binary: cli
 ```
 
 Each file in `src/bin/` automatically becomes a binary named after the file.
