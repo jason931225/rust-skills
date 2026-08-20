@@ -12,7 +12,7 @@ execute either — turning file upload into stored cross-site scripting against
 every viewer. Validating the extension does not help, because the browser
 decides how to interpret the bytes, not the filename.
 
-## Contract
+## Upload Serving Requirements
 
 - Serve uploads from a separate origin — a different domain, not merely a
   different path — so a script that does run holds no session for the app.
@@ -100,7 +100,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Inert Delivery Cases To Pin
 
 - an SVG, an HTML file, and a mislabelled executable are all delivered as
   attachments with `nosniff`;

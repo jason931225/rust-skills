@@ -49,7 +49,7 @@ fn main() {
 
 A binary that still lives on `edition = "2015"` can depend on this crate. The editions do not have to match.
 
-## Key Points
+## Edition Scope And MSRV
 
 - **New** packages and **new** workspaces take the current stable edition. That is **2024** now; move forward when 2027 ships.
 - Edition choice does **not** control which crates you may depend on. It does

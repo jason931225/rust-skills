@@ -45,6 +45,25 @@ adding a rule, improving an existing one, or fixing an example.
    summary line. `## Why It Matters` and `## See Also` are required; `See Also`
    links must point to real rule files.
 
+   **Name every other section for what it contains.** `Why It Matters`, `Bad`,
+   `Good`, and `See Also` are the fixed frame each rule shares. Everything
+   between them is free-form, and the heading should tell a reader what is in
+   it — `## Numeric Invariants`, `## Boundary Conversion Before Effects`,
+   `## Builder Typestate`, `## Supported Cases And Precedence`. Most rules have
+   two to five such sections; they are where the rule does its teaching, and
+   their headings double as the rule's table of contents.
+
+   `## Contract`, `## Key Points`, `## Failure Tests`, and `## Notes` are
+   **rejected by the validator**. They are the labels that accumulate when a
+   section is written without deciding what it is about: a reader scanning
+   three rules sees three identical headings, and someone searching for "nonce
+   reuse" or "rollback attack" matches nothing. Say what the section covers
+   instead — a checklist of obligations at an API boundary might be
+   `## Request Handling Contract`, a list of cases a test suite should pin
+   might be `## Cases To Pin In Tests`. The rename is not cosmetic: these
+   headings are the main retrieval surface for both humans and the agents this
+   library is written for.
+
 3. **Make examples compile on current stable Rust** (2024 edition). Prefer
    self-contained `## Good` examples (define the types you reference) so the
    compile harness can verify them. Keep error/log message strings lowercase

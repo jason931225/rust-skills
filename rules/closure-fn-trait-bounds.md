@@ -71,7 +71,7 @@ fn demo() {
 }
 ```
 
-## Key Points
+## Fn Trait Hierarchy
 
 | Trait | Captures | Calls | Accepts |
 |-------|----------|-------|---------|

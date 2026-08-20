@@ -56,7 +56,7 @@ fn main() {
 A size assertion is useful only for a measured hot path. Treat the threshold as
 an architecture-specific regression budget, not a universal ABI guarantee.
 
-## Key Points
+## Measuring And Shrinking Futures
 
 - Inspect values that remain live across each `.await`; source order alone does
   not determine liveness.

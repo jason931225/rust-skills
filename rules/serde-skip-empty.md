@@ -64,7 +64,7 @@ impl Default for ApiResponse {
 
 Produces: `{"id":1,"name":"Alice"}` — absent fields are simply omitted.
 
-## Key Points
+## Skip Attribute Semantics
 
 - `skip_serializing_if` takes any path resolving to `fn(&T) -> bool`. Common choices:
   - `Option::is_none` for `Option<T>`

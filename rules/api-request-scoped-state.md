@@ -19,7 +19,7 @@ handler or error hook that expects one without it being registered fails —
 often only on the error path, which is the path least likely to be exercised
 in casual testing.
 
-## Contract
+## Worker And Request State Rules
 
 - Construct any value that must be visible to every worker — a shared cache,
   a counter, a connection pool — once, outside the per-worker factory
@@ -91,7 +91,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Sharing Failures To Test
 
 - state mutated while handling a request on one simulated worker is visible
   when handling a request on a different simulated worker;

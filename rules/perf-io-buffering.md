@@ -89,7 +89,7 @@ fn process_large_file(path: &str) -> io::Result<()> {
 }
 ```
 
-## Key Points
+## Flushing And Buffer Sizing
 
 - `BufWriter::flush()?` must be called explicitly. Dropping a `BufWriter` writes the buffered bytes out through the inner writer and **silently discards any error** from that write; it does not call `flush` on the inner writer at all. Flush before the writer goes out of scope, and handle the error.
 - Buffer capacity is an implementation detail and can change between Rust releases. A larger buffer can improve sequential throughput, but it also increases per-connection memory.

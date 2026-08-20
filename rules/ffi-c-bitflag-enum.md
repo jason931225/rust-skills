@@ -17,7 +17,7 @@ undefined behavior the moment the value exists, whether or not anything
 matches on it. The Rust type that actually matches a C bitmask's contract is
 an integer newtype with associated constants and bit operators, not an enum.
 
-## Contract
+## Bitmask Modeling Rules
 
 - Model a C header's bitmask constants (values meant to be combined with `|`)
   as a `#[repr(transparent)]` newtype over the C integer type, with each
@@ -106,7 +106,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Flag Behavior To Verify
 
 - combining two flags with `|` and testing each with `contains` reports both
   present and the third absent;

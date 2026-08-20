@@ -10,7 +10,7 @@ and production disagree; shipping nightly ties the product to unfinished
 features. Pin the current stable release used for admission and upgrade it
 deliberately.
 
-## Contract
+## Toolchain Pinning Requirements
 
 - Install and select toolchains with `rustup` or an equivalent hermetic
   mechanism.

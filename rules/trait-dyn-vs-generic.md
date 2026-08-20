@@ -122,7 +122,7 @@ wrappers when storage and sharing are implementation details that may change.
 | Sharing is internal | Crate-owned cloneable handle |
 | Caller transfers or shares erased ownership | Public `Box` / `Arc<dyn Trait>` may be the honest API |
 
-## Key Points
+## Trait Boundary Guidelines
 
 - Keep traits narrow and based on behavior callers actually substitute.
 - Require `Send` and `Sync` only when the execution contract needs them.

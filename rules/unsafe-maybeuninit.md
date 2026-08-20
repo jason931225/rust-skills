@@ -57,7 +57,7 @@ fn fill_vec(v: &mut Vec<u8>, extra: usize) {
 }
 ```
 
-## Key Points
+## Initialization Rules And APIs
 
 - **`assume_init` is only sound after every byte is initialized** via `write`, an FFI call that fills the buffer, or another provably complete initialization path. Calling it on partially initialized memory is UB.
 - Create arrays of uninitialized memory with `[const { MaybeUninit::uninit() }; N]` (works for any `T`). Convert a fully-initialized `[MaybeUninit<T>; N]` to `[T; N]` via `MaybeUninit::<[T; N]>::from(arr)` then `assume_init()` — these `From` conversions are stable since Rust 1.95. The `MaybeUninit::array_assume_init` helper remains nightly-only (feature `maybe_uninit_array_assume_init`).

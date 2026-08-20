@@ -80,7 +80,7 @@ Only these count:
 
 Anything else is an ad-hoc use. Ad-hoc means the `unsafe` sits inside unrelated code instead of behind a dedicated, documented boundary.
 
-## Key Points
+## Obligations By Justification Category
 
 **Novel abstractions**
 

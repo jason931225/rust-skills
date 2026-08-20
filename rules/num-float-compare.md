@@ -85,7 +85,7 @@ mod tests {
 }
 ```
 
-## Key Points
+## Comparison And Ordering Semantics
 
 - **Tolerance choice**: an absolute tolerance alone is usually inappropriate
   across many magnitudes. A common finite-value test accepts

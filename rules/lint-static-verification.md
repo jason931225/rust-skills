@@ -75,7 +75,7 @@ literal_string_with_formatting_args = "allow"
 
 Start with the high-signal restriction lints that enforce an adopted rule. Add the rest deliberately, with workspace-level reasons for opt-outs; do not paste a maximal list that the team immediately suppresses.
 
-## Key Points
+## Running The CI Checks
 
 - Run `cargo hack` across the feature policy you publish, not only `--all-features`.
 - Keep `cargo audit` advisory policy explicit and time-bound; never ignore the command because one advisory needs a documented exception.

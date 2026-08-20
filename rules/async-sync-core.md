@@ -128,7 +128,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Drawing The Async Boundary
 
 - Apply the deletion test to every `async fn`: if removing the keyword would
   require nothing more than removing the keyword, the function never needed to

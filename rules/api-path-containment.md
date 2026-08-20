@@ -11,7 +11,7 @@ does not help here — `Path::join` cheerfully accepts `..`, and an absolute
 component silently replaces the whole prefix. Containment has to be decided
 before the open, on the resolved path, not by scanning the raw string.
 
-## Contract
+## Root Containment Requirements
 
 - Treat the storage root as the only trusted path. Callers supply a key, never
   a path.
@@ -78,7 +78,7 @@ Where keys legitimately carry a nested shape, keep the same discipline: accept
 only `Component::Normal` segments, then canonicalize the result and re-check
 containment against the canonical root before opening.
 
-## Failure Tests
+## Traversal Cases To Test
 
 - `..`, `../..`, and a percent-decoded `..` are rejected on read and on write;
 - an absolute path and a Windows prefix (`C:\`, `\\?\`) are rejected;

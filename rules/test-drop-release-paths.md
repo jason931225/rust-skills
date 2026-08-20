@@ -72,7 +72,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Assertions That Catch Regressions
 
 - Count releases rather than asserting a boolean: a double release is as much a
   bug as none, and only a counter distinguishes them.

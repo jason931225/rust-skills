@@ -12,7 +12,7 @@ or allocate without limit can stall an entire executor. Limits belong in the
 code path, expressed as numbers the operator can see, not as an assumption
 that clients are well behaved.
 
-## Contract
+## Request Ceiling Requirements
 
 - Set a maximum body size per route and enforce it while reading, not after.
 - Cap decompressed output and the compression ratio; a small compressed payload
@@ -73,7 +73,7 @@ fn main() {
 one byte beyond the limit. Reading everything first and checking `len()`
 afterwards has already paid the cost the limit exists to prevent.
 
-## Failure Tests
+## Overload Cases To Pin
 
 - a body one byte over the limit is rejected, and nothing is stored;
 - a chunked or streaming body is cut off at the limit rather than buffered;

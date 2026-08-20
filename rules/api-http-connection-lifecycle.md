@@ -15,7 +15,7 @@ has already forgotten the hostname that resolved to it — virtual hosting,
 TLS SNI, and the HTTP `Host` header all depend on the application layer
 resending that name after the transport layer's job is done.
 
-## Contract
+## Connection Lifecycle Requirements
 
 - If a client will only ever send one request per connection, say so
   explicitly: request `HTTP/1.0`, or send `HTTP/1.1` with an explicit
@@ -95,7 +95,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Keep-Alive Cases To Test
 
 - a request built for a one-shot call carries both `Host` and
   `Connection: close`;

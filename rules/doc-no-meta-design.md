@@ -51,7 +51,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## What Belongs In Rustdoc
 
 - User-facing crate and module docs describe the end state: what to call, what it returns, what can fail.
 - Design history, discarded alternatives, and "which guidelines we applied" tables belong in review artifacts, not in rustdoc.

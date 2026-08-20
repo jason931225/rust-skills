@@ -96,7 +96,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Attribute Semantics And Requirements
 
 - `#[serde(try_from = "Raw")]` — serde deserializes `Raw`, then calls `T::try_from(raw)?`. Any error from `TryFrom` becomes a serde deserialization error.
 - `#[serde(into = "Raw")]` — serde calls `Raw::from(value)` for serialization. The type must also implement `Clone` because serde may clone before converting.

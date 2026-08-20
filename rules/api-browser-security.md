@@ -10,7 +10,7 @@ also attach cookies automatically, so another site can trigger an
 authenticated state change unless the application binds that request to the
 user's session and origin.
 
-## Contract
+## Escaping And CSRF Requirements
 
 - Use an auto-escaping template or context-specific encoder for every
   untrusted value. Never build HTML with `format!`.
@@ -83,7 +83,7 @@ fn main() {
 Escaping is the templating engine's job: pick one that escapes by default and
 keep raw-HTML insertion to values the application itself produced.
 
-## Failure Tests
+## Attacks The Tests Must Reject
 
 - HTML/script payloads render as text, not markup;
 - missing, wrong-session, replayed, and expired CSRF tokens are rejected;

@@ -8,7 +8,7 @@ A password reset bypasses the existing password by design. Long-lived,
 reusable, guessable, or logged reset tokens become alternate credentials.
 Changing a password without revoking sessions leaves stolen sessions active.
 
-## Contract
+## Credential Recovery Requirements
 
 - Authenticated password change verifies the current credential and applies the
   same password policy as enrollment.
@@ -101,7 +101,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Recovery Cases To Test
 
 - unknown and known accounts have the same status/body;
 - expired, replayed, modified, and wrong-account tokens fail;

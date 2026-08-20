@@ -64,7 +64,7 @@ const fn align_up(n: usize, align: usize) -> Option<usize> {
 const ALIGNED: Option<usize> = align_up(13, 8); // Some(16)
 ```
 
-## Notes
+## Stability And MSRV
 
 Adding `const` is generally backwards-compatible. Removing it later can break
 callers that use the function in const contexts, so treat const-evaluability as

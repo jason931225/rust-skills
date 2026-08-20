@@ -39,7 +39,7 @@ warnings = "deny"
   run: cargo clippy --workspace --all-targets -- -D warnings
 ```
 
-## Notes
+## Setting Values And Scope
 
 - `build.warnings` accepts `"warn"` (default), `"deny"`, and `"allow"`. Use `"deny"` in CI so new rustc warnings fail the build.
 - The setting is documented in the Cargo Book as `build.warnings`. It covers rustc lints from your packages; it is not a substitute for `cargo clippy -- -D warnings`.

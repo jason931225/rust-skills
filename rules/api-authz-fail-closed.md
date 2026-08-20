@@ -9,7 +9,7 @@ principal may perform this operation on this resource. A valid session is not
 permission to every route. Missing middleware, backend errors, or unknown
 policy results must not turn into access.
 
-## Contract
+## Authorization Decision Requirements
 
 - Authenticate credentials at a trusted ingress and construct a typed
   principal; handlers do not parse raw credentials repeatedly.
@@ -67,7 +67,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Access Denials To Verify
 
 - missing, expired, malformed, and revoked credentials fail closed;
 - a valid principal without the required permission is denied;

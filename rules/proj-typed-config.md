@@ -77,7 +77,7 @@ units. Parse URLs, addresses, durations, sizes, and enum policies into their
 semantic types. Construct connection strings in one adapter rather than
 concatenating fragments throughout the application.
 
-## Key Points
+## Configuration Loading Requirements
 
 - Load and validate once before spawning workers.
 - Treat the listen address as security policy. Default developer settings to

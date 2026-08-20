@@ -34,7 +34,7 @@ codegen-units = 4
 
 Use named profiles so benchmark and artifact evidence says exactly which code-generation policy produced the bytes.
 
-## Contract
+## Codegen Unit Trade-Offs
 
 - More codegen units can increase parallelism and reduce wall time on a machine with available CPU and memory, but scheduling and crate shape determine the result.
 - One codegen unit gives LLVM one unit for the crate; it does not provide whole-program visibility unless the selected LTO mode does so.

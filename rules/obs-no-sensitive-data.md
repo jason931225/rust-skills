@@ -71,7 +71,7 @@ fn verify_password(_username: &str, _password: &Secret) -> bool { true }
 // credentials.password.expose_secret()  // only call site that reveals value
 ```
 
-## Key Points
+## Redaction Tools And Practices
 
 - **`skip(arg)`**: exclude a single argument from `#[instrument]` auto-captured fields.
 - **`skip_all`**: exclude all arguments; then add only safe fields with `fields(key = value)`.

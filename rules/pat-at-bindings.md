@@ -88,7 +88,7 @@ fn log_data(packet: &Packet) {
 
 `whole` captures the entire `Packet::Data(...)` value while the guard checks the payload — no need to reconstruct the variant for logging.
 
-## Notes
+## Pattern Positions And Related Lints
 
 - `@` bindings work in all pattern positions: `match`, `if let`, `while let`, `let ... else`, and function parameters.
 - Clippy lint `clippy::bind_instead_of_map` is unrelated but similarly reduces redundant re-access patterns.

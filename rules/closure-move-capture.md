@@ -56,7 +56,7 @@ fn demo() {
 }
 ```
 
-## Key Points
+## Capturing For Spawned Work
 
 - **Thread closures** passed to `std::thread::spawn` must be `'static`, which `move` enables when all captured types are `'static + Send`.
 - **Clone selectively:** clone only what the closure needs, not the whole owning struct — see [closure-disjoint-capture](closure-disjoint-capture.md).

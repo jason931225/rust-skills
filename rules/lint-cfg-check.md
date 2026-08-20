@@ -56,7 +56,7 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 workspace = true
 ```
 
-## Notes
+## Check-Cfg Syntax And Level
 
 - Feature names (`feature = "serde"`, `feature = "std"`) are registered automatically by Cargo — you do not need to list them in `check-cfg`.
 - Values in `check-cfg` entries must be quoted cfg expressions: `'cfg(name)'` or `'cfg(name, values("v1", "v2"))'`.

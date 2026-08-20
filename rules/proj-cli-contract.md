@@ -12,7 +12,7 @@ whatever consumes the output, and a program that dies on a closed pipe makes
 `prog | head` look like a crash. These conventions are cheap to honour and
 expensive to retrofit once scripts depend on the wrong behaviour.
 
-## Contract
+## Command-Line Behavior Requirements
 
 - Exit 0 for success and non-zero for failure. Return `ExitCode` from `main`,
   or call `std::process::exit` at one place, rather than exiting from deep

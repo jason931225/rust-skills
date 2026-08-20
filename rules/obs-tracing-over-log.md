@@ -42,7 +42,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Choosing Between Logging Approaches
 
 | Approach | Levels | Structured | Async-aware spans | `log` compat |
 |---|---|---|---|---|

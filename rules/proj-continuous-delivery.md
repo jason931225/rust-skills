@@ -36,7 +36,7 @@ same immutable artifact through environments.
 - Secrets are referenced from a secret provider, never copied into deployment
   manifests.
 
-## Failure Tests
+## Rollout Scenarios To Exercise
 
 - deploy the candidate against the previous compatible schema;
 - keep old and new replicas live during the expand phase;

@@ -60,7 +60,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Outlining Scope And Measurement
 
 - The pattern is standard-library practice: an ergonomic generic signature over
   a single concrete implementation.

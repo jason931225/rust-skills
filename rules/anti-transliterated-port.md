@@ -96,7 +96,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## What To Port And Rewrite
 
 - Keep portable domain logic (formulas, table rules, state machines). Rewrite the language-specific architecture.
 - **Errors:** `Result` and typed error values, not exceptions, `null` checks, or `expect` as control flow.

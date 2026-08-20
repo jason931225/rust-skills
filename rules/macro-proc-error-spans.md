@@ -104,7 +104,7 @@ error: MyTrait requires named fields
    |     ^^
 ```
 
-## Key Points
+## Emitting Spanned Compile Errors
 
 - Wrap proc-macro logic in a `fn(...) -> Result<TokenStream2, syn::Error>` helper and convert at the entry point with `.unwrap_or_else(|e| e.to_compile_error().into())`.
 - Use `Error::new_spanned(tokens, "message")` to attach the error to a specific part of the input AST.

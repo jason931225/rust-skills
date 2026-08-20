@@ -86,7 +86,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Namespaces And Helper Collisions
 
 - A namespace in Rust is the naming bucket (`fn`, `struct`/`enum`/`trait`, `macro`), not a C#/Java package. A Rust module is the closest analogue of those foreign "namespaces."
 - Repeated expansions must not fight each other over a fixed helper name.

@@ -84,6 +84,13 @@ rule_names = {p.name for p in rule_files}
 
 link_re = re.compile(r'\]\((?:\./)?([a-z0-9-]+\.md)\)')
 
+# Section labels that say nothing about the section's content. The original
+# rule set names its middle sections descriptively (775 descriptive headings
+# against 3 generic ones); these four crept in later and reduce the heading
+# list to boilerplate. `## Why It Matters` / `## Bad` / `## Good` /
+# `## See Also` are the fixed frame every rule shares and are checked above.
+generic_section_headings = {"Contract", "Failure Tests", "Key Points", "Notes"}
+
 for p in rule_files:
     text = p.read_text(encoding="utf-8")
     lines = text.splitlines()
@@ -113,6 +120,19 @@ for p in rule_files:
                 f"{p.name}: Why It Matters has {why_sentences} sentences, "
                 "expected 2-4"
             )
+    # House style: the four universal sections are fixed, and every *other*
+    # section is named for what it contains. Generic labels reused across
+    # dozens of rules turn the heading list into noise instead of a table of
+    # contents, and they hurt retrieval — someone searching for "nonce reuse"
+    # should hit a heading that says so, not a third "Key Points".
+    for heading in re.findall(r"^## (.+)$", text, flags=re.M):
+        heading = heading.strip()
+        if heading in generic_section_headings:
+            err(
+                f"{p.name}: section '## {heading}' is a generic label; name the "
+                "section for what it contains (see CONTRIBUTING.md)"
+            )
+
     for tgt in link_re.findall(text):
         if tgt not in rule_names:
             err(f"{p.name}: broken link -> {tgt}")

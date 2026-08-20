@@ -18,7 +18,7 @@ compiler infers these traits rather than requiring an explicit `impl`,
 nothing forces the author to notice the regression at the point where they
 introduced it.
 
-## Contract
+## Auto Trait Assertion Rules
 
 - For every public type whose `Send`, `Sync`, or `Unpin` status is part of
   the contract (used across threads, held across an `.await`, or returned as
@@ -76,7 +76,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## What The Assertions Must Catch
 
 - the assertion compiles against the current definition of `JobHandle`;
 - replacing `buffer`'s field type with a non-`Send` type (`Rc<[u8]>` in place
