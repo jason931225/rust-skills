@@ -20,11 +20,11 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 654,
+    "covered": 655,
     "documented-deviation": 10,
     "project-specific": 674,
     "reject": 340,
-    "unreviewed": 446
+    "unreviewed": 445
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -47597,27 +47597,29 @@
       "end_line": 55,
       "unit_sha256": "71d0e1073e123eac929033ed3d5fecd54459d499160af17ea84993957cfe6879",
       "claim": "Declaring `no_std` (H2 at ch15-no_std-rust-without-the-standard-library.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "err-panic-handler-policy"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "declaring #![no_std] obliges the binary to supply the #[panic_handler] lang item the standard library would otherwise provide; the rule states that requirement and the policy its body encodes \u2014 report before halting, pick the halt from the device's power and recovery model rather than defaulting to loop {}, and allocate nothing in the handler"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:67a60e3f29f68f99329d2bd5ced8457ddc2a2da6d43683b8dcac75e0c0b59ef8",
         "unit-sha256:71d0e1073e123eac929033ed3d5fecd54459d499160af17ea84993957cfe6879"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::the_halt_policy_is_a_real_choice_and_the_site_needs_no_allocation"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the assertion runs hosted, so it covers the location-extraction and policy-selection logic rather than a real freestanding handler; the rest of this chapter's bare-metal material (linker scripts, HAL crates, global allocator) stays unreviewed",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "67a60e3f29f68f99329d2bd5ced8457ddc2a2da6d43683b8dcac75e0c0b59ef8"
       }
     },

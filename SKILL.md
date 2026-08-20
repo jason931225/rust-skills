@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 428 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 429 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 428 rules across 27 categories, prioritized by impact for use by
+Contains 429 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -55,7 +55,7 @@ Reference these guidelines when:
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 13 |
-| 2 | Error Handling | CRITICAL | `err-` | 18 |
+| 2 | Error Handling | CRITICAL | `err-` | 19 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 17 |
 | 5 | API Design | HIGH | `api-` | 57 |
@@ -122,6 +122,7 @@ Reference these guidelines when:
 - [`err-debug-assert-scope`](rules/err-debug-assert-scope.md) - Guard internal invariants with `debug_assert!`; validate boundary data with checks that survive `--release`
 - [`err-send-sync-static`](rules/err-send-sync-static.md) - Make public error types `Send + Sync + 'static` so callers can move, wrap, and downcast them
 - [`err-short-read`](rules/err-short-read.md) - Trust the byte count a read returns, not the length you asked for
+- [`err-panic-handler-policy`](rules/err-panic-handler-policy.md) - A freestanding `#[panic_handler]` is a policy decision, not boilerplate: report if you can, then halt in a way that matches the device's power and recovery model
 
 ### 3. Memory Optimization (CRITICAL)
 

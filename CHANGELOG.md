@@ -7,6 +7,14 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `err-panic-handler-policy`: a freestanding `#[panic_handler]` is a policy
+  decision, not boilerplate. `loop {}` — the shape everyone reaches for —
+  holds the core at 100% forever and reports nothing, which on a battery
+  device is a flat battery and in the field is an undiagnosable hang. Covers
+  reporting before halting, choosing the halt from the device's power and
+  recovery model, allocating nothing in the handler, and the fact that
+  `PanicInfo` (handler) and `PanicHookInfo` (hook) have been separate types
+  since Rust 1.81.
 - `unsafe-inline-asm`: the operand-direction, clobber, and `options(...)`
   contract for `asm!`. The compiler cannot read the assembly, so it acts on
   whatever the block promises — a wrong `nomem` or `preserves_flags` is a
