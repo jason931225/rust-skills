@@ -82,6 +82,15 @@ observable channels.
   stay parallel-safe and self-cleaning.
 - Keep golden-output comparisons in files next to the test, and treat a
   changed golden file as a deliberate contract change.
+- Generate golden files by running the real reference implementation under
+  the same argument matrix the test drives, not by hand-writing expected
+  output — a hand-written fixture encodes what the author believes the tool
+  does, not what it does.
+- When the tool's output is not guaranteed to be valid UTF-8, compare raw
+  bytes rather than `String::from_utf8_lossy`-decoded text on both sides:
+  lossy decoding independently applied to actual and expected output can turn
+  a real byte-level mismatch (a split multi-byte character, a stray
+  replacement character) into two strings that compare equal.
 
 Every command-line tool has the same starting set of cases:
 
