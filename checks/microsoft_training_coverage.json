@@ -20,15 +20,15 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 805,
+    "covered": 817,
     "documented-deviation": 25,
     "project-specific": 708,
     "reject": 532,
-    "unreviewed": 54
+    "unreviewed": 42
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2070 of 2124 units carry a reviewed disposition with a named reviewer; 54 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "reason": "Source-bound inventory under semantic review. 2082 of 2124 units carry a reviewed disposition with a named reviewer; 42 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -13991,14 +13991,16 @@
       "end_line": 499,
       "unit_sha256": "86ae512b62d6ce20ed5a8c09a437ebe8beb2d9e6d30d5ebd1ed55fa0598c1cf3",
       "claim": "The Solution: A Config Trait (H3 at ch03-the-newtype-and-type-state-patterns.md#15)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "trait-config-family"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "names the generic-parameter explosion and collapses it into one config trait whose associated types name each collaborator, leaving the struct with a single type parameter; the rule states that same contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14008,10 +14010,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit motivates the pattern on an embedded diagnostics controller; the rule states it without that domain, and does not carry the unit's bound-propagation aside",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -14073,14 +14075,16 @@
       "end_line": 606,
       "unit_sha256": "079c00676af14908152d33106fc5e4c2cbf9c72a3f80476c03fcc1c7757149aa",
       "claim": "Production Wiring (H3 at ch03-the-newtype-and-type-state-patterns.md#17)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "trait-config-family"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "binds a production family by writing one unit-struct impl of the config trait that names every concrete collaborator, which is the per-deployment impl half of the rule's contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14090,10 +14094,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit's concrete bus types are illustrative; the rule asserts only that one impl per deployment selects the family",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -14114,14 +14118,16 @@
       "end_line": 689,
       "unit_sha256": "96b85cb66407910a5e191a1e0f76613034daabb4dcbcd1f3bf59654ef9f36d4a",
       "claim": "Test Wiring with Mocks (H3 at ch03-the-newtype-and-type-state-patterns.md#18)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "trait-config-family"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "substitutes the whole collaborator layer in tests by naming one alternative implementor of the config trait, with downstream helpers unchanged; the rule's Good example asserts exactly this swap"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14131,10 +14137,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit hand-writes mocks; the rule takes no position on how the substitute types are built, only that naming one type swaps the family",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -14155,14 +14161,16 @@
       "end_line": 724,
       "unit_sha256": "192b90ce1967a291b12993d3409d7ce4bfa35c064fe0ea8bf99b32484490953f",
       "claim": "Adding a New Bus Later (H3 at ch03-the-newtype-and-type-state-patterns.md#19)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "trait-config-family"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "adding a peripheral later touches the config trait, the struct, and each deployment impl, and leaves every downstream signature untouched; the rule states this and shows the E0107 the multi-parameter form produces instead"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14172,10 +14180,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit asserts the no-churn property; the rule pins it with the compiler error that makes the churn mandatory rather than stylistic",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -14564,14 +14572,16 @@
       "end_line": 1057,
       "unit_sha256": "86a0bc90282314e8bca21f701864dbfca6dd0a97532bcfc99cac1e1317fc0a57",
       "claim": "When to Reach for This Pattern (H3 at ch03-the-newtype-and-type-state-patterns.md#29)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "trait-config-family"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states the boundary this rule needs: with three or more axes, collapse the collaborator axes into an associated-type config trait while keeping the state axis its own generic parameter, giving Handle<Cfg, S>"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7",
@@ -14581,10 +14591,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit reaches this boundary from the dual-axis typestate discussion; the rule states it as a limit on the config trait and does not cover the marker-trait typestate refinement the surrounding sections teach",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "1e82b8ac3f5832c3e62b9e79ec613353bc81163f423b0b285857b147adb311d7"
       }
     },
@@ -16333,14 +16343,16 @@
       "end_line": 49,
       "unit_sha256": "aa0af9d3a815ebbbb5d5dafa8a68b7e88848824d3dd6fd85a67448b2dc0b9595",
       "claim": "8.1 The Combinator You Didn't Know You Wanted (H2 at ch08-functional-vs-imperative-when-elegance-wins.md#2)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "pat-combinator-over-branch"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "argues that a hand-written if-let/match producing one value should be written as the named Option combinator that already denotes it; the rule states that contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -16350,10 +16362,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit surveys several combinators; the rule states the substitution and its evaluation caveat rather than cataloguing the surface",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -16456,14 +16468,16 @@
       "end_line": 92,
       "unit_sha256": "6efb89a8f91f28e94f949a604ce95969d7c176ba8ffc3dab065e029cad926518",
       "claim": "When `if let` IS better (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "pat-combinator-over-branch"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states the counter-boundary: keep if let when the arms are genuinely different control flow rather than short expressions of one type, which is the rule's limiting half"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -16473,10 +16487,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit argues the boundary from readability; the rule additionally pins it to the compile errors that make a diverging or differently-typed arm impossible as an argument",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -16496,14 +16510,16 @@
       "end_line": 140,
       "unit_sha256": "1678d23b508bb5e582c59d83512b363ab2be53dad64b945faea1ea8e92e8ac75",
       "claim": "8.2 Bool Combinators: `.then()` and `.then_some()` (H2 at ch08-functional-vs-imperative-when-elegance-wins.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "pat-combinator-over-branch"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "teaches bool::then and then_some for a conditional Some/None, including that then_some evaluates its argument eagerly while then defers it; the rule states both"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -16513,10 +16529,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit dates then to Rust 1.62; only then_some stabilised in 1.62, then landed in 1.50, so the rule states no version and the discrepancy is not carried forward",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -16826,14 +16842,16 @@
       "end_line": 438,
       "unit_sha256": "b9381bba668be3e72587469e45b213a7b4b184508d29657f810ce6cfa773df82",
       "claim": "Collecting into a Result (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#14)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "pat-combinator-over-branch"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states that collecting a fallible iterator into Result<Vec<_>, E> stops at the first Err via Result's FromIterator, replacing a push loop with an early return"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -16843,10 +16861,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit asserts the short-circuit; the rule pins it with a measured count of elements actually pulled from the source",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -17194,14 +17212,16 @@
       "end_line": 625,
       "unit_sha256": "45703212b827b715f313ace085b5b5961b19e2ae7bb1233d91d09e3916752041",
       "claim": "8.9 The Taste Test: A Catalog of Transformations (H2 at ch08-functional-vs-imperative-when-elegance-wins.md#23)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "pat-combinator-over-branch"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "catalogues the branch-to-combinator equivalences (map_or, map, filter, zip) that the rule states as one substitution with a shared side condition"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -17211,10 +17231,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit is a wider catalogue than the rule reproduces; the rule states the transformation and its limits rather than every pair",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -17275,14 +17295,16 @@
       "end_line": 659,
       "unit_sha256": "cd9e378f0bba6d7321206eb25211fb40652c9df6f3b2917d52515711dab99830",
       "claim": "Over-functionalizing: the 5-deep chain nobody can read (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#25)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "pat-combinator-over-branch"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states that a chain grown past roughly four adapters stops reading as one operation and should have an intermediate stage named; the rule states the same ceiling"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -17292,10 +17314,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit fixes the threshold at five; the rule says roughly four and treats the number as a prompt to name a binding rather than a limit to enforce",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -17316,14 +17338,16 @@
       "end_line": 707,
       "unit_sha256": "7b1b85cedf46ddde25b8ac2fadd8594aba1924f05c29f707dcc8f6d03b23b770",
       "claim": "Under-functionalizing: the C-style loop that Rust has a word for (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#26)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "perf-iter-lazy"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "replaces a boolean-flag-plus-break search loop with the named short-circuiting adapter; perf-iter-lazy states that any/all/find short-circuit and shows the same substitution"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -17333,10 +17357,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the mapped rule teaches the destination adapters but never shows the flag-and-break loop as the starting shape, so the unit's diagnosis of that shape is not itself stated anywhere",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
