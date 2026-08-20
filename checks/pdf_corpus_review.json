@@ -17224,6 +17224,25 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "unit_id": "rust-in-action:0295",
+      "title": "12.5.3 Listing all signals supported by the OS",
+      "page_text_sha256": "536288266593303458cfcc464cf483e7326fd2b9cd2fb9ebccfe36165e96dc9d",
+      "disposition": "reject",
+      "audit_disposition": "reject",
+      "mapped_rule_ids": [],
+      "exact_difference": {
+        "kind": "out-of-scope",
+        "detail": "the `kill -l` signal list and a table of common signals with their default actions and command-line shortcuts; operating-system reference material rather than a Rust engineering contract"
+      },
+      "rationale_class": "tutorial-scaffolding",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "the extracted pages also carry the opening of the next section, which states that a handler must act quickly within a restricted subset; that is the premise of conc-signal-handler-safety but stops before its prescription, so no coverage is claimed from it",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
       "unit_id": "rust-in-action:0296",
       "title": "12.6 Handling signals with custom actions",
       "page_text_sha256": "89751a83c020055d987b1b3067cfaf4b1a5d59e51e05c8455a8ebeb35f2ba870",

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 432,
-  "ledger_mapped": 355,
+  "rule_count": 434,
+  "ledger_mapped": 357,
   "typed_justification": 77,
   "summary": {
     "cargo-book": 2,
     "clippy-docs": 6,
     "crate-docs": 10,
     "edition-guide": 2,
-    "ledger-mapped": 355,
+    "ledger-mapped": 357,
     "rust-api-guidelines": 15,
     "rust-performance-book": 5,
     "rust-reference": 11,
@@ -2089,6 +2089,13 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "rule_id": "own-mutation-scope",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "own-mutex-interior",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -2148,6 +2155,7 @@
       "rule_id": "pat-exhaustive-enum",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -2610,6 +2618,13 @@
     },
     {
       "rule_id": "serde-flatten",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "serde-format-choice",
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_training_coverage.json"

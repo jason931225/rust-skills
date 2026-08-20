@@ -130,6 +130,39 @@ fn main() {
 - the state lives in exactly one thread, so no test needs a lock to read it
   consistently.
 
+## Waiting On Work, A Tick, And A Deadline In One Loop
+
+This rule notes that `std` has no `select` and moves on. That leaves the common
+shape unanswered: a worker that must serve a work queue, do something
+periodically, and stop at a deadline.
+
+The alternative people reach for is sequencing non-blocking receives —
+`if let Ok(job) = work.try_recv() { .. } else if let Ok(_) = tick.try_recv() { .. }`
+— and it starves everything after the first arm. Over 2000 iterations with both
+channels always ready, the sequenced form gave the first channel 2000 turns and
+the second 0. A real `select` over the same channels gave 1007 and 993, because
+its arm order is randomised for exactly this reason.
+
+So take the MPMC channel this rule already points at and use its `select!`:
+one loop, one arm per source, and a receive on a timer channel instead of a
+deadline flag threaded through the body.
+
+```text
+one select! loop over work + tick + deadline:
+  jobs=7 ticks=5 ended: deadline elapsed
+```
+
+Two things stay true from the rest of this rule. Disconnection is still the
+shutdown path — a `recv` arm that reports the channel closed ends the loop, so
+there is no sentinel message and no separate stop flag. And the deadline is a
+channel like any other, which is what keeps it out of the work-handling code:
+nothing has to check elapsed time between jobs, because waiting on the deadline
+is one of the things the loop is already waiting on.
+
+Where the set of sources is known only at runtime, the same crates offer a
+dynamic form that takes a built list of operations rather than a fixed set of
+arms.
+
 ## See Also
 
 - [async-mpsc-queue](async-mpsc-queue.md) - the async counterpart, and why a sync channel inside async is a different mistake

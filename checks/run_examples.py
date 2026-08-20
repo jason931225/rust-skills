@@ -40,9 +40,13 @@ def main() -> int:
             continue
         # A wall-clock timeout cannot tell a hung example from a loaded
         # machine, and this suite runs right after a full cargo build. Retry
-        # once with a longer budget before calling it a failure: a real hang
-        # still hangs, while a starved process gets the room it needed.
-        for attempt, budget in enumerate((TIMEOUT, TIMEOUT * 3)):
+        # once with a much longer budget before calling it a failure: a real
+        # hang still hangs, while a starved process gets the room it needed.
+        # The retry budget is deliberately generous rather than merely larger —
+        # a 3x retry still failed three examples when other compile jobs were
+        # saturating the machine, and every example here finishes in
+        # milliseconds when it runs at all.
+        for attempt, budget in enumerate((TIMEOUT, TIMEOUT * 12)):
             try:
                 result = subprocess.run([str(binary)], capture_output=True,
                                         text=True, timeout=budget)
@@ -50,7 +54,7 @@ def main() -> int:
             except subprocess.TimeoutExpired:
                 result = None
         if result is None:
-            failures.append((name, f"did not finish within {TIMEOUT * 3}s "
+            failures.append((name, f"did not finish within {TIMEOUT * 12}s "
                                    "across two attempts"))
             continue
         ran += 1
