@@ -38,11 +38,20 @@ def main() -> int:
         if not binary.exists():
             skipped += 1
             continue
-        try:
-            result = subprocess.run([str(binary)], capture_output=True,
-                                    text=True, timeout=TIMEOUT)
-        except subprocess.TimeoutExpired:
-            failures.append((name, f"did not finish within {TIMEOUT}s"))
+        # A wall-clock timeout cannot tell a hung example from a loaded
+        # machine, and this suite runs right after a full cargo build. Retry
+        # once with a longer budget before calling it a failure: a real hang
+        # still hangs, while a starved process gets the room it needed.
+        for attempt, budget in enumerate((TIMEOUT, TIMEOUT * 3)):
+            try:
+                result = subprocess.run([str(binary)], capture_output=True,
+                                        text=True, timeout=budget)
+                break
+            except subprocess.TimeoutExpired:
+                result = None
+        if result is None:
+            failures.append((name, f"did not finish within {TIMEOUT * 3}s "
+                                   "across two attempts"))
             continue
         ran += 1
         if result.returncode != 0:

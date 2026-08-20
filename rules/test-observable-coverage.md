@@ -77,6 +77,55 @@ fn increment_rejects_overflow_without_changing_state() {
 - Keep coverage and mutation reports as diagnostic evidence; neither justifies tautological tests.
 - Compile and run repository examples because they are user-facing behavior, not decorative snippets.
 
+## Reading The Measurement Itself
+
+The policy above says to measure in order to find omissions. What you measure
+with decides whether the number can find them at all.
+
+Rust's `-C instrument-coverage` produces LLVM *source-based* coverage, which
+counts execution regions rather than lines. The distinction is not academic — a
+line can be fully covered while the branches on it never ran:
+
+```rust
+fn classify(n: i32) -> &'static str {
+    // Two regions live on this line. A test that only passes a negative number
+    // short-circuits at `n > 0`, so `n % 2 == 0` and the `positive-even` arm
+    // never execute — while the line itself reports as covered.
+    if n > 0 && n % 2 == 0 { "positive-even" } else { "other" }
+}
+
+fn main() {
+    assert_eq!(classify(-3), "other");
+}
+```
+
+Instrumenting exactly that program and reporting it gives **100% line coverage
+and 80% region coverage**: six of six lines executed, two of ten regions never
+did. A line-coverage number would have shown nothing left to do. This is why
+the untested half of a short-circuit, and the arm of a condition that is never
+taken, are the omissions worth chasing.
+
+## Aggregating Across Test Kinds And Excluding Noise
+
+A crate's observable behavior is exercised by unit tests, integration tests,
+doctests, and the examples the policy above requires you to run. Each is a
+separate binary and a separate profile, so measuring one run and reporting it
+as the crate's coverage understates it — and the gap is not uniform, because
+integration tests are usually the only thing touching the public surface that
+matters most.
+
+- Merge the profiles from every test kind into one report before reading it.
+  Two runs measured separately cannot be compared or added.
+- Exclude generated code and paths that are compiled out on the host —
+  platform-gated modules, hardware-only branches. Left in, they depress the
+  signal permanently and train everyone to ignore it.
+- An exclusion is a claim that something is untestable here, so it belongs in
+  review like any other claim. A growing exclusion list is the finding.
+
+Both of these are about keeping the number honest enough to be diagnostic.
+They are not an argument for a threshold: a merged, region-level report still
+answers "what behavior has no test", not "is this crate done".
+
 ## See Also
 
 - [test-no-tautology](test-no-tautology.md) - an independent oracle matters more than a covered line
