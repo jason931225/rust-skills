@@ -748,3 +748,90 @@ fn independent_required_builder_fields_can_be_set_in_either_order() {
     // `DerBuilder::new().mnemonic("E101".into()).finish()` does not compile:
     // no `finish` exists while `fault_class` is still `Missing`.
 }
+
+// --- async-completion-owned-buffer ---------------------------------------------
+
+/// A submitted operation. The engine owns `buffer` until completion, so
+/// nothing else can read or write it in the meantime.
+struct AbInFlight {
+    buffer: Vec<u8>,
+    requested: usize,
+}
+
+struct CompletionEngine;
+
+impl CompletionEngine {
+    fn submit_read(&self, buffer: Vec<u8>, requested: usize) -> AbInFlight {
+        AbInFlight { requested: requested.min(buffer.len()), buffer }
+    }
+
+    fn complete(&self, mut in_flight: AbInFlight) -> (Vec<u8>, std::io::Result<usize>) {
+        for slot in in_flight.buffer[..in_flight.requested].iter_mut() {
+            *slot = 0xab;
+        }
+        let written = in_flight.requested;
+        (in_flight.buffer, Ok(written))
+    }
+}
+
+#[test]
+fn a_completion_read_returns_the_buffer_it_took_by_value() {
+    let engine = CompletionEngine;
+    let buffer = vec![0u8; 8];
+
+    let in_flight = engine.submit_read(buffer, 4);
+    // `buffer` has moved: the bytes are unreachable while the engine owns
+    // them, which is what makes a later write by the engine sound.
+    let (buffer, result) = engine.complete(in_flight);
+
+    assert_eq!(result.expect("the read completes"), 4);
+    assert_eq!(&buffer[..4], &[0xab; 4]);
+    assert_eq!(&buffer[4..], &[0u8; 4], "the engine wrote only what was requested");
+}
+
+// --- test-cross-target-execution ------------------------------------------------
+
+/// Logic verifiable on the host, kept separate from anything needing the
+/// target so a fast host run cannot masquerade as target coverage.
+fn frame_len(header: &[u8]) -> Option<usize> {
+    let raw = u16::from_le_bytes([*header.first()?, *header.get(1)?]);
+    Some(usize::from(raw))
+}
+
+#[test]
+fn host_verifiable_logic_stays_separate_from_target_only_behavior() {
+    assert_eq!(frame_len(&[0x04, 0x00]), Some(4));
+    assert_eq!(frame_len(&[0x00, 0x01]), Some(256));
+    assert_eq!(frame_len(&[0x04]), None, "a short header has no length");
+}
+
+// --- proj-build-script-scope -----------------------------------------------------
+
+/// Stands in for the decision a build script makes: the emitted cfg set must
+/// be a function of the target and the package's own features only, never of
+/// what happens to exist on the machine running the build.
+fn emitted_cfgs(target_os: &str, systemd_feature: bool, host_has_libsystemd: bool) -> Vec<&'static str> {
+    let _ = host_has_libsystemd; // deliberately unused: the host must not matter
+    let mut cfgs = Vec::new();
+    if target_os == "linux" {
+        cfgs.push("uses_epoll");
+    }
+    if systemd_feature {
+        cfgs.push("has_systemd");
+    }
+    cfgs
+}
+
+#[test]
+fn build_script_output_depends_on_the_target_not_the_build_machine() {
+    // Same target, same features, two machines that differ in what is installed.
+    let on_builder_a = emitted_cfgs("linux", false, true);
+    let on_builder_b = emitted_cfgs("linux", false, false);
+    assert_eq!(on_builder_a, on_builder_b, "the artifact must not depend on the build host");
+
+    // The feature, not a host probe, is what turns the capability on.
+    assert_eq!(emitted_cfgs("linux", true, false), vec!["uses_epoll", "has_systemd"]);
+
+    // Cross-compiling emits the target's cfgs, not the host's.
+    assert_eq!(emitted_cfgs("windows", false, true), Vec::<&str>::new());
+}

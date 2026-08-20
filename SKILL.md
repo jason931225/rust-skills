@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 422 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 425 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 422 rules across 27 categories, prioritized by impact for use by
+Contains 425 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -59,7 +59,7 @@ Reference these guidelines when:
 | 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
 | 5 | API Design | HIGH | `api-` | 57 |
-| 6 | Async/Await | HIGH | `async-` | 29 |
+| 6 | Async/Await | HIGH | `async-` | 30 |
 | 7 | Concurrency | HIGH | `conc-` | 9 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
@@ -73,11 +73,11 @@ Reference these guidelines when:
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
 | 19 | Naming Conventions | MEDIUM | `name-` | 17 |
-| 20 | Testing | MEDIUM | `test-` | 25 |
+| 20 | Testing | MEDIUM | `test-` | 26 |
 | 21 | Documentation | MEDIUM | `doc-` | 15 |
 | 22 | Observability | MEDIUM | `obs-` | 10 |
 | 23 | Performance Patterns | MEDIUM | `perf-` | 15 |
-| 24 | Project Structure | LOW | `proj-` | 35 |
+| 24 | Project Structure | LOW | `proj-` | 36 |
 | 25 | FFI & Interop | LOW | `ffi-` | 11 |
 | 26 | Clippy & Linting | LOW | `lint-` | 16 |
 | 27 | Anti-patterns | REFERENCE | `anti-` | 16 |
@@ -255,6 +255,7 @@ Reference these guidelines when:
 - [`async-sync-core`](rules/async-sync-core.md) - Keep business rules in sync functions that take I/O results as arguments; confine async to the outermost shell that fetches and orchestrates
 - [`async-explicit-close`](rules/async-explicit-close.md) - Give a resource whose release must await an explicit `close` method; leave `Drop` as a best-effort fallback
 - [`async-runtime-agnostic-lib`](rules/async-runtime-agnostic-lib.md) - A library takes futures and returns futures; the binary that owns `main` picks the runtime
+- [`async-completion-owned-buffer`](rules/async-completion-owned-buffer.md) - Completion-based I/O must take the buffer by value and hand it back with the result; do not wrap it in the readiness `AsyncRead`/`AsyncWrite` traits
 
 ### 7. Concurrency (HIGH)
 
@@ -449,6 +450,7 @@ Reference these guidelines when:
 - [`test-env-independent`](rules/test-env-independent.md) - Assert what the program decides; normalize or exclude everything the host decides
 - [`test-compile-fail-guarantees`](rules/test-compile-fail-guarantees.md) - Pin every type-system-only guarantee with a committed compile-fail test
 - [`test-drop-release-paths`](rules/test-drop-release-paths.md) - Assert that a `Drop`-based release actually happens on an early return and during a panic
+- [`test-cross-target-execution`](rules/test-cross-target-execution.md) - A green `cargo test` proves the host build works; a target you cross-compile for is untested until something runs the binary there
 
 ### 21. Documentation (MEDIUM)
 
@@ -536,6 +538,7 @@ Reference these guidelines when:
 - [`proj-build-target-cfg`](rules/proj-build-target-cfg.md) - Write `build.rs` against the target, not the host: read `TARGET`, `HOST`, and `CARGO_CFG_TARGET_*` instead of `cfg!`
 - [`proj-libc-floor`](rules/proj-libc-floor.md) - Choose the C library and dynamic-link floor the fleet must satisfy, and verify the shipped binary against it
 - [`proj-atomic-file-replace`](rules/proj-atomic-file-replace.md) - Replace a whole file through a same-directory temporary, a sync, and a rename — never by truncating the original
+- [`proj-build-script-scope`](rules/proj-build-script-scope.md) - A `build.rs` configures only its own package, and must decide from the target — never from what it finds on the build machine
 
 ### 25. FFI & Interop (LOW)
 

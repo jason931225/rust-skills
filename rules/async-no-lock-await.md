@@ -115,6 +115,41 @@ async fn state_manager(
 }
 ```
 
+## Releasing The Lock Can Be The Bug
+
+Every pattern above splits one critical section into two, with an `.await`
+between them. That is only correct when the second half does not depend on
+state the first half observed. When it does, dropping the guard is not a fix —
+it opens a check-then-act race that holding the lock would have prevented:
+
+```rust
+// Pattern 1 applied where the halves are *not* independent. Between the two
+// locks, another task can change `version`, and this task then writes a
+// result computed from a version that is no longer current — silently
+// overwriting the other task's work.
+async fn refresh(state: &Mutex<State>) {
+    let version = state.lock().await.version;          // check
+    let rendered = render(version).await;              // ...another task may bump `version` here
+    state.lock().await.result = rendered;              // act, on a stale premise
+}
+```
+
+Three honest resolutions, in preference order:
+
+- **Make the halves independent.** Compute something that does not depend on
+  the observed state, so the interleaving cannot matter. This is why the
+  patterns above are written as clone-out / compute / apply.
+- **Re-validate under the second lock.** Take the guard, confirm the premise
+  still holds (`version` unchanged), and either commit or retry. This is a
+  compare-and-swap in disguise and should be written as one.
+- **Hold an async mutex across the whole transaction.** A
+  `tokio::sync::Mutex` held across `.await` is legal and sometimes correct;
+  the cost is that the critical section now includes I/O latency, which is a
+  throughput decision to make deliberately rather than a rule violation.
+
+The failure is invisible in a single-task test and reproduces only under
+concurrency, so pin it with two tasks and an assertion on the torn state.
+
 ## Using RwLock
 
 ```rust
