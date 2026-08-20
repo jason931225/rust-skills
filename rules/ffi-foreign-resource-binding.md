@@ -37,6 +37,15 @@ failures are invisible until the wrong code path runs.
   it as a Rust borrow — hold the dependent handle behind a lifetime tied to
   the owning handle — instead of two independently owned pointers a caller
   could free out of order.
+- Keep the memory a caller hands in (bytes the caller allocated and owns) and
+  memory this side allocates to hand back (a `Box`, a `String`) on separate,
+  explicitly paired allocate/free functions; the two are different
+  allocations even when both cross the same boundary, and freeing one
+  through the other's deallocator is undefined behavior.
+- When implementing a custom `alloc`/`dealloc` pair over `std::alloc::Layout`,
+  never pass a zero-sized `Layout` to `alloc` — that is undefined behavior —
+  and always `dealloc` with the exact same size and alignment the matching
+  `alloc` call used.
 
 ## Bad
 

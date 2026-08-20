@@ -74,6 +74,12 @@ Most rules yield when the alternative is worse. This one does not. Unsound code 
 - The soundness boundary is the **module**, not the function. A safe method may rely on an invariant that another item in the *same* module established and that privacy keeps outsiders from breaking.
 - Crossing a module (or crate) line without re-establishing the invariant is a new API. If that API's callers must promise something the compiler cannot check, it is `unsafe`.
 - Dangerous-but-defined work stays safe (`unsafe-means-ub`). Missing a `Send` bound is not a license to implement `Send` for every `T`.
+- A WASM export the host can call is the same boundary as any other FFI entry
+  point: a `pub extern "C"` function that reconstructs a `&str`/`String` from
+  host-supplied `(ptr, len)` via `from_raw_parts` and `from_utf8_unchecked`
+  is unsound if left safe, because the host is an untrusted caller from the
+  module's point of view. Mark it `unsafe`, or route it through a generated
+  binder that validates the bytes first.
 
 ## See Also
 

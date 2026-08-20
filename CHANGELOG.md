@@ -7,6 +7,33 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Three gaps from surveying "Fullstack Rust" via Grok 4.6 xhigh reasoning
+  (intro/Actix, the Diesel-backed blog app, WASM/CLI, macros) — the last
+  unreviewed book in the PDF corpus: `api-request-scoped-state` (a value
+  built inside a web framework's per-worker factory closure is worker-local;
+  shared state must be built once and cloned in, and request-scoped values
+  belong in the framework's typed extension map, not a handler parameter
+  alone), `ffi-wasm-wire-abi` (export a compound value across a numeric-only
+  WASM ABI as an explicit `(ptr, len)` pair, never as a pointer into a
+  `String`'s or `Vec`'s undocumented `#[repr(Rust)]` layout), and
+  `macro-proc-helper-attributes` (a proc macro sees only tokens, before type
+  checking, so trait-dependent codegen needs an explicit caller-stated
+  helper attribute, declared via `attributes(...)` and parsed with
+  `syn::parse::Parse`). Six existing rules gained bullets: `api-error-schema`
+  (extractor rejection is a separate pipeline from a handler's own `Result`;
+  a response-building trait's un-overridden sibling method still runs),
+  `conc-db-transaction-boundary` (recovering an `INSERT`'s generated id
+  without `RETURNING` needs the same connection or transaction, not a
+  follow-up `MAX(id)`; load-then-group beats one query per parent),
+  `ffi-wasm-memory-view` (WASM integers carry no signedness of their own;
+  linear memory grows but never shrinks), `unsafe-sound-abstractions` (a
+  WASM export reachable from an untrusted host is the same boundary as any
+  other FFI entry point), `ffi-foreign-resource-binding` (input and output
+  allocations need separate paired free functions; a custom `alloc`/`dealloc`
+  pair must never see a zero-sized `Layout` and must match size and
+  alignment exactly), and `api-http-connection-lifecycle` (`Content-Length`
+  after transparent decompression reflects the encoded size, not the
+  decoded bytes a caller reads back).
 - Two gaps from surveying "Command-Line Rust" (Ken Youens-Clark), which
   reimplements classic Unix utilities in Rust and surfaces clap and
   text-I/O pitfalls repeatedly across all thirteen tools it builds:
