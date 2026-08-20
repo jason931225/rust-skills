@@ -14,7 +14,9 @@ The test module is a child of the module being tested. `use super::*` imports al
 mod tests {
     use crate::my_module::public_function;
     use crate::my_module::MyStruct;
-    // Can't access private items this way!
+    // Note: privacy is not the reason to prefer `use super::*`. A child
+    // `mod tests` CAN name private parent items by path (verified) —
+    // the glob import is about brevity, not access.
     
     #[test]
     fn test_function() {

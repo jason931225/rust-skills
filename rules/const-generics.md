@@ -87,7 +87,7 @@ let result = xor_block([0u8; BLOCK], [0xFF; BLOCK]);
 
 ## Stability And Inference Limits
 
-Rust 1.65+ stabilized const generic defaults
+Rust 1.59 stabilized const generic defaults
 (`struct Buf<const N: usize = 64>`). Const generic parameter types currently
 include integers, `bool`, and `char`; floating-point and user-defined parameter
 types are not stable. Inference often supplies `N` from an argument, but public

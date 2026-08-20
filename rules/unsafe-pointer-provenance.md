@@ -30,7 +30,9 @@ if they carry different provenance.
   do not exempt the pointer from bounds rules if you dereference it.
 - Do not reconstruct a pointer from an integer you saved earlier and expect it
   to carry the provenance of the object it once pointed into; use
-  `with_addr`/`expose_provenance`/`from_exposed_addr` (or keep the pointer
+  `with_addr`/`expose_provenance`/`with_exposed_provenance` (note the last is
+  the stable name; the old nightly `from_exposed_addr` no longer exists), or
+  keep the pointer
   itself, not its address) when the round trip is unavoidable.
 - Two pointers with the same address but different provenance are not
   interchangeable — a pointer derived from allocation A cannot be used to

@@ -382,6 +382,22 @@ semantic versioning for the rule set.
   It is load-bearing only under nightly `#[may_dangle]`, which the rule never
   mentioned. Written two days ago; removed rather than patched.
 ### Fixed
+- Nine more audit findings, each verified by compiling or running it rather
+  than taken on report. Two were the remaining high-severity ones:
+  `closure-disjoint-capture` said `move` captures the whole named place (RFC
+  2229 applies to `move` closures since edition 2021 — the untouched field
+  stays usable), and `async-cancellation-token` said child tokens are
+  auto-cancelled when the parent is dropped (they are not; only
+  `parent.cancel()` propagates). Also `test-use-super` ("can't access private
+  items" — a child test module can), `async-async-fn-bounds` (`AsyncFn` is in
+  the prelude for every edition, not just 2024), `name-acronym-word` (cited
+  `std::io::IoError`, which does not exist), `const-generics` (defaults
+  stabilized in 1.59, not 1.65), `unsafe-pointer-provenance`
+  (`from_exposed_addr` is gone; the stable name is `with_exposed_provenance`),
+  `api-clap-parser-contract` (`get_matches` is on `Command`, not
+  `ArgMatches`), and `conc-signal-handler-safety` (Rust's std sets `SIGPIPE`
+  to `SIG_IGN` before `main`, so a write to a closed pipe returns `EPIPE`
+  rather than killing the process).
 - Correctness audit of all 428 rules, ten agents, every acted-on finding
   re-verified by compiling or running it. Notable: `ffi-wasm-wire-abi`
   returned a Rust tuple across `extern "C"` (not FFI-safe — the rule's own
