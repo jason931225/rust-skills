@@ -2709,3 +2709,52 @@ fn an_unrecognized_attribute_is_skipped_not_treated_as_an_error() {
     let unrelated: Vec<syn::Attribute> = vec![syn::parse_quote!(#[serde(skip)])];
     assert!(!fsr_is_required(&unrelated).expect("unrecognized attributes are skipped"));
 }
+
+// conc-pattern-choice: the commutativity test decides whether concurrent
+// updates need to see one another. A commuting update combines from per-worker
+// accumulators with no shared state; a non-commuting one gives a different
+// answer per interleaving, so it needs an owner or a lock.
+fn cpc_commuting_total(chunks: Vec<Vec<u64>>) -> u64 {
+    let (tx, rx) = std::sync::mpsc::channel();
+    for chunk in chunks {
+        let tx = tx.clone();
+        std::thread::spawn(move || {
+            let subtotal: u64 = chunk.iter().sum();
+            tx.send(subtotal).expect("the receiver outlives the workers");
+        });
+    }
+    drop(tx);
+    rx.iter().sum()
+}
+
+#[test]
+fn a_commuting_update_needs_no_shared_state_to_reach_the_sequential_answer() {
+    let chunks = vec![vec![1u64, 2, 3], vec![4, 5], vec![6], Vec::new()];
+    let sequential: u64 = chunks.iter().flatten().sum();
+
+    // Order of arrival varies run to run; the answer does not. That is what
+    // "commutes" means, and it is why no worker had to wait for another.
+    for _ in 0..64 {
+        assert_eq!(cpc_commuting_total(chunks.clone()), sequential);
+    }
+    assert_eq!(cpc_commuting_total(Vec::new()), 0, "no workers is an empty sum");
+}
+
+#[test]
+fn a_non_commuting_pair_gives_a_different_answer_per_order() {
+    // "withdraw 100 if funds allow" and "add 10% interest" do not commute, so
+    // the two interleavings are genuinely different outcomes rather than a
+    // rounding artifact. Exclusion is required; the choice of owner vs mutex
+    // is then a measurement, not a correctness question.
+    let withdraw = |balance: u64| if balance >= 100 { balance - 100 } else { balance };
+    let interest = |balance: u64| balance + balance / 10;
+
+    let start = 150u64;
+    assert_eq!(withdraw(interest(start)), 65);
+    assert_eq!(interest(withdraw(start)), 55);
+    assert_ne!(
+        withdraw(interest(start)),
+        interest(withdraw(start)),
+        "an order-dependent update is exactly the case a lock or an owner exists to settle"
+    );
+}
