@@ -64,6 +64,88 @@ const fn align_up(n: usize, align: usize) -> Option<usize> {
 const ALIGNED: Option<usize> = align_up(13, 8); // Some(16)
 ```
 
+## Constructor-Enforced Relational Invariants
+
+A `const fn` constructor is not limited to validating one value in
+isolation — it can assert relationships *among* several constants, and a
+failed `assert!` there is a compile error, not a runtime check that a
+missed test path never exercises. This matters most for layouts with
+cross-value invariants: memory regions that must not overlap and must stay
+within a bound, protocol fields that must not leave gaps, a multi-stage
+derivation (a PLL configuration, a baud-rate divisor chain) where an
+intermediate value has its own valid range independent of the final result.
+
+```rust
+struct MemoryRegion {
+    start: usize,
+    size: usize,
+}
+
+const fn checked_layout(regions: &[MemoryRegion], total: usize) -> bool {
+    let mut i = 0;
+    while i < regions.len() {
+        let end = regions[i].start + regions[i].size;
+        if end > total {
+            return false; // a region overruns the physical bound
+        }
+        let mut j = i + 1;
+        while j < regions.len() {
+            let other_end = regions[j].start + regions[j].size;
+            let overlaps = regions[i].start < other_end && regions[j].start < end;
+            if overlaps {
+                return false; // two regions claim the same bytes
+            }
+            j += 1;
+        }
+        i += 1;
+    }
+    true
+}
+
+const REGIONS: [MemoryRegion; 2] =
+    [MemoryRegion { start: 0, size: 64 }, MemoryRegion { start: 64, size: 64 }];
+const _: () = assert!(checked_layout(&REGIONS, 128), "region layout is invalid");
+```
+
+For a sequential layout (a wire frame, a packed struct's fields), derive
+each field's position from the *previous* field's end instead of writing
+independent offsets — a fifth field with an independent offset needs four
+new pairwise-overlap assertions to stay honest, while a derived offset makes
+a gap or overlap structurally unwritable:
+
+```rust
+struct Field {
+    offset: usize,
+    size: usize,
+}
+
+impl Field {
+    const fn first(size: usize) -> Self {
+        Field { offset: 0, size }
+    }
+
+    const fn then(&self, size: usize) -> Self {
+        Field { offset: self.offset + self.size, size }
+    }
+
+    const fn end(&self) -> usize {
+        self.offset + self.size
+    }
+}
+
+const HEADER: Field = Field::first(4);
+const PAYLOAD: Field = HEADER.then(64);
+const CRC: Field = PAYLOAD.then(2);
+const MAX_FRAME: usize = 128;
+const _: () = assert!(CRC.end() <= MAX_FRAME, "frame layout exceeds the maximum size");
+```
+
+When a `const fn` derives a value through several stages (each depending on
+the last), assert every intermediate against its own valid range inside the
+same function, not only the final result — the compiler error then names
+the broken stage, and a later change to one input cannot silently violate a
+mid-chain limit that a single end-to-end check would miss.
+
 ## Stability And MSRV
 
 Adding `const` is generally backwards-compatible. Removing it later can break
