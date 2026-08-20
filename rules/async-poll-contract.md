@@ -139,6 +139,69 @@ fn main() {
 - Keep each `poll` bounded in time; long computation inside it starves the
   worker exactly as a blocking call would.
 
+## The Same Contract For `poll_next`
+
+A hand-written `Stream` carries every obligation above — never block, re-check
+readiness rather than trusting the wake, re-register the waker before each
+`Pending` — plus a state machine `Future` does not have. `poll_next` returns
+`Poll<Option<Item>>`, and the three outcomes mean different things:
+
+- `Ready(Some(item))` yields one item and says nothing about the next. The
+  consumer will poll again, so the stream must be left ready to produce or to
+  park.
+- `Ready(None)` is terminal, the way `Future`'s `Ready` is. Polling after it
+  is unspecified; make the violation loud rather than returning items again.
+- `Pending` carries the same wake obligation as a future's: something must
+  wake the registered waker when another item may be available.
+
+The common bug is a stream that returns `Ready(Some(_))` for its last item and
+then, on the next poll, does the work of deciding it is finished *without*
+having registered a waker for that decision — so a consumer that would have
+been woken by an upstream event parks forever one item short.
+
+```rust
+use std::pin::Pin;
+use std::task::{Context, Poll};
+
+/// Yields each queued item, then ends. `finished` makes the terminal
+/// contract observable instead of silently restarting.
+pub struct Drain {
+    items: std::collections::VecDeque<u32>,
+    finished: bool,
+}
+
+impl futures::Stream for Drain {
+    type Item = u32;
+
+    fn poll_next(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<Option<u32>> {
+        let this = self.get_mut();
+        assert!(!this.finished, "Drain polled after returning Ready(None)");
+        match this.items.pop_front() {
+            Some(item) => Poll::Ready(Some(item)),
+            None => {
+                this.finished = true;
+                Poll::Ready(None)
+            }
+        }
+    }
+}
+
+fn main() {
+    use futures::StreamExt;
+    let drain = Drain {
+        items: [1, 2, 3].into_iter().collect(),
+        finished: false,
+    };
+    let collected: Vec<u32> = futures::executor::block_on(drain.collect());
+    assert_eq!(collected, vec![1, 2, 3]);
+}
+```
+
+Bounded *consumption* of a stream — running several items concurrently with a
+ceiling — is a separate concern covered by
+[async-join-parallel](async-join-parallel.md); this section is about
+implementing the trait.
+
 ## See Also
 
 - [async-cancel-safety](async-cancel-safety.md) - the future may be dropped between two polls, taking its buffered state with it
