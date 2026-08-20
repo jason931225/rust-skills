@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 429 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 428 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 429 rules across 27 categories, prioritized by impact for use by
+Contains 428 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -57,7 +57,7 @@ Reference these guidelines when:
 | 1 | Ownership & Borrowing | CRITICAL | `own-` | 13 |
 | 2 | Error Handling | CRITICAL | `err-` | 19 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
-| 4 | Unsafe Code | CRITICAL | `unsafe-` | 17 |
+| 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
 | 5 | API Design | HIGH | `api-` | 57 |
 | 6 | Async/Await | HIGH | `async-` | 30 |
 | 7 | Concurrency | HIGH | `conc-` | 10 |
@@ -162,7 +162,6 @@ Reference these guidelines when:
 - [`unsafe-pin-address-stable`](rules/unsafe-pin-address-stable.md) - Opt address-dependent types out of `Unpin` with `PhantomPinned` and expose their mutation only through `Pin<&mut Self>`
 - [`unsafe-byte-slice-cast`](rules/unsafe-byte-slice-cast.md) - Reinterpret bytes as a typed value only through a length- and alignment-checked conversion
 - [`unsafe-pin-projection`](rules/unsafe-pin-projection.md) - Decide once whether each field of a `!Unpin` type is structurally pinned, and keep every accessor consistent with that choice
-- [`unsafe-dropck-phantom`](rules/unsafe-dropck-phantom.md) - Add `PhantomData<T>` to any type that drops or accesses a `T` only through a raw pointer, so the borrow checker knows it and rejects programs that let `T` expire too early
 - [`unsafe-pointer-provenance`](rules/unsafe-pointer-provenance.md) - Keep every `offset`/`add`/`sub` result inside the allocation it started from, even when the result is never dereferenced
 - [`unsafe-inline-asm`](rules/unsafe-inline-asm.md) - Declare every register, memory, and flag effect an `asm!` block has; the options you pass are promises the optimizer acts on
 

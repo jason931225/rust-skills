@@ -50,10 +50,11 @@ async fn test_concurrent_operations() {
 ## Runtime Configuration
 
 ```rust
-// Multi-threaded runtime (default)
+// Current-thread runtime — this is the DEFAULT for #[tokio::test].
+// (Note it differs from #[tokio::main], whose default is multi-thread.)
 #[tokio::test]
 async fn test_default_runtime() {
-    // Uses multi-thread runtime
+    // One worker: spawned work is interleaved on this thread, not parallel.
 }
 
 // Single-threaded (current_thread)

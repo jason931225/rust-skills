@@ -372,7 +372,31 @@ semantic versioning for the rule set.
   measured artifact policy, and narrowed Miri and iterator guidance to the
   behavior those tools and constructs can establish.
 
+### Removed
+- `unsafe-dropck-phantom`. Its premise was false: it claimed a struct holding
+  `*mut T` with a `Drop` impl is invisible to drop-check and needs
+  `PhantomData<T>`. Non-parametric dropck (RFC 1238) already requires every
+  generic parameter of a `Drop` type to strictly outlive it — both versions
+  compile to the identical `E0597`. The marker also changes nothing about
+  variance (`*mut T` is already invariant) or auto traits (already `!Send`).
+  It is load-bearing only under nightly `#[may_dangle]`, which the rule never
+  mentioned. Written two days ago; removed rather than patched.
 ### Fixed
+- Correctness audit of all 428 rules, ten agents, every acted-on finding
+  re-verified by compiling or running it. Notable: `ffi-wasm-wire-abi`
+  returned a Rust tuple across `extern "C"` (not FFI-safe — the rule's own
+  thesis violated by its Good example); `own-slice-over-vec` claimed `&str`
+  coerces to `&Path` (E0308); `serde-rename-all` documented `FOOBAR` where
+  serde produces `FOO_BAR`, a wrong wire contract; `test-tokio-async` called
+  bare `#[tokio::test]` multi-threaded (it is current_thread — asserted one
+  worker); `lint-pedantic-selective`'s recommended config hard-errors on
+  `lint_groups_priority`; `test-snapshot-testing` suggested an `INSTA_UPDATE`
+  mode for CI that can rewrite a committed golden and pass;
+  `type-generational-handle` cited `slab`, which has no generations and is the
+  pattern the rule forbids; `type-case-insensitive-match`'s Good example
+  folded the data its own summary says not to fold; plus `const-vs-static`,
+  `proj-avoid-statics`, `pat-matches-macro`, `api-must-use`, `api-impl-into`,
+  `err-context-chain`, and `lint-workspace-lints`.
 - Two shipped rules asserted something false. `api-upload-serving` claimed a
   `Content-Disposition` value contained no quotes when it always contains the
   two that delimit the filename, and `unsafe-byte-slice-cast` asserted a stack

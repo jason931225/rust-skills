@@ -10756,27 +10756,6 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
-      "unit_id": "rust-for-rustaceans:0045",
-      "title": "Great Responsibility",
-      "page_text_sha256": "64f228753e080fb7e9be41eefde9c3d828720c225a2482e1e2456d0dbe8e4141",
-      "disposition": "covered",
-      "audit_disposition": "covered",
-      "mapped_rule_ids": [
-        "unsafe-dropck-phantom"
-      ],
-      "exact_difference": {
-        "kind": "rule-extends-source",
-        "detail": "the unit (\"Great Responsibility\", pp.157-166) covers drop-check and the #[may_dangle]+PhantomData interaction, including the nightly-only escape hatch; the rule states the stable-Rust half only \u2014 a raw-pointer-holding wrapper needs PhantomData<T> for drop-check to see it as owning a T at all \u2014 since #[may_dangle] cannot appear in a stable-toolchain compiled example"
-      },
-      "rationale_class": "source-aligned",
-      "executable_check": {
-        "applicability": "behavior-assertion",
-        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_value_held_behind_a_raw_pointer_is_dropped_exactly_once"
-      },
-      "remaining_uncertainty": "#[may_dangle] itself (feature dropck_eyepatch) is nightly-only and is mentioned in this rule's prose only, not compiled; the assertion proves the ordinary PhantomData<T> case runs a value's destructor exactly once, not the lifetime-rejection half of dropck, which would need a compile-fail harness",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
-    },
-    {
       "unit_id": "rust-for-rustaceans:0046",
       "title": "Coping with Fear",
       "page_text_sha256": "ef13e548b5bafa57ce593d9d8a86240a92a4974e9b568bd360d2b38b862ca2d8",

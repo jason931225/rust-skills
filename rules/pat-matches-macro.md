@@ -90,7 +90,7 @@ impl Status {
 For tests, `assert_matches!` (and `debug_assert_matches!`) — stabilized in Rust 1.96 — checks a value against a pattern and panics with the value's `Debug` output on failure, which is more informative than `assert!(matches!(...))`. They are not in the prelude, so import them:
 
 ```rust
-use std::assert_matches::assert_matches;
+use std::assert_matches;
 
 let result = parse("42");
 assert_matches!(result, Ok(n) if n == 42);

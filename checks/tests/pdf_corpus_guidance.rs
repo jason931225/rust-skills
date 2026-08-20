@@ -2640,14 +2640,22 @@ fn shared_state_cloned_into_each_worker_is_visible_across_workers() {
 
 // --- ffi-wasm-wire-abi ---------------------------------------------------------
 
-fn fsr_greeting_ptr_len() -> (u64, u64) {
+/// A Rust tuple is NOT FFI-safe (unspecified layout); `#[repr(C)]` is what
+/// makes the field order part of the contract.
+#[repr(C)]
+struct FsrPtrLen {
+    ptr: u64,
+    len: u64,
+}
+
+fn fsr_greeting_ptr_len() -> FsrPtrLen {
     let message = "hello";
     let bytes = message.as_bytes();
     let layout = std::alloc::Layout::array::<u8>(bytes.len()).expect("layout for greeting bytes");
     let ptr = unsafe { std::alloc::alloc(layout) };
     assert!(!ptr.is_null(), "allocation failed");
     unsafe { std::ptr::copy_nonoverlapping(bytes.as_ptr(), ptr, bytes.len()) };
-    (ptr as u64, bytes.len() as u64)
+    FsrPtrLen { ptr: ptr as u64, len: bytes.len() as u64 }
 }
 
 fn fsr_free_bytes(ptr: *mut u8, len: usize) {
@@ -2660,9 +2668,9 @@ fn fsr_free_bytes(ptr: *mut u8, len: usize) {
 
 #[test]
 fn a_ptr_len_pair_round_trips_the_bytes_and_frees_through_the_matching_layout() {
-    let (ptr, len) = fsr_greeting_ptr_len();
-    let ptr = ptr as *mut u8;
-    let len = len as usize;
+    let pair = fsr_greeting_ptr_len();
+    let ptr = pair.ptr as *mut u8;
+    let len = pair.len as usize;
 
     let copied = unsafe { std::slice::from_raw_parts(ptr, len) }.to_vec();
     assert_eq!(copied, b"hello");

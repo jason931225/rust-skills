@@ -96,8 +96,10 @@ inner failure rides through inside `Ok` and never receives it:
 // applies to the JoinError, and the inner `E` passes through untouched.
 // let value = handle.await.context("spawned worker failed")??;
 
-// And this maps a real inner error to a timeout that did not happen:
-// let value = timeout(dur, work).await.map_err(|_| MyError::Timeout)??;
+// This one is subtler than it looks: `map_err` here applies to the OUTER
+// `Elapsed` only, so an inner `Err(e)` still propagates as `e`. The bug is
+// not mislabelling — it is that the outer and inner failures now flow
+// through the same `?` with only one of them carrying any context.
 ```
 
 Handle the two separately: attach context to the work *inside* the spawned
