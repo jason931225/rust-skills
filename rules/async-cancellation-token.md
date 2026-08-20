@@ -111,7 +111,9 @@ async fn run_server(shutdown: CancellationToken) {
         }
     }
     
-    // Child tokens auto-cancelled when we exit
+    // NOTE: dropping the parent does NOT cancel children — verified:
+    // after `drop(parent)`, `child.is_cancelled()` is still false. Only
+    // `parent.cancel()` propagates. Cancel explicitly before returning.
 }
 
 async fn handle_connection(socket: TcpStream, token: CancellationToken) {

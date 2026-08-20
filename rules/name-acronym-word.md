@@ -48,7 +48,7 @@ std::net::TcpStream            // Not TCPStream
 std::net::TcpListener          // Not TCPListener
 std::net::UdpSocket            // Not UDPSocket
 std::net::IpAddr               // Not IPAddr
-std::io::IoError               // Not IOError (though Io is acceptable too)
+std::io::Error                 // the real std type; `IoError` does not exist
 ```
 
 ## Two-Letter Acronyms
