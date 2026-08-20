@@ -45,11 +45,6 @@
       "justification": "States tokio::sync::oneshot's contract: a single-use channel consumed by await, RecvError when the sender drops, send returning the value back when the receiver is gone, and is_closed/closed for detecting an abandoned receiver."
     },
     {
-      "rule_id": "async-select-racing",
-      "source_class": "crate-docs",
-      "justification": "Documents tokio::select! behaviour \u2014 racing branches with pattern bindings and if guards, dropping losing futures at their next await point, the random-by-default versus biased; poll order, and the else branch when all branches are disabled \u2014 with futures::future::select_all for dynamic sets."
-    },
-    {
       "rule_id": "async-try-join",
       "source_class": "crate-docs",
       "justification": "Turns on tokio's try_join! contract \u2014 concurrent polling of a fixed tuple in one task, return on the first observed error, and dropping unfinished branch futures without any rollback \u2014 plus futures' try_join_all/buffered for the dynamic case."
