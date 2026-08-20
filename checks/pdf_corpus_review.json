@@ -11300,6 +11300,49 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "unit_id": "rust-for-rustaceans:0049",
+      "title": "The Trouble with Concurrency",
+      "page_text_sha256": "2e348537a76ee0ccc8398e76ea2c21569cdea7ab4bfccaa13f5d4f6a524d3ad0",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "conc-pattern-choice",
+        "opt-cache-friendly"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "Explains why concurrency is hard: data races versus race conditions, Rust expressing thread safety through Send/Sync in the type system, scalability limits, and the three sources of contention (mutual exclusion, resource exhaustion, false sharing) with the COST paper's warning to measure before and after parallelizing."
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_commuting_update_needs_no_shared_state_to_reach_the_sequential_answer"
+      },
+      "remaining_uncertainty": "The section is the chapter's explanatory framing rather than a stated practice, and both rules say more than it does: the commutativity test is the mapped rule's own formulation, not the book's here. Its data-race-versus-race-condition distinction is definitional and has no rule of its own.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "rust-for-rustaceans:0050",
+      "title": "Concurrency Patterns",
+      "page_text_sha256": "110e9fa8a5093e18d395efb06cb2d59da7692abdab8e6f8b38eb404704c7051d",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "conc-pattern-choice"
+      ],
+      "exact_difference": {
+        "kind": "no-difference",
+        "detail": "Gjengset's three concurrency patterns with the criterion for choosing among them: shared memory is needed when concurrent updates do not commute (f(g(s)) != g(f(s))), worker pools fit identical work over differing data and stop fitting once threads need distinct roles, and actors give one owner exclusive access so no synchronization is needed inside it. Also covers work stealing and connection-pool lifecycle."
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_commuting_update_needs_no_shared_state_to_reach_the_sequential_answer"
+      },
+      "remaining_uncertainty": "The section's connection-pool sidebar (resetting client and server state before handing a connection back) and its work-stealing implementation notes are not part of the mapped rule; only the pattern-selection contract is.",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
       "unit_id": "rust-for-rustaceans:0051",
       "title": "Asynchrony and Parallelism",
       "page_text_sha256": "af8ce522d3bd01eaa6c892c320d9e993450bcd16868fd0aad965ac868de7a2b0",

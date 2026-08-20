@@ -7,6 +7,17 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `conc-pattern-choice`, the decision the library had no rule for: which
+  concurrency architecture to use. `Arc<Mutex<T>>` is usually not chosen at
+  all — it is the nearest primitive, so it becomes the design, and every later
+  problem is a lock problem. Gives the criterion that settles it: if two
+  concurrent updates commute, the threads never needed each other's partial
+  results and a lock buys only serialization; if they do not, exclusion is
+  required and owner-versus-mutex becomes a measurement. Covers the cases
+  where shared memory genuinely earns its lock (reader-dominated access,
+  disjoint subranges of one large structure, per-message cost above the work)
+  and the diagnostic that a worker pool is the wrong shape once threads need
+  distinct roles.
 - `conc-lock-reentry`, chosen from evidence rather than intuition. A study of
   59 blocking bugs in production Rust found every one occurred in safe code
   calling synchronization APIs, and 30 of them were double-acquisitions from
