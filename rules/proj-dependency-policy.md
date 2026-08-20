@@ -59,6 +59,26 @@ from the pull-request gate so a new advisory surfaces without a code change.
 - Watch build-time dependencies too: build scripts and proc macros execute on
   every developer machine and CI runner.
 
+## An Advisory Scan Is Not A Code Review
+
+`cargo audit` and `cargo deny` answer "is this crate version known-bad, or
+against policy?" They do not answer "has anyone actually read these bytes."
+Both questions matter and neither substitutes for the other: a dependency with
+no advisories and a permissive license can still have been published by a
+compromised account this morning.
+
+For most projects the right response is to admit that gap explicitly rather
+than to pretend the scan closed it. Where the product genuinely needs the
+stronger claim, attested per-version reviews (your own, or imported from named
+organizations whose review corpus you pin the way you pin a lockfile) are the
+mechanism — and the review burden is real enough that adopting it should be a
+deliberate decision, not a default.
+
+When admitting a crate, also separate `unsafe` that this build actually
+compiles from `unsafe` that merely exists somewhere in the crate. A tool that
+reports the compiled set is telling you about your artifact; one that reports
+the whole crate is telling you about code you may never link.
+
 ## See Also
 
 - [lint-static-verification](lint-static-verification.md) - where the audit jobs sit in the CI gate

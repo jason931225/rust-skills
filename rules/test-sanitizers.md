@@ -54,6 +54,29 @@ promising a job on a given runner.
 - Every report is a bug until proven otherwise. Add a regression test for each
   one, which makes the next run of these tools more effective.
 
+## Which Tool Catches Which Bug
+
+The tools are not interchangeable, and a job that runs the wrong one reports
+green for the class of bug it cannot see.
+
+- ASan finds out-of-bounds and use-after-free; it does **not** find reads of
+  uninitialized memory. That is MSan's job (or Miri's). An ASan-only pipeline
+  is silent on a whole UB class.
+- ASan, MSan, and TSan need an instrumented standard library to be
+  trustworthy, which means nightly plus `-Zbuild-std`. A partially
+  instrumented binary produces misleading results rather than obviously
+  broken ones. LSan does not need the rebuild.
+- Miri interprets MIR, so it cannot execute code that crosses into C. For UB
+  inside an FFI dependency, check the linked binary with Valgrind memcheck or
+  an ASan build; use Miri for provenance, aliasing, and validity in Rust.
+- Do not combine coverage instrumentation with a sanitizer in one build. The
+  two instrumentations conflict, producing crashes or empty profiles rather
+  than a clean failure.
+- `cargo careful` sits between an ordinary test run and Miri: it enables extra
+  standard-library validity checks (invalid `bool`/`char`/enum values,
+  unaligned access, overlapping `copy_nonoverlapping`) at roughly 1.5x
+  runtime, so it is cheap enough to run on every test job.
+
 ## See Also
 
 - [unsafe-miri-ci](unsafe-miri-ci.md) - the interpreter-based half of the same evidence

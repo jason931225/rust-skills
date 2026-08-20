@@ -89,6 +89,26 @@ Both transformations run on the same task and can monopolize one executor worker
 
 Keep operations sequential when later inputs depend on earlier outputs. When independent branches cause external effects, define compensation/idempotency before concurrent execution. `try_join!` is not an atomic transaction: one branch can commit before another fails. For durable multi-step workflows, persist state transitions and make retries replay-safe.
 
+## Concurrency Does Not Require `'static`
+
+`tokio::spawn` and `JoinSet` require `'static` because the task may outlive
+the scope that created it and may migrate to another worker thread. Running
+several futures *concurrently* requires neither. `join!`, `try_join!`,
+`FuturesUnordered`, and `StreamExt::buffered` drive their futures on the
+current task, so those futures may borrow from the enclosing scope — no
+`Arc`, no clone, no `'static` bound.
+
+Reaching for `spawn` merely to get overlap therefore imposes an ownership tax
+that the concurrency itself never demanded. Spawn when you need one of the
+things a task actually buys: migration to another worker for parallelism,
+abort isolation so one unit of work can be cancelled independently, or a
+lifetime that genuinely outlives the current scope. Otherwise stay on the
+current task and keep the borrows.
+
+`LocalSet`/`spawn_local` is a partial escape hatch and an easy misread: it
+drops the `Send` bound, not the `'static` one. An `Rc` moved into a
+`spawn_local` future is fine; a reference to a local is still rejected.
+
 ## Failure And Shutdown Contract
 
 - Set an overall request deadline and compatible per-branch deadlines.
