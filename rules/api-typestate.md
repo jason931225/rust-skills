@@ -156,6 +156,82 @@ let good = Request::builder()
     .build();
 ```
 
+## Independent Required Fields
+
+The single-state-parameter builder above forces an order: `url` must be set
+before `timeout` becomes reachable, even though nothing about the domain
+requires that order. When two or more fields are independently required, a
+linear chain either forces an arbitrary order or needs a state enum whose
+size grows exponentially in the number of fields. Give each independent
+requirement its own type parameter instead, so setters commute and `build`
+exists only once every parameter has reached its `Set` form:
+
+```rust
+struct Missing;
+struct Set<T>(T);
+
+struct DerBuilder<Mnemonic, FaultClass> {
+    mnemonic: Mnemonic,
+    fault_class: FaultClass,
+}
+
+impl DerBuilder<Missing, Missing> {
+    fn new() -> Self {
+        DerBuilder { mnemonic: Missing, fault_class: Missing }
+    }
+}
+
+impl<FC> DerBuilder<Missing, FC> {
+    fn mnemonic(self, value: String) -> DerBuilder<Set<String>, FC> {
+        DerBuilder { mnemonic: Set(value), fault_class: self.fault_class }
+    }
+}
+
+impl<M> DerBuilder<M, Missing> {
+    fn fault_class(self, value: u8) -> DerBuilder<M, Set<u8>> {
+        DerBuilder { mnemonic: self.mnemonic, fault_class: Set(value) }
+    }
+}
+
+// `finish` exists only when both parameters have reached `Set<_>` — in
+// either setter order, and it does not exist at all with one still Missing.
+impl DerBuilder<Set<String>, Set<u8>> {
+    fn finish(self) -> (String, u8) {
+        (self.mnemonic.0, self.fault_class.0)
+    }
+}
+
+fn main() {
+    let a = DerBuilder::new().mnemonic("E101".into()).fault_class(2).finish();
+    let b = DerBuilder::new().fault_class(2).mnemonic("E101".into()).finish();
+    assert_eq!(a, b);
+    // `DerBuilder::new().mnemonic("E101".into()).finish()` does not compile:
+    // `fault_class` is still `Missing`, and no `finish` exists for that type.
+}
+```
+
+The same completeness requirement applies when a builder gathers required
+data from more than one optional source (a primary reader, then a fallback):
+every branch of the `match`/`if let` that supplies the data has to produce
+the same complete set of `Set<_>` markers, or `build`/`finish` will not
+exist for the branch that took a shortcut. Do not let one branch skip a
+field "because it usually has a good default" — make the default explicit
+in that branch's own `Set(default)`, not by omitting the transition.
+
+## `Drop` Cannot Be Specialized Per State
+
+A single generic type cannot implement `Drop` only for one of its typestate
+parameters — `impl Drop for Lock<Locked>` alongside no impl for
+`Lock<Unlocked>` is `E0366: implementations of Drop must be unconditional`.
+When only one state needs cleanup on drop (releasing a hardware lock,
+unmapping memory, closing a session), either give that state its own,
+separate named type with its own `Drop` impl, or keep one generic type and
+match on an inner enum inside a single unconditional `Drop for Lock<S>`.
+Do not follow "just implement `Drop`" advice by replacing an explicit
+`close()`/`release()` typestate transition with a destructor for I/O-ful or
+fallible release — that trades a caller-visible failure and ordering
+contract for the weaker guarantees `Drop` provides ([async-explicit-close](async-explicit-close.md)).
+
 ## Transaction Example
 
 ```rust

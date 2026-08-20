@@ -542,3 +542,209 @@ fn redirect_targets_come_from_a_table_and_csrf_tokens_compare_in_full() {
     assert!(!csrf_ok(session, b"tok-abcdeg"));
     assert!(!csrf_ok(session, b"tok-abcde"), "a length mismatch is not a match");
 }
+
+// --- type-affine-quantity -----------------------------------------------------
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+struct Celsius(f64);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+struct CelsiusDelta(f64);
+
+impl std::ops::Sub for Celsius {
+    type Output = CelsiusDelta;
+    fn sub(self, rhs: Celsius) -> CelsiusDelta {
+        CelsiusDelta(self.0 - rhs.0)
+    }
+}
+
+impl std::ops::Add<CelsiusDelta> for Celsius {
+    type Output = Celsius;
+    fn add(self, delta: CelsiusDelta) -> Celsius {
+        Celsius(self.0 + delta.0)
+    }
+}
+
+impl std::ops::Add for CelsiusDelta {
+    type Output = CelsiusDelta;
+    fn add(self, rhs: CelsiusDelta) -> CelsiusDelta {
+        CelsiusDelta(self.0 + rhs.0)
+    }
+}
+
+#[test]
+fn two_absolute_temperatures_subtract_to_a_delta_and_cannot_be_added() {
+    let boiling = Celsius(100.0);
+    let room = Celsius(20.0);
+
+    let change: CelsiusDelta = boiling - room;
+    assert_eq!(change, CelsiusDelta(80.0));
+
+    let warmed: Celsius = room + CelsiusDelta(15.0);
+    assert_eq!(warmed, Celsius(35.0));
+
+    // `boiling + room` does not compile: no `Add<Celsius>` impl exists for
+    // `Celsius`. Only the delta type composes with itself.
+    assert_eq!(CelsiusDelta(10.0) + CelsiusDelta(5.0), CelsiusDelta(15.0));
+}
+
+// --- api-typed-command-dispatch -----------------------------------------------
+
+trait TdcRequest {
+    type Response;
+    fn decode(payload: &[u8]) -> Self::Response;
+}
+
+struct ReadTemperature;
+struct TdcTemperature(f64);
+
+impl TdcRequest for ReadTemperature {
+    type Response = TdcTemperature;
+    fn decode(payload: &[u8]) -> TdcTemperature {
+        TdcTemperature(payload[0] as f64 / 10.0)
+    }
+}
+
+struct TdcIdentify;
+struct TdcDeviceInfo {
+    vendor_id: u16,
+}
+
+impl TdcRequest for TdcIdentify {
+    type Response = TdcDeviceInfo;
+    fn decode(payload: &[u8]) -> TdcDeviceInfo {
+        TdcDeviceInfo { vendor_id: u16::from_le_bytes([payload[0], payload[1]]) }
+    }
+}
+
+fn tdc_execute<R: TdcRequest>(_request: R, payload: &[u8]) -> R::Response {
+    R::decode(payload)
+}
+
+#[test]
+fn a_requests_response_type_is_pinned_by_the_request_not_the_call_site() {
+    let temp = tdc_execute(ReadTemperature, &[215]);
+    assert_eq!(temp.0, 21.5);
+
+    let info = tdc_execute(TdcIdentify, &[0x34, 0x12]);
+    assert_eq!(info.vendor_id, 0x1234);
+}
+
+// --- trait-capability-mixin ----------------------------------------------------
+
+trait HasSpi {
+    type Spi;
+    fn spi(&self) -> &Self::Spi;
+}
+
+trait HasI2c {
+    type I2c;
+    fn i2c(&self) -> &Self::I2c;
+}
+
+trait FanDiagMixin: HasSpi + HasI2c {
+    fn read_fan_speed(&self) -> u16 {
+        let _spi = self.spi();
+        let _i2c = self.i2c();
+        1200
+    }
+}
+
+impl<T: HasSpi + HasI2c> FanDiagMixin for T {}
+
+struct Board {
+    spi_bus: (),
+    i2c_bus: (),
+}
+
+impl HasSpi for Board {
+    type Spi = ();
+    fn spi(&self) -> &() {
+        &self.spi_bus
+    }
+}
+
+impl HasI2c for Board {
+    type I2c = ();
+    fn i2c(&self) -> &() {
+        &self.i2c_bus
+    }
+}
+
+#[test]
+fn a_mixin_method_exists_only_on_a_receiver_owning_every_ingredient() {
+    let board = Board { spi_bus: (), i2c_bus: () };
+    assert_eq!(board.read_fan_speed(), 1200);
+}
+
+// --- type-exclusive-occupancy-guard --------------------------------------------
+
+struct InFlight<T> {
+    buffer: T,
+    _not_send: std::marker::PhantomData<*mut ()>,
+}
+
+impl<T> InFlight<T> {
+    fn start(buffer: T) -> Self {
+        InFlight { buffer, _not_send: std::marker::PhantomData }
+    }
+
+    fn wait(self) -> T {
+        self.buffer
+    }
+}
+
+#[test]
+fn a_buffer_in_flight_is_recoverable_only_by_consuming_its_guard() {
+    let buffer = vec![0u8; 4];
+    let transfer = InFlight::start(buffer);
+
+    // No accessor exposes the buffer while the guard is held, and
+    // `thread::spawn(move || transfer.wait())` does not compile because
+    // `InFlight<Vec<u8>>` is `!Send`.
+    let recovered = transfer.wait();
+    assert_eq!(recovered, vec![0u8; 4]);
+}
+
+// --- api-typestate (independent required fields) -------------------------------
+
+struct Missing;
+struct SetField<T>(T);
+
+struct DerBuilder<Mnemonic, FaultClass> {
+    mnemonic: Mnemonic,
+    fault_class: FaultClass,
+}
+
+impl DerBuilder<Missing, Missing> {
+    fn new() -> Self {
+        DerBuilder { mnemonic: Missing, fault_class: Missing }
+    }
+}
+
+impl<FC> DerBuilder<Missing, FC> {
+    fn mnemonic(self, value: String) -> DerBuilder<SetField<String>, FC> {
+        DerBuilder { mnemonic: SetField(value), fault_class: self.fault_class }
+    }
+}
+
+impl<M> DerBuilder<M, Missing> {
+    fn fault_class(self, value: u8) -> DerBuilder<M, SetField<u8>> {
+        DerBuilder { mnemonic: self.mnemonic, fault_class: SetField(value) }
+    }
+}
+
+impl DerBuilder<SetField<String>, SetField<u8>> {
+    fn finish(self) -> (String, u8) {
+        (self.mnemonic.0, self.fault_class.0)
+    }
+}
+
+#[test]
+fn independent_required_builder_fields_can_be_set_in_either_order() {
+    let a = DerBuilder::new().mnemonic("E101".into()).fault_class(2).finish();
+    let b = DerBuilder::new().fault_class(2).mnemonic("E101".into()).finish();
+    assert_eq!(a, b);
+    // `DerBuilder::new().mnemonic("E101".into()).finish()` does not compile:
+    // no `finish` exists while `fault_class` is still `Missing`.
+}
