@@ -141,6 +141,13 @@ Compile-time SQL macros validate syntax/types against the schema information sup
 - Use `TryFrom`/`FromStr` when those standard conversion contracts fit.
 - Test empty, boundary, oversized, malformed, Unicode, and round-trip cases.
 - Revalidate contextual facts at the effect boundary.
+- Where a format nests dispatch — earlier bytes decide how later bytes are
+  interpreted — parse each layer into its own sum type whose variants carry
+  only that case's fields, and drop the raw buffer once decoded. Threading
+  one shared byte slice through several nested switches invites reading a
+  field at the offset another variant defines; a variant that owns its own
+  fields makes that a type error, and adding a new case breaks every
+  consumer's `match` instead of silently falling through.
 
 ## See Also
 

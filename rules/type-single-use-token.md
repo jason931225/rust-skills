@@ -71,6 +71,13 @@ fn main() {
   generated and thrown away.
 - Runtime single-use enforcement is still required where the token crosses
   processes; the type protects one process from itself.
+- A move-only token proves *at most once*, never *at least once*. Dropping
+  it unspent still compiles — `#[must_use]` produces a warning, not an
+  error — so a required step cannot be enforced this way. When a step must
+  actually happen, use typestate so the follow-on operation exists only on
+  the type the consuming step returns ([api-typestate](api-typestate.md)),
+  or check at runtime; do not read "not `Clone`, taken by value" as
+  exactly-once.
 
 ## See Also
 

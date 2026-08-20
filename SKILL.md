@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 418 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 422 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 418 rules across 27 categories, prioritized by impact for use by
+Contains 422 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,13 +58,13 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
-| 5 | API Design | HIGH | `api-` | 56 |
+| 5 | API Design | HIGH | `api-` | 57 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 9 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 26 |
-| 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
+| 10 | Type Safety | MEDIUM | `type-` | 28 |
+| 11 | Trait & Generics Design | MEDIUM | `trait-` | 8 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
 | 14 | Serde | MEDIUM | `serde-` | 10 |
@@ -222,6 +222,7 @@ Reference these guidelines when:
 - [`api-http-connection-lifecycle`](rules/api-http-connection-lifecycle.md) - Force connection close on a one-shot HTTP client, and resend the hostname in every request even though the connection already resolved it
 - [`api-clap-parser-contract`](rules/api-clap-parser-contract.md) - Know which clap behaviors are silent by default — process-exiting parse errors, id/value_name confusion, and declaration-order positionals — and pin each one deliberately
 - [`api-request-scoped-state`](rules/api-request-scoped-state.md) - Build shared application state outside the per-worker factory and clone a handle into each worker; read request-scoped values from the framework's typed extension map, not from handler parameters alone
+- [`api-typed-command-dispatch`](rules/api-typed-command-dispatch.md) - Give each request type its own associated response type and decoder, so a dispatcher cannot return the wrong domain type for what was asked
 
 ### 6. Async/Await (HIGH)
 
@@ -320,6 +321,8 @@ Reference these guidelines when:
 - [`type-capability-token`](rules/type-capability-token.md) - Make a privileged operation take an unforgeable token, so authority appears in the signature
 - [`type-unicode-identity`](rules/type-unicode-identity.md) - Canonicalize a hostname or domain to its ASCII/Punycode form before it is trusted as an identity, stored, compared, or shown to a person making a security decision
 - [`type-line-terminator-fidelity`](rules/type-line-terminator-fidelity.md) - Re-emit a line's original terminator and byte content when the tool's contract is byte-for-byte fidelity, not `BufRead::lines()` plus `println!`
+- [`type-affine-quantity`](rules/type-affine-quantity.md) - Split an absolute quantity from its delta: implement `Sub<Self> -> Delta` but never `Add<Self> -> Self`, so adding two points does not compile
+- [`type-exclusive-occupancy-guard`](rules/type-exclusive-occupancy-guard.md) - While a foreign agent (DMA, GPU, an in-flight I/O ring) owns a buffer, hold it behind a `!Send` guard whose only way back is a consuming `wait(self) -> T`
 
 ### 11. Trait & Generics Design (MEDIUM)
 
@@ -330,6 +333,7 @@ Reference these guidelines when:
 - [`trait-dyn-vs-generic`](rules/trait-dyn-vs-generic.md) - Choose concrete types, enums, generics, or `dyn Trait` from the substitution and ownership contract
 - [`trait-object-safety`](rules/trait-object-safety.md) - Keep a trait dyn-compatible (object-safe) when you need `dyn Trait`
 - [`trait-ord-consistent`](rules/trait-ord-consistent.md) - Keep `Ord`, `PartialOrd`, `Eq`, and `PartialEq` consistent
+- [`trait-capability-mixin`](rules/trait-capability-mixin.md) - Declare each required resource as its own associated-type ingredient trait, then bind a method to the conjunction with a supertrait-bounded blanket impl
 
 ### 12. Conversions (MEDIUM)
 
