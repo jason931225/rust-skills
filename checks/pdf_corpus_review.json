@@ -968,18 +968,19 @@
       "disposition": "covered",
       "audit_disposition": "covered",
       "mapped_rule_ids": [
-        "ffi-wasm-memory-view"
+        "ffi-wasm-memory-view",
+        "ffi-wasm-wire-abi"
       ],
       "exact_difference": {
         "kind": "rule-extends-source",
-        "detail": "the unit constructs a host-side typed array over the module's linear memory and frees what it allocated in a finally block; the rule adds that any call which can grow memory invalidates that view"
+        "detail": "the unit constructs a host-side typed array over the module's linear memory and frees what it allocated in a finally block, and its surrounding pages hand-marshal a String across the boundary by having the host read raw pointer/length words out of the struct's private layout; ffi-wasm-memory-view adds that any call which can grow memory invalidates that view, and ffi-wasm-wire-abi adds that the (ptr, len) pair must be an explicit, documented wire contract rather than a read of #[repr(Rust)]'s undocumented layout"
       },
       "rationale_class": "security",
       "executable_check": {
         "applicability": "behavior-assertion",
-        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_view_into_linear_memory_is_reacquired_after_growth"
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::a_ptr_len_pair_round_trips_the_bytes_and_frees_through_the_matching_layout"
       },
-      "remaining_uncertainty": "the invalidation is demonstrated through Rust's borrow checker rather than across a real wasm boundary",
+      "remaining_uncertainty": "the wire-ABI assertion runs on a 64-bit host, not a real wasm32 target, so ptr/len are u64 there instead of the u32 a real WASM export would use; the marshalling shape is the same",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
@@ -1255,6 +1256,48 @@
         "assertion_id": "checks/tests/pdf_corpus_guidance.rs::crlf_and_a_missing_final_newline_both_round_trip_unchanged"
       },
       "remaining_uncertainty": "the source demonstrates this with read_line specifically; the rule's assertion additionally covers read_until and a CRLF fixture, which the cited page does not itself include a worked example for",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "fullstack-rust:0037",
+      "title": "Adding state",
+      "page_text_sha256": "fe1530da693d85583bd3e0bf2b812efff399c4bb4ea60215c79344d047ce6d5a",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "api-request-scoped-state"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Adding state\", p.71) demonstrates values built inside the per-worker application factory being invisible across workers (server_id/request_count desync across curls); the rule states the general fix (build shared state outside the factory, clone a handle in) and extends it to the typed-extension-map half of request-scoped state the unit does not cover"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::shared_state_cloned_into_each_worker_is_visible_across_workers"
+      },
+      "remaining_uncertainty": "the source's worked example is Actix-specific; the rule's typed-extension-map contract is a generalization to the same pattern in Axum/Rocket/Tower that the source does not itself demonstrate",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
+      "unit_id": "fullstack-rust:0084",
+      "title": "Writing a custom derive",
+      "page_text_sha256": "ffa2525a391b565be761499fc56553e8cb97495fbb97bbec01f24ca79cfadae8",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "macro-proc-helper-attributes"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "the unit (\"Writing a custom derive\", p.281) builds a derive macro and, in the surrounding pages, introduces helper attributes and the fact that a proc macro sees only tokens before type checking; the rule states the general contract (declare via attributes(...), cannot query trait impls, parse with syn::parse::Parse, skip attributes the macro does not own) as a falsifiable pattern"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/pdf_corpus_guidance.rs::an_unrecognized_attribute_is_skipped_not_treated_as_an_error"
+      },
+      "remaining_uncertainty": "the source's helper-attribute parsing is demonstrated across several pages of one worked derive; the rule's example is a condensed, independently-verified restatement rather than the book's own code",
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     }
   ]
