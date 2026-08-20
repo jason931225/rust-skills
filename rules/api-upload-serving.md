@@ -94,9 +94,18 @@ fn main() {
     assert!(svg.disposition.starts_with("attachment"));
     assert!(svg.nosniff);
 
-    // A header-injecting filename cannot break out of the disposition.
+    // A header-injecting filename cannot break out of the disposition. The
+    // value keeps exactly the two quotes that delimit the filename, and the
+    // CR/LF that would have started a new header are gone.
     let hostile = serve_headers("svg", "a\"\r\nSet-Cookie: x=1");
-    assert!(!hostile.disposition.contains('\r') && !hostile.disposition.contains('"'));
+    assert!(!hostile.disposition.contains('\r'));
+    assert!(!hostile.disposition.contains('\n'));
+    assert_eq!(
+        hostile.disposition.matches('"').count(),
+        2,
+        "only the delimiting quotes survive; the injected one is stripped"
+    );
+    assert_eq!(hostile.disposition, "attachment; filename=\"aSet-Cookie: x=1\"");
 }
 ```
 

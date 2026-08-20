@@ -366,6 +366,17 @@ semantic versioning for the rule set.
   behavior those tools and constructs can establish.
 
 ### Fixed
+- Two shipped rules asserted something false. `api-upload-serving` claimed a
+  `Content-Disposition` value contained no quotes when it always contains the
+  two that delimit the filename, and `unsafe-byte-slice-cast` asserted a stack
+  array was misaligned, which depends on where the allocator put it — the very
+  thing `test-env-independent` forbids. Both compiled cleanly, so the gate
+  never saw them.
+### Changed
+- `checks/check.sh` now executes every generated example that carries an
+  assertion (201 of them) instead of only type-checking it. `cargo check`
+  cannot catch a false claim in a passing compile; this closes that hole
+  permanently.
 - `mem-arena-allocator` said a bump arena "frees all allocations at once" and
   never mentioned that it runs **no destructors**, so the rule as written
   invited placing a `File`, socket, guard, or `Vec` in an arena and leaking the
