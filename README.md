@@ -1,11 +1,11 @@
 # Rust Skills
 
-![rules](https://img.shields.io/badge/rules-432-blue)
+![rules](https://img.shields.io/badge/rules-434-blue)
 ![categories](https://img.shields.io/badge/categories-27-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.97.1%20%2F%202024%20edition-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-432 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
+434 Rust rules your AI coding agent can use to write better code. Current for Rust 1.97.1 (2024 edition).
 
 Works with Claude Code, Cursor, Windsurf, Copilot, Codex, Aider, Zed, Amp, Cline, and pretty much any other agent that supports skills.
 
@@ -66,11 +66,11 @@ fn first_word(s: &str) -> Option<&str> {
 
 ## What's in here
 
-432 rules split into 27 categories:
+434 rules split into 27 categories:
 
 | Category | Rules | What it covers |
 |----------|-------|----------------|
-| **Ownership & Borrowing** | 13 | When to borrow vs clone, Arc/Rc, lifetimes |
+| **Ownership & Borrowing** | 14 | When to borrow vs clone, Arc/Rc, lifetimes |
 | **Error Handling** | 19 | thiserror for libs, anyhow for apps, the `?` operator |
 | **Memory** | 19 | SmallVec, arenas, avoiding allocations, `mem::take`, drop order |
 | **Unsafe Code** | 16 | `SAFETY:` comments, Miri, `MaybeUninit`, 2024-edition unsafe |
@@ -83,7 +83,7 @@ fn first_word(s: &str) -> Option<&str> {
 | **Trait & Generics Design** | 9 | dyn vs generic, associated types, blanket impls, object safety, orphan rule |
 | **Conversions** | 3 | `TryFrom`, `FromStr`, `AsMut` |
 | **Const & Compile-Time** | 5 | `const fn`, const vs static, const generics, `const {}` blocks |
-| **Serde** | 10 | rename_all, default, flatten, enum tagging, validate-on-deserialize |
+| **Serde** | 11 | rename_all, default, flatten, enum tagging, validate-on-deserialize |
 | **Pattern Matching** | 7 | `let-else`, `matches!`, if-let chains, exhaustive matches |
 | **Macros** | 13 | `macro_rules!` hygiene, fragment specifiers, proc-macros with syn/quote |
 | **Closures** | 5 | Fn/FnMut/FnOnce bounds, returning `impl Fn`, move & disjoint capture |

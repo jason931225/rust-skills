@@ -126,6 +126,23 @@ Both of these are about keeping the number honest enough to be diagnostic.
 They are not an argument for a threshold: a merged, region-level report still
 answers "what behavior has no test", not "is this crate done".
 
+## Ordering The Gaps By What Breaks If They Are Wrong
+
+Everything above finds gaps. Which to close first is a separate question, and
+the report cannot answer it: an uncovered region contributes the same amount to
+the number whatever it does.
+
+Order by consequence. An uncovered error path at an authentication, payment, or
+persistence boundary outranks an uncovered `Display` impl by a wide margin,
+even though closing the second may move the percentage further. The inverse is
+also worth acting on — an area with heavy coverage and low consequence is a
+candidate for deleting slow tests, not for adding more.
+
+This is a prioritisation aid and not a target in disguise. It says which gap to
+close next; it still says nothing about when to stop, because a merged,
+region-level report answers "what behavior has no test", not "is this crate
+done".
+
 ## See Also
 
 - [test-no-tautology](test-no-tautology.md) - an independent oracle matters more than a covered line

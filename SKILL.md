@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 432 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 434 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 432 rules across 27 categories, prioritized by impact for use by
+Contains 434 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -54,7 +54,7 @@ Reference these guidelines when:
 
 | Priority | Category | Impact | Prefix | Rules |
 |----------|----------|--------|--------|-------|
-| 1 | Ownership & Borrowing | CRITICAL | `own-` | 13 |
+| 1 | Ownership & Borrowing | CRITICAL | `own-` | 14 |
 | 2 | Error Handling | CRITICAL | `err-` | 19 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
@@ -67,7 +67,7 @@ Reference these guidelines when:
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 9 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
-| 14 | Serde | MEDIUM | `serde-` | 10 |
+| 14 | Serde | MEDIUM | `serde-` | 11 |
 | 15 | Pattern Matching | MEDIUM | `pat-` | 7 |
 | 16 | Macros | MEDIUM | `macro-` | 13 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
@@ -101,6 +101,7 @@ Reference these guidelines when:
 - [`own-move-large`](rules/own-move-large.md) - Borrow large values by default; box only when measured moves or type shape justify allocation
 - [`own-lifetime-elision`](rules/own-lifetime-elision.md) - Rely on lifetime elision rules; add explicit lifetimes only when required
 - [`own-split-borrow-fields`](rules/own-split-borrow-fields.md) - Group a wide struct's fields into named sub-structs so independent operations borrow disjoint state
+- [`own-mutation-scope`](rules/own-mutation-scope.md) - Confine mutation to the block that builds the value, and bind the result immutably
 
 ### 2. Error Handling (CRITICAL)
 
@@ -368,6 +369,7 @@ Reference these guidelines when:
 - [`serde-try-from-validate`](rules/serde-try-from-validate.md) - Validate while deserializing with `#[serde(try_from = "Raw")]`
 - [`serde-byte-order`](rules/serde-byte-order.md) - Declare a byte order for every multi-byte value that leaves the process, and convert explicitly at the boundary
 - [`serde-format-version`](rules/serde-format-version.md) - Start every persisted binary format with a magic identifier and a version, and reject versions you do not understand
+- [`serde-format-choice`](rules/serde-format-choice.md) - Choose the encoding from who reads the bytes — self-describing and editable for people, positional for same-binary data, a cross-language binary format where another runtime decodes
 
 ### 15. Pattern Matching (MEDIUM)
 

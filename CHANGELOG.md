@@ -6,6 +6,30 @@ semantic versioning for the rule set.
 
 ## [Unreleased]
 
+### Added
+- `serde-format-choice`: pick the encoding from who decodes the bytes. Every
+  other `serde-` rule decides how to encode once a format is fixed, which
+  assumed somebody chose one.
+- `own-mutation-scope`: confine mutation to the block that builds the value and
+  bind the result immutably, so `mut` ends where construction ends rather than
+  at the end of the scope.
+- Sections closing the rest of the backlog: derived-unit arithmetic on
+  `type-affine-quantity`; what a wrapper actually costs on `api-newtype-safety`;
+  editing versus rebuilding a collection on `anti-collect-intermediate`; the
+  equality chain that never enrols in exhaustiveness checking on
+  `pat-exhaustive-enum`; multi-output traversals on `perf-iter-over-index`;
+  work, tick, and deadline in one synchronous select loop on
+  `conc-thread-channel`; and ordering coverage gaps by consequence on
+  `test-observable-coverage`.
+
+### Changed
+- `type-phantom-marker` no longer asserts "It has zero runtime cost" without
+  qualification; it points at the section that measures where the erasure holds
+  and where it stops.
+- Both source ledgers are fully dispositioned. The training ledger's derived
+  `semantic_status` now reads `reviewed`, which the validator enforces in both
+  directions.
+
 ### Changed
 - The training ledger gains an `out-of-library-scope` rationale class, and the
   twelve build-tooling and embedded units it describes move off `unreviewed`.

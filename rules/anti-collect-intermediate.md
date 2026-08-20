@@ -129,6 +129,48 @@ let vec: Vec<_> = valid_items(&items).collect();  // Collection when needed
 | Single chain, one `.collect()` | 1 | 1 |
 | No collection (streaming) | 0 | 1 |
 
+## Editing A Collection Is Not Rebuilding It
+
+When the result should be the collection you already have, `iter_mut`,
+`retain`, and the in-place sorts say so directly. `collect` builds a second
+collection, which is a different statement about what the code is doing:
+
+```rust
+fn main() {
+    let mut load = vec![10u64, 20, 30, 40];
+
+    // Editing: the same Vec, still the same buffer.
+    for value in &mut load {
+        *value *= 2;
+    }
+    assert_eq!(load, vec![20, 40, 60, 80]);
+
+    // Editing: `retain` removes in place rather than filtering into a new Vec.
+    load.retain(|value| *value >= 40);
+    assert_eq!(load, vec![40, 60, 80]);
+}
+```
+
+The allocation argument is real but narrower than it is usually stated, so it
+is worth stating correctly. A **borrowing** collect allocates a second buffer;
+a **consuming** collect whose element type keeps the same layout reuses the
+original through `Vec`'s in-place specialization; changing the element width
+defeats that reuse:
+
+```text
+consuming same-width reused buffer: true
+borrowing reused buffer:            false
+width-change reused buffer:         false
+```
+
+So `v = v.into_iter().map(..).collect()` is not the allocation people warn
+about, and `iter_mut().for_each(..)` is not faster than a `for` loop — neither
+allocates. What actually distinguishes the forms is what they claim: editing
+says the collection persists and its identity matters, rebuilding says a new
+value is being produced. Reach for `collect` when you want a different
+collection, a different type, or a different length that in-place editing
+cannot express.
+
 ## See Also
 
 - [perf-iter-lazy](perf-iter-lazy.md) - keep iterators lazy and collect once
