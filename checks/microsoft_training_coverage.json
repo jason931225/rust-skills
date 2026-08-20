@@ -20,11 +20,11 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 655,
+    "covered": 656,
     "documented-deviation": 10,
     "project-specific": 674,
     "reject": 340,
-    "unreviewed": 445
+    "unreviewed": 444
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
@@ -47639,27 +47639,30 @@
       "end_line": 68,
       "unit_sha256": "2f799795678eec635d74bcd3fb6e046654035accd5d955b277eebde296128d60",
       "claim": "What you lose (and alternatives) (H2 at ch15-no_std-rust-without-the-standard-library.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "perf-global-allocator",
+        "mem-arrayvec"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "the unit covers what a no_std build loses and the alternatives, including that linking alloc requires supplying a #[global_allocator] whose heap region must be handed over explicitly, and fixed-capacity collections as the way to avoid the heap entirely; perf-global-allocator now states the freestanding supply-and-initialise-first contract and mem-arrayvec states the fixed-capacity alternative"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:67a60e3f29f68f99329d2bd5ced8457ddc2a2da6d43683b8dcac75e0c0b59ef8",
         "unit-sha256:2f799795678eec635d74bcd3fb6e046654035accd5d955b277eebde296128d60"
       ],
       "executable_check": {
-        "applicability": "inventory-parity-only",
-        "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
+        "applicability": "behavior-assertion",
+        "assertion_id": "checks/tests/source_guidance.rs::a_freestanding_heap_refuses_use_before_init_and_refuses_a_second_init"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the assertion models the allocator's init-order state machine on a hosted target; it does not exercise a real #[global_allocator] on bare metal, and the linker-script half of choosing a non-overlapping heap region has no rule",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "67a60e3f29f68f99329d2bd5ced8457ddc2a2da6d43683b8dcac75e0c0b59ef8"
       }
     },

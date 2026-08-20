@@ -2,14 +2,14 @@
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
   "rule_count": 429,
-  "ledger_mapped": 321,
-  "typed_justification": 108,
+  "ledger_mapped": 322,
+  "typed_justification": 107,
   "summary": {
     "cargo-book": 3,
     "clippy-docs": 6,
-    "crate-docs": 21,
+    "crate-docs": 20,
     "edition-guide": 2,
-    "ledger-mapped": 321,
+    "ledger-mapped": 322,
     "rust-api-guidelines": 18,
     "rust-performance-book": 6,
     "rust-reference": 15,
@@ -1526,10 +1526,10 @@
     },
     {
       "rule_id": "mem-arrayvec",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The rule is the `arrayvec` crate's contract: `ArrayVec<T, N>` and `ArrayString<N>` store elements inline with fixed compile-time capacity, `push` panics when full while `try_push` returns a `CapacityError`.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "mem-assert-type-size",
@@ -2186,7 +2186,8 @@
       "rule_id": "perf-global-allocator",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {

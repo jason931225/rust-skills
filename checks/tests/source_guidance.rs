@@ -1177,3 +1177,64 @@ fn the_halt_policy_is_a_real_choice_and_the_site_needs_no_allocation() {
     let site = seen.lock().expect("hook mutex").expect("a location was recorded");
     assert!(site.0 > 0, "the failure site carries a real line number");
 }
+
+// --- perf-global-allocator (freestanding heap init order) -----------------------
+
+struct FreestandingHeap {
+    ready: std::sync::atomic::AtomicBool,
+    remaining: std::sync::atomic::AtomicUsize,
+}
+
+#[derive(Debug, PartialEq)]
+enum HeapError {
+    NotInitialised,
+    AlreadyInitialised,
+    Exhausted,
+}
+
+impl FreestandingHeap {
+    const fn new() -> Self {
+        Self {
+            ready: std::sync::atomic::AtomicBool::new(false),
+            remaining: std::sync::atomic::AtomicUsize::new(0),
+        }
+    }
+
+    fn init(&self, size: usize) -> Result<(), HeapError> {
+        use std::sync::atomic::Ordering;
+        if self.ready.swap(true, Ordering::SeqCst) {
+            return Err(HeapError::AlreadyInitialised);
+        }
+        self.remaining.store(size, Ordering::SeqCst);
+        Ok(())
+    }
+
+    fn allocate(&self, bytes: usize) -> Result<usize, HeapError> {
+        use std::sync::atomic::Ordering;
+        if !self.ready.load(Ordering::SeqCst) {
+            return Err(HeapError::NotInitialised);
+        }
+        let left = self.remaining.load(Ordering::SeqCst);
+        if bytes > left {
+            return Err(HeapError::Exhausted);
+        }
+        self.remaining.store(left - bytes, Ordering::SeqCst);
+        Ok(bytes)
+    }
+}
+
+#[test]
+fn a_freestanding_heap_refuses_use_before_init_and_refuses_a_second_init() {
+    let heap = FreestandingHeap::new();
+
+    // The hazard: on a real target this is a fault or a pointer into
+    // unmapped memory, not a clean error.
+    assert_eq!(heap.allocate(16), Err(HeapError::NotInitialised));
+
+    assert_eq!(heap.init(64), Ok(()));
+    // A second init would re-arm over allocations already handed out.
+    assert_eq!(heap.init(64), Err(HeapError::AlreadyInitialised));
+
+    assert_eq!(heap.allocate(16), Ok(16));
+    assert_eq!(heap.allocate(1024), Err(HeapError::Exhausted));
+}
