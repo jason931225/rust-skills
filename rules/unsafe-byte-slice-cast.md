@@ -87,6 +87,55 @@ fn main() {
   references — can never be produced from arbitrary bytes, checked or not.
 - Byte order is a separate obligation: a checked cast still reads host order.
 
+## Packed Fields Are The Same Obligation From The Other Side
+
+A `#[repr(C, packed)]` struct drops padding, so a field can sit at an offset
+that does not satisfy its own alignment. Rust does not let you form a reference
+to one — `&frame.id` is `error[E0793]: reference to field of packed struct is
+unaligned`, and the note says why: creating a misaligned reference is undefined
+behaviour *even if that reference is never dereferenced*.
+
+That the compiler rejects it is the important part. Safe code cannot express
+this mistake, so the obligation only survives where you have opted out of the
+check with a raw pointer:
+
+```rust
+#[repr(C, packed)]
+struct Frame {
+    kind: u8,
+    id: u32,
+    flags: u16,
+}
+
+fn read_id(frame: &Frame) -> u32 {
+    // Copying out by value is the ordinary answer; the compiler emits the
+    // unaligned load for you and no reference is ever formed.
+    frame.id
+}
+
+fn read_id_via_pointer(frame: &Frame) -> u32 {
+    // `&raw const` produces a pointer without going through a reference, so
+    // the misalignment is legal here. The read must still be the unaligned
+    // one: `*p` would be UB even though taking `p` was not.
+    let p = &raw const frame.id;
+    // SAFETY: `p` points at an initialised `u32` inside `frame`, which the
+    // borrow guarantees is live; `read_unaligned` imposes no alignment
+    // requirement, which is the only reason this is sound for a packed field.
+    unsafe { p.read_unaligned() }
+}
+
+fn main() {
+    let frame = Frame { kind: 7, id: 0x0102_0304, flags: 9 };
+    assert_eq!(read_id(&frame), 0x0102_0304);
+    assert_eq!(read_id_via_pointer(&frame), 0x0102_0304);
+}
+```
+
+So the packed case collapses to two moves: copy the field out by value, or take
+`&raw const` and use `read_unaligned` / `write_unaligned`. Reach for the pointer
+form only when copying is genuinely not an option — an oversized field, or a
+write that must land in place.
+
 ## See Also
 
 - [serde-byte-order](serde-byte-order.md) - the encoding the decoded fields must agree on

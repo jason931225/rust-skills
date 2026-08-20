@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 430 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 432 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 430 rules across 27 categories, prioritized by impact for use by
+Contains 432 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -64,11 +64,11 @@ Reference these guidelines when:
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
 | 10 | Type Safety | MEDIUM | `type-` | 29 |
-| 11 | Trait & Generics Design | MEDIUM | `trait-` | 8 |
+| 11 | Trait & Generics Design | MEDIUM | `trait-` | 9 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
 | 14 | Serde | MEDIUM | `serde-` | 10 |
-| 15 | Pattern Matching | MEDIUM | `pat-` | 6 |
+| 15 | Pattern Matching | MEDIUM | `pat-` | 7 |
 | 16 | Macros | MEDIUM | `macro-` | 13 |
 | 17 | Closures | MEDIUM | `closure-` | 5 |
 | 18 | Collections | MEDIUM | `coll-` | 4 |
@@ -340,6 +340,7 @@ Reference these guidelines when:
 - [`trait-object-safety`](rules/trait-object-safety.md) - Keep a trait dyn-compatible (object-safe) when you need `dyn Trait`
 - [`trait-ord-consistent`](rules/trait-ord-consistent.md) - Keep `Ord`, `PartialOrd`, `Eq`, and `PartialEq` consistent
 - [`trait-capability-mixin`](rules/trait-capability-mixin.md) - Declare each required resource as its own associated-type ingredient trait, then bind a method to the conjunction with a supertrait-bounded blanket impl
+- [`trait-config-family`](rules/trait-config-family.md) - Collapse three or more collaborator generics into one config trait whose associated types name the whole family, and select the family with one impl per deployment
 
 ### 12. Conversions (MEDIUM)
 
@@ -376,6 +377,7 @@ Reference these guidelines when:
 - [`pat-exhaustive-enum`](rules/pat-exhaustive-enum.md) - Match owned enums exhaustively; avoid catch-all `_` that hides new variants
 - [`pat-at-bindings`](rules/pat-at-bindings.md) - Use `@` bindings to capture a value while matching it against a pattern
 - [`pat-if-let-guards`](rules/pat-if-let-guards.md) - Use `if let` match guards to bind data needed only by one arm
+- [`pat-combinator-over-branch`](rules/pat-combinator-over-branch.md) - Collapse a branch into the named combinator only when both arms are short expressions of one type; keep `if let` / `match` when the arms are different control flow
 
 ### 16. Macros (MEDIUM)
 

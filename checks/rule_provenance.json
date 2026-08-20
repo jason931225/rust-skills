@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 430,
-  "ledger_mapped": 352,
+  "rule_count": 432,
+  "ledger_mapped": 354,
   "typed_justification": 78,
   "summary": {
     "cargo-book": 2,
     "clippy-docs": 6,
     "crate-docs": 11,
     "edition-guide": 2,
-    "ledger-mapped": 352,
+    "ledger-mapped": 354,
     "rust-api-guidelines": 15,
     "rust-performance-book": 5,
     "rust-reference": 11,
@@ -2134,6 +2134,13 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "rule_id": "pat-combinator-over-branch",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "pat-exhaustive-enum",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -2859,6 +2866,13 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "zero2production_coverage.json"
+      ]
+    },
+    {
+      "rule_id": "trait-config-family",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
       ]
     },
     {

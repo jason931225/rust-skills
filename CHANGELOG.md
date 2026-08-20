@@ -6,6 +6,36 @@ semantic versioning for the rule set.
 
 ## [Unreleased]
 
+### Added
+- `trait-config-family`: collapse three or more collaborator generics into one
+  config trait whose associated types name the whole family. The cost of the
+  multi-parameter form is not verbosity — adding a fourth collaborator forces
+  every downstream signature to change in lockstep, and leaving one behind is
+  `E0107`, so the churn is mandatory rather than stylistic. Carries the
+  boundary that keeps it from contradicting `api-typestate`: a state axis stays
+  its own parameter, giving `Handle<Cfg, S>`.
+- `pat-combinator-over-branch`: write the named combinator instead of the
+  hand-rolled branch, and the limit that makes that safe. Two measured facts
+  carry it — `then_some` and `map_or` evaluate their alternative eagerly while
+  `then` and `map_or_else` defer it, and collecting into `Result` short-circuits
+  at the first `Err` with the rest of the source left unpulled. The
+  counter-boundary is a section, not a caveat: a diverging or differently-typed
+  arm cannot be a combinator argument at all, and the compiler says so.
+- `unsafe-byte-slice-cast` gains the packed-field case: `&packed.field` is
+  `E0793`, so safe code cannot express it, and the surviving obligation is to
+  copy the field out or reach it through `&raw const` plus `read_unaligned`.
+- `test-observable-coverage` gains the measurement mechanics its policy already
+  presumed — source-based instrumentation counting regions rather than lines
+  (a demonstration where line coverage reports 100% and region coverage 80% on
+  the same run), merging profiles across test kinds, and treating an exclusion
+  as a reviewable claim. Deliberately not a threshold: that rule refuses one.
+
+### Changed
+- `checks/run_examples.py` retries a timed-out example once with a longer budget
+  before failing. The suite runs straight after a full `cargo build`, so a
+  wall-clock timeout could not tell a hung example from a loaded machine — one
+  example failed spuriously that way and passed immediately on its own.
+
 ### Fixed
 - 44 verified defects across 42 rules, from a 48-finding audit queue. Each
   finding was adversarially re-checked before any edit, and four were thrown
