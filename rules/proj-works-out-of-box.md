@@ -58,6 +58,55 @@ fn main() {
 }
 ```
 
+## One Cfg-Gated Layer, Platform-Neutral Everything Above
+
+The HAL above is a fallback for a target you cannot fully support. The same
+shape is worth adopting deliberately for targets you *do* support, because the
+alternative is `#[cfg]` scattered through business logic — and every scattered
+branch is a place the code compiles on the maintainer's machine and nowhere
+else.
+
+Give the platform difference one module with one cfg split, expose it through
+a trait or a plain function signature that names no platform, and keep
+everything above it target-neutral:
+
+```rust
+// One boundary. Everything above `Platform` is compiled identically on every
+// target, so it can also be exercised without a real platform behind it.
+pub trait Platform {
+    fn hostname(&self) -> String;
+}
+
+pub struct Report {
+    pub line: String,
+}
+
+// Ordinary logic: no cfg, no platform types, testable anywhere.
+pub fn build_report(platform: &impl Platform, load: u32) -> Report {
+    Report { line: format!("{} load={load}", platform.hostname()) }
+}
+
+pub struct Fake(pub &'static str);
+impl Platform for Fake {
+    fn hostname(&self) -> String { self.0.to_string() }
+}
+
+fn main() {
+    let report = build_report(&Fake("build-box"), 3);
+    assert_eq!(report.line, "build-box load=3");
+}
+```
+
+The payoff is that the tests for `build_report` are not platform tests. They
+compile and run on every target, including the one the developer happens to be
+on, and a port becomes one new implementation of `Platform` rather than an
+audit of every `#[cfg]` in the crate.
+
+Two things keep the boundary honest: the trait's signatures must not leak a
+platform-specific type, or the split has only moved; and each implementation
+should be a thin translation, since logic inside a cfg-gated module is logic
+that only one target's CI ever runs.
+
 ## See Also
 
 - [proj-feature-additive](proj-feature-additive.md) - optional native bits add items; they never remove the default build
