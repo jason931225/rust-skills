@@ -48,6 +48,7 @@ loom = "0.7"
 syn = { version = "2", features = ["full", "extra-traits", "derive"] }
 quote = "1"
 proc-macro2 = "1"
+clap = { version = "4", features = ["derive"] }
 
 [profile.dev]
 debug = false

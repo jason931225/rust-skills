@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 413 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 415 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 413 rules across 27 categories, prioritized by impact for use by
+Contains 415 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -58,12 +58,12 @@ Reference these guidelines when:
 | 2 | Error Handling | CRITICAL | `err-` | 18 |
 | 3 | Memory Optimization | CRITICAL | `mem-` | 19 |
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
-| 5 | API Design | HIGH | `api-` | 54 |
+| 5 | API Design | HIGH | `api-` | 55 |
 | 6 | Async/Await | HIGH | `async-` | 29 |
 | 7 | Concurrency | HIGH | `conc-` | 9 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
-| 10 | Type Safety | MEDIUM | `type-` | 25 |
+| 10 | Type Safety | MEDIUM | `type-` | 26 |
 | 11 | Trait & Generics Design | MEDIUM | `trait-` | 7 |
 | 12 | Conversions | MEDIUM | `conv-` | 3 |
 | 13 | Const & Compile-Time | MEDIUM | `const-` | 5 |
@@ -220,6 +220,7 @@ Reference these guidelines when:
 - [`api-auto-trait-contract`](rules/api-auto-trait-contract.md) - Pin every auto trait a public type promises — `Send`, `Sync`, `Unpin`, `UnwindSafe` — with a compile-only assertion, so a private-field change that silently drops one is caught before release
 - [`api-buffer-disclosure`](rules/api-buffer-disclosure.md) - Disclose only the bytes a request actually filled, never the reused buffer's full length
 - [`api-http-connection-lifecycle`](rules/api-http-connection-lifecycle.md) - Force connection close on a one-shot HTTP client, and resend the hostname in every request even though the connection already resolved it
+- [`api-clap-parser-contract`](rules/api-clap-parser-contract.md) - Know which clap behaviors are silent by default — process-exiting parse errors, id/value_name confusion, and declaration-order positionals — and pin each one deliberately
 
 ### 6. Async/Await (HIGH)
 
@@ -317,6 +318,7 @@ Reference these guidelines when:
 - [`type-single-use-token`](rules/type-single-use-token.md) - Give an at-most-once permission a type that is neither `Clone` nor `Copy`, so a second use will not compile
 - [`type-capability-token`](rules/type-capability-token.md) - Make a privileged operation take an unforgeable token, so authority appears in the signature
 - [`type-unicode-identity`](rules/type-unicode-identity.md) - Canonicalize a hostname or domain to its ASCII/Punycode form before it is trusted as an identity, stored, compared, or shown to a person making a security decision
+- [`type-line-terminator-fidelity`](rules/type-line-terminator-fidelity.md) - Re-emit a line's original terminator and byte content when the tool's contract is byte-for-byte fidelity, not `BufRead::lines()` plus `println!`
 
 ### 11. Trait & Generics Design (MEDIUM)
 
