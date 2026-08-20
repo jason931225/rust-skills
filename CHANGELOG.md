@@ -7,6 +7,22 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- Four gaps from surveying "Type-Driven Correctness in Rust" (the first
+  RustTraining book) via a six-chunk Grok 4.6 xhigh pass:
+  `type-affine-quantity` (an absolute quantity and its delta are different
+  types — implement `Sub<Self> -> Delta` but never `Add<Self>`, so adding two
+  temperatures or two timestamps does not compile), `api-typed-command-dispatch`
+  (give each request an associated response type and its own decoder, so a
+  dispatcher cannot decode one command's reply as another's),
+  `trait-capability-mixin` (bind a method to a conjunction of resources with
+  supertrait-bounded ingredient traits and an empty blanket impl, so the
+  method exists only on a receiver owning the whole set), and
+  `type-exclusive-occupancy-guard` (while DMA or a GPU owns a buffer, hold it
+  in a `!Send` guard whose only way back is a consuming `wait`). `api-typestate`
+  gained two sections — independent required builder fields as separate type
+  parameters so setters commute, and the `E0366` constraint that `Drop` cannot
+  be specialized per typestate — and `const-fn` gained constructor-enforced
+  relational invariants for layouts and derivation chains.
 - Three gaps from surveying "Fullstack Rust" via Grok 4.6 xhigh reasoning
   (intro/Actix, the Diesel-backed blog app, WASM/CLI, macros) — the last
   unreviewed book in the PDF corpus: `api-request-scoped-state` (a value
