@@ -23,6 +23,9 @@ pub fn slice_pair(range: (usize, usize)) -> (usize, usize) {
 ```rust
 use std::ops::{Bound, Range, RangeBounds};
 
+// A concrete `Range` is the right parameter only when both endpoints are part
+// of the contract, as they are here. Anything that accepts a caller-chosen
+// span takes `impl RangeBounds<T>` instead.
 pub fn slice_half_open(range: Range<usize>) -> Range<usize> {
     range
 }

@@ -128,7 +128,7 @@ std::thread::spawn(|| -> ! {
 
 ## Stability Notes
 
-`fn f() -> !` (never type as a return type) has been **stable since Rust 1.41** — no feature gate needed.
+`fn f() -> !` (never type as a return type) has been **stable since Rust 1.0** — no feature gate needed.
 
 Using `!` as an *arbitrary type argument* (e.g. `Result<(), !>`) still requires the nightly feature gate:
 

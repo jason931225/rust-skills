@@ -27,11 +27,13 @@ fn test_with_temp_file() {
 
 #[test]
 fn test_with_env_var() {
-    std::env::set_var("MY_VAR", "test_value");
+    // Both calls are `unsafe` in edition 2024: they mutate process-global
+    // state shared with the parallel test harness.
+    unsafe { std::env::set_var("MY_VAR", "test_value") };
     
     let result = read_config();
     
-    std::env::remove_var("MY_VAR");  // Might not run if test panics!
+    unsafe { std::env::remove_var("MY_VAR") };  // Might not run if test panics!
     assert!(result.is_ok());
 }
 ```

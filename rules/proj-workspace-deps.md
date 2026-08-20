@@ -201,6 +201,6 @@ proptest.workspace = true
 
 ## See Also
 
-- [proj-lib-main-split](./proj-lib-main-split.md) - Workspace structure
+- [proj-lib-main-split](./proj-lib-main-split.md) - Library/binary split within a crate
 - [api-serde-optional](./api-serde-optional.md) - Optional dependencies
-- [lint-deny-correctness](./lint-deny-correctness.md) - Workspace lints
+- [lint-workspace-lints](./lint-workspace-lints.md) - Workspace lints

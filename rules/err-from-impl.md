@@ -128,9 +128,10 @@ fn load_config(path: &str) -> Result<Config> {
 }
 ```
 
-You cannot implement `From<Source>` for a foreign target error because the
-orphan rules require you to own either the trait or a participating type. In
-that case `map_err` is not boilerplate to eliminate; it is the legal boundary.
+You cannot implement `From<Source>` for `Target` when both types are foreign,
+because the orphan rules require you to own the trait or one of the
+participating types. In that case `map_err` is not boilerplate to eliminate; it
+is the legal boundary.
 Use `map_err` as well when conversion needs call-site context that a global
 `From` implementation cannot know.
 

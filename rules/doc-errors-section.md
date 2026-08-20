@@ -150,5 +150,4 @@ pub fn divide(dividend: i64, divisor: i64) -> Result<i64, MathError> {
 ## See Also
 
 - [doc-panics-section](./doc-panics-section.md) - Documenting panics
-- [doc-errors-section](doc-errors-section.md) - document each failure condition in an `# Errors` section
 - [doc-intra-links](./doc-intra-links.md) - Linking to types

@@ -50,9 +50,14 @@ async fn good_example(
     loop {
         tokio::select! {
             n = stream.read(&mut buf[filled..]) => {
-                // `read` (not `read_exact`) is cancel-safe: it either
-                // reads some bytes or returns immediately with 0.
-                filled += n?;
+                // `read` (not `read_exact`) is cancel-safe: if this branch is
+                // dropped, no bytes were consumed, so `buf` and `filled` stay
+                // valid. `Ok(0)` means end of stream, not cancellation.
+                let n = n?;
+                if n == 0 {
+                    return Ok(());
+                }
+                filled += n;
                 if filled == buf.len() {
                     println!("buffer full: {:?}", &buf[..]);
                     filled = 0;

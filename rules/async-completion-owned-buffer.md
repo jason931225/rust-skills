@@ -135,4 +135,4 @@ fn main() {
 - [async-poll-contract](async-poll-contract.md) - the readiness contract this rule explains a completion engine cannot honestly satisfy
 - [api-impl-io](api-impl-io.md) - the readiness traits themselves, and when accepting them is right
 - [async-cancel-safety](async-cancel-safety.md) - dropping the future does not retract a submitted operation
-- [unsafe-pointer-provenance](unsafe-pointer-provenance.md) - why a pointer retained past its borrow is already invalid
+- [unsafe-pointer-provenance](unsafe-pointer-provenance.md) - the raw pointer handed to the kernel carries the provenance of the allocation it was derived from

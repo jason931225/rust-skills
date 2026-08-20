@@ -52,7 +52,6 @@ mem-drop-order.md :: Controlling Drop Order for Locals :: P:expected one of `!` 
 mem-reuse-collections.md :: Good :: E0107
 name-acronym-word.md :: Standard Library Examples :: P:expected `;`, found `std`
 name-funcs-snake.md :: Good :: P:expected item, found keyword `let`
-name-into-ownership.md :: Standard Library Examples :: E0308
 name-is-has-bool.md :: Standard Library Examples :: P:expected `;`, found `char`,P:expected `;`, found `iterator`,P:expected `;`, found `option`,P:expected `;`, found `path`,P:expected `;`, found `result`,P:expected `;`, found `str`
 name-iter-convention.md :: Standard Library Examples :: P:expected `;`, found `map`,P:expected `;`, found `vec`
 name-iter-type-match.md :: Custom Iterator Methods :: E0308,E0392
@@ -70,6 +69,7 @@ own-lifetime-elision.md :: The Three Elision Rules :: P:expected one of `->`, `w
 own-move-large.md :: Good :: E0599
 own-slice-over-vec.md :: Path Types Too :: E0428
 perf-chain-avoid.md :: When Chain Is Fine :: E0106
+perf-collect-into.md :: Supported Collections :: E0658
 perf-extend-batch.md :: Good :: E0107
 perf-extend-batch.md :: Pattern: Building Strings :: E0428
 proj-mod-rs-dir.md :: Consistency Rule :: P:expected `;`, found `mod_module_files`,P:expected one of `.`, `;`,

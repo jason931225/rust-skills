@@ -44,9 +44,9 @@ fn process_age(age: i32) {
 // Return errors for expected failures
 fn fetch_data(url: &str) -> Result<Data, FetchError> {
     let response = reqwest::blocking::get(url)
-        .context("failed to connect")?;
+        .map_err(FetchError::Connect)?;
     let data = response.json()
-        .context("failed to parse response")?;
+        .map_err(FetchError::Parse)?;
     Ok(data)
 }
 

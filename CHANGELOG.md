@@ -6,6 +6,35 @@ semantic versioning for the rule set.
 
 ## [Unreleased]
 
+### Fixed
+- 44 verified defects across 42 rules, from a 48-finding audit queue. Each
+  finding was adversarially re-checked before any edit, and four were thrown
+  out — `obs-error-chain` (all three types it named as counterexamples do print
+  the chain), `own-rwlock-readers` (already corrected in an earlier pass),
+  `async-explicit-close` (the disputed panic reproduces exactly as written), and
+  `err-no-unwrap-prod` (the snippet type-checks under its unstated types).
+  Applying the queue unchecked would have introduced four regressions while
+  fixing the rest.
+- `unsafe-pointer-provenance` had the provenance model backwards: it said
+  `wrapping_add`/`wrapping_sub` lose provenance. The standard library documents
+  the opposite — the result "remembers" the allocation `self` points to. What
+  those methods actually change is that the arithmetic stays defined outside
+  the allocation.
+- `api-record-checksum`'s own Good example panicked on the truncated record its
+  test list requires it to reject; `async-cancel-safety` misstated tokio's
+  guarantee and hot-spun forever at EOF; `test-fixture-raii` called
+  `env::set_var` unwrapped, which is E0133 in the 2024 edition this library
+  targets.
+
+### Changed
+- `checks/analyze.py` no longer classifies E0658 as a name-resolution error.
+  "Use of unstable library feature" means the example does not build on the
+  stable toolchain this library pins — a reviewable fact, not a missing name —
+  and bucketing it as a fragment meant a nightly-only example could ship
+  invisibly. The one real instance is now a visible baseline entry, and the
+  `fn f(...)` pseudocode that parses as a C-variadic is classified as the
+  extraction artifact it is.
+
 ### Changed
 - The RustTraining ledger's `semantic_status` is now derived from its rows
   rather than pinned to a constant. The literal `"unreviewed-backlog"` outlived
