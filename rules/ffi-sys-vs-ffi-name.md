@@ -45,6 +45,27 @@ hyphen in identifiers, and an abandoned binding crate may force a successor
 name such as `foo-sys2`. Preserve the import/export meaning even when registry
 history prevents the ideal spelling.
 
+## Depending On Raw Bindings Or A Safe Wrapper
+
+Naming your own crates is one question; which of the two to *depend on* is
+another, and the answer is not automatic.
+
+- **The `-sys` crate** gives you the C surface directly. Every call needs an
+  `unsafe` block, a safety comment, and its own status-code handling, and any
+  resource it returns has to be released by whatever the library says frees it.
+  In exchange there is no wrapper to learn, no wrapper to keep current, and
+  nothing between you and the semantics the C documentation describes.
+- **The safe wrapper** pays those costs once and hands back `Result` and RAII.
+  It is the default worth reaching for, and the questions to ask are whether it
+  covers the calls you need, and whether it is maintained on the same cadence
+  as the C library — a wrapper pinned to an older release is a second
+  compatibility floor you now have.
+
+Take one or the other for a given library. Both in one graph means two paths to
+the same native handles, with the wrapper's invariants applying to only half of
+them; if you need an escape hatch, use the one the wrapper exposes rather than
+adding a parallel dependency on its `-sys` crate.
+
 ## See Also
 
 - [ffi-logic-in-core](ffi-logic-in-core.md) - the `*-ffi` crate only translates; logic lives in `foo`
