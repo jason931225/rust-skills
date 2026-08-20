@@ -160,6 +160,42 @@ fn send_to_thread(data: &[u8]) {
 }
 ```
 
+## Borrowing Fails When The Text Must Be Transformed
+
+Zero-copy deserialization borrows a slice of the input, which is only possible
+when the decoded value *is* a contiguous run of input bytes. A JSON string
+containing an escape (`"a\nb"`) has no such run — the unescaped text does not
+appear anywhere in the input — so deserializing it into `&'de str` fails at
+runtime rather than borrowing.
+
+`Cow<'de, str>` is the honest type for this field — but only with
+`#[serde(borrow)]` on it. Without that attribute, `Cow`'s derived
+`Deserialize` allocates unconditionally, so a field typed `Cow<'de, str>`
+that looks zero-copy silently owns every value including the ones that could
+have been borrowed. With the attribute, plain text borrows and only the
+values needing unescaping allocate. The same split applies to any format with
+escapes, continuations, or compression: the borrow is a property of the
+individual value, not of the field's type.
+
+```rust
+use std::borrow::Cow;
+
+#[derive(serde::Deserialize)]
+struct Record<'a> {
+    /// Without `#[serde(borrow)]` this allocates even for plain text.
+    #[serde(borrow)]
+    text: Cow<'a, str>,
+}
+```
+
+- Use `&'de str` only where the format guarantees the bytes are verbatim; an
+  escaped value makes deserialization *fail*, not fall back to allocating.
+- Use `Cow<'de, str>` **plus `#[serde(borrow)]`** where a transformation is
+  possible but rare, so the common case still borrows.
+- Test with a value that requires transformation *and* one that does not, and
+  assert which variant came back — a test that only checks the decoded string
+  passes whether or not the borrow actually happened.
+
 ## See Also
 
 - [own-cow-conditional](own-cow-conditional.md) - Use Cow for conditional ownership
