@@ -102,6 +102,64 @@ decorrelate retries.
   the documented retry or completion state;
 - dead-letter retention purges expired operator context.
 
+## Who Decides Which Failures Are Retryable
+
+The transient-versus-permanent split above is stated as if the worker knows it.
+It usually does not. Whether a 409 is a lost race worth retrying or a genuine
+conflict, whether a timeout may be replayed, whether a validation failure will
+ever succeed — those are facts about the caller's domain, and a worker that
+matches on error kinds it invented will be wrong for half its users.
+
+Take the classification and the stop condition as parameters:
+
+```rust
+#[derive(Debug, PartialEq)]
+pub enum Retry {
+    /// Try again, subject to the worker's attempt and age budget.
+    Transient,
+    /// Never going to succeed; fail the job now.
+    Permanent,
+}
+
+pub struct Budget {
+    pub max_attempts: u32,
+}
+
+/// The worker owns backoff, jitter, and the budget. The caller owns the
+/// question of what is worth retrying at all.
+pub fn should_retry<E>(
+    error: &E,
+    attempt: u32,
+    budget: &Budget,
+    classify: impl Fn(&E) -> Retry,
+) -> bool {
+    attempt < budget.max_attempts && classify(error) == Retry::Transient
+}
+
+fn main() {
+    let budget = Budget { max_attempts: 3 };
+    let classify = |code: &u16| match code {
+        503 | 504 => Retry::Transient,
+        _ => Retry::Permanent,
+    };
+
+    assert!(should_retry(&503, 1, &budget, classify));
+    assert!(!should_retry(&400, 1, &budget, classify), "permanent, not retried");
+    assert!(!should_retry(&503, 3, &budget, classify), "budget exhausted");
+}
+```
+
+The division is what matters more than the signature: backoff, jitter, the
+attempt and age budget, and the shutdown path stay with the worker, because
+they are about the queue. Which errors qualify stays with the caller, because
+it is about the work. A worker that hardcodes both is one a caller has to fork
+to change a single match arm.
+
+Give the closure the error by reference and keep it `Fn` rather than `FnOnce`,
+since it runs once per attempt, and default it to "retry nothing" if the API
+needs a no-argument form — a worker that retries by default turns a permanent
+failure into a budget's worth of duplicate side effects.
+
 ## See Also
 
 - [async-bounded-channel](async-bounded-channel.md) - bound in-process handoff

@@ -69,6 +69,61 @@ fn main() {
 - Tests assert the startup and draining transitions, not only the default
   healthy response.
 
+## Folding Dependency Verdicts Into One Status
+
+A readiness probe that consults several dependencies has to turn several
+verdicts into one answer, and the two ways that usually goes wrong are a chain
+of `if` statements whose precedence nobody wrote down, and a new dependency
+that silently never reaches the aggregate.
+
+Order the severities as a fieldless enum and fold with `max`. A derived `Ord`
+on a fieldless enum ranks variants by **declaration order**, so writing them
+least-to-most severe makes "the worst wins" the derived behaviour rather than
+something to hand-maintain:
+
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Health {
+    Ok,
+    Degraded,
+    Down,
+}
+
+pub struct Verdict {
+    pub name: &'static str,
+    pub health: Health,
+}
+
+/// Every source is listed here, so adding one is a visible edit to this array
+/// rather than a forgotten branch somewhere else.
+pub fn readiness(sources: &[Verdict]) -> Health {
+    sources
+        .iter()
+        .map(|source| source.health)
+        .max()
+        .unwrap_or(Health::Down)
+}
+
+fn main() {
+    let sources = [
+        Verdict { name: "db", health: Health::Ok },
+        Verdict { name: "cache", health: Health::Degraded },
+        Verdict { name: "queue", health: Health::Ok },
+    ];
+    assert_eq!(readiness(&sources), Health::Degraded);
+    assert!(Health::Ok < Health::Degraded && Health::Degraded < Health::Down);
+
+    // An empty source list is not healthy by default: nothing was checked.
+    assert_eq!(readiness(&[]), Health::Down);
+}
+```
+
+Two details carry their weight. The empty case is a decision, not a fallthrough
+— `max()` on no sources is `None`, and answering `Ok` there means a probe that
+checked nothing reports ready. And keep the enumeration in one array so a
+reviewer can see the whole set; a fold over a list assembled across several
+modules has the same silent-omission problem as the `if` chain it replaced.
+
 ## See Also
 
 - [test-http-blackbox](test-http-blackbox.md) - verify probe routes through the production server

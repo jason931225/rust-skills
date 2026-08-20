@@ -7,6 +7,25 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `async-assert-send` gains the generic case. The compile-time assertion cannot
+  be written for a generic future, so a generic API that hands its parameter to
+  another worker declares `Send + 'static` itself. Without it the caller's error
+  points into the callee's body and tokio's source; with it, `required by a
+  bound in store` points at the signature the caller wrote against.
+- `api-health-probes` gains the fold: an `Ord`-ordered enum over an explicitly
+  enumerated source list, so the worst verdict wins by derivation rather than by
+  a hand-maintained `if` chain, and an empty source list is a decision instead
+  of a fallthrough to healthy.
+- `trait-ord-consistent` gains the fact that makes that work — derived ordering
+  follows declaration order for enum variants and field order for structs, so
+  alphabetising variants silently changes every comparison.
+- `async-durable-worker` gains who owns the retry decision: backoff, jitter, and
+  the budget belong to the worker; which failures are transient belongs to the
+  caller, as a closure rather than error kinds the worker invented.
+- `type-capability-token` gains proof minted from a successful initialization,
+  so a degraded startup path cannot name the source that failed to come up.
+
+### Added
 - `async-select-racing` gains what `biased` actually costs. The random default
   is the fairness mechanism, and `biased` trades it away: draining two
   permanently-ready channels 2000 times gives `first=1920 second=80` under
