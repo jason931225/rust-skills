@@ -1,7 +1,7 @@
 ---
 name: rust-skills
 description: >
-  Comprehensive Rust coding guidelines with 426 rules across 27 categories.
+  Comprehensive Rust coding guidelines with 427 rules across 27 categories.
   Use when writing, reviewing, or refactoring Rust code. Covers ownership,
   error handling, async patterns, concurrency, unsafe code, API design, memory
   optimization, performance, numeric safety, conversions, serde, pattern
@@ -33,7 +33,7 @@ metadata:
 # Rust Best Practices
 
 Comprehensive guide for writing correct, maintainable, production-grade Rust.
-Contains 426 rules across 27 categories, prioritized by impact for use by
+Contains 427 rules across 27 categories, prioritized by impact for use by
 humans and LLMs in code generation and review. Current for Rust 1.97.1
 (2024 edition).
 
@@ -60,7 +60,7 @@ Reference these guidelines when:
 | 4 | Unsafe Code | CRITICAL | `unsafe-` | 16 |
 | 5 | API Design | HIGH | `api-` | 57 |
 | 6 | Async/Await | HIGH | `async-` | 30 |
-| 7 | Concurrency | HIGH | `conc-` | 9 |
+| 7 | Concurrency | HIGH | `conc-` | 10 |
 | 8 | Compiler Optimization | HIGH | `opt-` | 13 |
 | 9 | Numeric & Arithmetic Safety | HIGH | `num-` | 6 |
 | 10 | Type Safety | MEDIUM | `type-` | 29 |
@@ -268,6 +268,7 @@ Reference these guidelines when:
 - [`conc-signal-handler-safety`](rules/conc-signal-handler-safety.md) - Let a signal handler set an atomic flag and return; do everything else in ordinary code
 - [`conc-condvar-predicate-loop`](rules/conc-condvar-predicate-loop.md) - Re-check a condition variable's predicate in a loop under its mutex; a wakeup is a hint, not proof
 - [`conc-thread-budget`](rules/conc-thread-budget.md) - Bound OS-thread count by what the workload actually does — CPU-bound work collapses past the physical core count, sleeping threads do not
+- [`conc-thread-channel`](rules/conc-thread-channel.md) - Bound a thread-to-thread channel, and treat sender disconnection as the shutdown signal rather than a separate protocol
 
 ### 8. Compiler Optimization (HIGH)
 

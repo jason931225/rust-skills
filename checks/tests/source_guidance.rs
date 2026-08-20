@@ -965,3 +965,52 @@ fn a_json_string_with_an_escape_cannot_be_borrowed_but_cow_handles_it() {
         "Cow without #[serde(borrow)] allocates even for plain text"
     );
 }
+
+// --- conc-thread-channel --------------------------------------------------------
+
+struct ChannelTotals {
+    seen: u64,
+    sum: u64,
+}
+
+fn accumulate(producers: usize, per_producer: u64) -> ChannelTotals {
+    use std::sync::mpsc;
+    // Bounded: a producer that outruns the consumer blocks rather than
+    // growing the queue.
+    let (tx, rx) = mpsc::sync_channel::<u64>(64);
+
+    let mut handles = Vec::new();
+    for id in 0..producers {
+        let tx = tx.clone();
+        handles.push(std::thread::spawn(move || {
+            for n in 0..per_producer {
+                tx.send(id as u64 + n).expect("consumer is alive");
+            }
+        }));
+    }
+    // Must drop, or the channel never disconnects and the loop below hangs.
+    drop(tx);
+
+    let mut totals = ChannelTotals { seen: 0, sum: 0 };
+    for value in rx {
+        totals.seen += 1;
+        totals.sum += value;
+    }
+    for handle in handles {
+        handle.join().expect("producer did not panic");
+    }
+    totals
+}
+
+#[test]
+fn dropping_every_sender_ends_the_consumer_without_losing_queued_work() {
+    let totals = accumulate(4, 1_000);
+    assert_eq!(totals.seen, 4_000, "every message arrived before shutdown");
+
+    // Disconnection is the shutdown signal: with the sender gone, recv errs.
+    let (tx, rx) = std::sync::mpsc::sync_channel::<u8>(1);
+    tx.send(7).expect("capacity available");
+    drop(tx);
+    assert_eq!(rx.recv().expect("queued value survives disconnection"), 7);
+    assert!(rx.recv().is_err(), "an empty, disconnected channel ends the loop");
+}

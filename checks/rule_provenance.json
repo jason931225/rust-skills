@@ -1,29 +1,29 @@
 {
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
-  "rule_count": 426,
-  "ledger_mapped": 282,
-  "typed_justification": 144,
+  "rule_count": 427,
+  "ledger_mapped": 314,
+  "typed_justification": 113,
   "summary": {
-    "cargo-book": 4,
+    "cargo-book": 3,
     "clippy-docs": 6,
-    "crate-docs": 27,
+    "crate-docs": 21,
     "edition-guide": 2,
-    "ledger-mapped": 282,
-    "rust-api-guidelines": 20,
-    "rust-performance-book": 8,
-    "rust-reference": 26,
+    "ledger-mapped": 314,
+    "rust-api-guidelines": 19,
+    "rust-performance-book": 6,
+    "rust-reference": 16,
     "rustonomicon": 3,
-    "std-docs": 34,
-    "synthesized-practice": 14
+    "std-docs": 24,
+    "synthesized-practice": 13
   },
   "entries": [
     {
       "rule_id": "anti-clone-excessive",
-      "provenance": "typed-justification",
-      "source_class": "rust-performance-book",
-      "justification": "The contract is the allocation-and-copy cost of `Clone` on owned data like `String` and `Vec` versus passing `&str`/`&[T]`, the borrow-instead-of-clone advice that the Rust Performance Book collects; the Clippy `redundant_clone` and `clone_on_copy` lints appear only as a detection aid.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "anti-collect-intermediate",
@@ -80,6 +80,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -172,6 +173,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -187,6 +189,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -215,7 +218,8 @@
       "rule_id": "api-default-impl",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -262,10 +266,10 @@
     },
     {
       "rule_id": "api-from-not-into",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The rule's whole argument is the standard library's documented blanket impl `impl<T, U> Into<U> for T where U: From<T>` in `core::convert`, which is why implementing `From` is sufficient and implementing `Into` directly is not; Clippy's `from_over_into` lint only enforces that std contract.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "api-health-probes",
@@ -293,6 +297,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -305,10 +310,10 @@
     },
     {
       "rule_id": "api-impl-into",
-      "provenance": "typed-justification",
-      "source_class": "rust-api-guidelines",
-      "justification": "Same API Guidelines source as the AsRef rule \u2014 take `impl Into<T>` to loosen parameter assumptions (C-GENERIC) and implement `From` rather than `Into` as the conversion-trait convention (C-CONV-TRAITS).",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "api-impl-io",
@@ -391,6 +396,7 @@
       "rule_id": "api-parse-dont-validate",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -519,6 +525,7 @@
       "rule_id": "api-typestate",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -541,22 +548,23 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
     {
       "rule_id": "async-async-fn-bounds",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The rule rests on the documented contract of the standard library's `AsyncFn`, `AsyncFnMut`, and `AsyncFnOnce` traits in `std::ops` \u2014 that they mirror `Fn`/`FnMut`/`FnOnce` receiver semantics and tie the returned future's borrow to the call, unlike a hand-written `F: Fn() -> Fut, Fut: Future` pair.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-bounded-channel",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The contract is Tokio's `tokio::sync::mpsc` API: `channel(capacity)` makes `send` await when the buffer is full while `unbounded_channel` never applies backpressure, plus the documented `try_send` `TrySendError::Full`/`Closed` cases and `reserve` permits.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-bounded-dependency",
@@ -581,10 +589,10 @@
     },
     {
       "rule_id": "async-cancellation-token",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The rule is built entirely on `tokio_util::sync::CancellationToken` and its documented API \u2014 `cancelled()`, `cancel()`, `is_cancelled()`, `child_token()`, `drop_guard()` \u2014 together with Tokio's contract that dropping a `JoinHandle` detaches rather than cancels the task.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-clone-before-await",
@@ -616,10 +624,10 @@
     },
     {
       "rule_id": "async-fn-in-trait",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "This is language semantics: an async fn in a trait desugars to an opaque associated future that carries no Send promise, and the dyn-compatibility rules exclude such methods from trait objects; the trait-variant and async-trait crates appear only as workarounds.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-fn-over-future",
@@ -632,7 +640,8 @@
       "rule_id": "async-future-size",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -651,22 +660,23 @@
     },
     {
       "rule_id": "async-joinset-structured",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "Every claim is a tokio::task::JoinSet contract: spawn/join_next yielding results as they complete, JoinError distinguishing panic from cancellation, abort_all, and aborting remaining tasks when the set is dropped.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-mpsc-queue",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "Derives from tokio::sync::mpsc's API contract \u2014 async send/recv with bounded capacity for backpressure, cheap Sender clones, the channel closing when all senders drop, Sender::downgrade/WeakSender, and reserve() permits \u2014 contrasted against std::sync::mpsc's blocking recv.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-no-lock-await",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -702,6 +712,7 @@
       "rule_id": "async-spawn-blocking",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -841,10 +852,10 @@
     },
     {
       "rule_id": "conc-rayon-par-iter",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "Entirely rayon's contract \u2014 rayon::prelude, par_iter/par_iter_mut and the parallel reduce, par_sort_unstable_by, with_min_len/with_max_len granularity control, and the work-stealing scheduler's Send/Sync requirements plus its unsuitability for blocking I/O.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "conc-scoped-threads",
@@ -868,6 +879,13 @@
       ]
     },
     {
+      "rule_id": "conc-thread-channel",
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
+    },
+    {
       "rule_id": "conc-thread-local",
       "provenance": "ledger-mapped",
       "ledgers": [
@@ -876,17 +894,17 @@
     },
     {
       "rule_id": "const-block",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The rule describes the language semantics of inline `const { }` block expressions \u2014 forced compile-time evaluation, use as an expression in array initializers and function bodies, and how they differ from a named const item.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "const-fn",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The contract is what `const fn` means to the compiler \u2014 callable in const contexts such as array lengths, const and static initializers, and const-generic arguments, with the set of const-evaluable operations growing per release \u2014 plus a secondary API-compatibility note about removing `const`.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "const-generics",
@@ -918,15 +936,16 @@
     },
     {
       "rule_id": "conv-fromstr-parsing",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The contract is std::str::FromStr's documented relationship with str::parse \u2014 implementing the trait with its Err associated type is what makes `.parse::<T>()` and `T: FromStr` bounds work \u2014 with clap's value_parser noted only as a downstream consumer.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "conv-tryfrom-fallible",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "rust_release_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -1043,6 +1062,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1058,7 +1078,8 @@
       "rule_id": "err-catch-unwind-boundary",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -1101,6 +1122,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1115,6 +1137,7 @@
       "rule_id": "err-no-unwrap-prod",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1129,6 +1152,7 @@
       "rule_id": "err-question-mark",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1165,6 +1189,7 @@
       "rule_id": "err-thiserror-lib",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1309,6 +1334,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -1386,10 +1412,10 @@
     },
     {
       "rule_id": "macro-fragment-specifiers",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The fragment-specifier table and the follow-set restriction on what tokens may appear after `:expr`, `:ty`, and `:pat` are defined by the Rust Reference's Macros By Example chapter.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "macro-no-implied-items",
@@ -1409,7 +1435,8 @@
       "rule_id": "macro-prefer-functions",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -1437,7 +1464,8 @@
       "rule_id": "macro-proc-syn-quote",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -1449,10 +1477,10 @@
     },
     {
       "rule_id": "macro-rules-hygiene",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "Both halves \u2014 `macro_rules!` hygiene for locally introduced identifiers and `$crate` expanding to the defining crate rather than the caller's \u2014 are language semantics specified in the Rust Reference's Macros By Example chapter.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "mem-arena-allocator",
@@ -1715,10 +1743,10 @@
     },
     {
       "rule_id": "num-cast-try-from",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The rule's core justification is the language semantics of the `as` cast operator \u2014 silent truncation on narrowing integer casts and saturating float-to-integer conversion with `NaN` mapping to zero \u2014 with std's `From`/`TryFrom` offered as the safe alternative; it is arguably std-docs instead, since the losslessness convention is a standard-library contract.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "num-float-compare",
@@ -1759,6 +1787,7 @@
       "rule_id": "obs-instrument-spans",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1767,6 +1796,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1812,6 +1842,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1820,6 +1851,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1839,10 +1871,10 @@
     },
     {
       "rule_id": "opt-codegen-units",
-      "provenance": "typed-justification",
-      "source_class": "cargo-book",
-      "justification": "The rule is about the Cargo profile key `codegen-units`, named profiles with `inherits`, differing defaults per profile, and the documented fact that a library's own profile settings are ignored when it is built as a dependency.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "opt-cold-unlikely",
@@ -1883,6 +1915,7 @@
       "rule_id": "opt-lto-release",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1890,6 +1923,7 @@
       "rule_id": "opt-monomorph-outline",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -1918,15 +1952,16 @@
       "rule_id": "own-arc-shared",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
     {
       "rule_id": "own-borrow-over-clone",
-      "provenance": "typed-justification",
-      "source_class": "rust-performance-book",
-      "justification": "The rule derives from the allocation- and copy-avoidance guidance that book collects (do not clone a `String` or owned graph merely to read it), with the caveat that `Arc` clones are refcount bumps and cloning is right when independent ownership is needed.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "own-clone-explicit",
@@ -1944,17 +1979,17 @@
     },
     {
       "rule_id": "own-cow-conditional",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The whole rule is the documented contract of `std::borrow::Cow`: hold `Borrowed` or `Owned`, clone only via `to_mut`/`into_owned` when mutation or ownership is required.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "own-lifetime-elision",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The three elision rules, the `'_` anonymous lifetime, and where elision fails are language semantics specified in the Rust Reference's lifetime-elision rules.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "own-move-large",
@@ -1965,24 +2000,24 @@
     },
     {
       "rule_id": "own-mutex-interior",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "It derives from `std::sync::Mutex`'s documented contract: guard-based exclusive access, `Send`/`Sync` conditioned on `T: Send`, lock poisoning surfaced as a `Result` with `into_inner`, and no promised fairness or implementation.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "own-rc-single-thread",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The contract is `std::rc::Rc`'s documented non-atomic reference counting, its `!Send`/`!Sync` status, and the documented leak-on-cycle behaviour that `Weak`/`downgrade`/`upgrade` exist to break.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "own-refcell-interior",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "It derives from `std::cell::RefCell`'s documented runtime borrow tracking \u2014 `borrow`/`borrow_mut` panic on conflict while `try_borrow`/`try_borrow_mut` return `BorrowError`/`BorrowMutError` \u2014 and from `Cell`'s get/set alternative.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "own-rwlock-readers",
@@ -2063,10 +2098,10 @@
     },
     {
       "rule_id": "perf-black-box-bench",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "Every claim restates the documented contract of `std::hint::black_box` \u2014 a best-effort optimization barrier with no guarantee about inlining or timing \u2014 stabilized in the standard library and used here from Criterion benchmarks.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "perf-chain-avoid",
@@ -2143,6 +2178,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2150,6 +2186,7 @@
       "rule_id": "perf-release-profile",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2228,6 +2265,7 @@
       "rule_id": "proj-dependency-policy",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -2404,6 +2442,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "rust_release_coverage.json"
       ]
     },
@@ -2431,10 +2470,10 @@
     },
     {
       "rule_id": "serde-default-compat",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "The contract is serde's `#[serde(default)]` and `#[serde(default = \"path\")]` field and container attributes, including that they affect deserialization only and require `Default` at container level.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "serde-deny-unknown-fields",
@@ -2482,6 +2521,7 @@
       "rule_id": "serde-try-from-validate",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2496,6 +2536,7 @@
       "rule_id": "test-cfg-test-module",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2518,6 +2559,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -2560,6 +2602,7 @@
       "rule_id": "test-fixture-raii",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2582,6 +2625,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2589,6 +2633,7 @@
       "rule_id": "test-loom-concurrency",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
@@ -2627,6 +2672,7 @@
       "rule_id": "test-proptest-properties",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -2635,15 +2681,16 @@
       "rule_id": "test-sanitizers",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
     {
       "rule_id": "test-should-panic",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The contract is the built-in `#[should_panic]` testing attribute, its `expected =` substring matching, and the compiler rule that such a test must return `()`, all of which are language/test-harness behaviour described in the Reference's testing attributes.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "test-snapshot-testing",
@@ -2676,10 +2723,10 @@
     },
     {
       "rule_id": "trait-associated-type-vs-generic",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The contract is language semantics of trait declarations: an associated type is bound once per implementation while a generic trait parameter admits several implementations of the same trait for one type (as with `Add<Vec2>` and `Add<f64>` for the same struct), and that difference is what drives the guidance regardless of the rule file's own nod to the API Guidelines.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "trait-blanket-impl",
@@ -2704,25 +2751,26 @@
     },
     {
       "rule_id": "trait-default-methods",
-      "provenance": "typed-justification",
-      "source_class": "synthesized-practice",
-      "justification": "The design advice \u2014 keep a minimal orthogonal required set and build defaults on top, overriding only for performance \u2014 is generalized from how std::iter::Iterator, std::io::Read, and std::io::Write are written rather than from a stated guideline, and the file's attribution to the API Guidelines' 'implement common traits from std' item does not actually cover default methods.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "trait-dyn-vs-generic",
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
     {
       "rule_id": "trait-object-safety",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The rule restates the Rust Reference's dyn-compatibility (object-safety) rules \u2014 which methods are vtable-dispatchable, the exclusion of generic methods, by-value Self returns and associated constants, and the where Self: Sized escape hatch \u2014 with E0038 as the compiler's enforcement.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "trait-ord-consistent",
@@ -2828,6 +2876,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2848,10 +2897,10 @@
     },
     {
       "rule_id": "type-option-nullable",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The contract comes from std::option::Option's documented role as the type for an optional value plus its combinator API (map, and_then, ok_or, as_ref/as_deref, `?` on Option) that the examples exercise.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "type-path-not-string",
@@ -2862,10 +2911,10 @@
     },
     {
       "rule_id": "type-phantom-marker",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The contract is std::marker::PhantomData's documented behaviour \u2014 a zero-sized marker that makes an otherwise unused type parameter legal and tells the compiler the type acts as if it owned or borrowed a T \u2014 with the variance and drop-ownership discussion overlapping the Nomicon's PhantomData material, so the split between the two is not clean.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "type-repr-transparent",
@@ -2878,6 +2927,7 @@
       "rule_id": "type-result-fallible",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2962,7 +3012,8 @@
       "rule_id": "unsafe-justify-use",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -2991,6 +3042,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
@@ -3027,7 +3079,8 @@
       "rule_id": "unsafe-safety-comment",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
@@ -3041,7 +3094,8 @@
       "rule_id": "unsafe-sound-abstractions",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json"
       ]
     },
     {
