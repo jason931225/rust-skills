@@ -89,6 +89,20 @@ fn main() {
   covering the returned type's `Send` status, separate from any assertion on
   `T` itself.
 
+## Auto Traits Do Not Propagate Through Associated Types
+
+A bound on a generic parameter says nothing about that parameter's associated
+types. `F: Future + Unpin` does not make `F::Output: Unpin`, and
+`T: Iterator + Send` does not make `T::Item: Send`. A type that stores an
+associated-type value therefore derives its own auto traits from that concrete
+type, not from the bound its author wrote.
+
+The failure mode is a hand-written auto-trait impl added to recover an
+ergonomic method — the impl is not obviously wrong at the definition, and
+becomes unsound only for the instantiations whose associated type opts out.
+Assert the property for the associated type explicitly when the surrounding
+code depends on it, rather than inferring it from the parameter's bound.
+
 ## See Also
 
 - [err-send-sync-static](err-send-sync-static.md) - the same assertion pattern specialized for public error types

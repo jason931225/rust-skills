@@ -90,6 +90,29 @@ fn main() {
 - A type with no address-dependent invariant needs none of this — it is `Unpin`
   and projection is irrelevant.
 
+## Storing A Child Future In A Combinator
+
+A combinator that owns a child future has three mutually exclusive ways to
+poll it, and the choice is an API and allocation decision, not a style one:
+
+- **Bound `F: Unpin` and use `Pin::new`.** Zero cost inside the combinator,
+  but every caller passing an `async` block must `Box::pin` it first, because
+  an `async` block is `!Unpin`. The constraint is pushed onto every call site.
+- **Store `Pin<Box<F>>`.** The combinator stays `Unpin` (`Pin<Box<T>>: Unpin`
+  for every `T`), so callers pass `async` blocks directly — at one allocation
+  per child future.
+- **Pin-project the field.** No allocation and no caller-side bound, at the
+  cost that the combinator is itself `!Unpin` and needs the projection
+  discipline this rule describes.
+
+One related trap: `F: Unpin` says nothing about `F::Output`. A combinator that
+stores the completed output (a `MaybeDone`-style enum) is auto-`Unpin` only if
+that associated type is also `Unpin`, because auto traits do not propagate
+through associated types. Writing a blanket
+`impl<A: Future + Unpin> Unpin for Join<A, B> {}` to recover `get_mut()` is
+unsound the moment an output is `!Unpin` — it hands out a `&mut` that
+`mem::swap` can move. Bound `A::Output: Unpin` explicitly, or project.
+
 ## See Also
 
 - [unsafe-pin-address-stable](unsafe-pin-address-stable.md) - opting a type out of `Unpin` in the first place
