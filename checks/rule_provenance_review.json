@@ -260,11 +260,6 @@
       "justification": "The rule is the `arrayvec` crate's contract: `ArrayVec<T, N>` and `ArrayString<N>` store elements inline with fixed compile-time capacity, `push` panics when full while `try_push` returns a `CapacityError`."
     },
     {
-      "rule_id": "mem-assert-type-size",
-      "source_class": "rust-reference",
-      "justification": "The rule rests on Rust's type-layout rules: the default representation gives no stable size or field order across compilers, targets, and features, while `repr(C)` and `repr(transparent)` define representation contracts and niche optimization can change size."
-    },
-    {
       "rule_id": "mem-avoid-format",
       "source_class": "rust-performance-book",
       "justification": "This is the allocation-avoidance advice the Performance Book collects under heap allocations and string handling \u2014 do not build an owned `String` for constant text, and prefer borrowed or `Cow` returns on hot paths."

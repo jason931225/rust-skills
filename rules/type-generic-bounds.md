@@ -92,6 +92,53 @@ where
 { }
 ```
 
+## The Implicit `Sized` Bound
+
+Every type parameter carries an invisible `T: Sized` bound. That is the right
+default — it is what lets a generic hold a `T` by value — but it silently
+excludes the unsized types: slices, `str`, and every `dyn Trait`. A wrapper
+that only ever holds its `T` behind a pointer does not need the bound, and
+leaving it in place makes the wrapper unusable with exactly the types a
+pointer-holding wrapper exists for.
+
+```rust
+use std::fmt::Debug;
+
+/// Implicitly `T: Sized`, so this cannot hold a trait object even though the
+/// `Box` makes the size irrelevant. `Holder<dyn Debug>` fails to compile with
+/// E0277, and the error names the cause: "required by an implicit `Sized`
+/// bound in `Holder`".
+struct Holder<T> {
+    inner: Box<T>,
+}
+
+/// Relaxing the bound is what makes the wrapper work for the unsized types.
+struct Relaxed<T: ?Sized> {
+    inner: Box<T>,
+}
+
+fn main() {
+    let sized = Holder { inner: Box::new(5u8) };
+    assert_eq!(*sized.inner, 5);
+
+    let unsized_: Relaxed<dyn Debug> = Relaxed { inner: Box::new(5u8) };
+    assert_eq!(format!("{:?}", unsized_.inner), "5");
+    // `Holder<dyn Debug>` does not compile.
+}
+```
+
+Relax the bound when the parameter is only ever reached through a reference,
+`Box`, `Rc`, or `Arc`. Keep it whenever the code stores, returns, or moves a
+`T` by value — `?Sized` is not a free generalization, and adding it to a type
+that genuinely needs a size just moves the error somewhere less obvious.
+
+Note the size consequence, because it is easy to miss when budgeting a type:
+a reference to an unsized type is a *wide* pointer carrying a payload pointer
+plus a length or vtable pointer, so it is two words rather than one.
+`&[u8]` and `&dyn Trait` are 16 bytes on a 64-bit target where `&u8` is 8.
+`Option<Box<dyn Trait>>` is still 16, because the null niche in the data
+pointer absorbs the discriminant.
+
 ## Implied Bounds
 
 ```rust
