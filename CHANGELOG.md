@@ -6,6 +6,14 @@ semantic versioning for the rule set.
 
 ## [Unreleased]
 
+### Changed
+- The RustTraining ledger's `semantic_status` is now derived from its rows
+  rather than pinned to a constant. The literal `"unreviewed-backlog"` outlived
+  its own truth: it kept asserting that no unit had been semantically reviewed
+  while most of the ledger had been, and the check held the stale claim in
+  place instead of catching it. Its `reason` prose said the same false thing
+  and is now written from the counts.
+
 ### Added
 - `conc-pattern-choice`, the decision the library had no rule for: which
   concurrency architecture to use. `Arc<Mutex<T>>` is usually not chosen at
