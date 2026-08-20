@@ -2,20 +2,20 @@
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
   "rule_count": 429,
-  "ledger_mapped": 322,
-  "typed_justification": 107,
+  "ledger_mapped": 326,
+  "typed_justification": 103,
   "summary": {
     "cargo-book": 3,
     "clippy-docs": 6,
     "crate-docs": 20,
     "edition-guide": 2,
-    "ledger-mapped": 322,
+    "ledger-mapped": 326,
     "rust-api-guidelines": 18,
     "rust-performance-book": 6,
-    "rust-reference": 15,
+    "rust-reference": 14,
     "rustonomicon": 2,
-    "std-docs": 23,
-    "synthesized-practice": 12
+    "std-docs": 21,
+    "synthesized-practice": 11
   },
   "entries": [
     {
@@ -121,10 +121,10 @@
     },
     {
       "rule_id": "anti-unwrap-abuse",
-      "provenance": "typed-justification",
-      "source_class": "synthesized-practice",
-      "justification": "Beyond the documented fact that `Option::unwrap` and `Result::unwrap` panic, the rule's actual contract \u2014 that input, dependency, configuration, and shutdown failures must become typed errors rather than panics, with `expect` reserved for proved invariants \u2014 is general service-engineering practice rather than a single upstream document.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "anti-vec-for-slice",
@@ -270,7 +270,8 @@
       "rule_id": "api-from-not-into",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_training_coverage.json"
+        "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -301,6 +302,7 @@
       "ledgers": [
         "microsoft_guidelines_coverage.json",
         "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -556,6 +558,7 @@
       "ledgers": [
         "microsoft_guidelines_coverage.json",
         "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -687,6 +690,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -794,10 +798,10 @@
     },
     {
       "rule_id": "closure-move-capture",
-      "provenance": "typed-justification",
-      "source_class": "rust-reference",
-      "justification": "The rule states language semantics the compiler enforces: the `move` keyword makes a closure capture its environment by value rather than by reference, which is what lets the closure satisfy the `'static` bound required to escape its defining scope, and `move` is orthogonal to which of `Fn`/`FnMut`/`FnOnce` the closure implements.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "closure-static-vs-dyn",
@@ -815,10 +819,10 @@
     },
     {
       "rule_id": "coll-map-choice",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The selection criteria mirror the `std::collections` module documentation's guidance on when to use `HashMap` versus `BTreeMap`, including `BTreeMap::range` and the note that the default hasher is randomized and its algorithm unspecified; `IndexMap` is the one non-std option named.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "coll-seq-choice",
@@ -836,15 +840,16 @@
     },
     {
       "rule_id": "conc-atomic-ordering",
-      "provenance": "typed-justification",
-      "source_class": "std-docs",
-      "justification": "The Relaxed/Acquire/Release/AcqRel/SeqCst taxonomy and the release-store to acquire-load happens-before argument are the documented contract of std::sync::atomic::Ordering; the loom section is supporting tooling, and the same material is also covered by the Nomicon's atomics discussion.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "pdf_corpus_coverage.json"
+      ]
     },
     {
       "rule_id": "conc-atomic-update",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "pdf_corpus_coverage.json",
         "rust_release_coverage.json"
       ]
     },
@@ -903,14 +908,16 @@
       "rule_id": "conc-thread-channel",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_training_coverage.json"
+        "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json"
       ]
     },
     {
       "rule_id": "conc-thread-local",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_guidelines_coverage.json"
+        "microsoft_guidelines_coverage.json",
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -945,6 +952,7 @@
       "rule_id": "const-vs-static",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1118,6 +1126,7 @@
       "rule_id": "err-custom-type",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1149,6 +1158,7 @@
       "ledgers": [
         "microsoft_guidelines_coverage.json",
         "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1164,6 +1174,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -1171,7 +1182,8 @@
       "rule_id": "err-panic-handler-policy",
       "provenance": "ledger-mapped",
       "ledgers": [
-        "microsoft_training_coverage.json"
+        "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json"
       ]
     },
     {
@@ -1186,6 +1198,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_training_coverage.json",
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2262,6 +2275,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -2887,6 +2901,7 @@
       "rule_id": "type-enum-states",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "pdf_corpus_coverage.json",
         "zero2production_coverage.json"
       ]
     },
@@ -3090,6 +3105,7 @@
       "rule_id": "unsafe-maybeuninit",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "pdf_corpus_coverage.json",
         "rust_release_coverage.json"
       ]
     },
