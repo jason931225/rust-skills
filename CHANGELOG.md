@@ -7,6 +7,13 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `api-typestate` gains capability markers: an empty marker trait implemented by
+  every state that has a capability, with one `impl` block (and free functions)
+  bound on the marker instead of one block per concrete state. Adding a state
+  becomes one line, and a state without the marker still fails — with an error
+  naming the unsatisfied capability rather than a missing method.
+
+### Added
 - `trait-config-family`: collapse three or more collaborator generics into one
   config trait whose associated types name the whole family. The cost of the
   multi-parameter form is not verbosity — adding a fourth collaborator forces
