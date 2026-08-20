@@ -23,12 +23,12 @@
     "covered": 836,
     "documented-deviation": 25,
     "project-specific": 708,
-    "reject": 532,
-    "unreviewed": 23
+    "reject": 544,
+    "unreviewed": 11
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2101 of 2124 units carry a reviewed disposition with a named reviewer; 23 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "reason": "Source-bound inventory under semantic review. 2113 of 2124 units carry a reviewed disposition with a named reviewer; 11 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -30387,14 +30387,14 @@
       "end_line": 351,
       "unit_sha256": "d9d692ce146fe9eaab491713836876d233969b5cb3657ee2a803f2b723266db0",
       "claim": "CI Pipeline: GitHub Actions Matrix (H3 at ch02-cross-compilation-one-source-many-target.md#9)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "a GitHub Actions cross-build matrix. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169",
@@ -30404,10 +30404,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169"
       }
     },
@@ -31540,14 +31540,14 @@
       "end_line": 155,
       "unit_sha256": "37c833b080d24bf5f96bc5320f347a28bdffb8b6cca97a38a61687865457ee72",
       "claim": "grcov \u2014 Mozilla's Coverage Tool (H3 at ch04-code-coverage-seeing-what-tests-miss.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "the grcov coverage tool. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058",
@@ -31557,10 +31557,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058"
       }
     },
@@ -31580,14 +31580,14 @@
       "end_line": 206,
       "unit_sha256": "c92c3d1ef94730ec57d56036e36ccae116b2295f777cdc82004ce37c7a3cdafb",
       "claim": "Coverage in CI: Codecov and Coveralls (H3 at ch04-code-coverage-seeing-what-tests-miss.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "Codecov and Coveralls integration with a coverage threshold; test-observable-coverage also declines the threshold on its own grounds. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058",
@@ -31597,10 +31597,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058"
       }
     },
@@ -31703,14 +31703,14 @@
       "end_line": 352,
       "unit_sha256": "efc7bdee598a568de42f0938556919698ef0708bd33f40b6791957db2c09a96e",
       "claim": "Application: 1,000+ Tests Coverage Map (H3 at ch04-code-coverage-seeing-what-tests-miss.md#8)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "a coverage map over a large existing suite, gated on a line-coverage floor. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058",
@@ -31720,10 +31720,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058"
       }
     },
@@ -33771,14 +33771,14 @@
       "end_line": 127,
       "unit_sha256": "d163e1d773b53aab535f1353ed19b9062e7d83338d9ea83d17e57a9448ef5320",
       "claim": "Compile-Time Optimization: sccache, mold, cargo-nextest (H3 at ch08-compile-time-and-developer-tools.md#2)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "sccache, mold, and cargo-nextest as compile- and test-iteration tooling. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:aac95466ed7d32ddb243c836a8c221fc18070bf5ef0ef4c2394e9b3095de1e95",
@@ -33788,10 +33788,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "aac95466ed7d32ddb243c836a8c221fc18070bf5ef0ef4c2394e9b3095de1e95"
       }
     },
@@ -34426,14 +34426,14 @@
       "end_line": 241,
       "unit_sha256": "eea88f624064e4b9e3d020bdb57eb3bbf8aaf16884a2605660cbd22803933ef1",
       "claim": "Building a `no_std` Crate (H3 at ch09-no-std-and-feature-verification.md#5)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "walking a no_std crate's layers and its dependencies' capability tiers. The embedded and no_std material beyond the named gaps is outside this library's declared scope by an explicit decision; the unit teaches a real contract, but not one this library covers."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:2672a14a62dc3390d2f1249555e6befe2308ca0479a1e0e2006980170ba0396c",
@@ -34443,10 +34443,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "2672a14a62dc3390d2f1249555e6befe2308ca0479a1e0e2006980170ba0396c"
       }
     },
@@ -35714,14 +35714,14 @@
       "end_line": 61,
       "unit_sha256": "6a9ffd9ae2ce2d2d756e78f7fb37b05890fe1446f67c3ce940220829dda81ab9",
       "claim": "2. Compile Once, Test Everywhere (H3 at ch12-tricks-from-the-trenches.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "running library, integration, and doc tests through a chosen runner to avoid recompilation between test kinds. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:53c6e437d4dd6572dfca5833a6d07ecc05756ff58e947dd3a90aef1dd1606ae6",
@@ -35731,10 +35731,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "53c6e437d4dd6572dfca5833a6d07ecc05756ff58e947dd3a90aef1dd1606ae6"
       }
     },
@@ -35880,14 +35880,14 @@
       "end_line": 147,
       "unit_sha256": "69f6e0baa075572d72997695e3193b70da7edbb61a3ad8e29210d4bdc7d8a1f9",
       "claim": "6. CI Cache Thrashing (H3 at ch12-tricks-from-the-trenches.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "CI build-cache keying and save policy. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:53c6e437d4dd6572dfca5833a6d07ecc05756ff58e947dd3a90aef1dd1606ae6",
@@ -35897,10 +35897,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "53c6e437d4dd6572dfca5833a6d07ecc05756ff58e947dd3a90aef1dd1606ae6"
       }
     },
@@ -36047,14 +36047,14 @@
       "end_line": 253,
       "unit_sha256": "d1eb75635fc462eb3e2c679299fd262c689a04b1c93a51cd8d7ca128784bba24",
       "claim": "10. Pre-Push Smoke Test (H3 at ch12-tricks-from-the-trenches.md#11)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "a local pre-push smoke test mirroring the CI gate. Build- and test-tool configuration is outside this library's scope: it states rules about Rust code, not about which cache, linker, runner, or coverage service a project adopts, and a tool recommendation ages on a different clock than a language contract."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:53c6e437d4dd6572dfca5833a6d07ecc05756ff58e947dd3a90aef1dd1606ae6",
@@ -36064,10 +36064,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "53c6e437d4dd6572dfca5833a6d07ecc05756ff58e947dd3a90aef1dd1606ae6"
       }
     },
@@ -48368,14 +48368,14 @@
       "end_line": 72,
       "unit_sha256": "f3df0c7e9c0c59466aad14e9d20a8dff20807a040cd6f80582d045d4041b5ced",
       "claim": "svd2rust \u2014 Type-Safe Register Access (the Rust way) (H3 at ch15-1-embedded-deep-dive.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "svd2rust peripheral-access crates for type-checked register access. The embedded and no_std material beyond the named gaps is outside this library's declared scope by an explicit decision; the unit teaches a real contract, but not one this library covers."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:8875e3349373bd4f88fbbc13f502272f3423a947161733ab03f65b3595bdb6c0",
@@ -48385,10 +48385,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "8875e3349373bd4f88fbbc13f502272f3423a947161733ab03f65b3595bdb6c0"
       }
     },
@@ -48487,14 +48487,14 @@
       "end_line": 162,
       "unit_sha256": "9a0599be8626470d7e63c77aaacfa2a5117a108a478d0a9742ccb0afcb62b64f",
       "claim": "RTIC \u2014 Real-Time Interrupt-driven Concurrency (H3 at ch15-1-embedded-deep-dive.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "the RTIC framework's compile-time priority and resource-ceiling scheduling for interrupt handlers. The embedded and no_std material beyond the named gaps is outside this library's declared scope by an explicit decision; the unit teaches a real contract, but not one this library covers."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:8875e3349373bd4f88fbbc13f502272f3423a947161733ab03f65b3595bdb6c0",
@@ -48504,10 +48504,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "8875e3349373bd4f88fbbc13f502272f3423a947161733ab03f65b3595bdb6c0"
       }
     },
@@ -48925,14 +48925,14 @@
       "end_line": 680,
       "unit_sha256": "2152e489d549bec5227fa0f448a701e4f647b05d6b867ed8f5c1557b19352907",
       "claim": "defmt \u2014 Deferred Formatting for Embedded Logging (H3 at ch15-1-embedded-deep-dive.md#17)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "defmt deferred-formatting logging that keeps format strings out of the device image. The embedded and no_std material beyond the named gaps is outside this library's declared scope by an explicit decision; the unit teaches a real contract, but not one this library covers."
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "out-of-library-scope",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:8875e3349373bd4f88fbbc13f502272f3423a947161733ab03f65b3595bdb6c0",
@@ -48942,10 +48942,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "assessed and declined rather than unexamined; if the library's scope changes to admit this material, this row is where to start",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "8875e3349373bd4f88fbbc13f502272f3423a947161733ab03f65b3595bdb6c0"
       }
     },

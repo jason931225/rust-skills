@@ -6,6 +6,15 @@ semantic versioning for the rule set.
 
 ## [Unreleased]
 
+### Changed
+- The training ledger gains an `out-of-library-scope` rationale class, and the
+  twelve build-tooling and embedded units it describes move off `unreviewed`.
+  `tutorial-scaffolding` says a unit carries no engineering contract; these
+  carry a real one the library has decided not to state. Leaving them
+  `unreviewed` claimed nobody had looked, which stopped being true once someone
+  had — so the ledger could only misdescribe them in one direction or the
+  other until the vocabulary admitted a third answer.
+
 ### Added
 - `async-sync-core` gains the adoption decision the boundary rule presumed:
   what a runtime costs before it buys anything — lock types change, `Send +

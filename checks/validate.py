@@ -812,6 +812,13 @@ allowed_training_rationale_classes = {
     # engineering contract.
     "cross-language-onboarding",
     "tutorial-scaffolding",
+    # A third, added once the backlog was worked down far enough to expose it.
+    # `tutorial-scaffolding` says a unit carries no engineering contract. Some
+    # units carry a real one this library has decided not to cover — build-tool
+    # configuration, and embedded/no_std material beyond the named gaps. Filing
+    # those as scaffolding misdescribes them, and leaving them `unreviewed`
+    # claims nobody has looked, which stops being true the moment someone has.
+    "out-of-library-scope",
 } | allowed_book_rationale_classes
 allowed_training_applicability = {"inventory-parity-only", "behavior-assertion"}
 training_heading_re = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
