@@ -20,15 +20,14 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 836,
+    "covered": 847,
     "documented-deviation": 25,
     "project-specific": 708,
-    "reject": 544,
-    "unreviewed": 11
+    "reject": 544
   },
   "audit_status": {
-    "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2113 of 2124 units carry a reviewed disposition with a named reviewer; 11 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "semantic_status": "reviewed",
+    "reason": "Source-bound inventory under semantic review. All 2124 units carry a reviewed disposition with a named reviewer. Rows dispositioned `out-of-library-scope` were read and declined on scope rather than left unexamined.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -3054,14 +3053,16 @@
       "end_line": 308,
       "unit_sha256": "97a2c20a9ee8d4906500538fe06ea45cf5be7e99bd5de0616d531d8089a8677b",
       "claim": "The uom Crate (H2 at ch06-dimensional-analysis-making-the-compiler.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "type-affine-quantity"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "requires derived-unit arithmetic to be type-checked, so that multiplying two quantities yields a third dimension and the wrong pairing does not compile; the rule states that as the Output of each Mul or Div impl"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:c30cec330d61b933a00404ab42652a673afcdd61d796fa7d3f5bd3a847c07c5f",
@@ -3071,10 +3072,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit reaches the contract by way of a units crate; the rule states the hand-rolled form and names the quadratic growth in impls as the point to switch, without endorsing a particular crate",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "c30cec330d61b933a00404ab42652a673afcdd61d796fa7d3f5bd3a847c07c5f"
       }
     },
@@ -9028,14 +9029,16 @@
       "end_line": 1038,
       "unit_sha256": "ed9f474697c41c953d5f163c8371bf84c423cd377173bb1c76ad64ace206c0bf",
       "claim": "Trick 12 \u2014 RAII / `Drop` as a Correctness Guarantee (H3 at ch11-fourteen-tricks-from-the-trenches.md#28)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-typestate"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "discusses Drop as a correctness guarantee including the E0366 restriction; api-typestate states that restriction, both remedies, and explicitly rejects the unit's blanket preference for a destructor over an explicit close for fallible release"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:e8648f8895f7a8438124fbe1797eef1be5083808a74240343ec856bae7fab752",
@@ -9045,10 +9048,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit's own Drop performs I/O and discards the error, which Drop's signature forces since drop returns unit; the mapped rule states why that makes it the wrong home for fallible release",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "e8648f8895f7a8438124fbe1797eef1be5083808a74240343ec856bae7fab752"
       }
     },
@@ -10139,14 +10142,16 @@
       "end_line": 295,
       "unit_sha256": "b3c00abde8b8f4716332784c589614c4d7008405fdf3a1ca5468f14050fd6848",
       "claim": "Zero-Cost Abstraction: Proof by Assembly (H3 at ch14-testing-type-level-guarantees.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-newtype-safety"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "requires a zero-cost-abstraction claim to be verified against the raw-primitive equivalent rather than asserted; the rule states that and shows the emitted symbols"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:3be8b1da58f8108177cb85441fef9d1ba659c224ade77dfdaf4504d93e051046",
@@ -10156,10 +10161,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the rule extends the unit in two ways the unit does not state: identical-code-folding can alias the symbols so a naive listing comparison shows no body at all, and the erasure ends at whatever the wrapper itself does, measured here as an empty Drop folding away while a Drop that writes does not",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "3be8b1da58f8108177cb85441fef9d1ba659c224ade77dfdaf4504d93e051046"
       }
     },
@@ -15302,14 +15307,16 @@
       "end_line": 163,
       "unit_sha256": "96113cdb1dfb66b7ba4b59bc0b5bc56716484cc7001e8c56752c0aafc9f09729",
       "claim": "Channel Selection (select!) (H3 at ch05-channels-and-message-passing.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "conc-thread-channel"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "serves work, a periodic tick, and a deadline from one synchronous select loop rather than sequencing receives or threading a deadline flag through the body; the rule states that and keeps disconnection as the shutdown path"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:2faf0ec6769042142d0a7daf4aeba67c5783c7c0aa5cb70b4689fa6143ce48b5",
@@ -15319,10 +15326,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit demonstrates one crate's macro; the rule states the shape and the starvation measurement for the sequenced alternative without depending on a particular channel crate",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "2faf0ec6769042142d0a7daf4aeba67c5783c7c0aa5cb70b4689fa6143ce48b5"
       }
     },
@@ -16651,14 +16658,16 @@
       "end_line": 296,
       "unit_sha256": "b9ffc165609c740bb0614e7b1840efbec849bd22694d8f6464f5bd7983ccd1d0",
       "claim": "When loops win (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#9)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "perf-iter-over-index"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states that an imperative loop is the right form when one traversal produces several outputs, advances a state machine, or performs effects that differ per element; the rule states that as the multi-output case"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -16668,10 +16677,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit lists more loop-favouring cases than the rule reproduces; the rule states the ones that follow from a traversal owing several results and points at partition where the split is by one predicate",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -16733,14 +16742,16 @@
       "end_line": 373,
       "unit_sha256": "1c5b90bc4e1e320f401c7dffae039ce42b285ec5ac9405287b52d6a5fadd0d7e",
       "claim": "Sidebar: Scoped mutability \u2014 imperative inside, functional outside (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#11)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "own-mutation-scope"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "confines mutation to a construction block whose value is bound immutably, so mutation scope is narrower than the binding's lifetime; the rule states that contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -16750,10 +16761,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit presents it as a sidebar idiom; the rule states when it applies rather than a single pipeline, and adds the limits about block size and struct fields that the unit does not",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -16981,14 +16992,16 @@
       "end_line": 490,
       "unit_sha256": "c5e4869464049e29bb6d45e4f181cf6a72fab2d13eb45c5dc49a972391fb5d7f",
       "claim": "When the loop version wins (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#17)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "anti-collect-intermediate"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "argues that an in-place update over an existing collection should edit it rather than rebuild it through collect; the rule states that as editing versus rebuilding"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -16998,10 +17011,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit justifies this by saying collect allocates; measurement shows a consuming collect into the same element layout reuses the buffer while a borrowing one does not, so the rule states the allocation fact correctly and rests the argument on what each form claims",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -17062,14 +17075,16 @@
       "end_line": 518,
       "unit_sha256": "c450219a607ab80c2d96e358fef692099215cad4fef8bc8174e43c8ef06f5428",
       "claim": "Match as a lookup table (H3 at ch08-functional-vs-imperative-when-elegance-wins.md#19)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "pat-exhaustive-enum"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "states that dispatching with match rather than a chain of equality tests is what makes the exhaustiveness check available at all; the rule states that as a contract distinct from avoiding a wildcard arm"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -17079,10 +17094,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit frames it as a lookup-table idiom and keeps a wildcard arm in its own example; the rule states the enrolment argument and records that no clippy group flags the equality chain",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -18817,14 +18832,16 @@
       "end_line": 301,
       "unit_sha256": "b36b869be3522a740b4e39ee76b6ec95deae2052422a2ce12e04d61994502169",
       "claim": "The Format Ecosystem (H3 at ch11-serialization-zero-copy-and-binary-data.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "serde-format-choice"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "chooses a serialization format from who decodes the bytes \u2014 human-edited, same-binary, cross-runtime, or constrained \u2014 which is the contract the rule states"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763",
@@ -18834,10 +18851,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit rates named formats in a table; the rule states the audiences and the constraints each choice commits to, and deliberately names no crate so it does not age with the ecosystem",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763"
       }
     },
@@ -18858,14 +18875,16 @@
       "end_line": 367,
       "unit_sha256": "7bf6ae2b263bdf399efa306f63c91c135b90e67d856337785485beabac2465c9",
       "claim": "Binary Data and repr(C) (H3 at ch11-serialization-zero-copy-and-binary-data.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "unsafe-byte-slice-cast"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "covers repr(C) layout as a contract and the packed-field access rule; unsafe-byte-slice-cast states the alignment obligation and both ways to reach a packed field"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763",
@@ -18875,10 +18894,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit says taking a reference to a packed field is undefined behaviour; the rule is more precise, since rustc rejects that reference outright as E0793 and the obligation only survives behind a raw pointer",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "f819769302f98b594caf36834d0f6f8514047543457b76067ccc0293b992f763"
       }
     },
@@ -31620,14 +31639,16 @@
       "end_line": 261,
       "unit_sha256": "211a9cd8f918ee1cd71a3b1fd6074cbc49fdb377b1cfdd47ea98715660ab420d",
       "claim": "Coverage-Guided Testing Strategy (H3 at ch04-code-coverage-seeing-what-tests-miss.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "test-observable-coverage"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "prioritises coverage gaps by consequence rather than by how much of the number they move, and excludes generated and hardware-only paths; the rule states both"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058",
@@ -31637,10 +31658,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit also sets a numeric coverage floor, which the mapped rule refuses on its own grounds; that half is not carried forward and the rule says so",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "b38050a80c38c266b79a2ec825c188259e47feaaecd5f7ca9cce81d66e6e8058"
       }
     },

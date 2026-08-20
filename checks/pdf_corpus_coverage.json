@@ -114,8 +114,7 @@
     "covered": 587,
     "documented-deviation": 15,
     "project-specific": 336,
-    "reject": 386,
-    "unreviewed": 1
+    "reject": 387
   },
   "units": [
     {
@@ -29274,14 +29273,14 @@
       "page": 425,
       "page_text_sha256": "536288266593303458cfcc464cf483e7326fd2b9cd2fb9ebccfe36165e96dc9d",
       "claim": "12.5.3 Listing all signals supported by the OS (depth 3 at Rust in Action.pdf page 425)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
+      "audit_disposition": "reject",
+      "disposition": "reject",
       "mapped_rule_ids": [],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "out-of-scope",
+        "detail": "the `kill -l` signal list and a table of common signals with their default actions and command-line shortcuts; operating-system reference material rather than a Rust engineering contract"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "tutorial-scaffolding",
       "supporting_evidence": [
         "source-sha256:448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1",
         "page-text-sha256:536288266593303458cfcc464cf483e7326fd2b9cd2fb9ebccfe36165e96dc9d"
@@ -29290,10 +29289,11 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::validate_pdf_corpus"
       },
-      "remaining_uncertainty": "unit has not been read against the rule library",
+      "remaining_uncertainty": "the extracted pages also carry the opening of the next section, which states that a handler must act quickly within a restricted subset; that is the premise of conc-signal-handler-safety but stops before its prescription, so no coverage is claimed from it",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
+        "reviewed_on": "2026-08-20",
         "source_sha256": "448d5293a1ec045afe621754b1816688325e40c3ab10e046734c49847dd25fc1"
       }
     },

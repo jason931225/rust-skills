@@ -141,6 +141,56 @@ Rewriting an indexed loop as an iterator chain is a clarity change until a
 benchmark says otherwise. If the indexed form measures faster on the target,
 keep it and record the measurement next to the loop.
 
+## When One Traversal Owes Several Outputs
+
+The forms this rule compares each produce one result. A traversal that has to
+produce several at once, or advance a state machine, is a case where the loop
+is the clearer form rather than a failure to use iterators.
+
+```rust
+#[derive(Debug, Default, PartialEq)]
+pub struct Tally {
+    pub accepted: Vec<u32>,
+    pub rejected: Vec<u32>,
+    pub total: u32,
+}
+
+/// One pass, three outputs. A fold with a tuple accumulator expresses this,
+/// and is longer, still mutates, and hides which arm did what.
+pub fn tally(readings: &[u32]) -> Tally {
+    let mut out = Tally::default();
+    for &reading in readings {
+        out.total += reading;
+        if reading >= 10 {
+            out.accepted.push(reading);
+        } else {
+            out.rejected.push(reading);
+        }
+    }
+    out
+}
+
+fn main() {
+    let tallied = tally(&[4, 12, 9, 30]);
+    assert_eq!(tallied.accepted, vec![12, 30]);
+    assert_eq!(tallied.rejected, vec![4, 9]);
+    assert_eq!(tallied.total, 55);
+}
+```
+
+Two cases where the loop wins for the same reason:
+
+- **The step depends on the previous step.** A state machine computes its next
+  state from the current one, so there is no independent per-element function
+  to hand an adapter.
+- **The traversal performs effects that differ between elements.** An adapter
+  body that writes, logs, or sends is a side effect in a lazy chain, with the
+  hazard that carries.
+
+Where the split really is two outputs by one predicate, `partition` says so
+better than either. Reach for the loop when the outputs are genuinely
+different computations over one pass, not when a named adapter exists.
+
 ## See Also
 
 - [perf-iter-lazy](./perf-iter-lazy.md) - Keep iterators lazy

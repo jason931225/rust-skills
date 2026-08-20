@@ -4,7 +4,7 @@
 
 ## Why It Matters
 
-Sometimes your type needs to be parameterized by a type that doesn't appear in any field—for variance, drop order, or semantic purposes. `PhantomData<T>` tells the compiler your type is "associated with" `T` without storing any `T` data. It has zero runtime cost.
+Sometimes your type needs to be parameterized by a type that doesn't appear in any field—for variance, drop order, or semantic purposes. `PhantomData<T>` tells the compiler your type is "associated with" `T` without storing any `T` data. `PhantomData<T>` is a zero-sized type, so it adds no bytes and no instructions of its own — see [api-newtype-safety](api-newtype-safety.md) for the cases where the wrapper around it is not free.
 
 ## Bad
 
