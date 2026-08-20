@@ -96,7 +96,8 @@ load and record the latency objective.
 // parking_lot provides explicit fair unlock operations where policy needs them
 use parking_lot::RwLock;
 
-// Or use std with explicit fairness (nightly)
+// `RwLockWriteGuard::downgrade` is stable: hand a write guard to readers
+// without releasing the lock in between
 // #![feature(rwlock_downgrade)]
 ```
 

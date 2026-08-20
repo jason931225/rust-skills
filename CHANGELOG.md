@@ -390,6 +390,20 @@ semantic versioning for the rule set.
   It is load-bearing only under nightly `#[may_dangle]`, which the rule never
   mentioned. Written two days ago; removed rather than patched.
 ### Fixed
+- The remaining 28 medium-severity audit findings, across 18 rules. Four were
+  verified by compiling first: `macro-export-crate-path`'s Good example did
+  not compile (`pub use greet;` beside `#[macro_export]` is E0255),
+  `serde-deny-unknown-fields` claimed a typo on a *required* field is silently
+  ignored (serde reports `missing field`), `own-split-borrow-fields` labelled
+  two sequential `&mut self` calls as not compiling (NLL ends each borrow at
+  return), and `doc-question-mark` claimed rustdoc wraps a mainless example in
+  a `Result`-returning function (it does not — `?` fails with E0277 without
+  `Ok::<(), E>(())`). Several others were the same self-contradiction shape as
+  `type-deref-coercion`: `lint-warn-suspicious` told readers to set lint levels
+  in `clippy.toml`, which does not accept them; `lint-warn-complexity` and
+  `lint-clippy-nursery-selected` each listed a lint from the wrong Clippy group
+  in a rule whose subject is enabling that group; and `doc-inline-reexport`'s
+  Good example demonstrated the exact redundancy its Bad section condemns.
 - Nine more audit findings, each verified by compiling or running it rather
   than taken on report. Two were the remaining high-severity ones:
   `closure-disjoint-capture` said `move` captures the whole named place (RFC

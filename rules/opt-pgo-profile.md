@@ -40,7 +40,7 @@ RUSTFLAGS="-Cprofile-generate=$RAW" \
   --replay-manifest tests/pgo/workload-v3.json
 
 rustup run 1.97.1 llvm-profdata merge \
-  --failure-mode=all-functions \
+  --failure-mode=any \
   -o "$MERGED" "$RAW"
 
 RUSTFLAGS="-Cprofile-use=$MERGED -Cllvm-args=-pgo-warn-missing-function" \

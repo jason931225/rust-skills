@@ -65,7 +65,8 @@ option.and_then(|x| Some(x + 1))  // Use: option.map(|x| x + 1)
 // WARN: clone_on_copy
 let y = x.clone();  // Where x is Copy type, just use: let y = x;
 
-// WARN: useless_let_if_seq
+// NOTE: `useless_let_if_seq` is a `nursery` lint, not `complexity` —
+// enabling clippy::complexity alone does not produce this warning
 let result;
 if condition {
     result = 1;

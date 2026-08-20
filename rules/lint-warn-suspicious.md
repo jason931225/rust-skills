@@ -23,7 +23,8 @@ suspicious = "warn"
 Or in `clippy.toml`:
 
 ```toml
-warn = ["clippy::suspicious"]
+# NOTE: clippy.toml does NOT accept lint levels — only configuration keys
+# (thresholds, allow-lists, msrv). Set levels via #![warn(..)] or Cargo.toml.
 ```
 
 ## Bad

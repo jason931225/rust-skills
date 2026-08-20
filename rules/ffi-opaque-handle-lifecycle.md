@@ -92,7 +92,7 @@ fn main() {
   nothing.
 - Check null at every entry point and report it as a status code rather than
   dereferencing.
-- Catch unwinding at the boundary: a panic crossing the C ABI is undefined
+- Catch unwinding at the boundary: a panic that escapes an `extern "C"` function aborts the process (it is undefined behaviour only for an ABI without unwind support); a panic crossing the C ABI is undefined
   behaviour.
 - Keep the handle opaque in the header (a forward-declared struct), so the
   caller cannot depend on the layout or construct one itself.
