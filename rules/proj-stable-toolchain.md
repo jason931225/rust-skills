@@ -46,6 +46,57 @@ components = ["clippy", "rustfmt"]
 targets = ["x86_64-unknown-linux-gnu"]
 ```
 
+## The Per-Target Half Of A Pinned Build
+
+`rust-toolchain.toml` pins *which* compiler and which targets. It says nothing
+about *how* each target links and runs — the linker, the per-target rustflags,
+the environment, the runner used to execute a cross-built test binary. Those
+belong in a checked-in `.cargo/config.toml`, for the same reason the toolchain
+file exists: a setting that lives in someone's shell is not part of the build.
+
+```toml
+# .cargo/config.toml — committed, so every machine links the same way.
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+rustflags = ["-C", "target-cpu=neoverse-n1"]
+
+[target.thumbv7em-none-eabihf]
+runner = "probe-rs run --chip STM32F303RETx"
+```
+
+Two merge rules decide whether that file is actually in effect, and both fail
+silently.
+
+**A matching `[target.*].rustflags` replaces `[build].rustflags` outright.**
+They do not concatenate — the `[build]` list is dropped. With both present:
+
+```text
+from_target: true
+from_build:  false
+```
+
+**`RUSTFLAGS` in the environment replaces every rustflags list from config.**
+An ad-hoc `RUSTFLAGS=...` on a command line therefore discards the committed
+per-target settings rather than adding to them:
+
+```text
+$ RUSTFLAGS="--cfg from_env" cargo run
+from_target: false
+from_build:  false
+```
+
+That is the practical hazard: a one-off `RUSTFLAGS=` to try a lint or a
+codegen flag quietly removes the cross-linker configuration the build depends
+on, and the failure surfaces as a link error with no mention of the flag that
+caused it. Put per-target settings in `[target.*]`, keep `[build].rustflags`
+for things that genuinely apply everywhere, and pass one-off flags as
+`--config 'build.rustflags=[...]'` or an added `[target.*]` entry rather than
+through the environment.
+
+Cargo also walks parent directories for `.cargo/config.toml`, so a workspace
+one level up can be supplying settings a crate never declares. That is useful
+for a monorepo and surprising when debugging one crate in isolation.
+
 ## See Also
 
 - [proj-msrv-declare](proj-msrv-declare.md) - library compatibility policy is separate from the app toolchain

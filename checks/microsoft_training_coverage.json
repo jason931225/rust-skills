@@ -20,15 +20,15 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 820,
+    "covered": 826,
     "documented-deviation": 25,
     "project-specific": 708,
     "reject": 532,
-    "unreviewed": 39
+    "unreviewed": 33
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2085 of 2124 units carry a reviewed disposition with a named reviewer; 39 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "reason": "Source-bound inventory under semantic review. 2091 of 2124 units carry a reviewed disposition with a named reviewer; 33 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -30160,14 +30160,16 @@
       "end_line": 110,
       "unit_sha256": "abb823de44f2b8d471a444dc7c35b56b676c908c56cdd160d31f703a0c772a7e",
       "claim": "`.cargo/config.toml` \u2014 Per-Target Configuration (H3 at ch02-cross-compilation-one-source-many-target.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-stable-toolchain"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "puts per-target linker, rustflags, env and runner in a checked-in .cargo/config.toml and treats its discovery and merge order as part of the build contract; the rule states that as the per-target half of a pinned build"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169",
@@ -30177,10 +30179,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit lists more config keys than the rule reproduces; the rule states where the settings belong and the two silent merge rules, not the full key surface",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169"
       }
     },
@@ -30284,14 +30286,16 @@
       "end_line": 234,
       "unit_sha256": "86dac7fd409935eb877b058669fe7711c08d9bdbe9930888610d7ef6b39c725e",
       "claim": "The `cross` Tool \u2014 Docker-Based Cross-Compilation (H3 at ch02-cross-compilation-one-source-many-target.md#7)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-libc-floor"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "provisions the cross toolchain and sysroot from a pinned container image rather than installing it on the build host, which is one of the ways proj-libc-floor names for holding the libc floor steady in the manifest of the build"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169",
@@ -30301,10 +30305,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit is a walkthrough of one such tool; the rule states the requirement without endorsing a particular one, and its emulator half is not separately stated",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "9e64ef7164e1be893a21e2bb763855d8a387af736e0871fbe3377b1528bc8169"
       }
     },
@@ -34767,14 +34771,16 @@
       "end_line": 71,
       "unit_sha256": "2d20e3e6f988a9734c29e6636d0447fb1e2931a2f9c21712f2cc1b705e17b343",
       "claim": "Windows Support \u2014 Platform Abstractions (H3 at ch10-windows-and-conditional-compilation.md#2)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-cfg-select"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "catalogues the cfg predicates available for platform divergence and which distinction each one actually draws; the rule states how to choose the predicate that separates the targets in question"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207",
@@ -34784,10 +34790,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit presents the predicates as a reference table; the rule states the selection contract and pins the two cases where the obvious predicate does not distinguish",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207"
       }
     },
@@ -34807,14 +34813,17 @@
       "end_line": 126,
       "unit_sha256": "283c3d0c3aefd2c7366ffbfa6efb052957243de0ff2ab49f980785f3496cad16",
       "claim": "The `windows-sys` and `windows` Crates (H3 at ch10-windows-and-conditional-compilation.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "ffi-sys-vs-ffi-name",
+        "proj-semver-contract"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "chooses between raw windows-sys bindings and the safe windows wrapper, and pins the binding crate to one 0.x minor line because its minors are incompatible; the two rules state those contracts"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207",
@@ -34824,10 +34833,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit's specific crate versions are illustrative; the rules state the choice and the 0.x compatibility axis without naming a version",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207"
       }
     },
@@ -34847,14 +34856,16 @@
       "end_line": 156,
       "unit_sha256": "e73d28122d10a19e45d27fe97d37fe5d84a5205cb8aeb054551086780c5ef926",
       "claim": "Cross-Compiling for Windows from Linux (H3 at ch10-windows-and-conditional-compilation.md#4)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-libc-floor"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "treats the Windows target ABI as a shipped-artifact decision covering the C runtime, linker, C++ interop and debug-info format; proj-libc-floor states that same split and requires the shipped binary be verified against the chosen triple"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207",
@@ -34864,10 +34875,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit walks a specific cross-from-Linux toolchain; the rule states the decision without prescribing how the cross build is provisioned",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207"
       }
     },
@@ -34929,14 +34940,16 @@
       "end_line": 321,
       "unit_sha256": "adabb2e751dee435d42299fa9994f987b22feaf62790531313068412705e4307",
       "claim": "Platform Abstraction Architecture (H3 at ch10-windows-and-conditional-compilation.md#6)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "proj-works-out-of-box"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "confines platform divergence to one cfg-gated layer behind platform traits so application logic and its tests compile unchanged on every target; the rule states that boundary and why the tests above it stop being platform tests"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207",
@@ -34946,10 +34959,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit also sketches a mock implementation for tests; that half is stated by test-mock-traits rather than by the mapped rule",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "43a06f90e12577a144e8ecc29fc9edf742eef982f47dae6859d36ed09d8a3207"
       }
     },

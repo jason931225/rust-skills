@@ -16855,6 +16855,27 @@
       "reviewer": "Jason Lee <jason931225@gmail.com>"
     },
     {
+      "unit_id": "rust-in-action:0276",
+      "title": "11.5.3 Why use enums?",
+      "page_text_sha256": "616f41d28f0d4da885c36643de16ac566b61deca7f6f30fce967644eb48bd4c1",
+      "disposition": "covered",
+      "audit_disposition": "covered",
+      "mapped_rule_ids": [
+        "type-enum-states"
+      ],
+      "exact_difference": {
+        "kind": "rule-extends-source",
+        "detail": "argues an enum over a group of bare u8 constants because it is much harder to reach an illegal value, and uses #[repr(u8)] to fix discriminants an external system requires; the rule states both, and additionally corrects the section's claim that a prescribed representation prevents space optimisation"
+      },
+      "rationale_class": "source-aligned",
+      "executable_check": {
+        "applicability": "inventory-parity-only",
+        "assertion_id": "checks/validate.py::validate_pdf_corpus"
+      },
+      "remaining_uncertainty": "the unit states that a prescribed representation prevents Rust from making space optimisations; measurement on 1.97.1 shows Option<T> of a repr(u8) fieldless enum is still one byte, so the rule states the width cost instead and does not carry the source's claim",
+      "reviewer": "Jason Lee <jason931225@gmail.com>"
+    },
+    {
       "unit_id": "rust-in-action:0277",
       "title": "11.5.4 Creating a type that can print to the VGA frame buffer",
       "page_text_sha256": "616f41d28f0d4da885c36643de16ac566b61deca7f6f30fce967644eb48bd4c1",
