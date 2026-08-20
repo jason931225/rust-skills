@@ -6,7 +6,7 @@
 
 `clap` looks like an ordinary library call, but several of its defaults do
 something a first read of the code does not suggest. `Parser::parse` and
-`ArgMatches::get_matches` print usage and call `std::process::exit` on a bad
+`Command::get_matches` print usage and call `std::process::exit` on a bad
 command line — wrapping the call in a function that returns `Result` does not
 change that, because the process is already gone by the time any `Err` would
 propagate. An argument's lookup key and its help-text placeholder are two
