@@ -92,7 +92,7 @@ These mirror `Fn` / `FnMut` / `FnOnce` semantics, so the same rules apply: prefe
 
 - `AsyncFn()` desugars the bound `F: AsyncFn<(), Output = T>` — the call syntax mirrors `Fn()`.
 - Plain `async fn` items (not closures) automatically implement `AsyncFn` when their signature matches.
-- `AsyncFn` is in `std::ops` but the traits are brought in scope automatically in the 2024 edition; in older editions you may need `use std::ops::AsyncFn;`.
+- `AsyncFn`, `AsyncFnMut`, and `AsyncFnOnce` live in `std::ops` and are in the standard prelude for **every** edition — no import is needed in 2018 or 2021 either (verified: a bare `F: AsyncFn() -> u32` bound compiles under `--edition 2021`).
 - The compiler still infers `Send`-ness from the closure body; if you need `Send` futures (Tokio multi-threaded), add `+ Send` to the bound or use a `Send` wrapper.
 
 ## See Also

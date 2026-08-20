@@ -86,10 +86,12 @@ fn main() {
   rapid `SIGTERM`s is enough — kills the process instead of invoking the
   handler again. Re-registering from inside the handler is a racy workaround,
   not a fix.
-- `SIGPIPE` terminates the process by default the first time a write targets
-  a closed pipe or socket; a long-running network server needs to install a
-  handler for it (or explicitly ignore it) or a single disconnected peer ends
-  the whole process. `SIG_IGN` and `SIG_DFL` (ignore, and restore the
+- `SIGPIPE` kills a bare C program on a write to a closed pipe, but Rust's
+  std sets it to `SIG_IGN` before `main`, so the write returns `EPIPE`
+  instead (verified: the process survives and keeps running). The work is
+  therefore handling that error, not installing a handler — see
+  `proj-cli-contract` for treating `BrokenPipe` as a normal end of output.
+  Code that re-enables the default disposition takes the C behaviour back. `SIG_IGN` and `SIG_DFL` (ignore, and restore the
   original default) are dispositions in their own right, not only something
   you replace with a custom function.
 - Signal, interrupt, and language "exception" name different things: a signal
