@@ -54,6 +54,17 @@ database state.
 - Use an outbox or durable queue when database state and an external side
   effect must eventually agree.
 - Test a failure between each statement and verify no partial state is visible.
+- When the database cannot return the row an `INSERT` just created (no
+  `RETURNING` support), do not recover it with a follow-up
+  `ORDER BY id DESC LIMIT 1` or `MAX(id)` query — under concurrent inserts
+  that query can return a different session's row. Fetch the generated id on
+  the same connection the insert ran on, or wrap the insert and fetch in one
+  transaction.
+- Load a parent-to-children relationship as one query for the parents and one
+  query for all their children, then group the children in memory — not one
+  child query per parent (N+1), and not by treating an in-memory grouping
+  helper as if it were a SQL `GROUP BY`; a helper that partitions
+  already-fetched rows does not aggregate them.
 
 ## See Also
 

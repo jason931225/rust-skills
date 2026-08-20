@@ -76,6 +76,14 @@ fn main() {
 - Pass ownership explicitly — pointer plus length, with a documented owner —
   rather than sharing a view in both directions.
 - Prefer generated bindings that already handle this over hand-written glue.
+- WASM's `i32`/`i64` integer types carry no signedness of their own — the same
+  bits mean different values depending on which operation reads them, exactly
+  like C. A host passing `-1` into an export typed `u32` on the Rust side
+  receives `u32::MAX`, not an error.
+- Linear memory can grow but never shrinks back down; once an instance's peak
+  payload has grown it, that memory stays reserved for the instance's whole
+  lifetime. This is a distinct fact from view invalidation on grow — it is
+  about total memory pinned, not about a stale view.
 
 ## See Also
 

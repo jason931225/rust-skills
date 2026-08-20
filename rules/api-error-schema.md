@@ -27,6 +27,23 @@ one.
   reported failure can be found in telemetry.
 - Version the error schema with the API. Adding a field is additive; changing
   a code's meaning is breaking.
+- A malformed request body typically fails during extraction, before any
+  handler runs, and the framework's default extractor-rejection path is a
+  separate pipeline from a handler's own `Result` — overriding handler-level
+  error mapping alone leaves extractor failures on the framework's default
+  (often a non-JSON body and the wrong status). Configure the extractor's own
+  rejection handling to match the rest of the schema.
+- A framework's response-building trait commonly exposes more than one
+  method that can produce a body (a primary render method plus a default
+  sibling for a different error kind). Override every method that can emit a
+  response, not just the one exercised by your own handler code — an
+  unoverridden sibling still runs and clobbers the content type and payload.
+- Distinguish "the request could not even be parsed" (typically 4xx, at the
+  extraction boundary) from "the request parsed but named something that
+  does not exist" (404, from application logic) from "the request parsed,
+  matched something, and it is empty" (200 with an empty or null body). These
+  are three different situations a client needs to tell apart, not one
+  generic failure.
 
 ## Bad
 
