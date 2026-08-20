@@ -20,15 +20,15 @@
     "retained_text": "heading text only; unit bodies are retained as digests, not text"
   },
   "summary": {
-    "covered": 832,
+    "covered": 836,
     "documented-deviation": 25,
     "project-specific": 708,
     "reject": 532,
-    "unreviewed": 27
+    "unreviewed": 23
   },
   "audit_status": {
     "semantic_status": "unreviewed-backlog",
-    "reason": "Source-bound inventory under semantic review. 2097 of 2124 units carry a reviewed disposition with a named reviewer; 27 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
+    "reason": "Source-bound inventory under semantic review. 2101 of 2124 units carry a reviewed disposition with a named reviewer; 23 remain unreviewed because no rule states the contract they argue, and topical overlap with an existing rule is not coverage.",
     "required_evidence": "Review each unit against the checkout at commit 9d19c482d66ef3995dca794bda74c7852134e0b7 and record an exact rule edge, a typed exact_difference, and a reviewer before moving any unit off 'unreviewed'."
   },
   "groups": [
@@ -17143,14 +17143,16 @@
       "end_line": 581,
       "unit_sha256": "9e4a22476e6f4c74191a596eb1da5e75aac92dc9509f4dba40c07fd18bd5e1ca",
       "claim": "8.7 Chaining Methods on Custom Types (H2 at ch08-functional-vs-imperative-when-elegance-wins.md#21)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "api-builder-pattern"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "requires a fluent chain to stay free of I/O and failure in its steps, concentrating fallibility in the terminal call; the rule states that as where failure belongs in a chain"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7",
@@ -17160,10 +17162,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit argues it for chains on arbitrary custom types; the rule states it for builders and adds the general sentence, so a non-builder fluent API is covered by extension rather than by its own example",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "bee6dfb7eeb121bb287e14f5f715aaff8a6c5da816fdec7f56a9b0968ff61ae7"
       }
     },
@@ -25638,14 +25640,16 @@
       "end_line": 131,
       "unit_sha256": "39fdd3aecfe3d633460ec8d00da46a8eea23a4bea7a456af2d35ddeafb6242f7",
       "claim": "Alternatives to `tokio::spawn` (H3 at ch09-when-tokio-isnt-the-right-fit.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-join-parallel"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "chooses among tokio::spawn, FuturesUnordered, and LocalSet by which spawn constraint actually binds; async-join-parallel states that concurrency requires neither Send nor 'static and that LocalSet drops only the Send bound"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:fc56922bf251a96c7d7ba4d50f9499aaeb7a157220a60ea4d4d9dae8fb295a99",
@@ -25655,10 +25659,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit surveys the alternatives as a table; the mapped rule states the decision and the LocalSet misread, and does not enumerate every alternative the unit lists",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "fc56922bf251a96c7d7ba4d50f9499aaeb7a157220a60ea4d4d9dae8fb295a99"
       }
     },
@@ -27265,14 +27269,16 @@
       "end_line": 29,
       "unit_sha256": "a195ba9a1aa2d9d93f336ea8c3e758e04befdf4b33a47de1c1eb784dc2ace8ca",
       "claim": "The Function Coloring Problem (H2 at ch14-async-is-an-optimization-not-an-architecture.md#2)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-sync-core"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "argues that adopting async infects types as well as signatures \u2014 lock type, Send and 'static bounds, and the test harness \u2014 and that this cost is charged before the runtime buys anything; the rule states that as the adoption decision"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:79646b1dbe6755f79aef2e5e6899b8f8397fbc5d6e51d3f1baf1f917327e7b6f",
@@ -27282,10 +27288,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit frames the cost through the function-colouring argument; the rule states the same three costs without that framing and takes no position on colouring as a language-design question",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "79646b1dbe6755f79aef2e5e6899b8f8397fbc5d6e51d3f1baf1f917327e7b6f"
       }
     },
@@ -27305,14 +27311,17 @@
       "end_line": 39,
       "unit_sha256": "2de7131001d63c3e13b42889fb70f795ee4cecbe0d33978e505633c0eee0fbdc",
       "claim": "\"But Threads Are Expensive\" (H2 at ch14-async-is-an-optimization-not-an-architecture.md#3)",
-      "audit_disposition": "unreviewed",
-      "disposition": "unreviewed",
-      "mapped_rule_ids": [],
+      "audit_disposition": "covered",
+      "disposition": "covered",
+      "mapped_rule_ids": [
+        "async-sync-core",
+        "conc-thread-budget"
+      ],
       "exact_difference": {
-        "kind": "unassessed",
-        "detail": "not compared with any rule; no semantic coverage credit"
+        "kind": "no-difference",
+        "detail": "argues that threads blocked on I/O are cheap enough that a thread pool is the simpler default below a large number of concurrent operations, so async is an optimization to justify rather than a default architecture"
       },
-      "rationale_class": "pending-semantic-review",
+      "rationale_class": "source-aligned",
       "supporting_evidence": [
         "rusttraining-commit:9d19c482d66ef3995dca794bda74c7852134e0b7",
         "source-file-sha256:79646b1dbe6755f79aef2e5e6899b8f8397fbc5d6e51d3f1baf1f917327e7b6f",
@@ -27322,10 +27331,10 @@
         "applicability": "inventory-parity-only",
         "assertion_id": "checks/validate.py::microsoft_training_inventory_parity"
       },
-      "remaining_uncertainty": "unreviewed: rule edge undetermined",
+      "remaining_uncertainty": "the unit puts a numeric threshold on the crossover; the rules state that sleeping threads are cheap and that the crossover is a measurement, and deliberately do not carry the number forward",
       "semantic_review": {
-        "status": "unreviewed",
-        "reviewer": null,
+        "status": "reviewed",
+        "reviewer": "Jason Lee <jason931225@gmail.com>",
         "source_sha256": "79646b1dbe6755f79aef2e5e6899b8f8397fbc5d6e51d3f1baf1f917327e7b6f"
       }
     },

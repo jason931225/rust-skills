@@ -921,6 +921,7 @@
       "rule_id": "conc-thread-budget",
       "provenance": "ledger-mapped",
       "ledgers": [
+        "microsoft_training_coverage.json",
         "pdf_corpus_coverage.json"
       ]
     },
