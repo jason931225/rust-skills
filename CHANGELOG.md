@@ -7,6 +7,14 @@ semantic versioning for the rule set.
 ## [Unreleased]
 
 ### Added
+- `async-select-racing` gains what `biased` actually costs. The random default
+  is the fairness mechanism, and `biased` trades it away: draining two
+  permanently-ready channels 2000 times gives `first=1920 second=80` under
+  `biased` against `991/1009` unbiased. It also states the direction the usual
+  advice omits — `biased` fixes starvation only when the branch at risk is
+  listed first, and produces it when the hot branch is.
+
+### Added
 - `proj-stable-toolchain` gains the per-target half of a pinned build:
   `rust-toolchain.toml` pins which compiler and targets, `.cargo/config.toml`
   pins how each target links and runs. Carries the two merge rules that fail

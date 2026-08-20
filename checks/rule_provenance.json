@@ -2,14 +2,14 @@
   "schema_version": 1,
   "generator": "checks/build_rule_provenance.py",
   "rule_count": 432,
-  "ledger_mapped": 354,
-  "typed_justification": 78,
+  "ledger_mapped": 355,
+  "typed_justification": 77,
   "summary": {
     "cargo-book": 2,
     "clippy-docs": 6,
-    "crate-docs": 11,
+    "crate-docs": 10,
     "edition-guide": 2,
-    "ledger-mapped": 354,
+    "ledger-mapped": 355,
     "rust-api-guidelines": 15,
     "rust-performance-book": 5,
     "rust-reference": 11,
@@ -724,10 +724,10 @@
     },
     {
       "rule_id": "async-select-racing",
-      "provenance": "typed-justification",
-      "source_class": "crate-docs",
-      "justification": "Documents tokio::select! behaviour \u2014 racing branches with pattern bindings and if guards, dropping losing futures at their next await point, the random-by-default versus biased; poll order, and the else branch when all branches are disabled \u2014 with futures::future::select_all for dynamic sets.",
-      "reviewer": "Jason Lee <jason931225@gmail.com>"
+      "provenance": "ledger-mapped",
+      "ledgers": [
+        "microsoft_training_coverage.json"
+      ]
     },
     {
       "rule_id": "async-spawn-blocking",
@@ -2786,6 +2786,7 @@
       "provenance": "ledger-mapped",
       "ledgers": [
         "microsoft_guidelines_coverage.json",
+        "microsoft_training_coverage.json",
         "zero2production_coverage.json"
       ]
     },
