@@ -78,7 +78,7 @@ mod tests {
 }
 ```
 
-## Key Points
+## Clamp Panics And NaN
 
 - **`clamp` panics if `min > max`** — it is a plain assertion, so it fires in `--release` as well as debug. Validate the order of bounds that come from configuration or user input before calling it.
 - **`f32`/`f64` `clamp`** propagates `NaN` from `self`: `NAN.clamp(0.0, 1.0)` is `NaN`. A `NaN` *bound* panics, with the same message as an inverted range. Filter `NaN` out of both the value and the bounds before clamping untrusted floats.

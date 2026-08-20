@@ -65,7 +65,7 @@ fn demo() {
 // don't use a blanket impl — or wrap the type in a newtype (see See Also).
 ```
 
-## Key Points
+## Coherence And Semver Effects
 
 - The standard library blanket-impls `ToString` for all `T: Display`, `From<T> for T` (reflexive), and `impl<T: Error> From<T> for Box<dyn Error>`.
 - Blanket impls live in the crate that owns the **trait** (not the type), satisfying the orphan rule.

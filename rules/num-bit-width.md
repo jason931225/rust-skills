@@ -82,7 +82,7 @@ mod tests {
 }
 ```
 
-## Key Points
+## Zero Cases And Return Types
 
 - `bit_width` is the minimum number of bits needed to represent the value, and is `0` when the value is `0`.
 - `highest_one` / `lowest_one` return `Option<u32>` indexes (or a bare `u32` on `NonZero`, where zero is impossible).

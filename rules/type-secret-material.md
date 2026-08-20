@@ -13,7 +13,7 @@ someone adds a parameter. A type makes the compiler carry the rule: the secret
 has no `Display`, its `Debug` is redacted, and reaching the value requires
 naming that intent at the call site.
 
-## Contract
+## Secret Wrapper Requirements
 
 - Wrap passwords, API keys, tokens, private keys, and connection strings that
   embed them in a dedicated secret type.
@@ -112,7 +112,7 @@ In production use a maintained crate (`secrecy` and `zeroize` are the common
 pair) rather than a local copy; the value here is the shape — no `Display`,
 redacted `Debug`, one named exposure point.
 
-## Failure Tests
+## Leak Paths To Check
 
 - `{:?}` on the enclosing config, request, or error does not contain the secret;
 - a structured-logging macro that captures all arguments emits the placeholder;

@@ -50,7 +50,7 @@ enum Status {
 }
 ```
 
-## Key Points
+## Supported Cases And Precedence
 
 `rename_all` applies to both serialization and deserialization. Supported values:
 

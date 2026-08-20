@@ -96,7 +96,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Generation Counter Design
 
 - Increment the generation on removal, not on insertion, so every handle issued
   before the removal is invalidated at once.

@@ -10,7 +10,7 @@ account existence through status, message, or timing. Use a maintained
 password-hashing library and current policy, store the encoded PHC string, and
 run both hashing and verification off the async executor.
 
-## Contract
+## Password Hashing And Verification Rules
 
 - Prefer a current memory-hard password hashing scheme such as Argon2id through
   a maintained library; do not implement cryptography.
@@ -82,7 +82,7 @@ fn main() {
 The adapter performs the real library call and always reaches the same public
 mapping for unknown user and wrong password.
 
-## Failure Tests
+## Authentication Cases To Test
 
 - different salts produce different encoded hashes for the same password;
 - valid and invalid passwords map to the expected result;

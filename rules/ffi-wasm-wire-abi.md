@@ -17,7 +17,7 @@ The contract-honest version is to decide the wire format explicitly: export
 `(ptr, len)` as two plain integers, and have the host copy the bytes out
 through the pointer before anything on the Rust side can move or free them.
 
-## Contract
+## Wire ABI Requirements
 
 - Export compound values across the WASM boundary as explicit numeric pairs
   — `(ptr: u32, len: u32)` for a string or byte buffer — never as a raw
@@ -107,7 +107,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Marshalling Cases To Test
 
 - the returned `(ptr, len)` pair, read as two plain integers, recovers
   exactly the bytes the module produced;

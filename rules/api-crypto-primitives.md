@@ -14,7 +14,7 @@ cryptographic libraries found more of their reported vulnerabilities were
 memory-safety issues than cryptographic ones, which is an argument for writing
 crypto libraries in Rust, not for hand-rolling primitives in application code.
 
-## Contract
+## Cryptographic Primitive Requirements
 
 - Use a maintained, reviewed implementation. Do not implement primitives.
 - Encrypt with an AEAD — AES-256-GCM, ChaCha20-Poly1305, or XChaCha20-Poly1305 —
@@ -66,7 +66,7 @@ crate (for example `subtle`), because a compiler is free to reintroduce a
 branch that the source does not contain. Length is deliberately allowed to
 leak — MAC and token lengths are public.
 
-## Failure Tests
+## Authenticated Encryption Test Cases
 
 - verification rejects a tag that differs only in its final byte;
 - encrypting the same plaintext twice produces different ciphertexts;

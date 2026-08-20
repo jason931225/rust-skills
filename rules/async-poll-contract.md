@@ -118,7 +118,7 @@ fn main() {
 }
 ```
 
-## Contract
+## Poll Implementation Requirements
 
 - Never block inside `poll`: no synchronous I/O, no `thread::sleep`, no
   contended lock held across slow work. Not-ready means return `Pending`, and

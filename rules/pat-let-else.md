@@ -56,7 +56,7 @@ fn get_id(map: &std::collections::HashMap<String, u64>, key: &str) -> Result<u64
 }
 ```
 
-## Notes
+## Scoping And Lint Caveats
 
 - The bound variable is in scope **after** the `let` statement, not inside the `else` block.
 - Prefer `?` when the `else` branch would just propagate an error; `let ... else` shines when the divergence is a `return`, `continue`, or `break`.

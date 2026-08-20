@@ -12,7 +12,7 @@ secret is already on disk and world-readable. The permissions have to be part
 of the create call, and the directory needs them too — a private file inside a
 traversable directory still leaks its name, size, and mtime.
 
-## Contract
+## Credential File Permission Requirements
 
 - Create with the mode set atomically (`OpenOptions::mode(0o600)` on Unix),
   not by relaxing permissions afterwards.
@@ -81,7 +81,7 @@ fn main() -> io::Result<()> {
 }
 ```
 
-## Failure Tests
+## Permission Cases To Test
 
 - the created file's mode is exactly owner read/write, checked on the file
   rather than on the umask;

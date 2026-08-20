@@ -78,7 +78,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Grouping And Borrow Boundaries
 
 - Split by concern, not by type. The grouping should name a responsibility that
   a reader recognises.

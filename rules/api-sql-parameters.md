@@ -13,7 +13,7 @@ value can never be parsed as syntax. Identifiers — table names, column names,
 sort directions — cannot be bound, which is exactly why they need an allowlist
 rather than escaping.
 
-## Contract
+## Statement Construction Requirements
 
 - Every value reaching a statement is a bound parameter. No `format!`, no
   `push_str`, no string interpolation of caller input into SQL.
@@ -94,7 +94,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Injection Cases To Test
 
 - `' OR 1=1 --` in a bound value returns no rows rather than every row;
 - a sort or column token outside the allowlist is rejected, and the rejection

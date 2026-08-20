@@ -41,7 +41,7 @@ A pure validation helper and adversarial cases live in
 `checks/tests/source_guidance.rs`. ID generation uses a maintained random/UUID
 implementation, not a timestamp or counter.
 
-## Contract
+## Request Span And ID Requirements
 
 - Ingress middleware creates exactly one root request span before routing.
 - Accept a caller-provided ID only after length and character validation;

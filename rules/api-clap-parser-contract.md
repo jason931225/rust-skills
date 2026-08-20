@@ -19,7 +19,7 @@ used. None of these show up in `--help` or in a quick manual test with valid
 input; they show up on the exact malformed input a real user eventually
 supplies.
 
-## Contract
+## Parser Declaration Requirements
 
 - Decide deliberately whether a bad command line should exit the process
   immediately (`parse`/`get_matches`, the common case for a `main` binary) or
@@ -91,7 +91,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Cases To Pin In Tests
 
 - a missing required positional returns `Err` from `try_get_matches`, and
   never calls `process::exit` inside the test process;

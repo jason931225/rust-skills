@@ -63,7 +63,7 @@ fuzz_target!(|data: &[u8]| { parse_is_total_and_lossless(data) });
 Keeping the property in the crate — not in the fuzz harness — is what lets the
 corpus double as a normal test.
 
-## Key Points
+## Fuzz Target Practices
 
 - Fuzz every boundary decoder: wire formats, file formats, query and header
   parsing, decompression, and deserialization of untrusted input.

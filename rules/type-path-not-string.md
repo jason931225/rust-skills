@@ -49,7 +49,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Path Handling At Boundaries
 
 - Accept `impl AsRef<Path>` in public functions so callers can pass `&str`,
   `String`, `PathBuf`, or `&Path` without converting.

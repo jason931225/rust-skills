@@ -105,7 +105,7 @@ fn demo() {
 }
 ```
 
-## Key Points
+## Standard Library Precedents
 
 - `std::iter::Iterator`, `std::future::Future`, and `std::ops::Deref` all use associated types because there is exactly one `Item`/`Output`/`Target` per implementor.
 - `std::ops::Add<Rhs>`, `std::convert::From<T>`, and `std::convert::Into<T>` use generic parameters because a single type can add to, or convert from, many others.

@@ -58,7 +58,7 @@ fn parallel_fill(left: &mut [u8], right: &mut [u8]) {
 }
 ```
 
-## Key Points
+## Scope Lifetime And Panic Behavior
 
 - The closure passed to `thread::scope` receives a `Scope<'env, '_>` handle; threads spawned via `s.spawn(...)` can borrow anything alive in `'env`.
 - All threads are joined automatically when the scope returns — even on panic.

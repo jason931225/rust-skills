@@ -16,7 +16,7 @@ addresses are just integers with no notion of which object they came from, and
 it is why two pointers with the same numeric address are not interchangeable
 if they carry different provenance.
 
-## Contract
+## Pointer Arithmetic And Provenance Rules
 
 - Keep every intermediate pointer produced by `offset`/`add`/`sub`/`wrapping_*`
   within the bounds of the single allocation the base pointer points into — one
@@ -82,7 +82,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Bounds Cases To Verify
 
 - summing an empty slice never dereferences a pointer, exercising the
   zero-length one-past-the-end case;

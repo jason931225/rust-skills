@@ -56,7 +56,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Naming Length And Abbreviations
 
 - Compound **at most two short words** (`RuntimeConfig`, not `DistributedRuntimeConfiguration`).
 - Do not prefix the item with its module or crate when the parent path already names the domain (`billing::Id`, not `billing::BillingInvoiceId`).

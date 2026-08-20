@@ -59,7 +59,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Choosing And Holding The Floor
 
 - Decide the floor from the oldest host the fleet actually runs, and record it
   where the build can read it.

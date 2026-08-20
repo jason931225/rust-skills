@@ -68,7 +68,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-## Notes
+## Error Type And Ecosystem Fit
 
 - Use a concrete `Err` type, not `String`, so callers can pattern-match on parse failures.
 - `FromStr` pairs naturally with `Display`: if you can parse it in, you should be able to print it out.

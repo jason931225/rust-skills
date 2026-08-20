@@ -50,7 +50,7 @@ fn main() {
 The one-megabyte threshold is an example policy. Derive a real threshold from
 object lifetime, allocator behavior, request concurrency, and memory SLOs.
 
-## Key Points
+## When To Reclaim Capacity
 
 - Reserve accurately before growth when the final size is predictable.
 - Prefer `into_boxed_slice` when a growable collection becomes immutable.

@@ -75,7 +75,7 @@ Only `SubscribeRequest` reaches the application service; the edge maps
 `BadRequest::InvalidEmail` to a stable public 4xx message rather than exposing
 parser internals.
 
-## Contract
+## Rejection Rules Before Side Effects
 
 - Distinguish malformed transport syntax from a well-formed domain command
   that conflicts with current state.

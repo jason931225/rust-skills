@@ -130,7 +130,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Pin Invariant Pitfalls
 
 - The `PhantomPinned` field is the entire opt-out. Writing `impl Unpin for T {}`
   by hand re-opens the hole; the impl is safe code, but it hands safe callers a

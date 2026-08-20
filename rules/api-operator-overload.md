@@ -102,7 +102,7 @@ fn main() {
 | `+` or `*` with visible side effects | Never |
 | Operator meaning depends on context not captured by types | Use a named method |
 
-## Notes
+## Assignment And Reference Impls
 
 - Implement the corresponding assignment operator when in-place mutation has
   the same natural semantics and a useful implementation. Do not add it merely

@@ -54,7 +54,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Normalizing Host-Dependent Output
 
 - Normalize rather than delete: replacing a field with a placeholder still
   asserts that it was present and in position.

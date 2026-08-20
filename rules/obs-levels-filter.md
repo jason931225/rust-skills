@@ -80,7 +80,7 @@ fn main() {
 | `debug!` | Diagnostic detail for development | query parameters, cache status |
 | `trace!` | Very verbose, per-iteration detail | loop counters, raw bytes |
 
-## Key Points
+## Filter Syntax And Compiled-Out Levels
 
 - `RUST_LOG=info,mycrate=debug,hyper=warn` — comma-separated target=level pairs; the first token sets the global default.
 - Compile out verbose levels in release with Cargo features: `tracing = { version = "0.1", features = ["max_level_debug", "release_max_level_info"] }`.

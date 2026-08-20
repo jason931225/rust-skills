@@ -65,7 +65,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Linear Memory Handling Rules
 
 - Re-read `memory.buffer` after every call into the module, or wrap access in a
   helper that always does.

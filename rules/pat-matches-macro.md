@@ -96,7 +96,7 @@ let result = parse("42");
 assert_matches!(result, Ok(n) if n == 42);
 ```
 
-## Notes
+## Lint Support And Limits
 
 - Enable `#![warn(clippy::match_like_matches_macro)]` (included in `clippy::style`) to catch existing verbose patterns automatically.
 - When you need to bind the matched value or branch on it further, a real `match` or `if let` is still the right tool.

@@ -66,7 +66,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Platform Signal Caveats
 
 - Registration is platform work: `sigaction` through a vetted crate, or a
   runtime's own listener. The contract above is about what the handler may do,

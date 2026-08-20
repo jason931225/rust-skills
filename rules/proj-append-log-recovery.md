@@ -13,7 +13,7 @@ everything after a bit flip. The distinction is structural — a short read at
 the very end is expected, anything else is not — and it has to be decided in
 the loader, not left to whichever error surfaces first.
 
-## Contract
+## Recovery Scan Requirements
 
 - Reaching end of file exactly at a record boundary ends the scan successfully.
 - A record header that is short at the end of the file ends the scan as a
@@ -119,7 +119,7 @@ fn main() {
 }
 ```
 
-## Failure Tests
+## Log Recovery Cases To Test
 
 - a log ending exactly on a boundary recovers clean;
 - a log with a short trailing header, and one with a short trailing payload,

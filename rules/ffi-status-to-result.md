@@ -53,7 +53,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Reading Foreign Failure Signals
 
 - Know each function's failure signal before wrapping it; `-1`, `0`, null, and
   a positive error code are all conventions in use, sometimes in one library.

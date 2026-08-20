@@ -57,7 +57,7 @@ fn handle_request(req: &Request, status: u16) {
 | `field = ?expr` | `Debug` | structs, enums, vecs — for diagnostics |
 | `field` (shorthand) | same as `field = field` | when name matches variable |
 
-## Key Points
+## Field Naming And Formatting
 
 - Keep the message string short and stable. If the telemetry backend supports message templates, reference the structured field names rather than formatting their values eagerly.
 - Prefer `%` over `?` for values that have a clean `Display` (e.g., `%id`, `%path`) — JSON backends quote Debug output inconsistently.

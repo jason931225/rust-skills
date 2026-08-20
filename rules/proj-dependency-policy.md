@@ -38,7 +38,7 @@ cargo vendor                         # optional: reviewable, offline-buildable t
 Run these against the committed lockfile in CI, and keep the schedule separate
 from the pull-request gate so a new advisory surfaces without a code change.
 
-## Key Points
+## Dependency Admission And Auditing
 
 - Weigh each new dependency against the cost of writing that code directly:
   what it pulls in transitively, whether it is maintained, and whether it is

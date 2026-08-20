@@ -10,7 +10,7 @@ block, while public unsafe functions also need a caller-facing contract. These
 two forms answer different questions and neither replaces the other. Omitting
 either prevents a reviewer from verifying soundness.
 
-## Contract
+## Two Levels Of Documentation
 
 Use two distinct levels of documentation:
 
@@ -61,7 +61,7 @@ fn process(slice: &[u8]) -> Option<u8> {
 }
 ```
 
-## Key Points
+## Lints And Comment Scope
 
 - A `# Safety` doc section and a `// SAFETY:` inline comment serve different audiences: the doc section targets *callers*, the inline comment targets *auditors* of the implementation.
 - Enable the lint explicitly to catch omissions:

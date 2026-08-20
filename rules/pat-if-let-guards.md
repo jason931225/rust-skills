@@ -48,7 +48,7 @@ fn apply(command: Command) -> Option<u16> {
 
 The `port` binding exists only in the guarded arm. If parsing fails or the following condition is false, matching continues with the next arm.
 
-## Key Points
+## Choosing And Writing Guards
 
 - Use an `if let` guard when the extra binding belongs to one match arm; use an if-let chain when the whole operation is naturally an `if` expression.
 - Guard expressions may run while the matched value is only conditionally selected. Keep them free of externally visible side effects.

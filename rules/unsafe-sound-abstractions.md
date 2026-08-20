@@ -68,7 +68,7 @@ fn main() {
 
 Most rules yield when the alternative is worse. This one does not. Unsound code is never acceptable, even as a temporary shortcut, a test helper, or an internal "we would never call it that way" function. If safe callers can reach UB, the API is wrong.
 
-## Key Points
+## Where Soundness Is Judged
 
 - Soundness is judged from *other safe code*, including adversarial `Deref` / `Clone` / `Drop` impls and unusual but legal generic instantiations.
 - The soundness boundary is the **module**, not the function. A safe method may rely on an invariant that another item in the *same* module established and that privacy keeps outsiders from breaking.

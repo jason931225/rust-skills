@@ -75,7 +75,7 @@ fn main() {
 }
 ```
 
-## Notes
+## Forwarding And When To Implement
 
 - Forward through the inner type's trait implementation (e.g., `fmt::LowerHex::fmt(&self.0, f)`) so that format flags like `#`, `0`, and width are handled correctly by the inner type.
 - Apply this to any newtype whose inner type is a primitive integer (`u8`–`u128`, `i8`–`i128`, `usize`, `isize`).

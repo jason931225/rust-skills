@@ -70,7 +70,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Version Bumps And Migrations
 
 - Bump the version for any layout change, including widening an integer or
   adding a field — a positional format has no compatible additions.

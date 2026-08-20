@@ -106,7 +106,7 @@ fn main() {
 }
 ```
 
-## Notes
+## Delegation And Iterator Traits
 
 - If your collection wraps an existing standard container, delegate `from_iter` and `extend` to the inner container's own implementations for maximum efficiency.
 - `FromIterator` + `Extend` enable `collect` to call `extend` on a pre-allocated collection when possible, avoiding extra allocations.

@@ -52,7 +52,7 @@ fn native_label() -> &'static str {
 }
 ```
 
-## Key Points
+## Branch Ordering And Cfg Checking
 
 - Branches are tested in source order; the first matching branch wins. Order overlapping predicates from most specific to least specific.
 - Use `_` for an intentional fallback. Prefer `compile_error!` when an unsupported target must fail closed.

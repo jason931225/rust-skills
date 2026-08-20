@@ -102,7 +102,7 @@ fn demo() {
 }
 ```
 
-## Key Points
+## Required Versus Defaulted Methods
 
 - Keep required methods to the **minimum orthogonal set**: ideally one or two.
 - Default implementations must only call other methods on `Self`, not external state.

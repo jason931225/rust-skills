@@ -87,7 +87,7 @@ mod tests {
 }
 ```
 
-## Key Points
+## When Each Cast Applies
 
 - The standard library implements `From<A> for B` only for infallible
   conversions that preserve the source value. A custom `From` implementation

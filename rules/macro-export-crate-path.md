@@ -73,7 +73,7 @@ macro_rules! greet {
 }
 ```
 
-## Key Points
+## Import Style And Helpers
 
 - Prefer `use mycrate::my_macro;` — it is explicit and plays well with `rustfmt` and IDEs.
 - Avoid `#[macro_use]` in new code; it is required only when supporting pre-2018 edition consumers.

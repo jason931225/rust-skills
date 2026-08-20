@@ -64,7 +64,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Handling Partial Reads
 
 - `read_exact` is the right default when the length is part of the format; it
   reports `UnexpectedEof` instead of leaving the tail untouched.

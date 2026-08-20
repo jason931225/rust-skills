@@ -116,7 +116,7 @@ impl Drop for FileWriter {
 }
 ```
 
-## Key Points
+## Default And Sentinel Choices
 
 - `mem::take` requires `T: Default`. If `T` has no meaningful default, use `mem::replace` with an explicit sentinel value (e.g., an `Option<T>` field — `mem::take` an `Option<T>` yields `None`, which is often exactly right).
 - Neither function clones the old value. Code generation and allocation

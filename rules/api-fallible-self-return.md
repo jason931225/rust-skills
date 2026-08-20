@@ -77,7 +77,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## When To Return The Receiver
 
 - The test is whether the receiver is reconstructible. Returning a consumed
   `u32` back is noise; returning a connected socket is the difference between

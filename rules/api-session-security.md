@@ -10,7 +10,7 @@ reusing an anonymous identifier after login, or accepting a long-lived cookie
 without transport and cross-site policy enables fixation, theft, and accidental
 authorization bypass.
 
-## Contract
+## Session And Cookie Requirements
 
 - Store only an opaque, high-entropy identifier in the browser; keep
   authoritative session state server-side for revocation and bounded size.
@@ -47,7 +47,7 @@ login succeeds
   -> return a Secure + HttpOnly + SameSite cookie
 ```
 
-## Failure Tests
+## Session Failures To Verify
 
 - a pre-login identifier is unusable after successful login;
 - logout revokes the server record;

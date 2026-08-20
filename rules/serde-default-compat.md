@@ -53,7 +53,7 @@ struct FeatureFlags {
 }
 ```
 
-## Key Points
+## Default Attribute Forms
 
 - **Field-level** `#[serde(default)]` — fills only that field; other required fields still fail if absent.
 - **Field-level** `#[serde(default = "path")]` — calls a user-supplied function `fn() -> T`; use this when `Default` would produce the wrong value (e.g. `timeout = 30` rather than `0`).

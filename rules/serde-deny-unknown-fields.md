@@ -57,7 +57,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Where To Apply Denial
 
 - Apply `deny_unknown_fields` to **config-file structs**, **request/response DTOs**, and any struct that forms a public API contract where typos must be caught.
 - Skip it for **flexible or extensible** structs where callers are expected to pass extra metadata. Use `#[serde(flatten)]` with a `HashMap` catch-all instead.

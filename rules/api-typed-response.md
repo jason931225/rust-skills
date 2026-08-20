@@ -68,7 +68,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Response Type Boundaries
 
 - Keep the response type separate from the domain type, so an internal field
   cannot leak by being added to a struct that happens to be serialized.

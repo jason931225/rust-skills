@@ -58,7 +58,7 @@ fn main() {
 }
 ```
 
-## Key Points
+## Preserving The Single-Use Guarantee
 
 - The guarantee is the *absence* of `Clone` and `Copy`. Adding either later
   deletes it silently, which is why the type deserves a comment saying so and a
