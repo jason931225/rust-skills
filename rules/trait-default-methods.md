@@ -108,7 +108,7 @@ fn demo() {
 - Default implementations must only call other methods on `Self`, not external state.
 - An override changes performance but must preserve the same observable semantics.
 - Document which methods are required vs defaulted in the trait's module-level doc comment.
-- The pattern is explicitly encouraged by the Rust API Guidelines under "Implement common traits from std" and is central to `std::iter::Iterator`, `std::io::Read`, and `std::io::Write`.
+- The pattern is central to `std::iter::Iterator`, `std::io::Read`, and `std::io::Write`.
 
 ## See Also
 

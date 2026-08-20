@@ -179,7 +179,7 @@ serde = "1.0"
 
 - [proj-lib-main-split](./proj-lib-main-split.md) - Library structure
 - [api-common-traits](./api-common-traits.md) - Core trait implementations
-- [lint-deny-correctness](./lint-deny-correctness.md) - Feature testing
+- [lint-static-verification](./lint-static-verification.md) - Feature-combination checks in CI
 - [serde-try-from-validate](./serde-try-from-validate.md) - Validate while deserializing
 - [serde-rename-all](./serde-rename-all.md) - Match external naming conventions
 - [api-std-types-boundary](./api-std-types-boundary.md) - leak a third-party type only when it is the contract

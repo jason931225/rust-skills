@@ -183,4 +183,4 @@ confirm the benefit in your specific use case.
 
 - [mem-with-capacity](mem-with-capacity.md) - Pre-allocate when size is known
 - [mem-reuse-collections](mem-reuse-collections.md) - Reuse collections with clear()
-- [opt-profile-first](perf-profile-first.md) - Profile to verify benefit
+- [perf-profile-first](perf-profile-first.md) - Profile to verify benefit

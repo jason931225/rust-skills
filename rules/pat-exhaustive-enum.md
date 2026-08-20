@@ -53,8 +53,8 @@ When several variants share the same handling, list them explicitly rather than 
 ```rust
 fn is_terminal(s: &Status) -> bool {
     match s {
-        Status::Closed | Status::Pending => true,
-        Status::Active => false,
+        Status::Active | Status::Pending => false,
+        Status::Closed => true,
     }
 }
 ```

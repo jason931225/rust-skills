@@ -69,7 +69,7 @@ type Errors = SmallVec<[Error; 4]>;
 type Attrs = SmallVec<[Attribute; 8]>;
 ```
 
-## Evidence from rust-analyzer
+## Evidence from rustc
 
 ```rust
 // https://github.com/rust-lang/rust/blob/main/compiler/rustc_expand/src/base.rs

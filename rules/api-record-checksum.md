@@ -45,6 +45,7 @@ fn read_record(file: &mut File) -> io::Result<Record> {
 #[derive(Debug, PartialEq)]
 pub enum RecordError {
     Corrupt { expected: u32, actual: u32 },
+    Truncated,
 }
 
 /// Stand-in for a real CRC or xxHash; the contract is the check, not the
@@ -63,7 +64,9 @@ pub fn encode(payload: &[u8]) -> Vec<u8> {
 
 /// Verifies before the payload is handed to a decoder.
 pub fn decode(record: &[u8]) -> Result<&[u8], RecordError> {
-    let (stored, payload) = record.split_at(4);
+    let Some((stored, payload)) = record.split_at_checked(4) else {
+        return Err(RecordError::Truncated);
+    };
     let expected = u32::from_be_bytes(stored.try_into().unwrap_or([0; 4]));
     let actual = checksum(payload);
     if expected != actual {

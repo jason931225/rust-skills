@@ -19,7 +19,9 @@ a single natural output per implementor.
 
 ```rust
 // Using a generic parameter for a trait that has exactly one output per type.
-// Callers must now write Parser<String, Output = Ast> or face ambiguity.
+// Callers must repeat the output type in every bound (`P: Parser<String>`),
+// and a second `impl Parser<Vec<u8>> for JsonParser` would make `p.parse(s)`
+// ambiguous.
 trait Parser<Output> {
     fn parse(&self, input: &str) -> Option<Output>;
 }

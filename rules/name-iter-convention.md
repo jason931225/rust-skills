@@ -168,5 +168,4 @@ for item in col {            // Calls col.into_iter()
 ## See Also
 
 - [name-iter-type-match](./name-iter-type-match.md) - Iterator type naming
-- [name-iter-convention](name-iter-convention.md) - name iterator methods iter/iter_mut/into_iter
 - [perf-iter-over-index](./perf-iter-over-index.md) - Prefer iterators

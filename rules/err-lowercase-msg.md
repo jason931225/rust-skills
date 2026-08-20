@@ -84,7 +84,7 @@ fn load_user(id: u64) -> Result<User> {
         .with_context(|| format!("failed to fetch user {}", id))?;
     
     parse_user(data)
-        .with_context(|| "failed to parse user data")?
+        .with_context(|| "failed to parse user data")
 }
 
 // Output: "failed to fetch user 42: connection refused"

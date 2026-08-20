@@ -23,8 +23,8 @@ impl Extract for Archive {
 
 fn main() {
     let archive = Archive;
-    // Does not compile until `Extract` is in scope.
-    let _ = Extract::extract_entry(&archive, "readme.txt");
+    // Callers in other crates need `use yourcrate::Extract;` before this works.
+    let _ = archive.extract_entry("readme.txt");
 }
 ```
 

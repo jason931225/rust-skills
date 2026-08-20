@@ -35,7 +35,7 @@ pub fn divide(a: i32, b: i32) -> i32 {
 ///
 /// ```
 /// let v = vec![1, 2, 3];
-/// assert_eq!(v.get(1), &2);
+/// assert_eq!(v[1], 2);
 /// ```
 pub fn get(&self, index: usize) -> &T {
     &self.data[index]

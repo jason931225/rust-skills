@@ -108,7 +108,7 @@ fn store_data(data: impl Into<Vec<u8>>) {
 ## When NOT to Use impl Into
 
 ```rust
-// ❌ Trait objects need Sized
+// ❌ Already-erased types — the `Into` bound buys nothing here
 fn process(handler: impl Into<Box<dyn Handler>>) { }
 // Better: just take Box<dyn Handler> directly
 
