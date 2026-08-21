@@ -84,7 +84,10 @@ fn main() {
 - `align_of::<T>()` and `align_offset` are how alignment is checked; a length
   check alone is not sufficient.
 - Types with validity invariants — `bool`, `char`, enums, `NonZero*`,
-  references — can never be produced from arbitrary bytes, checked or not.
+  references — can never be produced from arbitrary bytes *by a cast*. They
+  can be produced by a checked conversion that rejects the invalid patterns
+  (`char::from_u32`, `NonZeroU32::new`, a `TryFrom` on the discriminant), which
+  is what field-by-field decoding does.
 - Byte order is a separate obligation: a checked cast still reads host order.
 
 ## Packed Fields Are The Same Obligation From The Other Side

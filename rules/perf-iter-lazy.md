@@ -226,9 +226,10 @@ fn main() {
 }
 ```
 
-The compiler helps a little — an unused adapter is `#[must_use]`, so the first
-case warns — but the warning disappears as soon as the value is bound, passed
-on, or partially consumed by `take`. A chain that is short-circuited by `any`,
+The compiler helps only in the narrowest case. Adapters are `#[must_use]`, so
+a chain whose value is discarded outright warns — but the example above binds
+it, and a bound chain produces no diagnostic at all. Passing it on or partially
+consuming it with `take` are equally silent. A chain that is short-circuited by `any`,
 `find`, or a `?` inside `collect` stops pulling at the deciding element, and
 every side effect after it silently does not occur.
 

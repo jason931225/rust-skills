@@ -104,7 +104,9 @@ dispatch shape. Choosing `match` is the whole mechanism — there is no lint
 standing behind it.
 
 ```rust
-#[derive(Clone, Copy, PartialEq)]
+// No `PartialEq`: nothing here compares values, and deriving it is what makes
+// the equality chain available in the first place.
+#[derive(Clone, Copy)]
 pub enum StatusCode {
     Ok,
     NotFound,

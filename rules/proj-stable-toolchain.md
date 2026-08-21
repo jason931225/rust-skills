@@ -88,10 +88,21 @@ from_build:  false
 That is the practical hazard: a one-off `RUSTFLAGS=` to try a lint or a
 codegen flag quietly removes the cross-linker configuration the build depends
 on, and the failure surfaces as a link error with no mention of the flag that
-caused it. Put per-target settings in `[target.*]`, keep `[build].rustflags`
-for things that genuinely apply everywhere, and pass one-off flags as
-`--config 'build.rustflags=[...]'` or an added `[target.*]` entry rather than
-through the environment.
+caused it. Put per-target settings in `[target.*]` and keep `[build].rustflags` for what
+genuinely applies everywhere. For a one-off flag, reach for `--config` on the
+**same key** the committed file uses — the precedence rule above applies to CLI
+overrides too, so `--config 'build.rustflags=[...]'` is discarded whenever a
+matching `[target.*]` entry exists, which is precisely the configuration this
+section is about:
+
+```text
+--config 'build.rustflags=[...]'            from_cli: false   (dropped)
+--config 'target.<triple>.rustflags=[...]'  from_cli: true    (joined)
+```
+
+So override `target.<triple>.rustflags`, which joins with the committed list,
+and treat `RUSTFLAGS=` as unavailable for this purpose rather than as the quick
+option.
 
 Cargo also walks parent directories for `.cargo/config.toml`, so a workspace
 one level up can be supplying settings a crate never declares. That is useful

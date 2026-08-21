@@ -77,9 +77,12 @@ of `if` statements whose precedence nobody wrote down, and a new dependency
 that silently never reaches the aggregate.
 
 Order the severities as a fieldless enum and fold with `max`. A derived `Ord`
-on a fieldless enum ranks variants by **declaration order**, so writing them
-least-to-most severe makes "the worst wins" the derived behaviour rather than
-something to hand-maintain:
+on a fieldless enum compares **discriminant values**, and with no explicit
+discriminants those ascend in declaration order — so writing the variants
+least-to-most severe and leaving them unnumbered makes "the worst wins" the
+derived behaviour rather than something to hand-maintain. Do not pin
+discriminants on this type unless the numbers happen to ascend with severity
+too; see [trait-ord-consistent](trait-ord-consistent.md).
 
 ```rust
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
