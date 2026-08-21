@@ -140,7 +140,7 @@ one of them, and nothing tells a reader that the set is meant to be closed:
 // A value outside the intended set is an ordinary u8; nothing rejects it.
 pub const BLACK: u8 = 0x0;
 pub const BLUE: u8 = 0x1;
-pub const CYAN: u8 = 0x3;
+pub const CYAN: u8 = 0x2;
 
 pub fn set_colour_loose(_code: u8) {}
 ```
@@ -162,6 +162,10 @@ pub fn set_colour(colour: Colour) -> u8 {
 }
 
 fn main() {
+    // The discriminants are the compiler's here, so they happen to match the
+    // constants above only because the variants are declared in the same
+    // order. Where the numbers are a contract, pin them — see the next
+    // section — rather than relying on that coincidence.
     assert_eq!(set_colour(Colour::Cyan), 2);
     // `set_colour(7)` does not compile: there is no `Colour` with that value.
 }

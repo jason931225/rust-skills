@@ -65,7 +65,11 @@ fn increment_reports_the_new_value() {
 fn increment_rejects_overflow_without_changing_state() {
     let mut counter = Counter { value: u64::MAX };
     assert_eq!(counter.increment(), Err(CounterError::Overflow));
-    assert_eq!(counter.value, u64::MAX);
+
+    // "State unchanged" is checked through behaviour, not by reading the
+    // private field: a counter that had silently advanced would report a
+    // different value here, and one that saturated would return `Ok`.
+    assert_eq!(counter.increment(), Err(CounterError::Overflow));
 }
 ```
 

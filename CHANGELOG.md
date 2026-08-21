@@ -6,6 +6,33 @@ semantic versioning for the rule set.
 
 ## [Unreleased]
 
+### Fixed
+- 30 defects found by auditing this session's own new rules and sections, which
+  had never been checked. 13 were medium; none survived a compiler.
+  `pat-combinator-over-branch` claimed a diverging arm "cannot be a combinator
+  argument" — it compiles with an `unreachable_code` warning and then returns
+  the diverging value unconditionally, which is worse than the error the rule
+  described. `proj-stable-toolchain` recommended
+  `--config 'build.rustflags=[...]'` as the one-off escape hatch, which the
+  precedence rule that section had just explained silently discards; the
+  working form overrides `target.<triple>.rustflags`.
+  `api-health-probes` and `trait-ord-consistent` both said derived `Ord` on a
+  fieldless enum follows declaration order — it compares discriminant values,
+  and the two coincide only when no discriminants are written, which matters
+  because another rule tells readers to pin them.
+- `serde-format-choice`'s Good `CacheEntry` was byte-identical to its Bad one,
+  with the contrast living entirely in a comment; `type-capability-token`'s
+  token proved nothing, because the handle was as conditional as the proof;
+  `perf-iter-lazy` claimed a `#[must_use]` warning fires on an example that
+  binds the value, which suppresses it; `test-observable-coverage` asserted on
+  a private field in the rule that forbids exactly that;
+  `api-builder-pattern`'s "Evidence from reqwest" block quoted a body that
+  file does not contain.
+- Also corrected: an invented `E0366` message, `E0308` where the shipped
+  example produces `E0277`, an unreachable `select!` `else` arm, a
+  `select_all` call that cannot compile without `Box::pin`, and an allocation
+  count contradicted by this library's own in-place-specialization section.
+
 ### Added
 - `serde-format-choice`: pick the encoding from who decodes the bytes. Every
   other `serde-` rule decides how to encode once a format is fixed, which

@@ -115,24 +115,33 @@ pub struct Cache {
 pub struct CacheReady(());
 
 impl Cache {
-    pub fn connect(ok: bool) -> Option<(Self, CacheReady)> {
-        ok.then(|| (Cache { entries: vec!["hit".to_string()] }, CacheReady(())))
+    /// The handle always exists — the service runs degraded either way. Only
+    /// the proof is conditional, which is what makes it worth having: if the
+    /// handle were the conditional part, `Option` would already say this.
+    pub fn connect(ok: bool) -> (Self, Option<CacheReady>) {
+        let cache = Cache {
+            entries: if ok { vec!["hit".to_string()] } else { Vec::new() },
+        };
+        (cache, ok.then(|| CacheReady(())))
     }
 
-    /// Taking the proof by reference means this cannot be called on a path
-    /// where the cache failed to start — there is no token to pass.
+    /// Taking the proof means this cannot be called on the degraded path;
+    /// there is no token to pass, and one cannot be constructed elsewhere.
     pub fn lookup(&self, _proof: &CacheReady, index: usize) -> Option<&str> {
         self.entries.get(index).map(String::as_str)
     }
 }
 
 fn main() {
-    let (cache, proof) = Cache::connect(true).expect("connected");
+    let (cache, proof) = Cache::connect(true);
+    let proof = proof.expect("cache came up");
     assert_eq!(cache.lookup(&proof, 0), Some("hit"));
 
-    // The degraded path holds no proof, so the read does not compile there
-    // rather than panicking or silently returning nothing.
-    assert!(Cache::connect(false).is_none());
+    // Degraded: the handle is still here, so ordinary code compiles — but the
+    // read does not, because there is no proof to hand it.
+    let (degraded, no_proof) = Cache::connect(false);
+    assert!(no_proof.is_none());
+    let _ = degraded;
 }
 ```
 

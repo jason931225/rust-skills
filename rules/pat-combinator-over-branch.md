@@ -125,18 +125,7 @@ order to report the failure.
 
 ## When The Branches Are Genuinely Different Code Paths
 
-The boundary is checked by the compiler before it is a matter of taste. An arm
-that diverges cannot be an argument, because arguments are evaluated before the
-call:
-
-```text
-error[E0308]: mismatched types
-  |     opt.map_or(return Err("absent"), |x| x)
-  |                                          ^ expected `Result<i32, &str>`, found `i32`
-warning: unreachable expression
-```
-
-and arms of different types do not unify:
+Arms of different types do not unify, so the compiler stops that case outright:
 
 ```text
 error[E0308]: mismatched types
@@ -144,7 +133,15 @@ error[E0308]: mismatched types
   |         ------ ^^^^^^ expected `String`, found `&str`
 ```
 
-Where it does compile, prefer the branch when:
+A diverging arm is the more dangerous case, because it is **not** a compile
+error. `!` coerces to any type, so `opt.map_or(return Err("absent"), |x| x)`
+builds with nothing but an `unreachable_code` warning — and then returns
+`Err("absent")` unconditionally, including when the option was `Some`, because
+`map_or` evaluates its first argument before it looks at the option. The eager
+evaluation described above is what turns a `return` in the "default" position
+into a `return` in every position.
+
+So prefer the branch when:
 
 - an arm contains `return`, `break`, or `continue` — use `let ... else` for the
   divergent case, which exists for exactly this shape;
