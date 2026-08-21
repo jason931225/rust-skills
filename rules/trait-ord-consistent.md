@@ -97,12 +97,43 @@ impl PartialOrd for JobKey {
 - Do not implement `Ord` for domains with a genuine partial order. Floating-point values require an explicit policy such as `total_cmp` or a validated non-NaN wrapper.
 - Keep mutable payload outside the ordered key. Mutating a key while it is inside an ordered collection violates the collection's invariants.
 
-## Derived Ordering Follows Declaration Order
+## What Derived Ordering Actually Compares
 
-For a fieldless enum, `#[derive(PartialOrd, Ord)]` ranks variants by the order
-they are declared, and for a struct it compares fields top to bottom. That
-makes the ordering a property of the source layout: reordering variants for
-tidiness silently changes every comparison, every `max`, and every `sort`.
+For a struct, `#[derive(PartialOrd, Ord)]` compares fields top to bottom. For a
+fieldless enum it compares **discriminant values** — which is not the same as
+declaration order, though the two coincide in the common case where no
+discriminants are written and they ascend from zero.
+
+Assigning explicit discriminants breaks the coincidence, silently:
+
+```rust
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
+enum Plain {
+    A,
+    B,
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
+enum Explicit {
+    A = 5,
+    B = 1,
+}
+
+fn main() {
+    assert!(Plain::A < Plain::B, "no discriminants: source order decides");
+    assert!(Explicit::B < Explicit::A, "explicit values decide instead");
+}
+```
+
+That interacts badly with pinning discriminants for a wire or hardware
+contract, because the two reasons to write a number are unrelated: one is what
+an external system requires, the other is what "greater" should mean. A type
+that needs both owes an explicit check that its declared values ascend in the
+same direction as its meaning — or a hand-written `Ord` that says so directly
+rather than a derive that happens to agree.
+
+Either way the ordering is a property of the source, so reordering variants or
+renumbering them changes every comparison, every `max`, and every `sort`.
 
 Where the order is meaningful — severity levels, log levels, protocol
 versions — say so at the type, so the next person to alphabetise the variants
