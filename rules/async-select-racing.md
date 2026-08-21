@@ -131,16 +131,19 @@ select! {
 
 The random default is not an arbitrary choice — it is the fairness mechanism,
 and `biased` trades it away. When an earlier branch is ready on nearly every
-poll, the later branches get whatever is left. Draining two permanently-full
-channels through the same loop 2000 times:
+poll, the later branches get whatever is left. Two producers continuously
+refilling their channels, drained through the same loop 2000 times:
 
 ```text
 biased   : first=1920  second=80
 unbiased : first=991   second=1009
 ```
 
-The second branch under `biased` is not deadlocked — it still progresses when
-the first briefly has nothing — but it received four percent of the turns. If
+The second branch under `biased` is not deadlocked — it still progresses in the
+gaps where the first producer has not yet refilled — but it received four
+percent of the turns. Remove even those gaps, by pre-filling both channels so
+the first is ready on *every* poll, and the second branch gets nothing at all:
+starvation here is a spectrum whose far end is total. If
 that branch is a shutdown signal or a health check, four percent may be fine;
 if it is the other half of the work, the loop has a throughput bug that no test
 of either branch alone will show.
@@ -172,12 +175,16 @@ async fn event_loop(
                 println!("Shutting down");
                 break;
             }
-            Some(cmd) = commands.recv() => {
-                process_command(cmd).await;
-            }
-            else => {
-                // commands channel closed
-                break;
+            // Bind the whole `Option` rather than pattern-matching `Some` in
+            // the arm. A `Some(..)` pattern that fails to match *disables* the
+            // branch instead of running it, and an `else` arm would not catch
+            // that here: tokio takes `else` only when every branch is
+            // disabled, and `shutdown.cancelled()` never is.
+            maybe_cmd = commands.recv() => {
+                match maybe_cmd {
+                    Some(cmd) => process_command(cmd).await,
+                    None => break, // commands channel closed
+                }
             }
         }
     }
@@ -189,14 +196,16 @@ async fn event_loop(
 ```rust
 // Race multiple servers for fastest response
 async fn fastest_response(servers: &[String]) -> Result<Response> {
+    // `select_all` requires `Unpin` futures, and an `async fn` future is not
+    // `Unpin` — box each one, or the call does not compile.
     let futures = servers.iter()
-        .map(|s| fetch_from(s))
+        .map(|s| Box::pin(fetch_from(s)))
         .collect::<Vec<_>>();
-    
+
     // select! requires static branches, use select_all for dynamic
-    let (result, _index, _remaining) = 
+    let (result, _index, _remaining) =
         futures::future::select_all(futures).await;
-    
+
     result
 }
 ```

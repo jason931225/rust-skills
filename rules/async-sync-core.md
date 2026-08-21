@@ -168,8 +168,9 @@ everything:
 - **`Send + 'static` propagates.** Spawning pushes those bounds outward through
   every generic that feeds a task, and a type that is legitimately `!Send`
   becomes a design problem rather than an implementation detail.
-- **Every test grows a runtime.** A pure function can be called; an `async fn`
-  needs an executor and, in practice, a stub for each dependency it reaches.
+- **Every test grows an executor.** A pure function can be called; an
+  `async fn` has to be driven by something — at minimum a `block_on`, and in
+  practice a stub for each dependency it reaches.
   That is the same cost this rule's Why It Matters describes, paid once per
   test rather than once per program.
 

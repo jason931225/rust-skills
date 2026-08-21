@@ -39,14 +39,47 @@ pub struct ServiceConfig {
     pub workers: usize,
 }
 
-/// Written and read only by this binary, at volume. Positional: no field
-/// names on the wire, and a version prefix because there is nothing else to
-/// reconcile a layout change against.
+/// Written and read only by this binary, at volume, in a positional format:
+/// no field names on the wire. Because a positional encoding has no names to
+/// reconcile against, the layout carries its own version — without it a record
+/// written by the previous release decodes into whatever the current struct
+/// happens to be.
+pub const CACHE_FORMAT_VERSION: u16 = 1;
+
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct CacheEntry {
+    /// First field on the wire, and checked before the rest is trusted.
+    pub format_version: u16,
     pub key: String,
     pub fetched_at_ms: u64,
     pub payload: Vec<u8>,
+}
+
+impl CacheEntry {
+    pub fn decoded(self) -> Result<Self, &'static str> {
+        if self.format_version != CACHE_FORMAT_VERSION {
+            return Err("cache record written by a different format version");
+        }
+        Ok(self)
+    }
+}
+
+fn main() {
+    let entry = CacheEntry {
+        format_version: CACHE_FORMAT_VERSION,
+        key: "k".to_string(),
+        fetched_at_ms: 0,
+        payload: Vec::new(),
+    };
+    assert!(entry.decoded().is_ok());
+
+    let stale = CacheEntry {
+        format_version: CACHE_FORMAT_VERSION + 1,
+        key: "k".to_string(),
+        fetched_at_ms: 0,
+        payload: Vec::new(),
+    };
+    assert!(stale.decoded().is_err(), "a version it does not understand is rejected");
 }
 ```
 
@@ -77,8 +110,11 @@ side of it.
   [serde-format-version](serde-format-version.md). A self-describing format
   gets that reconciliation from the names, and needs
   [serde-default-compat](serde-default-compat.md) instead.
-- `flatten` and `deny_unknown_fields` need a self-describing format. Choosing a
-  positional one silently removes both.
+- `flatten` and `deny_unknown_fields` need a self-describing format. On a
+  positional one, `deny_unknown_fields` goes quietly inert — there are no field
+  names to be unknown — while `flatten` usually fails loudly at encode time,
+  because the encoder cannot size a map it has not seen. One of the two tells
+  you; the other does not.
 - Anything hand-rolled owes an explicit byte order regardless of the choice —
   see [serde-byte-order](serde-byte-order.md).
 

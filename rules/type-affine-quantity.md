@@ -165,8 +165,8 @@ fn main() {
     assert_eq!(Volts(12.0) * Amperes(2.0), Watts(24.0));
     assert_eq!(Volts(12.0) / Amperes(2.0), Ohms(6.0));
     assert_eq!(Volts(12.0) * 2.0, Volts(24.0));
-    // `Volts(12.0) * Volts(2.0)` is E0308: there is no such impl, and there is
-    // no dimension it could produce.
+    // `Volts(12.0) * Volts(2.0)` is E0277, "cannot multiply `Volts` by
+    // `Volts`": there is no such impl, and no dimension it could produce.
 }
 ```
 

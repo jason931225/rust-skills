@@ -62,7 +62,7 @@ fn run() {
     }
 
     // `tx` is still in scope here, so the channel never disconnects and this
-    // loop never ends — the join below waits forever.
+    // loop never ends, so this function never returns.
     for value in rx {
         let _ = value;
     }
@@ -76,7 +76,7 @@ use std::sync::mpsc;
 use std::thread;
 
 /// Owns the state outright; nothing else can reach it, so there is no lock.
-struct Totals {
+pub struct Totals {
     seen: u64,
     sum: u64,
 }

@@ -311,7 +311,7 @@ stable as states are added.
 
 A single generic type cannot implement `Drop` only for one of its typestate
 parameters — `impl Drop for Lock<Locked>` alongside no impl for
-`Lock<Unlocked>` is `E0366: implementations of Drop must be unconditional`.
+`Lock<Unlocked>` is ``E0366: `Drop` impls cannot be specialized``.
 When only one state needs cleanup on drop (releasing a hardware lock,
 unmapping memory, closing a session), either give that state its own,
 separate named type with its own `Drop` impl, or keep one generic type and

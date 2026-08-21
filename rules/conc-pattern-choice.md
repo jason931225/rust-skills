@@ -72,6 +72,10 @@ use std::thread;
 // mutable state to lock, so the double-acquisition and held-guard failures
 // cannot occur — not because they are avoided, but because nothing is shared.
 fn total(chunks: Vec<Vec<u64>>) -> u64 {
+    let expected = chunks.len();
+    // Unbounded is defensible here for a stated reason: each worker sends
+    // exactly one message, so the queue cannot exceed the number of chunks.
+    // A producer that sends in a loop would need a bounded channel instead.
     let (tx, rx) = mpsc::channel();
     for chunk in chunks {
         let tx = tx.clone();
@@ -82,7 +86,12 @@ fn total(chunks: Vec<Vec<u64>>) -> u64 {
     }
     // The original sender must go, or the receive loop never ends.
     drop(tx);
-    rx.iter().sum()
+
+    // Counting the replies is what catches a worker that panicked before
+    // reporting: without it the sum is simply too small, and nothing says so.
+    let subtotals: Vec<u64> = rx.iter().collect();
+    assert_eq!(subtotals.len(), expected, "every worker reported exactly once");
+    subtotals.into_iter().sum()
 }
 
 fn main() {

@@ -14,7 +14,7 @@ not universally allocate—for example, collecting into `Result` short-circuits.
 ## Bad
 
 ```rust
-// Three allocations, three passes
+// Three passes, and three intermediate Vecs that nothing else reads
 fn process(data: Vec<i32>) -> Vec<i32> {
     let step1: Vec<_> = data.into_iter()
         .filter(|x| *x > 0)
@@ -174,5 +174,4 @@ cannot express.
 ## See Also
 
 - [perf-iter-lazy](perf-iter-lazy.md) - keep iterators lazy and collect once
-- [perf-iter-lazy](./perf-iter-lazy.md) - Lazy evaluation
 - [perf-iter-over-index](./perf-iter-over-index.md) - Iterator patterns

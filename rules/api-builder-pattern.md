@@ -154,26 +154,31 @@ pub struct ClientBuilder {
 }
 
 impl Client {
+    // The real body delegates rather than building the struct inline; the
+    // point here is that `Client::builder()` is the entry point, not
+    // `ClientBuilder`.
     pub fn builder() -> ClientBuilder {
-        ClientBuilder {
-            config: Config::default(),
-        }
+        ClientBuilder::new()
     }
 }
 
 impl ClientBuilder {
+    pub fn new() -> ClientBuilder {
+        ClientBuilder { config: Config::default() }
+    }
+
     pub fn timeout(mut self, timeout: Duration) -> ClientBuilder {
         self.config.timeout = Some(timeout);
         self
     }
-    
+
     pub fn build(self) -> Result<Client, Error> {
         // Validation and construction
     }
 }
 ```
 
-## Key Attributes
+## Attributes That Carry The Contract
 
 ```rust
 #[derive(Default)]  // Enables MyBuilder::default()
@@ -207,6 +212,13 @@ pub struct Config {
     retries: u32,
 }
 
+impl Config {
+    /// The entry point lives on the built type, not on the builder.
+    pub fn builder() -> ConfigBuilder {
+        ConfigBuilder::default()
+    }
+}
+
 #[derive(Default)]
 pub struct ConfigBuilder {
     endpoint: Option<String>,
@@ -238,14 +250,14 @@ impl ConfigBuilder {
 }
 
 fn main() {
-    let config = ConfigBuilder::default()
+    let config = Config::builder()
         .endpoint("https://example.invalid")
         .retries(5)
         .build()
         .expect("valid configuration");
     assert_eq!(config.retries, 5);
 
-    assert!(ConfigBuilder::default().build().is_err(), "missing endpoint is caught at build");
+    assert!(Config::builder().build().is_err(), "missing endpoint is caught at build");
 }
 ```
 
